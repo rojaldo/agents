@@ -379,7 +379,7 @@ Para reportar problemas o sugerir mejoras:
 
 ## 📜 Licencia
 
-Este curso es material educativo. Respeta los términos de licencia de las librerías y frameworks utilizados.
+Este curso es material educativo. Con licencia bajo Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0).
 
 ## 🎓 Conclusión
 
@@ -389,7 +389,7 @@ Este curso proporciona una base sólida en el desarrollo de agentes de IA, desde
 
 ---
 
-**Última actualización**: Noviembre 2024
+**Última actualización**: Noviembre 2025
 **Versión del curso**: 1.0
-**Presentaciones**: 11 módulos
+**Presentaciones**: 12 módulos
 **Total de slides**: ~1,050

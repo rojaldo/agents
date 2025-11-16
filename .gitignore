@@ -98,6 +98,9 @@ celerybeat.pid
 # Claude 
 .claude/
 
+# samples directory
+samples/
+
 # Environments
 .env
 .venv
