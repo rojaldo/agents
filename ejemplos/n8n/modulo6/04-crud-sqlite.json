@@ -1,0 +1,153 @@
+{
+  "name": "M6.4 - Operaciones CRUD con SQLite",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "start",
+      "name": "Start",
+      "type": "n8n-nodes-base.start",
+      "typeVersion": 1,
+      "position": [100, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "resource": "query",
+        "query": "CREATE TABLE IF NOT EXISTS usuarios (id INTEGER PRIMARY KEY, nombre TEXT, email TEXT, edad INTEGER, estado TEXT DEFAULT 'activo')"
+      },
+      "id": "sqlite-create-table",
+      "name": "SQLite - Crear Tabla",
+      "type": "n8n-nodes-base.sqlite",
+      "typeVersion": 1,
+      "position": [300, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "resource": "query",
+        "query": "INSERT INTO usuarios (nombre, email, edad) VALUES ('Juan García', 'juan@example.com', 28), ('María López', 'maria@example.com', 32), ('Carlos Rodríguez', 'carlos@example.com', 25)"
+      },
+      "id": "sqlite-insert",
+      "name": "SQLite - Insertar Datos",
+      "type": "n8n-nodes-base.sqlite",
+      "typeVersion": 1,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "resource": "query",
+        "query": "SELECT * FROM usuarios WHERE edad > 26 ORDER BY edad DESC"
+      },
+      "id": "sqlite-read",
+      "name": "SQLite - Leer Datos (READ)",
+      "type": "n8n-nodes-base.sqlite",
+      "typeVersion": 1,
+      "position": [700, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "resource": "query",
+        "query": "UPDATE usuarios SET edad = edad + 1 WHERE nombre LIKE '%García%'"
+      },
+      "id": "sqlite-update",
+      "name": "SQLite - Actualizar Datos (UPDATE)",
+      "type": "n8n-nodes-base.sqlite",
+      "typeVersion": 1,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "resource": "query",
+        "query": "DELETE FROM usuarios WHERE edad < 26"
+      },
+      "id": "sqlite-delete",
+      "name": "SQLite - Eliminar Datos (DELETE)",
+      "type": "n8n-nodes-base.sqlite",
+      "typeVersion": 1,
+      "position": [1100, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "resource": "query",
+        "query": "SELECT * FROM usuarios"
+      },
+      "id": "sqlite-final-read",
+      "name": "SQLite - Lectura Final",
+      "type": "n8n-nodes-base.sqlite",
+      "typeVersion": 1,
+      "position": [1300, 300]
+    }
+  ],
+  "connections": {
+    "start": {
+      "main": [
+        [
+          {
+            "node": "sqlite-create-table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sqlite-create-table": {
+      "main": [
+        [
+          {
+            "node": "sqlite-insert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sqlite-insert": {
+      "main": [
+        [
+          {
+            "node": "sqlite-read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sqlite-read": {
+      "main": [
+        [
+          {
+            "node": "sqlite-update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sqlite-update": {
+      "main": [
+        [
+          {
+            "node": "sqlite-delete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sqlite-delete": {
+      "main": [
+        [
+          {
+            "node": "sqlite-final-read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

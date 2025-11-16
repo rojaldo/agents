@@ -1,0 +1,129 @@
+{
+  "name": "M8.1 - Procesamiento de Formularios",
+  "description": "Recibir datos de formulario, validar, guardar y enviar confirmación",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "formulario-contacto",
+        "method": "POST",
+        "options": {}
+      },
+      "id": "webhook",
+      "name": "Webhook - Recibir Formulario",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [100, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Validar datos del formulario\nconst data = $input.first().json;\nconst errores = [];\n\nif (!data.nombre || data.nombre.trim().length < 3) {\n  errores.push('Nombre debe tener mínimo 3 caracteres');\n}\n\nif (!data.email || !data.email.match(/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/)) {\n  errores.push('Email inválido');\n}\n\nif (!data.mensaje || data.mensaje.trim().length < 10) {\n  errores.push('Mensaje debe tener mínimo 10 caracteres');\n}\n\nif (errores.length > 0) {\n  throw new Error(errores.join('; '));\n}\n\nreturn {\n  json: {\n    nombre: data.nombre.trim(),\n    email: data.email.toLowerCase().trim(),\n    mensaje: data.mensaje.trim(),\n    telefono: data.telefono || '',\n    fecha_envio: new Date().toISOString(),\n    estado: 'recibido'\n  }\n};"
+      },
+      "id": "validar",
+      "name": "Code - Validar Datos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [300, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "resource": "query",
+        "query": "CREATE TABLE IF NOT EXISTS formularios (id INTEGER PRIMARY KEY, nombre TEXT, email TEXT, mensaje TEXT, telefono TEXT, fecha_envio TEXT, estado TEXT)"
+      },
+      "id": "sqlite-create",
+      "name": "SQLite - Crear Tabla",
+      "type": "n8n-nodes-base.sqlite",
+      "typeVersion": 1,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "resource": "query",
+        "query": "INSERT INTO formularios (nombre, email, mensaje, telefono, fecha_envio, estado) VALUES ('{{ $input.first().json.nombre }}', '{{ $input.first().json.email }}', '{{ $input.first().json.mensaje }}', '{{ $input.first().json.telefono }}', '{{ $input.first().json.fecha_envio }}', '{{ $input.first().json.estado }}')"
+      },
+      "id": "sqlite-insert",
+      "name": "SQLite - Guardar Registro",
+      "type": "n8n-nodes-base.sqlite",
+      "typeVersion": 1,
+      "position": [700, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Enviar confirmación (simulado)\nreturn {\n  json: {\n    to: $input.first().json.email,\n    subject: 'Confirmación de recepción de formulario',\n    body: `Hola ${$input.first().json.nombre},\\n\\nHemos recibido tu mensaje:\\n${$input.first().json.mensaje}\\n\\nNos pondremos en contacto pronto.\\n\\nSaludos,\\nEquipo`,\n    simulado: true,\n    timestamp: new Date().toISOString()\n  }\n};"
+      },
+      "id": "email-confirmacion",
+      "name": "Code - Email Confirmación (simulado)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Respuesta al cliente\nreturn {\n  json: {\n    exito: true,\n    mensaje: 'Formulario recibido correctamente',\n    referencia: Math.random().toString(36).substr(2, 9).toUpperCase(),\n    timestamp: new Date().toISOString()\n  }\n};"
+      },
+      "id": "response",
+      "name": "Code - Respuesta",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 300]
+    }
+  ],
+  "connections": {
+    "webhook": {
+      "main": [
+        [
+          {
+            "node": "validar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "validar": {
+      "main": [
+        [
+          {
+            "node": "sqlite-create",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sqlite-create": {
+      "main": [
+        [
+          {
+            "node": "sqlite-insert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sqlite-insert": {
+      "main": [
+        [
+          {
+            "node": "email-confirmacion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "email-confirmacion": {
+      "main": [
+        [
+          {
+            "node": "response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

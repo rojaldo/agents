@@ -1,0 +1,440 @@
+= Curso Completo de Model Context Protocol (MCP)
+:doctype: book
+:toc:
+:toclevels: 4
+:sectnums:
+:icons: font
+:source-highlighter: highlight.js
+:highlightjsdir: https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0
+:highlightjs-theme: atom-one-light
+:data-uri:
+
+== Módulo 1: Fundamentos del Model Context Protocol
+
+=== 1.1 Introducción a MCP
+* ¿Qué es el Model Context Protocol?
+* Historia y desarrollo por Anthropic
+* El problema N×M en integraciones AI
+* MCP como el "puerto USB-C para AI"
+* Comparación con enfoques anteriores (Function Calling, LangChain, ChatGPT Plugins)
+* Adopción por la industria (OpenAI, Google DeepMind, Block, Apollo)
+
+=== 1.2 Arquitectura y Componentes Core
+* MCP Hosts (Claude Desktop, Cursor, Windsurf, IDEs)
+* MCP Clients
+* MCP Servers
+* Flujo de comunicación cliente-servidor
+* Protocolo JSON-RPC 2.0
+* Modelo de interacción y ciclo de vida
+
+=== 1.3 Instalación y Configuración del Entorno
+* Requisitos del sistema
+* Instalación de SDKs oficiales
+* Configuración de Claude Desktop
+* Configuración de otros hosts (Cursor, VS Code)
+* Herramientas de desarrollo y debugging
+* MCP Inspector
+
+== Módulo 2: Primitivos Fundamentales de MCP
+
+=== 2.1 Tools (Herramientas)
+* Concepto y propósito de tools
+* Anatomía de una herramienta MCP
+* Definición de esquemas con JSON Schema
+* Input y output schemas
+* Annotations y hints (readOnlyHint, destructiveHint, idempotentHint)
+* Manejo de errores en tools
+* Tool discovery y execution
+* Best practices para diseño de tools
+
+=== 2.2 Resources (Recursos)
+* Diferencia entre tools y resources
+* Resources estáticos vs dinámicos
+* URI schemes y templates (RFC 6570)
+* Text resources vs Binary resources
+* Resource metadata
+* Application-controlled access pattern
+* Implementación de resource templates
+* Casos de uso y ejemplos prácticos
+
+=== 2.3 Prompts
+* Prompts como templates reutilizables
+* Definición de prompt templates
+* Variables y argumentos en prompts
+* Prompts con autocompletado
+* User-initiated workflows
+* Integración con slash commands
+* Versionado y actualización centralizada de prompts
+
+=== 2.4 Características Avanzadas
+* Sampling: Permitir que servers soliciten completions del LLM
+* Notifications: Log y progress notifications
+* Roots: Control de acceso al sistema de archivos
+* Elicitation: Solicitud de información adicional al usuario
+* State management y persistencia
+
+== Módulo 3: Transportes y Comunicación
+
+=== 3.1 STDIO Transport
+* Comunicación vía Standard Input/Output
+* Configuración y setup para procesos locales
+* Ventajas y limitaciones
+* Implementación en diferentes lenguajes
+* Casos de uso ideales
+
+=== 3.2 HTTP con Server-Sent Events (SSE)
+* Arquitectura SSE para comunicación remota
+* Endpoints y flujo de mensajes
+* Configuración de servidores HTTP
+* CORS y consideraciones de seguridad
+* Migración de STDIO a SSE
+
+=== 3.3 Streamable HTTP Transport
+* Nueva especificación 2025-03-26
+* Diferencias con SSE tradicional
+* Modos de respuesta (batch vs streaming)
+* Implementación y configuración
+* Ventajas para aplicaciones modernas
+
+=== 3.4 Transports Personalizados
+* Creación de transports custom
+* Requisitos del protocolo
+* Implementación con anyio/asyncio
+* Testing de transports
+* Bridge patterns (mcp-proxy, mcp-remote)
+
+== Módulo 4: SDKs y Frameworks de Desarrollo
+
+=== 4.1 Python SDK y FastMCP
+* **FastMCP 2.0**: Framework de alto nivel para Python
+  - Instalación y configuración
+  - Decoradores @mcp.tool(), @mcp.resource(), @mcp.prompt()
+  - Context injection y session management
+  - Testing con in-memory transport
+  - Deployment con FastMCP Cloud
+* **Python SDK oficial**
+  - API de bajo nivel
+  - Server y Client implementation
+  - Async/await patterns
+  - Integration con asyncio
+
+=== 4.2 TypeScript/JavaScript SDK
+* **@modelcontextprotocol/sdk**
+  - Arquitectura del SDK
+  - McpServer y transport setup
+  - Tool registration con Zod schemas
+  - Resource templates
+  - Streamable HTTP implementation
+* **Frameworks TypeScript**
+  - EasyMCP: API estilo Express
+  - MCP-Framework: Producción-ready
+  - Template MCP Server: Quick start
+
+=== 4.3 Otros SDKs y Lenguajes
+* **Go SDK**
+  - Foxy Contexts framework
+  - High performance implementations
+  - Dependency injection patterns
+* **Java/Kotlin**
+  - Quarkus MCP Server SDK
+  - Enterprise integrations
+  - Spring Boot integration
+* **C#/.NET SDK**
+* **Rust implementations**
+
+=== 4.4 Frameworks Especializados
+* **FastAPI-MCP**: Zero-config para endpoints FastAPI existentes
+* **Stainless SDK Generator**: OpenAPI a MCP
+* **MCPify**: Conversión rápida de APIs a MCP
+* **Composio MCP**: 250+ servidores gestionados
+* **Smithery SDK**: Registry y deployment
+
+== Módulo 5: Seguridad y Autenticación
+
+=== 5.1 Fundamentos de Seguridad en MCP
+* Modelo de amenazas y vulnerabilidades
+* Principio de menor privilegio
+* Human-in-the-loop para aprobación de tools
+* Sandboxing y aislamiento
+* Rate limiting y quotas
+
+=== 5.2 Autenticación con API Keys
+* Configuración de API keys
+* Almacenamiento seguro (environment variables, secret managers)
+* Rotación de keys
+* Auditoría y logging
+
+=== 5.3 OAuth 2.1 y OpenID Connect
+* Especificación OAuth 2.1 para MCP (Marzo 2025)
+* Authorization Code Flow con PKCE
+* Dynamic Client Registration (DCR)
+* Resource indicators y audience claims
+* Protected Resource Metadata
+* Token introspection y validation
+
+=== 5.4 Implementación con Identity Providers
+* **Keycloak**
+  - Setup y configuración
+  - Realms y clients
+  - Scopes y roles
+* **Auth0/Okta integration**
+* **GitHub/Google OAuth**
+* **Azure AD/Entra ID**
+* **WorkOS y enterprise SSO**
+
+=== 5.5 Role-Based Access Control (RBAC)
+* Definición de roles y permisos
+* Políticas de acceso granular
+* Attribute-based access control (ABAC)
+* Multi-tenant considerations
+* Audit trails y compliance
+
+== Módulo 6: Desarrollo de Servidores MCP
+
+=== 6.1 Planificación y Diseño
+* Identificación de capacidades
+* Diseño de API y esquemas
+* Documentación de tools y resources
+* Error handling strategies
+* Logging y observabilidad
+
+=== 6.2 Implementación Práctica con Python/FastMCP
+* Setup del proyecto
+* Implementación de tools
+* Manejo de estado y contexto
+* Testing unitario e integración
+* Deployment local y remoto
+
+=== 6.3 Implementación con TypeScript
+* Configuración del proyecto
+* Uso del SDK oficial
+* Manejo de tipos con Zod
+* Build y bundling
+* Deployment con Node.js
+
+=== 6.4 Patterns y Best Practices
+* Server composition y mounting
+* Proxying y delegation
+* Caching strategies
+* Error recovery
+* Performance optimization
+* Rate limiting implementation
+
+== Módulo 7: Desarrollo de Clientes MCP
+
+=== 7.1 Cliente Python con FastMCP
+* Conexión a servidores
+* Discovery de capabilities
+* Llamadas a tools
+* Lectura de resources
+* Manejo de errores y retry logic
+
+=== 7.2 Cliente TypeScript
+* Setup con @modelcontextprotocol/sdk
+* Transports y conexión
+* Type-safe tool calls
+* Stream handling
+* Error boundaries
+
+=== 7.3 Integración con LLMs
+* Pasando contexto al modelo
+* Tool selection strategies
+* Result formatting
+* Context window management
+* Conversation state handling
+
+== Módulo 8: Registries y Ecosistema
+
+=== 8.1 MCP Registries Principales
+* **Smithery.ai**: 2000+ servidores
+* **Glama.ai**: Directory y hosting
+* **PulseMCP**: Trending servers
+* **mcp.run**: Catálogo de apps
+* **Composio Registry**: SSE-based servers
+* **guMCP**: Hosted servers gratuitos
+* **awesome-mcp-servers**: Lista comunitaria
+
+=== 8.2 Publicación de Servidores
+* Preparación para publicación
+* Metadata y documentación
+* Testing y validación
+* Registro en directorios
+* Versionado semántico
+
+=== 8.3 Descubrimiento y Consumo
+* Búsqueda de servidores
+* Evaluación de calidad y seguridad
+* Instalación vía Smithery CLI
+* Configuración en hosts
+* Actualizaciones y mantenimiento
+
+== Módulo 9: Deployment y DevOps
+
+=== 9.1 Deployment Local
+* Configuración para desarrollo
+* Scripts de inicio
+* Environment management
+* Debugging y troubleshooting
+
+=== 9.2 Deployment en la Nube
+* **FastMCP Cloud**
+* **Vercel/Cloudflare Workers**
+* **AWS Lambda/Google Cloud Functions**
+* **Docker y Kubernetes**
+* **Railway/Render/Fly.io**
+
+=== 9.3 Monitoreo y Observabilidad
+* Logging estructurado
+* Métricas y telemetría
+* Distributed tracing
+* Error tracking (Sentry)
+* Performance monitoring
+
+=== 9.4 CI/CD Pipelines
+* Testing automatizado
+* Build y packaging
+* Deployment strategies
+* Rollback procedures
+* Version management
+
+== Módulo 10: Casos de Uso Avanzados
+
+=== 10.1 Code Execution con MCP
+* Progressive tool discovery
+* Filesystem-based APIs
+* Context-efficient data handling
+* State persistence
+* Skills y reusable scripts
+
+=== 10.2 Multi-Agent Systems
+* Coordinación entre agentes
+* Shared context y memory
+* Task delegation
+* Conflict resolution
+* Workflow orchestration
+
+=== 10.3 Enterprise Integrations
+* Salesforce/CRM integration
+* Database access patterns
+* Document management (SharePoint, Confluence)
+* Business intelligence tools
+* Legacy system bridges
+
+=== 10.4 AI-Powered Workflows
+* RAG implementations
+* Embedding generation y storage
+* Vector database integration
+* Chain-of-thought prompting
+* Agent memory systems
+
+== Módulo 11: Testing y Calidad
+
+=== 11.1 Testing de Servidores MCP
+* Unit testing de tools
+* Integration testing
+* Contract testing
+* Performance testing
+* Security testing
+
+=== 11.2 Testing de Clientes
+* Mock servers
+* In-memory transports
+* Fixture management
+* Assertion strategies
+* Coverage metrics
+
+=== 11.3 End-to-End Testing
+* Scenario testing
+* User journey validation
+* Cross-platform testing
+* Load testing
+* Chaos engineering
+
+== Módulo 12: Proyecto Final
+
+=== 12.1 Diseño del Proyecto
+* Selección del dominio
+* Arquitectura del sistema
+* Definición de requirements
+* Planning y milestones
+
+=== 12.2 Implementación
+* Desarrollo del servidor MCP
+* Implementación de cliente
+* Integración con LLM
+* Testing completo
+* Documentación
+
+=== 12.3 Deployment y Presentación
+* Preparación para producción
+* Deployment en cloud
+* Demo y presentación
+* Code review
+* Mejoras y optimización
+
+== Recursos y Referencias
+
+=== Documentación Oficial
+* https://modelcontextprotocol.io - Sitio oficial MCP
+* https://spec.modelcontextprotocol.io - Especificación del protocolo
+* https://github.com/modelcontextprotocol - Repositorios oficiales
+
+=== SDKs y Frameworks
+* **Python**
+  - https://github.com/modelcontextprotocol/python-sdk
+  - https://github.com/jlowin/fastmcp (FastMCP 2.0)
+  - https://gofastmcp.com - Documentación FastMCP
+* **TypeScript**
+  - https://github.com/modelcontextprotocol/typescript-sdk
+  - https://github.com/easymcp/easymcp
+* **Go**
+  - https://github.com/foxy-contexts/foxy-contexts
+* **Java**
+  - Quarkus MCP Server SDK
+
+=== Herramientas y Utilidades
+* MCP Inspector - Testing y debugging
+* mcp-proxy - Bridge entre transportes
+* mcp-remote - Exposición remota de servidores
+* Smithery CLI - Gestión de servidores
+
+=== Comunidad y Recursos
+* Discord de MCP
+* awesome-mcp-servers en GitHub
+* Foros y discusiones en GitHub
+* Blog posts y tutoriales
+* Cursos de Anthropic Academy
+
+=== Plataformas y Registries
+* https://smithery.ai - Registry principal
+* https://glama.ai/mcp - Hosting y directory
+* https://www.pulsemcp.com - Trending servers
+* https://mcp.run - Catálogo de aplicaciones
+* https://composio.dev - Servidores gestionados
+
+== Anexos
+
+=== A. Glosario de Términos
+* MCP: Model Context Protocol
+* Tool: Función ejecutable expuesta por un servidor
+* Resource: Dato o contenido accesible
+* Prompt: Template de interacción reutilizable
+* Transport: Mecanismo de comunicación
+* Host: Aplicación que instancia clientes MCP
+* Registry: Directorio de servidores MCP
+
+=== B. Troubleshooting Común
+* Errores de conexión
+* Problemas de autenticación
+* Context window limits
+* Rate limiting
+* Debugging de tools
+* Performance issues
+
+=== C. Ejemplos de Código
+* Servidor básico en Python/FastMCP
+* Servidor TypeScript con Express
+* Cliente de prueba
+* Integración con Claude Desktop
+* OAuth implementation
+* Docker deployment

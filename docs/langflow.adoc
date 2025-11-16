@@ -1,0 +1,1950 @@
+= Curso Completo de Langflow - Desde Principiante hasta Producción
+:doctype: book
+:toc:
+:toclevels: 4
+:sectnums:
+:icons: font
+:source-highlighter: highlight.js
+:highlightjsdir: https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0
+:highlightjs-theme: atom-one-light
+:data-uri:
+
+== Introducción al Curso
+
+Bienvenido a este curso completo de Langflow. En esta guía aprenderás cómo construir aplicaciones inteligentes potenciadas por LLMs usando una **interfaz visual intuitiva**, sin necesidad de escribir código complejo.
+
+*Objetivos del Curso:*
+- Entender qué es Langflow y cómo se diferencia de otros frameworks
+- Construir flujos visuales complejos usando drag-and-drop
+- Integrar LLMs locales (Ollama) con herramientas y APIs
+- Crear chatbots conversacionales con memoria
+- Exportar flujos como APIs REST y aplicaciones web
+- Aplicar patrones de producción (logging, error handling, escalabilidad)
+
+*Tiempo Estimado:* 15-20 horas
+*Requisitos Previos:* Conocimiento básico de programación (no obligatorio)
+*Software Necesario:* Python 3.10+, Ollama local, Langflow
+
+---
+
+== Módulo 1: Introducción a Langflow
+
+=== 1.1 ¿Qué es Langflow?
+
+==== Concepto Fundamental
+
+Imagina que quieres construir una aplicación con IA que:
+- Hable con usuarios en conversaciones naturales
+- Busque información en internet
+- Procese documentos
+- Integre múltiples APIs
+- Se actualice sin reescribir código
+
+*Sin Langflow*, necesitarías escribir miles de líneas de código Python, manejar conexiones, debugging, etc.
+
+*Con Langflow*, simplemente **arrastra y suelta componentes** en una interfaz visual, los conectas, y ¡listo! Tu aplicación está lista.
+
+**Langflow es el "Figma" para aplicaciones de IA.**
+
+La analogía es precisa: así como Figma permite que diseñadores creen interfaces visuales sin escribir HTML/CSS, Langflow permite crear aplicaciones IA sin escribir código Python complejo.
+
+==== Definición Formal
+
+Langflow es una plataforma visual de código abierto que permite construir aplicaciones basadas en LLMs sin escribir código. Proporciona:
+
+* *Interfaz drag-and-drop*: Construye flujos visuales intuitivos
+* *Componentes predefinidos*: LLMs, herramientas, memoria, APIs, etc.
+* *Ejecución local*: Corre en tu máquina o servidor
+* *Exportación como código*: Genera Python (FastAPI) cuando lo necesites
+* *Testing integrado*: Prueba flujos en tiempo real
+* *Multi-modelo*: Soporta Ollama, OpenAI, Hugging Face, etc.
+
+==== Comparativa: Langflow vs. Alternativas
+
+[cols="25,25,25,25"]
+|===
+| Aspecto | Langflow | LangChain | AutoGen
+
+| **Interface** | Visual (UI) | Código Python | Código Python
+| **Curva Aprendizaje** | Muy baja | Media | Media-Alta
+| **Velocidad Prototipado** | Muy rápida | Rápida | Media
+| **Flexibilidad** | Media | Alta | Alta
+| **Para No-Programadores** | ✅ Sí | ❌ No | ❌ No
+| **Visualización** | Nativa | Requiere plugins | Ninguna
+| **Testing Visual** | ✅ Integrado | ❌ Manual | ❌ Manual
+| **Exportación a Código** | ✅ Sí | N/A | N/A
+| **Multi-LLM** | ✅ Sí | ✅ Sí | ✅ Sí
+|===
+
+**Caso de uso de Langflow:**
+- Prototipado rápido (horas, no días)
+- No-code applications
+- Visual process design
+- Equipos con gente no-técnica
+
+==== Casos de Uso Reales
+
+===== 1. Chatbot de Soporte Técnico
+
+*Problema:* Una empresa recibe 100 preguntas diarias de soporte.
+
+*Solución con Langflow:*
+
+[source]
+----
+[Chat Input]
+    ↓
+[Prompt Classifier] - ¿Pregunta técnica o general?
+    ├─ Técnica → [Technical LLM] → [Knowledge Base Search]
+    └─ General → [General LLM] → [Web Search]
+    ↓
+[Response Parser]
+    ↓
+[Chat Output]
+----
+
+*Tiempo de construcción:* 5-10 minutos
+*Beneficio:* Resuelve 70% de preguntas automáticamente
+
+===== 2. Procesador de Documentos (RAG)
+
+*Problema:* Analizar documentos grandes sin escribir código.
+
+*Solución:*
+
+[source]
+----
+[Upload PDF]
+    ↓
+[Text Splitter] - Divide en chunks de 500 caracteres
+    ↓
+[Embeddings] - Convierte a vectores
+    ↓
+[Vector Store] - FAISS o Pinecone
+    ↓
+[Search Query] → [Similarity Search] → [LLM]
+    ↓
+[JSON Output]
+----
+
+*Tiempo:* 10 minutos
+*Resultado:* Sistema RAG profesional sin código
+
+===== 3. Automatización de Workflow
+
+*Problema:* Procesar órdenes de clientes manualmente.
+
+*Solución:*
+
+[source]
+----
+[Webhook (Stripe)]
+    ↓
+[Data Extractor]
+    ↓
+[Email Generator] - Genera confirmación
+    ↓
+[Database Update] - Actualiza estado
+    ↓
+[Webhook (Google Sheets)]
+----
+
+*Tiempo:* 15 minutos
+*Costo:* Reducción de 8 horas/día de trabajo manual
+
+=== 1.2 Instalación y Configuración
+
+==== Requisitos del Sistema
+
+.Mínimos
+- Python 3.10+
+- 4GB RAM
+- 2GB disco libre
+
+.Recomendado
+- Python 3.11+
+- 8GB RAM
+- SSD con 5GB disponibles
+- GPU (opcional, para LLMs locales)
+
+==== Instalación Paso a Paso
+
+===== Paso 1: Instalar Python
+
+[source,bash]
+----
+# Verificar que tengas Python 3.10+
+python --version
+
+# Si no tienes, descarga desde https://python.org
+----
+
+===== Paso 2: Crear Entorno Virtual
+
+[source,bash]
+----
+# Crear entorno virtual
+python -m venv langflow_env
+
+# Activar en Linux/macOS
+source langflow_env/bin/activate
+
+# Activar en Windows
+langflow_env\Scripts\activate
+----
+
+===== Paso 3: Instalar Langflow
+
+[source,bash]
+----
+# Instalar desde PyPI
+pip install langflow
+
+# O instalar versión desarrollo
+git clone https://github.com/logspace-ai/langflow
+cd langflow
+pip install -e .
+----
+
+===== Paso 4: Instalar Ollama (Local LLM)
+
+[source,bash]
+----
+# Descargar desde https://ollama.ai
+curl https://ollama.ai/install.sh | sh
+
+# Descargar un modelo (ejemplo: mistral)
+ollama pull mistral
+
+# Iniciar servidor Ollama
+ollama serve
+# Escuchará en http://localhost:11434
+----
+
+===== Paso 5: Iniciar Langflow
+
+[source,bash]
+----
+# En otra terminal
+langflow run
+
+# Abre navegador en http://localhost:7860
+----
+
+==== Verificación de Instalación
+
+Crea un flujo simple para verificar que todo funciona:
+
+1. En la interfaz web, haz clic en "+"
+2. Arrastra un componente "Chat Input"
+3. Arrastra un componente "Ollama" (o GPT-4)
+4. Conecta Chat Input → Ollama
+5. Arastra "Chat Output"
+6. Conecta Ollama → Chat Output
+7. Haz clic en Play (▶️)
+8. Escribe un mensaje
+
+*Resultado esperado:* Recibir una respuesta del LLM
+
+---
+
+== Módulo 2: Conceptos Fundamentales
+
+=== 2.1 Componentes en Profundidad
+
+==== ¿Qué es un Componente?
+
+Un **componente** es un bloque funcional reutilizable que hace una cosa específica.
+
+*Analogía:* Un LEGO es un componente. Puedes usar muchos para construir algo grande.
+
+===== Tipos Principales de Componentes
+
+====== 1. Componentes de Entrada (Input)
+
+[source]
+----
+┌─────────────────────┐
+│   Chat Input        │ → Recibe texto del usuario
+├─────────────────────┤
+│ Salida: texto       │
+└─────────────────────┘
+
+┌─────────────────────┐
+│   File Upload       │ → Recibe archivos
+├─────────────────────┤
+│ Salida: ruta del    │
+│         archivo     │
+└─────────────────────┘
+----
+
+====== 2. Componentes de Procesamiento (LLM)
+
+[source]
+----
+┌─────────────────────────────────────┐
+│         Ollama LLM                  │
+├─────────────────────────────────────┤
+│ Entrada: prompt                     │
+│ Parámetros: modelo, temperatura    │
+│ Salida: texto generado              │
+└─────────────────────────────────────┘
+
+┌─────────────────────────────────────┐
+│         OpenAI GPT-4                │
+├─────────────────────────────────────┤
+│ Entrada: prompt, API key            │
+│ Parámetros: modelo, max_tokens      │
+│ Salida: texto generado              │
+└─────────────────────────────────────┘
+----
+
+====== 3. Componentes de Herramientas (Tools)
+
+[source]
+----
+┌──────────────────────────┐
+│   Web Search             │ → Busca en Google/Bing
+├──────────────────────────┤
+│ Entrada: query           │
+│ Salida: resultados       │
+└──────────────────────────┘
+
+┌──────────────────────────┐
+│   Calculator             │ → Calcula expresiones
+├──────────────────────────┤
+│ Entrada: "2+2"           │
+│ Salida: 4                │
+└──────────────────────────┘
+----
+
+====== 4. Componentes de Salida (Output)
+
+[source]
+----
+┌──────────────────────┐
+│   Chat Output        │ → Muestra en UI
+├──────────────────────┤
+│ Entrada: texto       │
+└──────────────────────┘
+
+┌──────────────────────┐
+│   JSON Output        │ → Exporta como JSON
+├──────────────────────┤
+│ Entrada: datos       │
+│ Salida: JSON         │
+└──────────────────────┘
+----
+
+=== 2.2 Conexiones (Edges)
+
+==== ¿Qué es una Conexión?
+
+Una **conexión** (o "edge") vincula la salida de un componente con la entrada de otro.
+
+*Analogía:* Un cable conecta dos partes de un circuito eléctrico.
+
+===== Tipos de Datos en Conexiones
+
+[cols="20,40,40"]
+|===
+| Tipo | Descripción | Ejemplo
+
+| **string** | Texto simple | "Hola mundo"
+| **number** | Números | 42, 3.14
+| **boolean** | Verdadero/Falso | true, false
+| **array** | Lista de items | [1, 2, 3]
+| **object** | Datos complejos | {nombre: "Juan", edad: 30}
+| **file** | Archivo/Ruta | /path/to/file.pdf
+|===
+
+===== Regla Importante
+
+**Los tipos de datos en las conexiones deben coincidir:**
+
+[source]
+----
+❌ INCORRECTO:
+┌────────────┐
+│ Chat Input │ (salida: string)
+└────────────┘
+      ↓
+   Mala conexión
+      ↓
+┌──────────────┐
+│ File Upload  │ (espera: file)
+└──────────────┘
+
+✅ CORRECTO:
+┌────────────┐
+│ Chat Input │ (salida: string)
+└────────────┘
+      ↓
+┌──────────────────┐
+│ Prompt Template  │ (espera: string)
+└──────────────────┘
+----
+
+=== 2.3 Prompts y Templates
+
+==== Concepto de Prompt
+
+Un **prompt** es la instrucción que le das a un LLM.
+
+*Analogía:* Como hablar con una persona. La calidad de tu respuesta depende de la claridad de tu pregunta.
+
+===== Estructura de un Buen Prompt
+
+[source]
+----
+1. CONTEXTO
+   - Quién eres
+   - Qué rol tienes
+
+2. TAREA
+   - Qué específicamente debe hacer
+   - Cómo debe hacerlo
+
+3. FORMATO
+   - Cómo quieres la respuesta
+   - JSON, markdown, etc.
+
+4. RESTRICCIONES
+   - Qué NO hacer
+   - Límites de longitud
+----
+
+===== Ejemplo: Mal Prompt
+
+[source]
+----
+"¿Qué es Python?"
+----
+
+*Problema:* Vago, el LLM puede escribir 10 párrafos o 1.
+
+===== Ejemplo: Buen Prompt
+
+[source]
+----
+"Eres un instructor de programación. Explica qué es Python
+en máximo 2 párrafos, dirigido a principiantes.
+Incluye: definición, 3 características principales,
+1 ejemplo de código simple. Usa lenguaje accesible."
+----
+
+*Ventaja:* Específico, claro, limita longitud, define audiencia.
+
+==== Prompt Templates en Langflow
+
+Un **Prompt Template** te permite reutilizar prompts con variables:
+
+[source]
+----
+Componente: Prompt Template
+
+Entrada:
+┌─────────────────────────────────┐
+│ Template:                       │
+│ "Eres experto en {tema}.        │
+│  Explica {concepto} en nivel    │
+│  {nivel_dificultad}."           │
+│                                 │
+│ Variables:                      │
+│ - tema: string                  │
+│ - concepto: string              │
+│ - nivel_dificultad: string      │
+└─────────────────────────────────┘
+
+Salida:
+┌─────────────────────────────────┐
+│ "Eres experto en Python.        │
+│  Explica decoradores en nivel   │
+│  principiante."                 │
+└─────────────────────────────────┘
+----
+
+===== Ventajas
+
+1. **Reutilizable:** Usa el mismo template múltiples veces
+2. **Dinámico:** Cambia variables sin editar el template
+3. **Mantenible:** Actualiza un template, afecta todos los usos
+
+=== 2.4 Testing en Langflow
+
+==== Play Button (Pruebas Rápidas)
+
+En Langflow, el botón "Play" (▶️) te permite:
+
+1. **Probar tu flujo** en tiempo real
+2. **Ver entrada y salida** de cada componente
+3. **Debuggear problemas** fácilmente
+
+===== Flujo de Testing
+
+[source]
+----
+1. Configura entrada (ej: escribe en Chat Input)
+2. Haz clic en ▶️ Play
+3. Observa cómo fluyen los datos
+4. Verifica salida en componentes
+5. Si hay error, identifica qué componente falló
+6. Ajusta parámetros
+7. Prueba de nuevo
+----
+
+==== Chat para Testing
+
+La interfaz "Chat" simula conversaciones reales:
+
+[source]
+----
+┌────────────────────────────────┐
+│ Your message here...           │
+│                                │
+│ ← Assistant response here       │
+│                                │
+│ Tell me more...                │
+│                                │
+│ ← More detailed response...     │
+└────────────────────────────────┘
+----
+
+===== Tips para Testing Efectivo
+
+1. **Prueba casos comunes:** "¿Hola?" "¿Cuál es 2+2?"
+2. **Prueba casos borde:** Entrada vacía, números grandes
+3. **Prueba errores:** Qué pasa si la API falla?
+4. **Observa latencia:** ¿Tarda mucho el flujo?
+
+---
+
+== Módulo 3: Conversaciones y Memoria
+
+=== 3.1 El Problema de la Memoria
+
+==== Sin Memoria
+
+[source]
+----
+Usuario: "Me llamo Juan"
+LLM:     "Hola Juan, gusto en conocerte"
+
+Usuario: "¿Cuál es mi nombre?"
+LLM:     "No sé tu nombre, podrías decirmelo?"
+         (¡Acaba de olvidar lo que dijo hace 10 segundos!)
+----
+
+*Problema:* Cada pregunta es independiente. El LLM no recuerda conversaciones previas.
+
+==== Con Memoria
+
+[source]
+----
+Usuario: "Me llamo Juan"
+LLM:     "Hola Juan, gusto en conocerte"
+[MEMORIA]: Guarda "Usuario se llama Juan"
+
+Usuario: "¿Cuál es mi nombre?"
+LLM:     "Tu nombre es Juan (lo dijiste hace poco)"
+         (¡Recuerda la conversación anterior!)
+----
+
+*Solución:* Mantener un historial y pasarlo al LLM.
+
+=== 3.2 Tipos de Memoria
+
+==== 1. Buffer Memory (La Más Común)
+
+**Qué es:** Guarda TODAS las conversaciones en memoria.
+
+**Analogía:** Un cuaderno donde escribes todo lo que se habla.
+
+[source]
+----
+Usuario: "Hola"
+Assistant: "Hola, ¿cómo estás?"
+
+Usuario: "Me llamo María"
+Assistant: "Gusto, María"
+
+[MEMORIA ACTUAL]
+1. Usuario: Hola
+2. Assistant: Hola, ¿cómo estás?
+3. Usuario: Me llamo María
+4. Assistant: Gusto, María
+----
+
+*Ventaja:* Contexto completo, nada se olvida
+*Desventaja:* Usa muchos tokens (dinero) si la conversación es larga
+
+===== Cuándo Usarla
+
+- Chatbots cortos (5-10 mensajes)
+- Conversaciones personales
+- Cuando el contexto es crítico
+
+===== Implementación en Langflow
+
+[source]
+----
+┌──────────────────┐
+│  Chat Input      │
+└──────────────────┘
+         ↓
+┌──────────────────┐
+│ Memory Component │ → Guarda historial
+└──────────────────┘
+         ↓
+┌──────────────────┐
+│ Prompt Template  │ → "Historial: {history}"
+└──────────────────┘
+         ↓
+┌──────────────────┐
+│   Ollama LLM     │
+└──────────────────┘
+         ↓
+┌──────────────────┐
+│  Chat Output     │
+└──────────────────┘
+----
+
+==== 2. Window Memory (Ventana de Contexto)
+
+**Qué es:** Guarda solo los últimos N mensajes.
+
+**Analogía:** Tienes un cuaderno pequeño, solo escribes las 5 últimas cosas que se dijeron.
+
+[source]
+----
+[Mensaje 1]
+[Mensaje 2]
+[Mensaje 3]
+[Mensaje 4]
+[Mensaje 5] ← Solo estos 5 están en memoria
+[Mensaje 6] ← Nuevo mensaje, se olvida el 1
+----
+
+*Ventaja:* Usa menos tokens, más eficiente
+*Desventaja:* Pierde contexto antiguo
+
+===== Cuándo Usarla
+
+- Chats largos (100+ mensajes)
+- Cuando el costo importa
+- Contexto reciente es suficiente
+
+===== Parámetro: k (window size)
+
+[source]
+----
+Si k=3, solo guarda los últimos 3 mensajes:
+
+[Mensaje 100] ← Más antiguo guardado
+[Mensaje 101]
+[Mensaje 102] ← Más reciente
+
+Mensajes 1-99: Se olvidan
+----
+
+==== 3. Summary Memory (Resumen)
+
+**Qué es:** Resume automáticamente la conversación.
+
+**Analogía:** Alguien lee todo el chat y crea un resumen para el LLM.
+
+[source]
+----
+CONVERSACIÓN COMPLETA:
+Usuario: "Trabajo en una startup de IA"
+Assistant: "Qué interesante"
+Usuario: "Especializada en NLP"
+Assistant: "Excelente"
+... (50 mensajes más)
+
+RESUMEN GENERADO:
+"El usuario trabaja en una startup de IA
+especializada en NLP. Tiene 5 años de
+experiencia. Quiere aprender Langflow."
+----
+
+*Ventaja:* Menos tokens, contexto resumido
+*Desventaja:* Pierde detalles específicos
+
+==== 4. Vector Memory (Búsqueda Semántica)
+
+**Qué es:** Busca conversaciones similares.
+
+**Analogía:** Un motor de búsqueda para tus conversaciones anteriores.
+
+[source]
+----
+NUEVO MENSAJE: "¿Cómo hago un API?"
+
+VECTOR MEMORY BUSCA:
+- "¿Cómo crear una API?" (Coincidencia 92%)
+- "¿Qué es REST API?" (Coincidencia 85%)
+- "¿Python para APIs?" (Coincidencia 78%)
+
+RESULTADO:
+Inyecta estas conversaciones antiguas como contexto
+----
+
+*Ventaja:* Contexto relevante sin guardar todo
+*Desventaja:* Requiere más computación
+
+=== 3.3 Implementación Práctica
+
+==== Flujo con Memoria
+
+[source]
+----
+Usuario escribe "Hola, soy Juan"
+         ↓
+[Chat Input] recibe el mensaje
+         ↓
+[Memory Component] carga historial anterior
+         ↓
+[Prompt Template] integra:
+  - Mensaje actual: "Hola, soy Juan"
+  - Historial: "[Conversaciones previas]"
+         ↓
+[LLM Ollama] recibe prompt completo
+         ↓
+[Memory Component] guarda nueva entrada
+         ↓
+[Chat Output] muestra respuesta
+----
+
+==== Flujo de Multi-Turn (Múltiples Turnos)
+
+*Caso:* Usuario hace varias preguntas seguidas
+
+[source]
+----
+Usuario: "¿Qué es Langflow?"
+LLM:     "Langflow es..."
+Memoria: Guardar esta Q&A
+
+Usuario: "¿Cuáles son sus ventajas?"
+LLM:     "Las ventajas son... (recordando Q1)"
+Memoria: Guardar esta Q&A
+
+Usuario: "¿Cómo instalo?"
+LLM:     "Pasos: 1. 2. 3. (recordando Q1 y Q2)"
+Memoria: Guardar esta Q&A
+----
+
+---
+
+== Módulo 4: Integraciones
+
+=== 4.1 Web Search
+
+==== Problema
+
+*Sin integración:*
+- Usuario: "¿Cuál es el clima hoy?"
+- LLM: "No tengo acceso a datos en tiempo real"
+
+*Con integración:*
+- Usuario: "¿Cuál es el clima hoy?"
+- Flujo busca online
+- LLM: "Según búsquedas recientes, [resultado actual]"
+
+=== 4.2 APIs Externas
+
+==== HTTP Request Component
+
+Permite llamar cualquier API REST:
+
+[source]
+----
+┌─────────────────────────────┐
+│    HTTP Request             │
+├─────────────────────────────┤
+│ URL:      https://api...    │
+│ Método:   GET, POST, PUT    │
+│ Headers:  Content-Type      │
+│ Body:     JSON data         │
+│ Auth:     API Key           │
+├─────────────────────────────┤
+│ Salida: Response JSON       │
+└─────────────────────────────┘
+----
+
+===== Ejemplo: Obtener Weather
+
+[source]
+----
+┌──────────────┐
+│ Chat Input   │ (Usuario pregunta: "¿clima en NYC?")
+└──────────────┘
+        ↓
+┌────────────────────────────┐
+│ Text Extractor             │ (Extrae "NYC")
+└────────────────────────────┘
+        ↓
+┌────────────────────────────┐
+│ HTTP Request               │ (Llama openweathermap API)
+│ URL: api.openweathermap.../NYC
+└────────────────────────────┘
+        ↓
+┌────────────────────────────┐
+│ JSON Parser                │ (Extrae temp, descripción)
+└────────────────────────────┘
+        ↓
+┌────────────────────────────┐
+│ Prompt Template            │ (Formatea respuesta bonita)
+│ "El clima en {city} es..."
+└────────────────────────────┘
+        ↓
+┌──────────────┐
+│ Chat Output  │ (Muestra: "El clima en NYC es 25°C...")
+└──────────────┘
+----
+
+=== 4.3 Database Connections
+
+==== Tipos Soportados
+
+[cols="30,70"]
+|===
+| BD | Casos de Uso
+
+| **PostgreSQL** | Producción, datos relacionales
+| **MongoDB** | Documentos JSON, flexibilidad
+| **SQLite** | Desarrollo, testing local
+| **Pinecone** | Vector store para embeddings
+| **Supabase** | Backend completo con auth
+|===
+
+==== Flujo: Buscar en Base de Datos
+
+[source]
+----
+Usuario: "¿Cuál es el email de Juan?"
+         ↓
+[Chat Input]
+         ↓
+[Text Extractor] → "Juan"
+         ↓
+[SQL Query Builder]
+   SELECT email FROM users WHERE name = 'Juan'
+         ↓
+[Database Component] → Conecta a PostgreSQL
+         ↓
+[Result Parser] → juan@email.com
+         ↓
+[Chat Output] → "El email de Juan es juan@email.com"
+----
+
+---
+
+== Módulo 5: Casos de Uso Prácticos
+
+=== 5.1 Chatbot de Atención al Cliente
+
+==== Flujo Completo
+
+[source]
+----
+┌─────────────┐
+│ Chat Input  │
+└─────────────┘
+      ↓
+┌────────────────────────┐
+│ Sentiment Analyzer     │ (¿Cliente enojado?)
+└────────────────────────┘
+      ├─ Negativo → Escalar a humano
+      └─ Positivo → Continuar
+      ↓
+┌────────────────────────┐
+│ Intent Classifier      │ (¿Qué quiere?)
+├────────────────────────┤
+│ - Queja
+│ - Pregunta
+│ - Sugerencia
+└────────────────────────┘
+      ↓
+┌────────────────────────┐
+│ Knowledge Base Lookup  │ (Buscar respuesta estándar)
+└────────────────────────┘
+      ├─ Encontrada → Enviar respuesta
+      └─ No encontrada → LLM generador
+      ↓
+┌────────────────────────┐
+│ Response Generator LLM │
+└────────────────────────┘
+      ↓
+┌──────────────┐
+│ Chat Output  │
+└──────────────┘
+----
+
+==== Beneficios
+
+- 70-80% de preguntas resueltas automáticamente
+- Escala a 1000+ usuarios sin personal adicional
+- Disponible 24/7
+- Aprendizaje continuo de nuevas preguntas
+
+=== 5.2 RAG: Chatbot sobre Tus Documentos
+
+==== Qué es RAG
+
+**RAG = Retrieval Augmented Generation**
+
+*Problema:*
+- LLM: "No sé qué dice tu documento"
+- Usuario: "Pero está aquí, léelo!"
+- LLM: "No puedo leer archivos directamente"
+
+*Solución RAG:*
+- Convertir documento → vectores
+- Buscar similitud con pregunta
+- Pasar documento relevante al LLM
+
+==== Flujo RAG Completo
+
+[source]
+----
+FASE 1: PREPARACIÓN (Una sola vez)
+┌──────────────────┐
+│ Upload documento │ (ej: manual_producto.pdf)
+└──────────────────┘
+      ↓
+┌──────────────────┐
+│ Text Splitter    │ Divide en chunks de 500 chars
+└──────────────────┘
+      ↓
+┌──────────────────┐
+│ Embeddings       │ Convierte a vectores 1536-dim
+│ (OllamaEmbeddings)
+└──────────────────┘
+      ↓
+┌──────────────────┐
+│ Vector Store     │ Guarda en FAISS/Pinecone
+│ (1000 vectores)
+└──────────────────┘
+
+FASE 2: CONSULTA (Cada pregunta del usuario)
+┌──────────────────┐
+│ User Query       │ "¿Cómo reseteo contraseña?"
+└──────────────────┘
+      ↓
+┌──────────────────┐
+│ Embed Query      │ Convierte pregunta a vector
+└──────────────────┘
+      ↓
+┌──────────────────┐
+│ Similarity Search│ Busca top 3 chunks similares
+└──────────────────┘
+      ↓
+┌──────────────────┐
+│ Retrieved Docs   │ "Para resetear: 1. Ir a settings..."
+└──────────────────┘
+      ↓
+┌──────────────────┐
+│ Prompt Template  │ "Basándote en:\n{docs}\nResponde: {query}"
+└──────────────────┘
+      ↓
+┌──────────────────┐
+│ LLM Ollama       │ Genera respuesta basada en documento
+└──────────────────┘
+      ↓
+┌──────────────────┐
+│ Chat Output      │ "Para resetear contraseña: [respuesta]"
+└──────────────────┘
+----
+
+===== Ventajas del RAG
+
+1. **Precisión:** Respuestas basadas en TUS datos
+2. **Escalabilidad:** Múltiples documentos, mismo flujo
+3. **Actualmente:** No necesitas entrenar modelos
+4. **Coste-efectivo:** Solo embeddings + búsqueda
+
+==== Casos de Uso RAG
+
+[cols="40,60"]
+|===
+| Caso | Ejemplo
+
+| **Atención técnica** | Bot responde basado en manual de producto
+| **Soporte legal** | Consulta contratos y leyes
+| **Investigación** | Analiza papers académicos
+| **Recursos humanos** | Responde preguntas sobre políticas
+| **E-commerce** | Recomendaciones basadas en catálogo
+|===
+
+=== 5.3 Análisis de Sentimiento
+
+==== Flujo
+
+[source]
+----
+Usuario: "Este producto es horrible, me decepciono mucho"
+      ↓
+┌─────────────────────────────────┐
+│ Prompt: "Analiza el sentimiento" │
+│ Respuesta: NEGATIVE SCORE: 0.95 │
+└─────────────────────────────────┘
+      ├─ POSITIVE (>0.7) → "Gracias, nos alegra!"
+      ├─ NEUTRAL (0.3-0.7) → Respuesta estándar
+      └─ NEGATIVE (<0.3) → Escalar a manager
+      ↓
+┌──────────────────────────────────┐
+│ Database: Guardar retroalimentación
+└──────────────────────────────────┘
+----
+
+=== 5.4 Automatización de Emails
+
+==== Caso: Responder Automáticamente
+
+[source]
+----
+┌──────────────────┐
+│ Email Webhook    │ (Nuevo email recibido)
+└──────────────────┘
+      ↓
+┌──────────────────┐
+│ Extract Subject  │ "Pregunta sobre billing"
+│ Extract Body     │ "¿Cuánto cuesta?"
+└──────────────────┘
+      ↓
+┌──────────────────┐
+│ Intent Classifier│ "Billing question"
+└──────────────────┘
+      ↓
+┌──────────────────┐
+│ Template Select  │ Selecciona template de respuesta
+└──────────────────┘
+      ↓
+┌──────────────────┐
+│ Variable Fill    │ Reemplaza {name}, {price}, etc.
+└──────────────────┘
+      ↓
+┌──────────────────┐
+│ Send Email       │ Envía respuesta
+└──────────────────┘
+      ↓
+┌──────────────────┐
+│ Log Database     │ Guarda que se respondió
+└──────────────────┘
+----
+
+*Resultado:* 90% de emails contestados automáticamente en < 1 segundo
+
+---
+
+== Módulo 6: Exportación y Deployment
+
+=== 6.1 Exportar como API REST
+
+==== ¿Por Qué Exportar?
+
+*Fase 1: Desarrollo*
+- Usas Langflow UI (drag and drop)
+- Pruebas rápidas
+- Iteración fácil
+
+*Fase 2: Producción*
+- Necesitas una API que otros sistemas usen
+- Langflow exporta el flujo como FastAPI
+
+==== Paso 1: Preparar Flujo
+
+1. Crear flujo funcional en Langflow
+2. Asegurar que tenga Input y Output claros
+3. Testear completamente
+
+==== Paso 2: Exportar
+
+[source]
+----
+1. Botón "Export" en Langflow
+2. Seleccionar "FastAPI"
+3. Se descarga código Python
+4. Estructura generada:
+
+my_flow_api/
+├── main.py              ← FastAPI server
+├── requirements.txt     ← Dependencias
+├── flow.json          ← Configuración flujo
+└── README.md
+----
+
+==== Paso 3: Desplegar
+
+[source,bash]
+----
+# 1. Instalar dependencias
+pip install -r requirements.txt
+
+# 2. Ejecutar servidor
+uvicorn main:app --host 0.0.0.0 --port 8000
+
+# 3. Acceder API en
+http://localhost:8000/docs
+----
+
+==== API Generada
+
+[source,bash]
+----
+# Ejemplo: Llamar tu flujo
+
+curl -X POST http://localhost:8000/predict \
+  -H "Content-Type: application/json" \
+  -d '{"user_input": "Hola, ¿cómo estás?"}'
+
+Respuesta:
+{
+  "output": "Hola, estoy bien. ¿En qué puedo ayudarte?"
+}
+----
+
+=== 6.2 Deployment en la Nube
+
+==== Opciones Disponibles
+
+[cols="25,50,25"]
+|===
+| Plataforma | Cómo | Coste
+
+| **Heroku** | Push código, auto-deploya | $5-50/mes
+| **Railway** | Git integration | $5-50/mes
+| **Replit** | UI web, run de inmediato | $5-100/mes
+| **Docker** | Containerizar, push a AWS/GCP | Variable
+| **Fly.io** | Deploy global | $5-100/mes
+|===
+
+==== Deployment a Heroku (Ejemplo)
+
+[source,bash]
+----
+# 1. Crear Procfile
+echo "web: uvicorn main:app --host 0.0.0.0 --port \$PORT" > Procfile
+
+# 2. Crear Heroku app
+heroku create my-langflow-app
+
+# 3. Hacer push
+git push heroku main
+
+# 4. Ver logs
+heroku logs --tail
+
+# 5. API en vivo en
+https://my-langflow-app.herokuapp.com/docs
+----
+
+==== Dockerfile para Producción
+
+[source,dockerfile]
+----
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+COPY . .
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+----
+
+=== 6.3 Variables de Entorno y Secrets
+
+==== Problema
+
+¿Cómo proteges API keys?
+
+[source]
+----
+❌ INCORRECTO:
+api_key = "sk-abc123xyz..."  # ¡Visible en GitHub!
+
+✅ CORRECTO:
+api_key = os.getenv("OPENAI_API_KEY")  # Variable de entorno
+----
+
+==== Archivo .env (Local)
+
+[source]
+----
+# .env
+OLLAMA_BASE_URL=http://localhost:11434
+OPENAI_API_KEY=sk-...
+DATABASE_URL=postgresql://...
+PINECONE_API_KEY=...
+JWT_SECRET=super-secret-key-12345
+----
+
+[source,bash]
+----
+# Cargar en Python
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+api_key = os.getenv("OPENAI_API_KEY")
+----
+
+==== En Producción
+
+[source,bash]
+----
+# Heroku
+heroku config:set OPENAI_API_KEY=sk-...
+heroku config:set OLLAMA_BASE_URL=http://...
+
+# Docker
+docker run -e OPENAI_API_KEY=sk-... my-app:latest
+
+# Railway/Fly.io
+Interfaz web para definir variables
+----
+
+---
+
+== Módulo 7: Componentes Personalizados
+
+=== 7.1 Por Qué Crear Componentes Personalizados
+
+==== Limitaciones de Componentes Estándar
+
+*Componentes de Langflow cubren 80% de casos.*
+
+*¿Qué pasa el otro 20%?*
+- Lógica muy específica para tu negocio
+- Algoritmos personalizados
+- Integraciones únicas
+
+===== Ejemplo: Validador de Email Corporativo
+
+Langflow tiene "Email Validator" genérico.
+
+*Pero tu empresa requiere:*
+- Solo emails @tucompania.com
+- Dominio en lista blanca
+- Verificar contra LDAP
+
+*Solución:* Crea componente personalizado
+
+=== 7.2 Crear Componente Personalizado
+
+==== Estructura Básica
+
+[source,python]
+----
+from langflow.custom.components import Component
+from langflow.custom.types import ComponentType
+
+class MiComponente(Component):
+    name = "Mi Componente"
+    description = "Descripción de qué hace"
+
+    # ENTRADAS
+    inputs = {
+        "texto": {"type": str, "description": "Texto a procesar"}
+    }
+
+    # SALIDAS
+    outputs = {
+        "resultado": str,
+        "longitud": int
+    }
+
+    def run(self, texto: str):
+        # Lógica aquí
+        resultado = texto.upper()
+        longitud = len(texto)
+
+        return {
+            "resultado": resultado,
+            "longitud": longitud
+        }
+----
+
+==== Paso 1: Definir Entradas
+
+[source,python]
+----
+inputs = {
+    "nombre": {
+        "type": str,
+        "description": "Nombre de la persona"
+    },
+    "edad": {
+        "type": int,
+        "description": "Edad en años"
+    },
+    "activo": {
+        "type": bool,
+        "description": "¿Está activo?"
+    }
+}
+----
+
+==== Paso 2: Definir Salidas
+
+[source,python]
+----
+outputs = {
+    "saludo": str,
+    "validacion": bool
+}
+----
+
+==== Paso 3: Implementar Lógica
+
+[source,python]
+----
+def run(self, nombre: str, edad: int, activo: bool):
+    # Validación
+    if edad < 0 or edad > 150:
+        return {"saludo": "Error: edad inválida", "validacion": False}
+
+    # Lógica
+    saludo = f"Hola {nombre}, tienes {edad} años"
+
+    return {
+        "saludo": saludo,
+        "validacion": activo
+    }
+----
+
+==== Paso 4: Registrar Componente
+
+[source,python]
+----
+# Agregar a components.py
+from my_components import MiComponente
+
+__all__ = ["MiComponente"]
+----
+
+==== Paso 5: Usar en Langflow
+
+Ahora aparecerá en la librería de componentes.
+
+[source]
+----
+┌──────────────────┐
+│ Chat Input       │
+└──────────────────┘
+      ↓
+┌──────────────────┐
+│ Mi Componente    │ (Tu componente personalizado)
+│ nombre: {input}
+│ edad: 25
+│ activo: true
+└──────────────────┘
+      ↓
+┌──────────────────┐
+│ Chat Output      │
+└──────────────────┘
+----
+
+=== 7.3 Componentes Avanzados
+
+==== Componente con Estado
+
+[source,python]
+----
+class ContadorComponente(Component):
+    def __init__(self):
+        super().__init__()
+        self.contador = 0
+
+    def run(self, incremento: int = 1):
+        self.contador += incremento
+        return {"valor": self.contador}
+----
+
+==== Componente Asincrónico
+
+[source,python]
+----
+async def run(self, url: str):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as response:
+            data = await response.json()
+    return {"resultado": data}
+----
+
+---
+
+== Módulo 8: Optimización y Performance
+
+=== 8.1 Problemas Comunes de Performance
+
+==== Latencia Alta
+
+[source]
+----
+Usuario escribe mensaje
+      ↓
+[Sistema procesa] ← ¿Cuánto tarda?
+      ├─ < 1s: Excelente
+      ├─ 1-3s: Bueno
+      ├─ 3-10s: Aceptable
+      └─ > 10s: MALO
+      ↓
+Respuesta llega
+----
+
+==== Bottlenecks Típicos
+
+[cols="30,40,30"]
+|===
+| Problema | Síntoma | Solución
+
+| **LLM lento** | Esperar 10s por respuesta | Modelo más rápido, cache
+| **API externa** | Red lenta | Timeout, retry
+| **Embeddings** | 5s por query | Caché, índices
+| **Database** | Queries lentas | Índices SQL
+|===
+
+=== 8.2 Estrategias de Optimización
+
+==== 1. Caching
+
+[source]
+----
+Pregunta 1: "¿Qué es Python?"
+      ↓
+LLM genera respuesta (5 segundos)
+      ↓
+GUARDAR EN CACHE
+
+Pregunta 2: "¿Qué es Python?" (misma pregunta)
+      ↓
+CACHE HIT → Respuesta inmediata (0.1 segundos)
+----
+
+===== Implementación
+
+[source,python]
+----
+from functools import lru_cache
+
+@lru_cache(maxsize=100)
+def generar_respuesta(pregunta: str) -> str:
+    # Esta función cacheará últimas 100 preguntas
+    return llm.generate(pregunta)
+----
+
+==== 2. Modelos Más Rápidos
+
+[cols="20,30,20,30"]
+|===
+| Modelo | Speed | Quality | Recomendado para
+
+| **Mistral-7B** | Rápido | 8/10 | Producción
+| **Llama-13B** | Medio | 8.5/10 | Calidad
+| **GPT-3.5** | Rápido | 9/10 | API cloud
+| **Ollama local** | Variable | 7/10 | Testing
+|===
+
+==== 3. Batch Processing
+
+*Caso:* Procesar 1000 documentos
+
+[source]
+----
+❌ LENTO: 1 por 1
+Documento 1 → 30s
+Documento 2 → 30s
+...
+Documento 1000 → 30s
+TOTAL: 8.3 horas
+
+✅ RÁPIDO: Procesar en grupos de 10
+[Docs 1-10] → 5s (paralelo)
+[Docs 11-20] → 5s
+...
+TOTAL: 50 minutos
+----
+
+===== Implementación
+
+[source,python]
+----
+import asyncio
+
+async def procesar_batch(documentos: list):
+    tasks = [procesar_doc(doc) for doc in documentos]
+    resultados = await asyncio.gather(*tasks)
+    return resultados
+
+# Usar
+await procesar_batch(documentos[:10])
+----
+
+==== 4. Índices en Base de Datos
+
+[source]
+----
+❌ Sin índice:
+SELECT * FROM usuarios WHERE email = 'juan@...'
+→ Escanea 1,000,000 filas → 2 segundos
+
+✅ Con índice en email:
+SELECT * FROM usuarios WHERE email = 'juan@...'
+→ Búsqueda directa → 0.01 segundos
+----
+
+==== 5. Reducción de Tokens
+
+[source]
+----
+Prompt largo: 2000 tokens → $0.04
+Prompt optimizado: 500 tokens → $0.01
+
+Si haces 10,000 requests/día:
+Ahorras: $300/mes
+----
+
+===== Cómo Reducir Tokens
+
+1. Prompts más cortos
+2. Quita explicaciones innecesarias
+3. Usa templates eficientes
+
+=== 8.3 Monitoreo de Performance
+
+==== Métricas Importantes
+
+[cols="30,40,30"]
+|===
+| Métrica | Importancia | Objetivo
+
+| **Latencia P50** | Media | < 1s
+| **Latencia P95** | Percentil 95 | < 5s
+| **Latencia P99** | Percentil 99 | < 10s
+| **Throughput** | Requests/seg | > 100/s
+| **Error rate** | Errores % | < 0.1%
+|===
+
+==== Logging Detallado
+
+[source,python]
+----
+import logging
+import time
+
+logger = logging.getLogger(__name__)
+
+def procesar_con_log(entrada):
+    inicio = time.time()
+    logger.info(f"Iniciando: {entrada}")
+
+    try:
+        resultado = hacer_algo(entrada)
+        duracion = time.time() - inicio
+        logger.info(f"OK en {duracion:.2f}s: {resultado}")
+        return resultado
+    except Exception as e:
+        logger.error(f"Error: {e}", exc_info=True)
+        raise
+----
+
+---
+
+== Módulo 9: Monitoreo y Debugging
+
+=== 9.1 Logging Estructurado
+
+==== Niveles de Log
+
+[cols="20,50,30"]
+|===
+| Nivel | Ejemplo | Cuándo usar
+
+| **DEBUG** | "Variable x = 42" | Desarrollo
+| **INFO** | "Usuario logueó" | Operación normal
+| **WARNING** | "API timeout 1 vez" | Potencial problema
+| **ERROR** | "API timeout 3 veces" | Problema importante
+| **CRITICAL** | "Database offline" | Sistema fuera
+|===
+
+==== Configuración
+
+[source,python]
+----
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+
+logger = logging.getLogger(__name__)
+logger.info("Aplicación iniciada")
+logger.warning("Conexión lenta detectada")
+logger.error("Error al procesar", exc_info=True)
+----
+
+=== 9.2 Error Handling en Langflow
+
+==== Try-Except Pattern
+
+[source,python]
+----
+def procesar_datos(entrada):
+    try:
+        # Código principal
+        resultado = hacer_algo(entrada)
+        return resultado
+
+    except TimeoutError:
+        # Timeouts: reintentar
+        logger.warning("Timeout, reintentando...")
+        return hacer_algo_con_retry(entrada)
+
+    except ValueError as e:
+        # Validación fallida
+        logger.error(f"Entrada inválida: {e}")
+        return {"error": "Entrada inválida", "detalle": str(e)}
+
+    except Exception as e:
+        # Error desconocido
+        logger.critical(f"Error inesperado: {e}", exc_info=True)
+        return {"error": "Error del sistema"}
+----
+
+==== Fallback Graceful
+
+[source]
+----
+Intenta API 1 (OpenAI)
+    ├─ Éxito → Usar respuesta
+    └─ Error → Intenta API 2 (Ollama local)
+        ├─ Éxito → Usar respuesta
+        └─ Error → Respuesta por defecto
+----
+
+=== 9.3 Debug en Tiempo Real
+
+==== Play Button Debug
+
+En Langflow:
+1. Haz clic ▶️ Play
+2. Visualiza flujo paso a paso
+3. Inspecciona entrada/salida de cada componente
+
+==== Ejemplo Debug
+
+[source]
+----
+[Chat Input] → input: "Hola" ✓
+    ↓
+[Prompt Template] → output: "Eres asistente..." ✓
+    ↓
+[LLM] → output: "Hola, ¿cómo estás?" ✓
+    ↓
+[Chat Output] → "Hola, ¿cómo estás?" ✓
+----
+
+Si hay error:
+
+[source]
+----
+[Chat Input] → input: "Hola" ✓
+    ↓
+[Prompt Template] → ERROR: Variable {variable} no definida ✗
+    ↓
+SOLUCIÓN: Definir variable en template
+----
+
+---
+
+== Módulo 10: Mejores Prácticas
+
+=== 10.1 Diseño de Flujos
+
+==== Principio 1: Modularidad
+
+✅ **Bien:**
+[source]
+----
+[Validación] → [Clasificación] → [Procesamiento] → [Salida]
+Cada paso es independiente, reutilizable
+----
+
+❌ **Mal:**
+[source]
+----
+[Todo en un mega-componente]
+Difícil de debuggear, imposible reutilizar
+----
+
+==== Principio 2: Testing en Cada Paso
+
+✅ **Bien:**
+[source]
+----
+1. Test [Validación] aislado
+2. Test [Clasificación] aislado
+3. Test flujo completo
+----
+
+❌ **Mal:**
+[source]
+----
+Construye flujo completo
+Luego testea
+Encontrar error es lentísimo
+----
+
+==== Principio 3: Documentación
+
+✅ **Bien:**
+[source]
+----
+Cada componente tiene descripción clara
+Prompts tienen comentarios
+Variables tienen significado obvio
+----
+
+❌ **Mal:**
+[source]
+----
+{var1} → {var2} → {var3}
+¿Qué hacen? ¿Quién sabe?
+----
+
+=== 10.2 Error Handling en Producción
+
+==== Strategy: Fail Fast, Fail Gracefully
+
+[source]
+----
+FASE 1: VALIDACIÓN (Fail Fast)
+Usuario da input → Validar inmediatamente
+Si inválido → Error al usuario de una vez
+
+FASE 2: PROCESAMIENTO (Fail Gracefully)
+Intenta procesar
+Si falla → Fallback a opción alternativa
+Si todo falla → Respuesta útil al usuario
+----
+
+==== Ejemplo Práctico
+
+[source]
+----
+Usuario: Sube archivo 500 MB (max: 100 MB)
+    ↓
+[Size Validator] → Error inmediato: "Archivo muy grande"
+    ↓
+Usuario no pierde tiempo
+
+vs.
+
+Usuario: Sube archivo 500 MB
+    ↓
+[Sistema comienza procesamiento]
+    ↓
+[15 minutos después] → Error: "Archivo muy grande"
+    ↓
+Usuario frustrado
+----
+
+=== 10.3 Versionado de Flujos
+
+==== Control de Versiones
+
+[source]
+----
+Flujo: chatbot_v1
+├─ v1.0: Inicial, solo respuestas estáticas
+├─ v1.1: Agregó memoria
+├─ v1.2: Agregó web search
+├─ v2.0: Completa refactorización
+└─ v2.1: Actual en producción
+----
+
+==== Cómo Cambiar Versiones
+
+[source]
+----
+┌─ En desarrollo: v2.1 (con nuevas features)
+│
+├─ En staging: v2.0 (testing)
+│
+└─ En producción: v1.2 (estable)
+
+Cuando v2.1 está lista:
+Producción: v1.2 → v2.1
+┌─ Con rollback si falla
+└─ Monitoreando constante
+----
+
+=== 10.4 Seguridad
+
+==== Proteger API Keys
+
+❌ Mal:
+[source,python]
+----
+OPENAI_API_KEY = "sk-abc123"  # ¡En código!
+----
+
+✅ Bien:
+[source,python]
+----
+import os
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+----
+
+==== Autenticación en APIs Exportadas
+
+[source,python]
+----
+from fastapi import Depends, HTTPException
+from fastapi.security import HTTPBearer
+
+security = HTTPBearer()
+
+@app.post("/chat")
+async def chat(user_input: str, credentials = Depends(security)):
+    # Validar token
+    if not validar_token(credentials.credentials):
+        raise HTTPException(status_code=401, detail="No autorizado")
+
+    # Procesar
+    return {"resultado": procesar(user_input)}
+----
+
+==== Rate Limiting
+
+[source,python]
+----
+from slowapi import Limiter
+
+limiter = Limiter(key_func=get_remote_address)
+
+@app.post("/chat")
+@limiter.limit("10/minute")  # Máximo 10 requests por minuto
+async def chat(user_input: str):
+    return procesar(user_input)
+----
+
+---
+
+== Conclusión y Próximos Pasos
+
+Felicidades, has completado un curso completo de Langflow de nivel profesional.
+
+=== Has Aprendido
+
+*Fundamentos (Módulos 1-2):*
+- ✅ Qué es Langflow y sus ventajas
+- ✅ Componentes, conexiones, prompts
+- ✅ Testing en interfaz Langflow
+
+*Aplicaciones (Módulos 3-5):*
+- ✅ Memoria y conversaciones multi-turn
+- ✅ Integraciones (web, APIs, database)
+- ✅ RAG, chatbots, automatización
+
+*Producción (Módulos 6-10):*
+- ✅ Exportación como APIs REST
+- ✅ Deployment en cloud
+- ✅ Componentes personalizados
+- ✅ Optimización y performance
+- ✅ Monitoreo, debugging, seguridad
+
+=== Próximas Acciones
+
+1. **Instalar Langflow:**
+   [source,bash]
+   ----
+   pip install langflow
+   langflow run
+   ----
+
+2. **Crear Primer Flujo:**
+   - Chat simple (Input → LLM → Output)
+   - Test con el Play button
+   - Verifica funcionamiento
+
+3. **Agregar Complejidad:**
+   - Memoria (Buffer Memory)
+   - Busca web
+   - Procesamiento de datos
+
+4. **Exportar:**
+   - Generar código FastAPI
+   - Desplegar en Heroku/Railway
+   - Hacer API pública
+
+5. **Iterar:**
+   - Monitorear performance
+   - Recoger feedback
+   - Mejorar continuamente
+
+=== Recursos Oficiales
+
+- *GitHub:* https://github.com/logspace-ai/langflow
+- *Documentación:* https://docs.langflow.ai
+- *Discord Comunidad:* https://discord.gg/langflow
+- *Langflow Hub:* https://langflow.io/hub (Comparte flujos)
+- *YouTube:* Tutoriales video oficiales
+
+=== Recursos de Aprendizaje Complementarios
+
+- *LangChain Docs:* https://python.langchain.com (Fundamentos)
+- *Ollama:* https://ollama.ai (LLMs locales)
+- *FastAPI:* https://fastapi.tiangolo.com (APIs REST)
+- *Docker:* https://docker.com (Containerización)
+
+=== Tipos Comunes en Langflow
+
+[cols="30,70"]
+|===
+| Tipo | Descripción
+
+| **string** | Texto ("Hola mundo")
+| **number** | Números (42, 3.14)
+| **integer** | Números enteros (5, -10)
+| **boolean** | Verdadero/Falso (true, false)
+| **array** | Lista ([1, 2, 3])
+| **object** | Datos complejos ({key: value})
+| **file** | Ruta a archivo (/path/to/file)
+| **prompt** | Plantilla de prompt
+| **any** | Cualquier tipo (flexible)
+|===
+
+=== Estructura de Componentes Básica
+
+Cada componente sigue esta estructura:
+
+[source]
+----
+ENTRADAS:
+- Parámetros que recibe
+- Tipos de datos esperados
+
+LÓGICA:
+- Qué hace el componente
+- Transformaciones de datos
+
+SALIDAS:
+- Resultados procesados
+- Tipos de datos retornados
+----
+
+---
+
+**¡Felicidades y bienvenido al mundo de Langflow!**
+
+Ahora tienes las herramientas para construir aplicaciones IA sofisticadas sin escribir código complejo. Empieza a experimentar, crea flujos, aprende de los errores y construye algo increíble.
+
+¿Preguntas? Únete a la comunidad Discord de Langflow. ¡Mucha suerte!

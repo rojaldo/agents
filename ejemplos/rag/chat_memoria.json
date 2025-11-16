@@ -1,0 +1,105 @@
+{
+  "sistema": "Chat con Memoria",
+  "turnos": 6,
+  "mensajes_totales": 12,
+  "conversacion": [
+    {
+      "turno": 1,
+      "pregunta": "¿Qué es Python?",
+      "documentos_utilizados": "Python Basics",
+      "respuesta_preview": "Basándome en el historial y el contexto:\n\nContexto: Python fue creado por Guido van Rossum en 1989. "
+    },
+    {
+      "turno": 2,
+      "pregunta": "¿Para qué sirve?",
+      "documentos_utilizados": "Ninguno",
+      "respuesta_preview": "Basándome en el historial y el contexto:\n\nContexto: Información general\n\nLa respuesta es: Esa es una"
+    },
+    {
+      "turno": 3,
+      "pregunta": "¿Quién lo creó?",
+      "documentos_utilizados": "LLMs",
+      "respuesta_preview": "Basándome en el historial y el contexto:\n\nContexto: Los Modelos de Lenguaje Grande (LLMs) como GPT p"
+    },
+    {
+      "turno": 4,
+      "pregunta": "¿Cómo se relaciona con Machine Learning?",
+      "documentos_utilizados": "Python Basics",
+      "respuesta_preview": "Basándome en el historial y el contexto:\n\nContexto: Python fue creado por Guido van Rossum en 1989. "
+    },
+    {
+      "turno": 5,
+      "pregunta": "¿Puedo usar RAG con Ollama?",
+      "documentos_utilizados": "Python Basics",
+      "respuesta_preview": "Basándome en el historial y el contexto:\n\nContexto: Python fue creado por Guido van Rossum en 1989. "
+    },
+    {
+      "turno": 6,
+      "pregunta": "¿Cómo mantengo la memoria en un chat?",
+      "documentos_utilizados": "Python Basics",
+      "respuesta_preview": "Basándome en el historial y el contexto:\n\nContexto: Python fue creado por Guido van Rossum en 1989. "
+    }
+  ],
+  "historial_completo": [
+    {
+      "rol": "usuario",
+      "contenido": "¿Qué es Python?",
+      "timestamp": "2025-11-14T18:08:22.531147"
+    },
+    {
+      "rol": "asistente",
+      "contenido": "Basándome en el historial y el contexto:\n\nContexto: Python fue creado por Guido van Rossum en 1989. ",
+      "timestamp": "2025-11-14T18:08:22.531166"
+    },
+    {
+      "rol": "usuario",
+      "contenido": "¿Para qué sirve?",
+      "timestamp": "2025-11-14T18:08:22.531174"
+    },
+    {
+      "rol": "asistente",
+      "contenido": "Basándome en el historial y el contexto:\n\nContexto: Información general\n\nLa respuesta es: Esa es una",
+      "timestamp": "2025-11-14T18:08:22.531196"
+    },
+    {
+      "rol": "usuario",
+      "contenido": "¿Quién lo creó?",
+      "timestamp": "2025-11-14T18:08:22.531200"
+    },
+    {
+      "rol": "asistente",
+      "contenido": "Basándome en el historial y el contexto:\n\nContexto: Los Modelos de Lenguaje Grande (LLMs) como GPT p",
+      "timestamp": "2025-11-14T18:08:22.531217"
+    },
+    {
+      "rol": "usuario",
+      "contenido": "¿Cómo se relaciona con Machine Learning?",
+      "timestamp": "2025-11-14T18:08:22.531220"
+    },
+    {
+      "rol": "asistente",
+      "contenido": "Basándome en el historial y el contexto:\n\nContexto: Python fue creado por Guido van Rossum en 1989. ",
+      "timestamp": "2025-11-14T18:08:22.531229"
+    },
+    {
+      "rol": "usuario",
+      "contenido": "¿Puedo usar RAG con Ollama?",
+      "timestamp": "2025-11-14T18:08:22.531232"
+    },
+    {
+      "rol": "asistente",
+      "contenido": "Basándome en el historial y el contexto:\n\nContexto: Python fue creado por Guido van Rossum en 1989. ",
+      "timestamp": "2025-11-14T18:08:22.531243"
+    },
+    {
+      "rol": "usuario",
+      "contenido": "¿Cómo mantengo la memoria en un chat?",
+      "timestamp": "2025-11-14T18:08:22.531246"
+    },
+    {
+      "rol": "asistente",
+      "contenido": "Basándome en el historial y el contexto:\n\nContexto: Python fue creado por Guido van Rossum en 1989. ",
+      "timestamp": "2025-11-14T18:08:22.531259"
+    }
+  ]
+}

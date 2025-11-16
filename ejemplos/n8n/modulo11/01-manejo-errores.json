@@ -1,0 +1,118 @@
+{
+  "name": "M11.1 - Manejo de Errores Robusto",
+  "description": "Try-catch, retry logic y fallback actions",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "start",
+      "name": "Start",
+      "type": "n8n-nodes-base.start",
+      "typeVersion": 1,
+      "position": [100, 300]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "url_api",
+              "value": "https://api.ejemplo.com/datos"
+            },
+            {
+              "name": "reintentos",
+              "value": "3"
+            }
+          ]
+        }
+      },
+      "id": "set-config",
+      "name": "Set - Configuración",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [300, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Try-catch con retry logic\nconst maxReintentos = parseInt($input.first().json.reintentos);\nlet intento = 0;\nlet error_ultimo = null;\n\nasync function intentarLlamada() {\n  while (intento < maxReintentos) {\n    try {\n      intento++;\n      console.log(`Intento ${intento} de ${maxReintentos}`);\n      \n      // Simular posible error\n      if (Math.random() > 0.3) {\n        return {\n          exito: true,\n          datos: { resultado: 'OK', intento: intento },\n          timestamp: new Date().toISOString()\n        };\n      } else {\n        throw new Error('Conexión rechazada (simulado)');\n      }\n    } catch (error) {\n      error_ultimo = error.message;\n      if (intento < maxReintentos) {\n        console.log(`Error en intento ${intento}, reintentando en 2 segundos...`);\n        // En un workflow real, usar Delay node\n      }\n    }\n  }\n  \n  throw new Error(`Falló después de ${maxReintentos} intentos: ${error_ultimo}`);\n}\n\nreturn await intentarLlamada();"
+      },
+      "id": "code-retry",
+      "name": "Code - Retry Logic",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Fallback action si todo falla\nreturn {\n  json: {\n    exito: false,\n    fallback_activado: true,\n    mensaje: 'Usando datos en caché del último éxito',\n    datos_cache: {\n      resultado: 'CACHÉ',\n      timestamp: new Date(Date.now() - 3600000).toISOString(),\n      nota: 'Datos de hace 1 hora'\n    },\n    error_registrado: true,\n    proxima_tentativa: new Date(Date.now() + 300000).toISOString()\n  }\n};"
+      },
+      "id": "fallback",
+      "name": "Code - Fallback",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [500, 500]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Logging de errores\nconst data = $input.first().json;\n\nreturn {\n  json: {\n    log: {\n      timestamp: new Date().toISOString(),\n      nivel: data.exito ? 'INFO' : 'ERROR',\n      tipo: data.exito ? 'Operación exitosa' : 'Fallback activado',\n      detalles: data,\n      correlativo: Math.random().toString(36).substr(2, 9).toUpperCase()\n    },\n    respuesta_final: data\n  }\n};"
+      },
+      "id": "logging",
+      "name": "Code - Logging",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [700, 400]
+    }
+  ],
+  "connections": {
+    "start": {
+      "main": [
+        [
+          {
+            "node": "set-config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set-config": {
+      "main": [
+        [
+          {
+            "node": "code-retry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "code-retry": {
+      "main": [
+        [
+          {
+            "node": "logging",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "fallback",
+            "type": "error",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "fallback": {
+      "main": [
+        [
+          {
+            "node": "logging",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

@@ -1,0 +1,3529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.26">
+<title>Curso Completo de Langflow - Desde Principiante hasta Producción</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<style>
+/*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
+/* Uncomment the following line when using as a custom stylesheet */
+/* @import "https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"; */
+html{font-family:sans-serif;-webkit-text-size-adjust:100%}
+a{background:none}
+a:focus{outline:thin dotted}
+a:active,a:hover{outline:0}
+h1{font-size:2em;margin:.67em 0}
+b,strong{font-weight:bold}
+abbr{font-size:.9em}
+abbr[title]{cursor:help;border-bottom:1px dotted #dddddf;text-decoration:none}
+dfn{font-style:italic}
+hr{height:0}
+mark{background:#ff0;color:#000}
+code,kbd,pre,samp{font-family:monospace;font-size:1em}
+pre{white-space:pre-wrap}
+q{quotes:"\201C" "\201D" "\2018" "\2019"}
+small{font-size:80%}
+sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}
+sup{top:-.5em}
+sub{bottom:-.25em}
+img{border:0}
+svg:not(:root){overflow:hidden}
+figure{margin:0}
+audio,video{display:inline-block}
+audio:not([controls]){display:none;height:0}
+fieldset{border:1px solid silver;margin:0 2px;padding:.35em .625em .75em}
+legend{border:0;padding:0}
+button,input,select,textarea{font-family:inherit;font-size:100%;margin:0}
+button,input{line-height:normal}
+button,select{text-transform:none}
+button,html input[type=button],input[type=reset],input[type=submit]{-webkit-appearance:button;cursor:pointer}
+button[disabled],html input[disabled]{cursor:default}
+input[type=checkbox],input[type=radio]{padding:0}
+button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0}
+textarea{overflow:auto;vertical-align:top}
+table{border-collapse:collapse;border-spacing:0}
+*,::before,::after{box-sizing:border-box}
+html,body{font-size:100%}
+body{background:#fff;color:rgba(0,0,0,.8);padding:0;margin:0;font-family:"Noto Serif","DejaVu Serif",serif;line-height:1;position:relative;cursor:auto;-moz-tab-size:4;-o-tab-size:4;tab-size:4;word-wrap:anywhere;-moz-osx-font-smoothing:grayscale;-webkit-font-smoothing:antialiased}
+a:hover{cursor:pointer}
+img,object,embed{max-width:100%;height:auto}
+object,embed{height:100%}
+img{-ms-interpolation-mode:bicubic}
+.left{float:left!important}
+.right{float:right!important}
+.text-left{text-align:left!important}
+.text-right{text-align:right!important}
+.text-center{text-align:center!important}
+.text-justify{text-align:justify!important}
+.hide{display:none}
+img,object,svg{display:inline-block;vertical-align:middle}
+textarea{height:auto;min-height:50px}
+select{width:100%}
+.subheader,.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{line-height:1.45;color:#7a2518;font-weight:400;margin-top:0;margin-bottom:.25em}
+div,dl,dt,dd,ul,ol,li,h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6,pre,form,p,blockquote,th,td{margin:0;padding:0}
+a{color:#2156a5;text-decoration:underline;line-height:inherit}
+a:hover,a:focus{color:#1d4b8f}
+a img{border:0}
+p{line-height:1.6;margin-bottom:1.25em;text-rendering:optimizeLegibility}
+p aside{font-size:.875em;line-height:1.35;font-style:italic}
+h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{font-family:"Open Sans","DejaVu Sans",sans-serif;font-weight:300;font-style:normal;color:#ba3925;text-rendering:optimizeLegibility;margin-top:1em;margin-bottom:.5em;line-height:1.0125em}
+h1 small,h2 small,h3 small,#toctitle small,.sidebarblock>.content>.title small,h4 small,h5 small,h6 small{font-size:60%;color:#e99b8f;line-height:0}
+h1{font-size:2.125em}
+h2{font-size:1.6875em}
+h3,#toctitle,.sidebarblock>.content>.title{font-size:1.375em}
+h4,h5{font-size:1.125em}
+h6{font-size:1em}
+hr{border:solid #dddddf;border-width:1px 0 0;clear:both;margin:1.25em 0 1.1875em}
+em,i{font-style:italic;line-height:inherit}
+strong,b{font-weight:bold;line-height:inherit}
+small{font-size:60%;line-height:inherit}
+code{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;font-weight:400;color:rgba(0,0,0,.9)}
+ul,ol,dl{line-height:1.6;margin-bottom:1.25em;list-style-position:outside;font-family:inherit}
+ul,ol{margin-left:1.5em}
+ul li ul,ul li ol{margin-left:1.25em;margin-bottom:0}
+ul.circle{list-style-type:circle}
+ul.disc{list-style-type:disc}
+ul.square{list-style-type:square}
+ul.circle ul:not([class]),ul.disc ul:not([class]),ul.square ul:not([class]){list-style:inherit}
+ol li ul,ol li ol{margin-left:1.25em;margin-bottom:0}
+dl dt{margin-bottom:.3125em;font-weight:bold}
+dl dd{margin-bottom:1.25em}
+blockquote{margin:0 0 1.25em;padding:.5625em 1.25em 0 1.1875em;border-left:1px solid #ddd}
+blockquote,blockquote p{line-height:1.6;color:rgba(0,0,0,.85)}
+@media screen and (min-width:768px){h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2}
+h1{font-size:2.75em}
+h2{font-size:2.3125em}
+h3,#toctitle,.sidebarblock>.content>.title{font-size:1.6875em}
+h4{font-size:1.4375em}}
+table{background:#fff;margin-bottom:1.25em;border:1px solid #dedede;word-wrap:normal}
+table thead,table tfoot{background:#f7f8f7}
+table thead tr th,table thead tr td,table tfoot tr th,table tfoot tr td{padding:.5em .625em .625em;font-size:inherit;color:rgba(0,0,0,.8);text-align:left}
+table tr th,table tr td{padding:.5625em .625em;font-size:inherit;color:rgba(0,0,0,.8)}
+table tr.even,table tr.alt{background:#f8f8f7}
+table thead tr th,table tfoot tr th,table tbody tr td,table tr td,table tfoot tr td{line-height:1.6}
+h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2;word-spacing:-.05em}
+h1 strong,h2 strong,h3 strong,#toctitle strong,.sidebarblock>.content>.title strong,h4 strong,h5 strong,h6 strong{font-weight:400}
+.center{margin-left:auto;margin-right:auto}
+.stretch{width:100%}
+.clearfix::before,.clearfix::after,.float-group::before,.float-group::after{content:" ";display:table}
+.clearfix::after,.float-group::after{clear:both}
+:not(pre).nobreak{word-wrap:normal}
+:not(pre).nowrap{white-space:nowrap}
+:not(pre).pre-wrap{white-space:pre-wrap}
+:not(pre):not([class^=L])>code{font-size:.9375em;font-style:normal!important;letter-spacing:0;padding:.1em .5ex;word-spacing:-.15em;background:#f7f7f8;border-radius:4px;line-height:1.45;text-rendering:optimizeSpeed}
+pre{color:rgba(0,0,0,.9);font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;line-height:1.45;text-rendering:optimizeSpeed}
+pre code,pre pre{color:inherit;font-size:inherit;line-height:inherit}
+pre.nowrap,pre.nowrap pre{white-space:pre;word-wrap:normal}
+em em{font-style:normal}
+strong strong{font-weight:400}
+.keyseq{color:rgba(51,51,51,.8)}
+kbd{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;display:inline-block;color:rgba(0,0,0,.8);font-size:.65em;line-height:1.45;background:#f7f7f7;border:1px solid #ccc;border-radius:3px;box-shadow:0 1px 0 rgba(0,0,0,.2),inset 0 0 0 .1em #fff;margin:0 .15em;padding:.2em .5em;vertical-align:middle;position:relative;top:-.1em;white-space:nowrap}
+.keyseq kbd:first-child{margin-left:0}
+.keyseq kbd:last-child{margin-right:0}
+.menuseq,.menuref{color:#000}
+.menuseq b:not(.caret),.menuref{font-weight:inherit}
+.menuseq{word-spacing:-.02em}
+.menuseq b.caret{font-size:1.25em;line-height:.8}
+.menuseq i.caret{font-weight:bold;text-align:center;width:.45em}
+b.button::before,b.button::after{position:relative;top:-1px;font-weight:400}
+b.button::before{content:"[";padding:0 3px 0 2px}
+b.button::after{content:"]";padding:0 2px 0 3px}
+p a>code:hover{color:rgba(0,0,0,.9)}
+#header,#content,#footnotes,#footer{width:100%;margin:0 auto;max-width:62.5em;*zoom:1;position:relative;padding-left:.9375em;padding-right:.9375em}
+#header::before,#header::after,#content::before,#content::after,#footnotes::before,#footnotes::after,#footer::before,#footer::after{content:" ";display:table}
+#header::after,#content::after,#footnotes::after,#footer::after{clear:both}
+#content{margin-top:1.25em}
+#content::before{content:none}
+#header>h1:first-child{color:rgba(0,0,0,.85);margin-top:2.25rem;margin-bottom:0}
+#header>h1:first-child+#toc{margin-top:8px;border-top:1px solid #dddddf}
+#header>h1:only-child{border-bottom:1px solid #dddddf;padding-bottom:8px}
+#header .details{border-bottom:1px solid #dddddf;line-height:1.45;padding-top:.25em;padding-bottom:.25em;padding-left:.25em;color:rgba(0,0,0,.6);display:flex;flex-flow:row wrap}
+#header .details span:first-child{margin-left:-.125em}
+#header .details span.email a{color:rgba(0,0,0,.85)}
+#header .details br{display:none}
+#header .details br+span::before{content:"\00a0\2013\00a0"}
+#header .details br+span.author::before{content:"\00a0\22c5\00a0";color:rgba(0,0,0,.85)}
+#header .details br+span#revremark::before{content:"\00a0|\00a0"}
+#header #revnumber{text-transform:capitalize}
+#header #revnumber::after{content:"\00a0"}
+#content>h1:first-child:not([class]){color:rgba(0,0,0,.85);border-bottom:1px solid #dddddf;padding-bottom:8px;margin-top:0;padding-top:1rem;margin-bottom:1.25rem}
+#toc{border-bottom:1px solid #e7e7e9;padding-bottom:.5em}
+#toc>ul{margin-left:.125em}
+#toc ul.sectlevel0>li>a{font-style:italic}
+#toc ul.sectlevel0 ul.sectlevel1{margin:.5em 0}
+#toc ul{font-family:"Open Sans","DejaVu Sans",sans-serif;list-style-type:none}
+#toc li{line-height:1.3334;margin-top:.3334em}
+#toc a{text-decoration:none}
+#toc a:active{text-decoration:underline}
+#toctitle{color:#7a2518;font-size:1.2em}
+@media screen and (min-width:768px){#toctitle{font-size:1.375em}
+body.toc2{padding-left:15em;padding-right:0}
+body.toc2 #header>h1:nth-last-child(2){border-bottom:1px solid #dddddf;padding-bottom:8px}
+#toc.toc2{margin-top:0!important;background:#f8f8f7;position:fixed;width:15em;left:0;top:0;border-right:1px solid #e7e7e9;border-top-width:0!important;border-bottom-width:0!important;z-index:1000;padding:1.25em 1em;height:100%;overflow:auto}
+#toc.toc2 #toctitle{margin-top:0;margin-bottom:.8rem;font-size:1.2em}
+#toc.toc2>ul{font-size:.9em;margin-bottom:0}
+#toc.toc2 ul ul{margin-left:0;padding-left:1em}
+#toc.toc2 ul.sectlevel0 ul.sectlevel1{padding-left:0;margin-top:.5em;margin-bottom:.5em}
+body.toc2.toc-right{padding-left:0;padding-right:15em}
+body.toc2.toc-right #toc.toc2{border-right-width:0;border-left:1px solid #e7e7e9;left:auto;right:0}}
+@media screen and (min-width:1280px){body.toc2{padding-left:20em;padding-right:0}
+#toc.toc2{width:20em}
+#toc.toc2 #toctitle{font-size:1.375em}
+#toc.toc2>ul{font-size:.95em}
+#toc.toc2 ul ul{padding-left:1.25em}
+body.toc2.toc-right{padding-left:0;padding-right:20em}}
+#content #toc{border:1px solid #e0e0dc;margin-bottom:1.25em;padding:1.25em;background:#f8f8f7;border-radius:4px}
+#content #toc>:first-child{margin-top:0}
+#content #toc>:last-child{margin-bottom:0}
+#footer{max-width:none;background:rgba(0,0,0,.8);padding:1.25em}
+#footer-text{color:hsla(0,0%,100%,.8);line-height:1.44}
+#content{margin-bottom:.625em}
+.sect1{padding-bottom:.625em}
+@media screen and (min-width:768px){#content{margin-bottom:1.25em}
+.sect1{padding-bottom:1.25em}}
+.sect1:last-child{padding-bottom:0}
+.sect1+.sect1{border-top:1px solid #e7e7e9}
+#content h1>a.anchor,h2>a.anchor,h3>a.anchor,#toctitle>a.anchor,.sidebarblock>.content>.title>a.anchor,h4>a.anchor,h5>a.anchor,h6>a.anchor{position:absolute;z-index:1001;width:1.5ex;margin-left:-1.5ex;display:block;text-decoration:none!important;visibility:hidden;text-align:center;font-weight:400}
+#content h1>a.anchor::before,h2>a.anchor::before,h3>a.anchor::before,#toctitle>a.anchor::before,.sidebarblock>.content>.title>a.anchor::before,h4>a.anchor::before,h5>a.anchor::before,h6>a.anchor::before{content:"\00A7";font-size:.85em;display:block;padding-top:.1em}
+#content h1:hover>a.anchor,#content h1>a.anchor:hover,h2:hover>a.anchor,h2>a.anchor:hover,h3:hover>a.anchor,#toctitle:hover>a.anchor,.sidebarblock>.content>.title:hover>a.anchor,h3>a.anchor:hover,#toctitle>a.anchor:hover,.sidebarblock>.content>.title>a.anchor:hover,h4:hover>a.anchor,h4>a.anchor:hover,h5:hover>a.anchor,h5>a.anchor:hover,h6:hover>a.anchor,h6>a.anchor:hover{visibility:visible}
+#content h1>a.link,h2>a.link,h3>a.link,#toctitle>a.link,.sidebarblock>.content>.title>a.link,h4>a.link,h5>a.link,h6>a.link{color:#ba3925;text-decoration:none}
+#content h1>a.link:hover,h2>a.link:hover,h3>a.link:hover,#toctitle>a.link:hover,.sidebarblock>.content>.title>a.link:hover,h4>a.link:hover,h5>a.link:hover,h6>a.link:hover{color:#a53221}
+details,.audioblock,.imageblock,.literalblock,.listingblock,.stemblock,.videoblock{margin-bottom:1.25em}
+details{margin-left:1.25rem}
+details>summary{cursor:pointer;display:block;position:relative;line-height:1.6;margin-bottom:.625rem;outline:none;-webkit-tap-highlight-color:transparent}
+details>summary::-webkit-details-marker{display:none}
+details>summary::before{content:"";border:solid transparent;border-left:solid;border-width:.3em 0 .3em .5em;position:absolute;top:.5em;left:-1.25rem;transform:translateX(15%)}
+details[open]>summary::before{border:solid transparent;border-top:solid;border-width:.5em .3em 0;transform:translateY(15%)}
+details>summary::after{content:"";width:1.25rem;height:1em;position:absolute;top:.3em;left:-1.25rem}
+.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{text-rendering:optimizeLegibility;text-align:left;font-family:"Noto Serif","DejaVu Serif",serif;font-size:1rem;font-style:italic}
+table.tableblock.fit-content>caption.title{white-space:nowrap;width:0}
+.paragraph.lead>p,#preamble>.sectionbody>[class=paragraph]:first-of-type p{font-size:1.21875em;line-height:1.6;color:rgba(0,0,0,.85)}
+.admonitionblock>table{border-collapse:separate;border:0;background:none;width:100%}
+.admonitionblock>table td.icon{text-align:center;width:80px}
+.admonitionblock>table td.icon img{max-width:none}
+.admonitionblock>table td.icon .title{font-weight:bold;font-family:"Open Sans","DejaVu Sans",sans-serif;text-transform:uppercase}
+.admonitionblock>table td.content{padding-left:1.125em;padding-right:1.25em;border-left:1px solid #dddddf;color:rgba(0,0,0,.6);word-wrap:anywhere}
+.admonitionblock>table td.content>:last-child>:last-child{margin-bottom:0}
+.exampleblock>.content{border:1px solid #e6e6e6;margin-bottom:1.25em;padding:1.25em;background:#fff;border-radius:4px}
+.sidebarblock{border:1px solid #dbdbd6;margin-bottom:1.25em;padding:1.25em;background:#f3f3f2;border-radius:4px}
+.sidebarblock>.content>.title{color:#7a2518;margin-top:0;text-align:center}
+.exampleblock>.content>:first-child,.sidebarblock>.content>:first-child{margin-top:0}
+.exampleblock>.content>:last-child,.exampleblock>.content>:last-child>:last-child,.exampleblock>.content .olist>ol>li:last-child>:last-child,.exampleblock>.content .ulist>ul>li:last-child>:last-child,.exampleblock>.content .qlist>ol>li:last-child>:last-child,.sidebarblock>.content>:last-child,.sidebarblock>.content>:last-child>:last-child,.sidebarblock>.content .olist>ol>li:last-child>:last-child,.sidebarblock>.content .ulist>ul>li:last-child>:last-child,.sidebarblock>.content .qlist>ol>li:last-child>:last-child{margin-bottom:0}
+.literalblock pre,.listingblock>.content>pre{border-radius:4px;overflow-x:auto;padding:1em;font-size:.8125em}
+@media screen and (min-width:768px){.literalblock pre,.listingblock>.content>pre{font-size:.90625em}}
+@media screen and (min-width:1280px){.literalblock pre,.listingblock>.content>pre{font-size:1em}}
+.literalblock pre,.listingblock>.content>pre:not(.highlight),.listingblock>.content>pre[class=highlight],.listingblock>.content>pre[class^="highlight "]{background:#f7f7f8}
+.literalblock.output pre{color:#f7f7f8;background:rgba(0,0,0,.9)}
+.listingblock>.content{position:relative}
+.listingblock pre>code{display:block}
+.listingblock code[data-lang]::before{display:none;content:attr(data-lang);position:absolute;font-size:.75em;top:.425rem;right:.5rem;line-height:1;text-transform:uppercase;color:inherit;opacity:.5}
+.listingblock:hover code[data-lang]::before{display:block}
+.listingblock.terminal pre .command::before{content:attr(data-prompt);padding-right:.5em;color:inherit;opacity:.5}
+.listingblock.terminal pre .command:not([data-prompt])::before{content:"$"}
+.listingblock pre.highlightjs{padding:0}
+.listingblock pre.highlightjs>code{padding:1em;border-radius:4px}
+.listingblock pre.prettyprint{border-width:0}
+.prettyprint{background:#f7f7f8}
+pre.prettyprint .linenums{line-height:1.45;margin-left:2em}
+pre.prettyprint li{background:none;list-style-type:inherit;padding-left:0}
+pre.prettyprint li code[data-lang]::before{opacity:1}
+pre.prettyprint li:not(:first-child) code[data-lang]::before{display:none}
+table.linenotable{border-collapse:separate;border:0;margin-bottom:0;background:none}
+table.linenotable td[class]{color:inherit;vertical-align:top;padding:0;line-height:inherit;white-space:normal}
+table.linenotable td.code{padding-left:.75em}
+table.linenotable td.linenos,pre.pygments .linenos{border-right:1px solid;opacity:.35;padding-right:.5em;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
+pre.pygments span.linenos{display:inline-block;margin-right:.75em}
+.quoteblock{margin:0 1em 1.25em 1.5em;display:table}
+.quoteblock:not(.excerpt)>.title{margin-left:-1.5em;margin-bottom:.75em}
+.quoteblock blockquote,.quoteblock p{color:rgba(0,0,0,.85);font-size:1.15rem;line-height:1.75;word-spacing:.1em;letter-spacing:0;font-style:italic;text-align:justify}
+.quoteblock blockquote{margin:0;padding:0;border:0}
+.quoteblock blockquote::before{content:"\201c";float:left;font-size:2.75em;font-weight:bold;line-height:.6em;margin-left:-.6em;color:#7a2518;text-shadow:0 1px 2px rgba(0,0,0,.1)}
+.quoteblock blockquote>.paragraph:last-child p{margin-bottom:0}
+.quoteblock .attribution{margin-top:.75em;margin-right:.5ex;text-align:right}
+.verseblock{margin:0 1em 1.25em}
+.verseblock pre{font-family:"Open Sans","DejaVu Sans",sans-serif;font-size:1.15rem;color:rgba(0,0,0,.85);font-weight:300;text-rendering:optimizeLegibility}
+.verseblock pre strong{font-weight:400}
+.verseblock .attribution{margin-top:1.25rem;margin-left:.5ex}
+.quoteblock .attribution,.verseblock .attribution{font-size:.9375em;line-height:1.45;font-style:italic}
+.quoteblock .attribution br,.verseblock .attribution br{display:none}
+.quoteblock .attribution cite,.verseblock .attribution cite{display:block;letter-spacing:-.025em;color:rgba(0,0,0,.6)}
+.quoteblock.abstract blockquote::before,.quoteblock.excerpt blockquote::before,.quoteblock .quoteblock blockquote::before{display:none}
+.quoteblock.abstract blockquote,.quoteblock.abstract p,.quoteblock.excerpt blockquote,.quoteblock.excerpt p,.quoteblock .quoteblock blockquote,.quoteblock .quoteblock p{line-height:1.6;word-spacing:0}
+.quoteblock.abstract{margin:0 1em 1.25em;display:block}
+.quoteblock.abstract>.title{margin:0 0 .375em;font-size:1.15em;text-align:center}
+.quoteblock.excerpt>blockquote,.quoteblock .quoteblock{padding:0 0 .25em 1em;border-left:.25em solid #dddddf}
+.quoteblock.excerpt,.quoteblock .quoteblock{margin-left:0}
+.quoteblock.excerpt blockquote,.quoteblock.excerpt p,.quoteblock .quoteblock blockquote,.quoteblock .quoteblock p{color:inherit;font-size:1.0625rem}
+.quoteblock.excerpt .attribution,.quoteblock .quoteblock .attribution{color:inherit;font-size:.85rem;text-align:left;margin-right:0}
+p.tableblock:last-child{margin-bottom:0}
+td.tableblock>.content{margin-bottom:1.25em;word-wrap:anywhere}
+td.tableblock>.content>:last-child{margin-bottom:-1.25em}
+table.tableblock,th.tableblock,td.tableblock{border:0 solid #dedede}
+table.grid-all>*>tr>*{border-width:1px}
+table.grid-cols>*>tr>*{border-width:0 1px}
+table.grid-rows>*>tr>*{border-width:1px 0}
+table.frame-all{border-width:1px}
+table.frame-ends{border-width:1px 0}
+table.frame-sides{border-width:0 1px}
+table.frame-none>colgroup+*>:first-child>*,table.frame-sides>colgroup+*>:first-child>*{border-top-width:0}
+table.frame-none>:last-child>:last-child>*,table.frame-sides>:last-child>:last-child>*{border-bottom-width:0}
+table.frame-none>*>tr>:first-child,table.frame-ends>*>tr>:first-child{border-left-width:0}
+table.frame-none>*>tr>:last-child,table.frame-ends>*>tr>:last-child{border-right-width:0}
+table.stripes-all>*>tr,table.stripes-odd>*>tr:nth-of-type(odd),table.stripes-even>*>tr:nth-of-type(even),table.stripes-hover>*>tr:hover{background:#f8f8f7}
+th.halign-left,td.halign-left{text-align:left}
+th.halign-right,td.halign-right{text-align:right}
+th.halign-center,td.halign-center{text-align:center}
+th.valign-top,td.valign-top{vertical-align:top}
+th.valign-bottom,td.valign-bottom{vertical-align:bottom}
+th.valign-middle,td.valign-middle{vertical-align:middle}
+table thead th,table tfoot th{font-weight:bold}
+tbody tr th{background:#f7f8f7}
+tbody tr th,tbody tr th p,tfoot tr th,tfoot tr th p{color:rgba(0,0,0,.8);font-weight:bold}
+p.tableblock>code:only-child{background:none;padding:0}
+p.tableblock{font-size:1em}
+ol{margin-left:1.75em}
+ul li ol{margin-left:1.5em}
+dl dd{margin-left:1.125em}
+dl dd:last-child,dl dd:last-child>:last-child{margin-bottom:0}
+li p,ul dd,ol dd,.olist .olist,.ulist .ulist,.ulist .olist,.olist .ulist{margin-bottom:.625em}
+ul.checklist,ul.none,ol.none,ul.no-bullet,ol.no-bullet,ol.unnumbered,ul.unstyled,ol.unstyled{list-style-type:none}
+ul.no-bullet,ol.no-bullet,ol.unnumbered{margin-left:.625em}
+ul.unstyled,ol.unstyled{margin-left:0}
+li>p:empty:only-child::before{content:"";display:inline-block}
+ul.checklist>li>p:first-child{margin-left:-1em}
+ul.checklist>li>p:first-child>.fa-square-o:first-child,ul.checklist>li>p:first-child>.fa-check-square-o:first-child{width:1.25em;font-size:.8em;position:relative;bottom:.125em}
+ul.checklist>li>p:first-child>input[type=checkbox]:first-child{margin-right:.25em}
+ul.inline{display:flex;flex-flow:row wrap;list-style:none;margin:0 0 .625em -1.25em}
+ul.inline>li{margin-left:1.25em}
+.unstyled dl dt{font-weight:400;font-style:normal}
+ol.arabic{list-style-type:decimal}
+ol.decimal{list-style-type:decimal-leading-zero}
+ol.loweralpha{list-style-type:lower-alpha}
+ol.upperalpha{list-style-type:upper-alpha}
+ol.lowerroman{list-style-type:lower-roman}
+ol.upperroman{list-style-type:upper-roman}
+ol.lowergreek{list-style-type:lower-greek}
+.hdlist>table,.colist>table{border:0;background:none}
+.hdlist>table>tbody>tr,.colist>table>tbody>tr{background:none}
+td.hdlist1,td.hdlist2{vertical-align:top;padding:0 .625em}
+td.hdlist1{font-weight:bold;padding-bottom:1.25em}
+td.hdlist2{word-wrap:anywhere}
+.literalblock+.colist,.listingblock+.colist{margin-top:-.5em}
+.colist td:not([class]):first-child{padding:.4em .75em 0;line-height:1;vertical-align:top}
+.colist td:not([class]):first-child img{max-width:none}
+.colist td:not([class]):last-child{padding:.25em 0}
+.thumb,.th{line-height:0;display:inline-block;border:4px solid #fff;box-shadow:0 0 0 1px #ddd}
+.imageblock.left{margin:.25em .625em 1.25em 0}
+.imageblock.right{margin:.25em 0 1.25em .625em}
+.imageblock>.title{margin-bottom:0}
+.imageblock.thumb,.imageblock.th{border-width:6px}
+.imageblock.thumb>.title,.imageblock.th>.title{padding:0 .125em}
+.image.left,.image.right{margin-top:.25em;margin-bottom:.25em;display:inline-block;line-height:0}
+.image.left{margin-right:.625em}
+.image.right{margin-left:.625em}
+a.image{text-decoration:none;display:inline-block}
+a.image object{pointer-events:none}
+sup.footnote,sup.footnoteref{font-size:.875em;position:static;vertical-align:super}
+sup.footnote a,sup.footnoteref a{text-decoration:none}
+sup.footnote a:active,sup.footnoteref a:active,#footnotes .footnote a:first-of-type:active{text-decoration:underline}
+#footnotes{padding-top:.75em;padding-bottom:.75em;margin-bottom:.625em}
+#footnotes hr{width:20%;min-width:6.25em;margin:-.25em 0 .75em;border-width:1px 0 0}
+#footnotes .footnote{padding:0 .375em 0 .225em;line-height:1.3334;font-size:.875em;margin-left:1.2em;margin-bottom:.2em}
+#footnotes .footnote a:first-of-type{font-weight:bold;text-decoration:none;margin-left:-1.05em}
+#footnotes .footnote:last-of-type{margin-bottom:0}
+#content #footnotes{margin-top:-.625em;margin-bottom:0;padding:.75em 0}
+div.unbreakable{page-break-inside:avoid}
+.big{font-size:larger}
+.small{font-size:smaller}
+.underline{text-decoration:underline}
+.overline{text-decoration:overline}
+.line-through{text-decoration:line-through}
+.aqua{color:#00bfbf}
+.aqua-background{background:#00fafa}
+.black{color:#000}
+.black-background{background:#000}
+.blue{color:#0000bf}
+.blue-background{background:#0000fa}
+.fuchsia{color:#bf00bf}
+.fuchsia-background{background:#fa00fa}
+.gray{color:#606060}
+.gray-background{background:#7d7d7d}
+.green{color:#006000}
+.green-background{background:#007d00}
+.lime{color:#00bf00}
+.lime-background{background:#00fa00}
+.maroon{color:#600000}
+.maroon-background{background:#7d0000}
+.navy{color:#000060}
+.navy-background{background:#00007d}
+.olive{color:#606000}
+.olive-background{background:#7d7d00}
+.purple{color:#600060}
+.purple-background{background:#7d007d}
+.red{color:#bf0000}
+.red-background{background:#fa0000}
+.silver{color:#909090}
+.silver-background{background:#bcbcbc}
+.teal{color:#006060}
+.teal-background{background:#007d7d}
+.white{color:#bfbfbf}
+.white-background{background:#fafafa}
+.yellow{color:#bfbf00}
+.yellow-background{background:#fafa00}
+span.icon>.fa{cursor:default}
+a span.icon>.fa{cursor:inherit}
+.admonitionblock td.icon [class^="fa icon-"]{font-size:2.5em;text-shadow:1px 1px 2px rgba(0,0,0,.5);cursor:default}
+.admonitionblock td.icon .icon-note::before{content:"\f05a";color:#19407c}
+.admonitionblock td.icon .icon-tip::before{content:"\f0eb";text-shadow:1px 1px 2px rgba(155,155,0,.8);color:#111}
+.admonitionblock td.icon .icon-warning::before{content:"\f071";color:#bf6900}
+.admonitionblock td.icon .icon-caution::before{content:"\f06d";color:#bf3400}
+.admonitionblock td.icon .icon-important::before{content:"\f06a";color:#bf0000}
+.conum[data-value]{display:inline-block;color:#fff!important;background:rgba(0,0,0,.8);border-radius:50%;text-align:center;font-size:.75em;width:1.67em;height:1.67em;line-height:1.67em;font-family:"Open Sans","DejaVu Sans",sans-serif;font-style:normal;font-weight:bold}
+.conum[data-value] *{color:#fff!important}
+.conum[data-value]+b{display:none}
+.conum[data-value]::after{content:attr(data-value)}
+pre .conum[data-value]{position:relative;top:-.125em}
+b.conum *{color:inherit!important}
+.conum:not([data-value]):empty{display:none}
+dt,th.tableblock,td.content,div.footnote{text-rendering:optimizeLegibility}
+h1,h2,p,td.content,span.alt,summary{letter-spacing:-.01em}
+p strong,td.content strong,div.footnote strong{letter-spacing:-.005em}
+p,blockquote,dt,td.content,td.hdlist1,span.alt,summary{font-size:1.0625rem}
+p{margin-bottom:1.25rem}
+.sidebarblock p,.sidebarblock dt,.sidebarblock td.content,p.tableblock{font-size:1em}
+.exampleblock>.content{background:#fffef7;border-color:#e0e0dc;box-shadow:0 1px 4px #e0e0dc}
+.print-only{display:none!important}
+@page{margin:1.25cm .75cm}
+@media print{*{box-shadow:none!important;text-shadow:none!important}
+html{font-size:80%}
+a{color:inherit!important;text-decoration:underline!important}
+a.bare,a[href^="#"],a[href^="mailto:"]{text-decoration:none!important}
+a[href^="http:"]:not(.bare)::after,a[href^="https:"]:not(.bare)::after{content:"(" attr(href) ")";display:inline-block;font-size:.875em;padding-left:.25em}
+abbr[title]{border-bottom:1px dotted}
+abbr[title]::after{content:" (" attr(title) ")"}
+pre,blockquote,tr,img,object,svg{page-break-inside:avoid}
+thead{display:table-header-group}
+svg{max-width:100%}
+p,blockquote,dt,td.content{font-size:1em;orphans:3;widows:3}
+h2,h3,#toctitle,.sidebarblock>.content>.title{page-break-after:avoid}
+#header,#content,#footnotes,#footer{max-width:none}
+#toc,.sidebarblock,.exampleblock>.content{background:none!important}
+#toc{border-bottom:1px solid #dddddf!important;padding-bottom:0!important}
+body.book #header{text-align:center}
+body.book #header>h1:first-child{border:0!important;margin:2.5em 0 1em}
+body.book #header .details{border:0!important;display:block;padding:0!important}
+body.book #header .details span:first-child{margin-left:0!important}
+body.book #header .details br{display:block}
+body.book #header .details br+span::before{content:none!important}
+body.book #toc{border:0!important;text-align:left!important;padding:0!important;margin:0!important}
+body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-break-before:always}
+.listingblock code[data-lang]::before{display:block}
+#footer{padding:0 .9375em}
+.hide-on-print{display:none!important}
+.print-only{display:block!important}
+.hide-for-print{display:none!important}
+.show-for-print{display:inherit!important}}
+@media amzn-kf8,print{#header>h1:first-child{margin-top:1.25rem}
+.sect1{padding:0!important}
+.sect1+.sect1{border:0}
+#footer{background:none}
+#footer-text{color:rgba(0,0,0,.6);font-size:.9em}}
+@media amzn-kf8{#header,#content,#footnotes,#footer{padding:0}}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-light.min.css">
+</head>
+<body class="book">
+<div id="header">
+<h1>Curso Completo de Langflow - Desde Principiante hasta Producción</h1>
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_introducción_al_curso">1. Introducción al Curso</a></li>
+<li><a href="#_módulo_1_introducción_a_langflow">2. Módulo 1: Introducción a Langflow</a>
+<ul class="sectlevel2">
+<li><a href="#_1_1_qué_es_langflow">2.1. 1.1 ¿Qué es Langflow?</a>
+<ul class="sectlevel3">
+<li><a href="#_concepto_fundamental">2.1.1. Concepto Fundamental</a></li>
+<li><a href="#_definición_formal">2.1.2. Definición Formal</a></li>
+<li><a href="#_comparativa_langflow_vs_alternativas">2.1.3. Comparativa: Langflow vs. Alternativas</a></li>
+<li><a href="#_casos_de_uso_reales">2.1.4. Casos de Uso Reales</a>
+<ul class="sectlevel4">
+<li><a href="#_1_chatbot_de_soporte_técnico">1. Chatbot de Soporte Técnico</a></li>
+<li><a href="#_2_procesador_de_documentos_rag">2. Procesador de Documentos (RAG)</a></li>
+<li><a href="#_3_automatización_de_workflow">3. Automatización de Workflow</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_1_2_instalación_y_configuración">2.2. 1.2 Instalación y Configuración</a>
+<ul class="sectlevel3">
+<li><a href="#_requisitos_del_sistema">2.2.1. Requisitos del Sistema</a></li>
+<li><a href="#_instalación_paso_a_paso">2.2.2. Instalación Paso a Paso</a>
+<ul class="sectlevel4">
+<li><a href="#_paso_1_instalar_python">Paso 1: Instalar Python</a></li>
+<li><a href="#_paso_2_crear_entorno_virtual">Paso 2: Crear Entorno Virtual</a></li>
+<li><a href="#_paso_3_instalar_langflow">Paso 3: Instalar Langflow</a></li>
+<li><a href="#_paso_4_instalar_ollama_local_llm">Paso 4: Instalar Ollama (Local LLM)</a></li>
+<li><a href="#_paso_5_iniciar_langflow">Paso 5: Iniciar Langflow</a></li>
+</ul>
+</li>
+<li><a href="#_verificación_de_instalación">2.2.3. Verificación de Instalación</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_módulo_2_conceptos_fundamentales">3. Módulo 2: Conceptos Fundamentales</a>
+<ul class="sectlevel2">
+<li><a href="#_2_1_componentes_en_profundidad">3.1. 2.1 Componentes en Profundidad</a>
+<ul class="sectlevel3">
+<li><a href="#_qué_es_un_componente">3.1.1. ¿Qué es un Componente?</a>
+<ul class="sectlevel4">
+<li><a href="#_tipos_principales_de_componentes">Tipos Principales de Componentes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_2_2_conexiones_edges">3.2. 2.2 Conexiones (Edges)</a>
+<ul class="sectlevel3">
+<li><a href="#_qué_es_una_conexión">3.2.1. ¿Qué es una Conexión?</a>
+<ul class="sectlevel4">
+<li><a href="#_tipos_de_datos_en_conexiones">Tipos de Datos en Conexiones</a></li>
+<li><a href="#_regla_importante">Regla Importante</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_2_3_prompts_y_templates">3.3. 2.3 Prompts y Templates</a>
+<ul class="sectlevel3">
+<li><a href="#_concepto_de_prompt">3.3.1. Concepto de Prompt</a>
+<ul class="sectlevel4">
+<li><a href="#_estructura_de_un_buen_prompt">Estructura de un Buen Prompt</a></li>
+<li><a href="#_ejemplo_mal_prompt">Ejemplo: Mal Prompt</a></li>
+<li><a href="#_ejemplo_buen_prompt">Ejemplo: Buen Prompt</a></li>
+</ul>
+</li>
+<li><a href="#_prompt_templates_en_langflow">3.3.2. Prompt Templates en Langflow</a>
+<ul class="sectlevel4">
+<li><a href="#_ventajas">Ventajas</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_2_4_testing_en_langflow">3.4. 2.4 Testing en Langflow</a>
+<ul class="sectlevel3">
+<li><a href="#_play_button_pruebas_rápidas">3.4.1. Play Button (Pruebas Rápidas)</a>
+<ul class="sectlevel4">
+<li><a href="#_flujo_de_testing">Flujo de Testing</a></li>
+</ul>
+</li>
+<li><a href="#_chat_para_testing">3.4.2. Chat para Testing</a>
+<ul class="sectlevel4">
+<li><a href="#_tips_para_testing_efectivo">Tips para Testing Efectivo</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_módulo_3_conversaciones_y_memoria">4. Módulo 3: Conversaciones y Memoria</a>
+<ul class="sectlevel2">
+<li><a href="#_3_1_el_problema_de_la_memoria">4.1. 3.1 El Problema de la Memoria</a>
+<ul class="sectlevel3">
+<li><a href="#_sin_memoria">4.1.1. Sin Memoria</a></li>
+<li><a href="#_con_memoria">4.1.2. Con Memoria</a></li>
+</ul>
+</li>
+<li><a href="#_3_2_tipos_de_memoria">4.2. 3.2 Tipos de Memoria</a>
+<ul class="sectlevel3">
+<li><a href="#_1_buffer_memory_la_más_común">4.2.1. 1. Buffer Memory (La Más Común)</a>
+<ul class="sectlevel4">
+<li><a href="#_cuándo_usarla">Cuándo Usarla</a></li>
+<li><a href="#_implementación_en_langflow">Implementación en Langflow</a></li>
+</ul>
+</li>
+<li><a href="#_2_window_memory_ventana_de_contexto">4.2.2. 2. Window Memory (Ventana de Contexto)</a>
+<ul class="sectlevel4">
+<li><a href="#_cuándo_usarla_2">Cuándo Usarla</a></li>
+<li><a href="#_parámetro_k_window_size">Parámetro: k (window size)</a></li>
+</ul>
+</li>
+<li><a href="#_3_summary_memory_resumen">4.2.3. 3. Summary Memory (Resumen)</a></li>
+<li><a href="#_4_vector_memory_búsqueda_semántica">4.2.4. 4. Vector Memory (Búsqueda Semántica)</a></li>
+</ul>
+</li>
+<li><a href="#_3_3_implementación_práctica">4.3. 3.3 Implementación Práctica</a>
+<ul class="sectlevel3">
+<li><a href="#_flujo_con_memoria">4.3.1. Flujo con Memoria</a></li>
+<li><a href="#_flujo_de_multi_turn_múltiples_turnos">4.3.2. Flujo de Multi-Turn (Múltiples Turnos)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_módulo_4_integraciones">5. Módulo 4: Integraciones</a>
+<ul class="sectlevel2">
+<li><a href="#_4_1_web_search">5.1. 4.1 Web Search</a>
+<ul class="sectlevel3">
+<li><a href="#_problema">5.1.1. Problema</a></li>
+</ul>
+</li>
+<li><a href="#_4_2_apis_externas">5.2. 4.2 APIs Externas</a>
+<ul class="sectlevel3">
+<li><a href="#_http_request_component">5.2.1. HTTP Request Component</a>
+<ul class="sectlevel4">
+<li><a href="#_ejemplo_obtener_weather">Ejemplo: Obtener Weather</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_4_3_database_connections">5.3. 4.3 Database Connections</a>
+<ul class="sectlevel3">
+<li><a href="#_tipos_soportados">5.3.1. Tipos Soportados</a></li>
+<li><a href="#_flujo_buscar_en_base_de_datos">5.3.2. Flujo: Buscar en Base de Datos</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_módulo_5_casos_de_uso_prácticos">6. Módulo 5: Casos de Uso Prácticos</a>
+<ul class="sectlevel2">
+<li><a href="#_5_1_chatbot_de_atención_al_cliente">6.1. 5.1 Chatbot de Atención al Cliente</a>
+<ul class="sectlevel3">
+<li><a href="#_flujo_completo">6.1.1. Flujo Completo</a></li>
+<li><a href="#_beneficios">6.1.2. Beneficios</a></li>
+</ul>
+</li>
+<li><a href="#_5_2_rag_chatbot_sobre_tus_documentos">6.2. 5.2 RAG: Chatbot sobre Tus Documentos</a>
+<ul class="sectlevel3">
+<li><a href="#_qué_es_rag">6.2.1. Qué es RAG</a></li>
+<li><a href="#_flujo_rag_completo">6.2.2. Flujo RAG Completo</a>
+<ul class="sectlevel4">
+<li><a href="#_ventajas_del_rag">Ventajas del RAG</a></li>
+</ul>
+</li>
+<li><a href="#_casos_de_uso_rag">6.2.3. Casos de Uso RAG</a></li>
+</ul>
+</li>
+<li><a href="#_5_3_análisis_de_sentimiento">6.3. 5.3 Análisis de Sentimiento</a>
+<ul class="sectlevel3">
+<li><a href="#_flujo">6.3.1. Flujo</a></li>
+</ul>
+</li>
+<li><a href="#_5_4_automatización_de_emails">6.4. 5.4 Automatización de Emails</a>
+<ul class="sectlevel3">
+<li><a href="#_caso_responder_automáticamente">6.4.1. Caso: Responder Automáticamente</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_módulo_6_exportación_y_deployment">7. Módulo 6: Exportación y Deployment</a>
+<ul class="sectlevel2">
+<li><a href="#_6_1_exportar_como_api_rest">7.1. 6.1 Exportar como API REST</a>
+<ul class="sectlevel3">
+<li><a href="#_por_qué_exportar">7.1.1. ¿Por Qué Exportar?</a></li>
+<li><a href="#_paso_1_preparar_flujo">7.1.2. Paso 1: Preparar Flujo</a></li>
+<li><a href="#_paso_2_exportar">7.1.3. Paso 2: Exportar</a></li>
+<li><a href="#_paso_3_desplegar">7.1.4. Paso 3: Desplegar</a></li>
+<li><a href="#_api_generada">7.1.5. API Generada</a></li>
+</ul>
+</li>
+<li><a href="#_6_2_deployment_en_la_nube">7.2. 6.2 Deployment en la Nube</a>
+<ul class="sectlevel3">
+<li><a href="#_opciones_disponibles">7.2.1. Opciones Disponibles</a></li>
+<li><a href="#_deployment_a_heroku_ejemplo">7.2.2. Deployment a Heroku (Ejemplo)</a></li>
+<li><a href="#_dockerfile_para_producción">7.2.3. Dockerfile para Producción</a></li>
+</ul>
+</li>
+<li><a href="#_6_3_variables_de_entorno_y_secrets">7.3. 6.3 Variables de Entorno y Secrets</a>
+<ul class="sectlevel3">
+<li><a href="#_problema_2">7.3.1. Problema</a></li>
+<li><a href="#_archivo_env_local">7.3.2. Archivo .env (Local)</a></li>
+<li><a href="#_en_producción">7.3.3. En Producción</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_módulo_7_componentes_personalizados">8. Módulo 7: Componentes Personalizados</a>
+<ul class="sectlevel2">
+<li><a href="#_7_1_por_qué_crear_componentes_personalizados">8.1. 7.1 Por Qué Crear Componentes Personalizados</a>
+<ul class="sectlevel3">
+<li><a href="#_limitaciones_de_componentes_estándar">8.1.1. Limitaciones de Componentes Estándar</a>
+<ul class="sectlevel4">
+<li><a href="#_ejemplo_validador_de_email_corporativo">Ejemplo: Validador de Email Corporativo</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_7_2_crear_componente_personalizado">8.2. 7.2 Crear Componente Personalizado</a>
+<ul class="sectlevel3">
+<li><a href="#_estructura_básica">8.2.1. Estructura Básica</a></li>
+<li><a href="#_paso_1_definir_entradas">8.2.2. Paso 1: Definir Entradas</a></li>
+<li><a href="#_paso_2_definir_salidas">8.2.3. Paso 2: Definir Salidas</a></li>
+<li><a href="#_paso_3_implementar_lógica">8.2.4. Paso 3: Implementar Lógica</a></li>
+<li><a href="#_paso_4_registrar_componente">8.2.5. Paso 4: Registrar Componente</a></li>
+<li><a href="#_paso_5_usar_en_langflow">8.2.6. Paso 5: Usar en Langflow</a></li>
+</ul>
+</li>
+<li><a href="#_7_3_componentes_avanzados">8.3. 7.3 Componentes Avanzados</a>
+<ul class="sectlevel3">
+<li><a href="#_componente_con_estado">8.3.1. Componente con Estado</a></li>
+<li><a href="#_componente_asincrónico">8.3.2. Componente Asincrónico</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_módulo_8_optimización_y_performance">9. Módulo 8: Optimización y Performance</a>
+<ul class="sectlevel2">
+<li><a href="#_8_1_problemas_comunes_de_performance">9.1. 8.1 Problemas Comunes de Performance</a>
+<ul class="sectlevel3">
+<li><a href="#_latencia_alta">9.1.1. Latencia Alta</a></li>
+<li><a href="#_bottlenecks_típicos">9.1.2. Bottlenecks Típicos</a></li>
+</ul>
+</li>
+<li><a href="#_8_2_estrategias_de_optimización">9.2. 8.2 Estrategias de Optimización</a>
+<ul class="sectlevel3">
+<li><a href="#_1_caching">9.2.1. 1. Caching</a>
+<ul class="sectlevel4">
+<li><a href="#_implementación">Implementación</a></li>
+</ul>
+</li>
+<li><a href="#_2_modelos_más_rápidos">9.2.2. 2. Modelos Más Rápidos</a></li>
+<li><a href="#_3_batch_processing">9.2.3. 3. Batch Processing</a>
+<ul class="sectlevel4">
+<li><a href="#_implementación_2">Implementación</a></li>
+</ul>
+</li>
+<li><a href="#_4_índices_en_base_de_datos">9.2.4. 4. Índices en Base de Datos</a></li>
+<li><a href="#_5_reducción_de_tokens">9.2.5. 5. Reducción de Tokens</a>
+<ul class="sectlevel4">
+<li><a href="#_cómo_reducir_tokens">Cómo Reducir Tokens</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_8_3_monitoreo_de_performance">9.3. 8.3 Monitoreo de Performance</a>
+<ul class="sectlevel3">
+<li><a href="#_métricas_importantes">9.3.1. Métricas Importantes</a></li>
+<li><a href="#_logging_detallado">9.3.2. Logging Detallado</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_módulo_9_monitoreo_y_debugging">10. Módulo 9: Monitoreo y Debugging</a>
+<ul class="sectlevel2">
+<li><a href="#_9_1_logging_estructurado">10.1. 9.1 Logging Estructurado</a>
+<ul class="sectlevel3">
+<li><a href="#_niveles_de_log">10.1.1. Niveles de Log</a></li>
+<li><a href="#_configuración">10.1.2. Configuración</a></li>
+</ul>
+</li>
+<li><a href="#_9_2_error_handling_en_langflow">10.2. 9.2 Error Handling en Langflow</a>
+<ul class="sectlevel3">
+<li><a href="#_try_except_pattern">10.2.1. Try-Except Pattern</a></li>
+<li><a href="#_fallback_graceful">10.2.2. Fallback Graceful</a></li>
+</ul>
+</li>
+<li><a href="#_9_3_debug_en_tiempo_real">10.3. 9.3 Debug en Tiempo Real</a>
+<ul class="sectlevel3">
+<li><a href="#_play_button_debug">10.3.1. Play Button Debug</a></li>
+<li><a href="#_ejemplo_debug">10.3.2. Ejemplo Debug</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_módulo_10_mejores_prácticas">11. Módulo 10: Mejores Prácticas</a>
+<ul class="sectlevel2">
+<li><a href="#_10_1_diseño_de_flujos">11.1. 10.1 Diseño de Flujos</a>
+<ul class="sectlevel3">
+<li><a href="#_principio_1_modularidad">11.1.1. Principio 1: Modularidad</a></li>
+<li><a href="#_principio_2_testing_en_cada_paso">11.1.2. Principio 2: Testing en Cada Paso</a></li>
+<li><a href="#_principio_3_documentación">11.1.3. Principio 3: Documentación</a></li>
+</ul>
+</li>
+<li><a href="#_10_2_error_handling_en_producción">11.2. 10.2 Error Handling en Producción</a>
+<ul class="sectlevel3">
+<li><a href="#_strategy_fail_fast_fail_gracefully">11.2.1. Strategy: Fail Fast, Fail Gracefully</a></li>
+<li><a href="#_ejemplo_práctico">11.2.2. Ejemplo Práctico</a></li>
+</ul>
+</li>
+<li><a href="#_10_3_versionado_de_flujos">11.3. 10.3 Versionado de Flujos</a>
+<ul class="sectlevel3">
+<li><a href="#_control_de_versiones">11.3.1. Control de Versiones</a></li>
+<li><a href="#_cómo_cambiar_versiones">11.3.2. Cómo Cambiar Versiones</a></li>
+</ul>
+</li>
+<li><a href="#_10_4_seguridad">11.4. 10.4 Seguridad</a>
+<ul class="sectlevel3">
+<li><a href="#_proteger_api_keys">11.4.1. Proteger API Keys</a></li>
+<li><a href="#_autenticación_en_apis_exportadas">11.4.2. Autenticación en APIs Exportadas</a></li>
+<li><a href="#_rate_limiting">11.4.3. Rate Limiting</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_conclusión_y_próximos_pasos">12. Conclusión y Próximos Pasos</a>
+<ul class="sectlevel2">
+<li><a href="#_has_aprendido">12.1. Has Aprendido</a></li>
+<li><a href="#_próximas_acciones">12.2. Próximas Acciones</a></li>
+<li><a href="#_recursos_oficiales">12.3. Recursos Oficiales</a></li>
+<li><a href="#_recursos_de_aprendizaje_complementarios">12.4. Recursos de Aprendizaje Complementarios</a></li>
+<li><a href="#_tipos_comunes_en_langflow">12.5. Tipos Comunes en Langflow</a></li>
+<li><a href="#_estructura_de_componentes_básica">12.6. Estructura de Componentes Básica</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_introducción_al_curso">1. Introducción al Curso</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Bienvenido a este curso completo de Langflow. En esta guía aprenderás cómo construir aplicaciones inteligentes potenciadas por LLMs usando una <strong>interfaz visual intuitiva</strong>, sin necesidad de escribir código complejo.</p>
+</div>
+<div class="paragraph">
+<p><strong>Objetivos del Curso:</strong>
+- Entender qué es Langflow y cómo se diferencia de otros frameworks
+- Construir flujos visuales complejos usando drag-and-drop
+- Integrar LLMs locales (Ollama) con herramientas y APIs
+- Crear chatbots conversacionales con memoria
+- Exportar flujos como APIs REST y aplicaciones web
+- Aplicar patrones de producción (logging, error handling, escalabilidad)</p>
+</div>
+<div class="paragraph">
+<p><strong>Tiempo Estimado:</strong> 15-20 horas
+<strong>Requisitos Previos:</strong> Conocimiento básico de programación (no obligatorio)
+<strong>Software Necesario:</strong> Python 3.10+, Ollama local, Langflow</p>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_módulo_1_introducción_a_langflow">2. Módulo 1: Introducción a Langflow</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_1_1_qué_es_langflow">2.1. 1.1 ¿Qué es Langflow?</h3>
+<div class="sect3">
+<h4 id="_concepto_fundamental">2.1.1. Concepto Fundamental</h4>
+<div class="paragraph">
+<p>Imagina que quieres construir una aplicación con IA que:
+- Hable con usuarios en conversaciones naturales
+- Busque información en internet
+- Procese documentos
+- Integre múltiples APIs
+- Se actualice sin reescribir código</p>
+</div>
+<div class="paragraph">
+<p><strong>Sin Langflow</strong>, necesitarías escribir miles de líneas de código Python, manejar conexiones, debugging, etc.</p>
+</div>
+<div class="paragraph">
+<p><strong>Con Langflow</strong>, simplemente <strong>arrastra y suelta componentes</strong> en una interfaz visual, los conectas, y ¡listo! Tu aplicación está lista.</p>
+</div>
+<div class="paragraph">
+<p><strong>Langflow es el "Figma" para aplicaciones de IA.</strong></p>
+</div>
+<div class="paragraph">
+<p>La analogía es precisa: así como Figma permite que diseñadores creen interfaces visuales sin escribir HTML/CSS, Langflow permite crear aplicaciones IA sin escribir código Python complejo.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_definición_formal">2.1.2. Definición Formal</h4>
+<div class="paragraph">
+<p>Langflow es una plataforma visual de código abierto que permite construir aplicaciones basadas en LLMs sin escribir código. Proporciona:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Interfaz drag-and-drop</strong>: Construye flujos visuales intuitivos</p>
+</li>
+<li>
+<p><strong>Componentes predefinidos</strong>: LLMs, herramientas, memoria, APIs, etc.</p>
+</li>
+<li>
+<p><strong>Ejecución local</strong>: Corre en tu máquina o servidor</p>
+</li>
+<li>
+<p><strong>Exportación como código</strong>: Genera Python (FastAPI) cuando lo necesites</p>
+</li>
+<li>
+<p><strong>Testing integrado</strong>: Prueba flujos en tiempo real</p>
+</li>
+<li>
+<p><strong>Multi-modelo</strong>: Soporta Ollama, OpenAI, Hugging Face, etc.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_comparativa_langflow_vs_alternativas">2.1.3. Comparativa: Langflow vs. Alternativas</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Aspecto</th>
+<th class="tableblock halign-left valign-top">Langflow</th>
+<th class="tableblock halign-left valign-top">LangChain</th>
+<th class="tableblock halign-left valign-top">AutoGen</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Interface</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Visual (UI)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Código Python</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Código Python</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Curva Aprendizaje</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Muy baja</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Media</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Media-Alta</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Velocidad Prototipado</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Muy rápida</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rápida</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Media</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Flexibilidad</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Media</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Alta</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Alta</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Para No-Programadores</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">✅ Sí</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">❌ No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">❌ No</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Visualización</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Nativa</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Requiere plugins</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Ninguna</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Testing Visual</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">✅ Integrado</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">❌ Manual</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">❌ Manual</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Exportación a Código</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">✅ Sí</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">N/A</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">N/A</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Multi-LLM</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">✅ Sí</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">✅ Sí</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">✅ Sí</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Caso de uso de Langflow:</strong>
+- Prototipado rápido (horas, no días)
+- No-code applications
+- Visual process design
+- Equipos con gente no-técnica</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_casos_de_uso_reales">2.1.4. Casos de Uso Reales</h4>
+<div class="sect4">
+<h5 id="_1_chatbot_de_soporte_técnico">1. Chatbot de Soporte Técnico</h5>
+<div class="paragraph">
+<p><strong>Problema:</strong> Una empresa recibe 100 preguntas diarias de soporte.</p>
+</div>
+<div class="paragraph">
+<p><strong>Solución con Langflow:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">[Chat Input]
+    ↓
+[Prompt Classifier] - ¿Pregunta técnica o general?
+    ├─ Técnica → [Technical LLM] → [Knowledge Base Search]
+    └─ General → [General LLM] → [Web Search]
+    ↓
+[Response Parser]
+    ↓
+[Chat Output]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Tiempo de construcción:</strong> 5-10 minutos
+<strong>Beneficio:</strong> Resuelve 70% de preguntas automáticamente</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_2_procesador_de_documentos_rag">2. Procesador de Documentos (RAG)</h5>
+<div class="paragraph">
+<p><strong>Problema:</strong> Analizar documentos grandes sin escribir código.</p>
+</div>
+<div class="paragraph">
+<p><strong>Solución:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">[Upload PDF]
+    ↓
+[Text Splitter] - Divide en chunks de 500 caracteres
+    ↓
+[Embeddings] - Convierte a vectores
+    ↓
+[Vector Store] - FAISS o Pinecone
+    ↓
+[Search Query] → [Similarity Search] → [LLM]
+    ↓
+[JSON Output]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Tiempo:</strong> 10 minutos
+<strong>Resultado:</strong> Sistema RAG profesional sin código</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_3_automatización_de_workflow">3. Automatización de Workflow</h5>
+<div class="paragraph">
+<p><strong>Problema:</strong> Procesar órdenes de clientes manualmente.</p>
+</div>
+<div class="paragraph">
+<p><strong>Solución:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">[Webhook (Stripe)]
+    ↓
+[Data Extractor]
+    ↓
+[Email Generator] - Genera confirmación
+    ↓
+[Database Update] - Actualiza estado
+    ↓
+[Webhook (Google Sheets)]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Tiempo:</strong> 15 minutos
+<strong>Costo:</strong> Reducción de 8 horas/día de trabajo manual</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_1_2_instalación_y_configuración">2.2. 1.2 Instalación y Configuración</h3>
+<div class="sect3">
+<h4 id="_requisitos_del_sistema">2.2.1. Requisitos del Sistema</h4>
+<div class="ulist">
+<div class="title">Mínimos</div>
+<ul>
+<li>
+<p>Python 3.10+</p>
+</li>
+<li>
+<p>4GB RAM</p>
+</li>
+<li>
+<p>2GB disco libre</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Recomendado</div>
+<ul>
+<li>
+<p>Python 3.11+</p>
+</li>
+<li>
+<p>8GB RAM</p>
+</li>
+<li>
+<p>SSD con 5GB disponibles</p>
+</li>
+<li>
+<p>GPU (opcional, para LLMs locales)</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_instalación_paso_a_paso">2.2.2. Instalación Paso a Paso</h4>
+<div class="sect4">
+<h5 id="_paso_1_instalar_python">Paso 1: Instalar Python</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># Verificar que tengas Python 3.10+
+python --version
+
+# Si no tienes, descarga desde https://python.org</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_paso_2_crear_entorno_virtual">Paso 2: Crear Entorno Virtual</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># Crear entorno virtual
+python -m venv langflow_env
+
+# Activar en Linux/macOS
+source langflow_env/bin/activate
+
+# Activar en Windows
+langflow_env\Scripts\activate</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_paso_3_instalar_langflow">Paso 3: Instalar Langflow</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># Instalar desde PyPI
+pip install langflow
+
+# O instalar versión desarrollo
+git clone https://github.com/logspace-ai/langflow
+cd langflow
+pip install -e .</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_paso_4_instalar_ollama_local_llm">Paso 4: Instalar Ollama (Local LLM)</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># Descargar desde https://ollama.ai
+curl https://ollama.ai/install.sh | sh
+
+# Descargar un modelo (ejemplo: mistral)
+ollama pull mistral
+
+# Iniciar servidor Ollama
+ollama serve
+# Escuchará en http://localhost:11434</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_paso_5_iniciar_langflow">Paso 5: Iniciar Langflow</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># En otra terminal
+langflow run
+
+# Abre navegador en http://localhost:7860</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_verificación_de_instalación">2.2.3. Verificación de Instalación</h4>
+<div class="paragraph">
+<p>Crea un flujo simple para verificar que todo funciona:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>En la interfaz web, haz clic en "+"</p>
+</li>
+<li>
+<p>Arrastra un componente "Chat Input"</p>
+</li>
+<li>
+<p>Arrastra un componente "Ollama" (o GPT-4)</p>
+</li>
+<li>
+<p>Conecta Chat Input → Ollama</p>
+</li>
+<li>
+<p>Arastra "Chat Output"</p>
+</li>
+<li>
+<p>Conecta Ollama → Chat Output</p>
+</li>
+<li>
+<p>Haz clic en Play (▶️)</p>
+</li>
+<li>
+<p>Escribe un mensaje</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Resultado esperado:</strong> Recibir una respuesta del LLM</p>
+</div>
+<hr>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_módulo_2_conceptos_fundamentales">3. Módulo 2: Conceptos Fundamentales</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_2_1_componentes_en_profundidad">3.1. 2.1 Componentes en Profundidad</h3>
+<div class="sect3">
+<h4 id="_qué_es_un_componente">3.1.1. ¿Qué es un Componente?</h4>
+<div class="paragraph">
+<p>Un <strong>componente</strong> es un bloque funcional reutilizable que hace una cosa específica.</p>
+</div>
+<div class="paragraph">
+<p><strong>Analogía:</strong> Un LEGO es un componente. Puedes usar muchos para construir algo grande.</p>
+</div>
+<div class="sect4">
+<h5 id="_tipos_principales_de_componentes">Tipos Principales de Componentes</h5>
+<div class="sect5">
+<h6 id="_1_componentes_de_entrada_input">1. Componentes de Entrada (Input)</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">┌─────────────────────┐
+│   Chat Input        │ → Recibe texto del usuario
+├─────────────────────┤
+│ Salida: texto       │
+└─────────────────────┘
+
+┌─────────────────────┐
+│   File Upload       │ → Recibe archivos
+├─────────────────────┤
+│ Salida: ruta del    │
+│         archivo     │
+└─────────────────────┘</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_2_componentes_de_procesamiento_llm">2. Componentes de Procesamiento (LLM)</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">┌─────────────────────────────────────┐
+│         Ollama LLM                  │
+├─────────────────────────────────────┤
+│ Entrada: prompt                     │
+│ Parámetros: modelo, temperatura    │
+│ Salida: texto generado              │
+└─────────────────────────────────────┘
+
+┌─────────────────────────────────────┐
+│         OpenAI GPT-4                │
+├─────────────────────────────────────┤
+│ Entrada: prompt, API key            │
+│ Parámetros: modelo, max_tokens      │
+│ Salida: texto generado              │
+└─────────────────────────────────────┘</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_3_componentes_de_herramientas_tools">3. Componentes de Herramientas (Tools)</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">┌──────────────────────────┐
+│   Web Search             │ → Busca en Google/Bing
+├──────────────────────────┤
+│ Entrada: query           │
+│ Salida: resultados       │
+└──────────────────────────┘
+
+┌──────────────────────────┐
+│   Calculator             │ → Calcula expresiones
+├──────────────────────────┤
+│ Entrada: "2+2"           │
+│ Salida: 4                │
+└──────────────────────────┘</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_4_componentes_de_salida_output">4. Componentes de Salida (Output)</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">┌──────────────────────┐
+│   Chat Output        │ → Muestra en UI
+├──────────────────────┤
+│ Entrada: texto       │
+└──────────────────────┘
+
+┌──────────────────────┐
+│   JSON Output        │ → Exporta como JSON
+├──────────────────────┤
+│ Entrada: datos       │
+│ Salida: JSON         │
+└──────────────────────┘</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_2_2_conexiones_edges">3.2. 2.2 Conexiones (Edges)</h3>
+<div class="sect3">
+<h4 id="_qué_es_una_conexión">3.2.1. ¿Qué es una Conexión?</h4>
+<div class="paragraph">
+<p>Una <strong>conexión</strong> (o "edge") vincula la salida de un componente con la entrada de otro.</p>
+</div>
+<div class="paragraph">
+<p><strong>Analogía:</strong> Un cable conecta dos partes de un circuito eléctrico.</p>
+</div>
+<div class="sect4">
+<h5 id="_tipos_de_datos_en_conexiones">Tipos de Datos en Conexiones</h5>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 40%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Tipo</th>
+<th class="tableblock halign-left valign-top">Descripción</th>
+<th class="tableblock halign-left valign-top">Ejemplo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>string</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Texto simple</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">"Hola mundo"</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>number</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Números</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">42, 3.14</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>boolean</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Verdadero/Falso</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true, false</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>array</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Lista de items</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[1, 2, 3]</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>object</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Datos complejos</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">{nombre: "Juan", edad: 30}</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>file</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Archivo/Ruta</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/path/to/file.pdf</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_regla_importante">Regla Importante</h5>
+<div class="paragraph">
+<p><strong>Los tipos de datos en las conexiones deben coincidir:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">❌ INCORRECTO:
+┌────────────┐
+│ Chat Input │ (salida: string)
+└────────────┘
+      ↓
+   Mala conexión
+      ↓
+┌──────────────┐
+│ File Upload  │ (espera: file)
+└──────────────┘
+
+✅ CORRECTO:
+┌────────────┐
+│ Chat Input │ (salida: string)
+└────────────┘
+      ↓
+┌──────────────────┐
+│ Prompt Template  │ (espera: string)
+└──────────────────┘</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_2_3_prompts_y_templates">3.3. 2.3 Prompts y Templates</h3>
+<div class="sect3">
+<h4 id="_concepto_de_prompt">3.3.1. Concepto de Prompt</h4>
+<div class="paragraph">
+<p>Un <strong>prompt</strong> es la instrucción que le das a un LLM.</p>
+</div>
+<div class="paragraph">
+<p><strong>Analogía:</strong> Como hablar con una persona. La calidad de tu respuesta depende de la claridad de tu pregunta.</p>
+</div>
+<div class="sect4">
+<h5 id="_estructura_de_un_buen_prompt">Estructura de un Buen Prompt</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">1. CONTEXTO
+   - Quién eres
+   - Qué rol tienes
+
+2. TAREA
+   - Qué específicamente debe hacer
+   - Cómo debe hacerlo
+
+3. FORMATO
+   - Cómo quieres la respuesta
+   - JSON, markdown, etc.
+
+4. RESTRICCIONES
+   - Qué NO hacer
+   - Límites de longitud</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_ejemplo_mal_prompt">Ejemplo: Mal Prompt</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">"¿Qué es Python?"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Problema:</strong> Vago, el LLM puede escribir 10 párrafos o 1.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_ejemplo_buen_prompt">Ejemplo: Buen Prompt</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">"Eres un instructor de programación. Explica qué es Python
+en máximo 2 párrafos, dirigido a principiantes.
+Incluye: definición, 3 características principales,
+1 ejemplo de código simple. Usa lenguaje accesible."</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Ventaja:</strong> Específico, claro, limita longitud, define audiencia.</p>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_prompt_templates_en_langflow">3.3.2. Prompt Templates en Langflow</h4>
+<div class="paragraph">
+<p>Un <strong>Prompt Template</strong> te permite reutilizar prompts con variables:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">Componente: Prompt Template
+
+Entrada:
+┌─────────────────────────────────┐
+│ Template:                       │
+│ "Eres experto en {tema}.        │
+│  Explica {concepto} en nivel    │
+│  {nivel_dificultad}."           │
+│                                 │
+│ Variables:                      │
+│ - tema: string                  │
+│ - concepto: string              │
+│ - nivel_dificultad: string      │
+└─────────────────────────────────┘
+
+Salida:
+┌─────────────────────────────────┐
+│ "Eres experto en Python.        │
+│  Explica decoradores en nivel   │
+│  principiante."                 │
+└─────────────────────────────────┘</code></pre>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_ventajas">Ventajas</h5>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Reutilizable:</strong> Usa el mismo template múltiples veces</p>
+</li>
+<li>
+<p><strong>Dinámico:</strong> Cambia variables sin editar el template</p>
+</li>
+<li>
+<p><strong>Mantenible:</strong> Actualiza un template, afecta todos los usos</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_2_4_testing_en_langflow">3.4. 2.4 Testing en Langflow</h3>
+<div class="sect3">
+<h4 id="_play_button_pruebas_rápidas">3.4.1. Play Button (Pruebas Rápidas)</h4>
+<div class="paragraph">
+<p>En Langflow, el botón "Play" (▶️) te permite:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Probar tu flujo</strong> en tiempo real</p>
+</li>
+<li>
+<p><strong>Ver entrada y salida</strong> de cada componente</p>
+</li>
+<li>
+<p><strong>Debuggear problemas</strong> fácilmente</p>
+</li>
+</ol>
+</div>
+<div class="sect4">
+<h5 id="_flujo_de_testing">Flujo de Testing</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">1. Configura entrada (ej: escribe en Chat Input)
+2. Haz clic en ▶️ Play
+3. Observa cómo fluyen los datos
+4. Verifica salida en componentes
+5. Si hay error, identifica qué componente falló
+6. Ajusta parámetros
+7. Prueba de nuevo</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_chat_para_testing">3.4.2. Chat para Testing</h4>
+<div class="paragraph">
+<p>La interfaz "Chat" simula conversaciones reales:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">┌────────────────────────────────┐
+│ Your message here...           │
+│                                │
+│ ← Assistant response here       │
+│                                │
+│ Tell me more...                │
+│                                │
+│ ← More detailed response...     │
+└────────────────────────────────┘</code></pre>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_tips_para_testing_efectivo">Tips para Testing Efectivo</h5>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Prueba casos comunes:</strong> "¿Hola?" "¿Cuál es 2+2?"</p>
+</li>
+<li>
+<p><strong>Prueba casos borde:</strong> Entrada vacía, números grandes</p>
+</li>
+<li>
+<p><strong>Prueba errores:</strong> Qué pasa si la API falla?</p>
+</li>
+<li>
+<p><strong>Observa latencia:</strong> ¿Tarda mucho el flujo?</p>
+</li>
+</ol>
+</div>
+<hr>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_módulo_3_conversaciones_y_memoria">4. Módulo 3: Conversaciones y Memoria</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_3_1_el_problema_de_la_memoria">4.1. 3.1 El Problema de la Memoria</h3>
+<div class="sect3">
+<h4 id="_sin_memoria">4.1.1. Sin Memoria</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">Usuario: "Me llamo Juan"
+LLM:     "Hola Juan, gusto en conocerte"
+
+Usuario: "¿Cuál es mi nombre?"
+LLM:     "No sé tu nombre, podrías decirmelo?"
+         (¡Acaba de olvidar lo que dijo hace 10 segundos!)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Problema:</strong> Cada pregunta es independiente. El LLM no recuerda conversaciones previas.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_con_memoria">4.1.2. Con Memoria</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">Usuario: "Me llamo Juan"
+LLM:     "Hola Juan, gusto en conocerte"
+[MEMORIA]: Guarda "Usuario se llama Juan"
+
+Usuario: "¿Cuál es mi nombre?"
+LLM:     "Tu nombre es Juan (lo dijiste hace poco)"
+         (¡Recuerda la conversación anterior!)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Solución:</strong> Mantener un historial y pasarlo al LLM.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_3_2_tipos_de_memoria">4.2. 3.2 Tipos de Memoria</h3>
+<div class="sect3">
+<h4 id="_1_buffer_memory_la_más_común">4.2.1. 1. Buffer Memory (La Más Común)</h4>
+<div class="paragraph">
+<p><strong>Qué es:</strong> Guarda TODAS las conversaciones en memoria.</p>
+</div>
+<div class="paragraph">
+<p><strong>Analogía:</strong> Un cuaderno donde escribes todo lo que se habla.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">Usuario: "Hola"
+Assistant: "Hola, ¿cómo estás?"
+
+Usuario: "Me llamo María"
+Assistant: "Gusto, María"
+
+[MEMORIA ACTUAL]
+1. Usuario: Hola
+2. Assistant: Hola, ¿cómo estás?
+3. Usuario: Me llamo María
+4. Assistant: Gusto, María</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Ventaja:</strong> Contexto completo, nada se olvida
+<strong>Desventaja:</strong> Usa muchos tokens (dinero) si la conversación es larga</p>
+</div>
+<div class="sect4">
+<h5 id="_cuándo_usarla">Cuándo Usarla</h5>
+<div class="ulist">
+<ul>
+<li>
+<p>Chatbots cortos (5-10 mensajes)</p>
+</li>
+<li>
+<p>Conversaciones personales</p>
+</li>
+<li>
+<p>Cuando el contexto es crítico</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_implementación_en_langflow">Implementación en Langflow</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">┌──────────────────┐
+│  Chat Input      │
+└──────────────────┘
+         ↓
+┌──────────────────┐
+│ Memory Component │ → Guarda historial
+└──────────────────┘
+         ↓
+┌──────────────────┐
+│ Prompt Template  │ → "Historial: {history}"
+└──────────────────┘
+         ↓
+┌──────────────────┐
+│   Ollama LLM     │
+└──────────────────┘
+         ↓
+┌──────────────────┐
+│  Chat Output     │
+└──────────────────┘</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_2_window_memory_ventana_de_contexto">4.2.2. 2. Window Memory (Ventana de Contexto)</h4>
+<div class="paragraph">
+<p><strong>Qué es:</strong> Guarda solo los últimos N mensajes.</p>
+</div>
+<div class="paragraph">
+<p><strong>Analogía:</strong> Tienes un cuaderno pequeño, solo escribes las 5 últimas cosas que se dijeron.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">[Mensaje 1]
+[Mensaje 2]
+[Mensaje 3]
+[Mensaje 4]
+[Mensaje 5] ← Solo estos 5 están en memoria
+[Mensaje 6] ← Nuevo mensaje, se olvida el 1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Ventaja:</strong> Usa menos tokens, más eficiente
+<strong>Desventaja:</strong> Pierde contexto antiguo</p>
+</div>
+<div class="sect4">
+<h5 id="_cuándo_usarla_2">Cuándo Usarla</h5>
+<div class="ulist">
+<ul>
+<li>
+<p>Chats largos (100+ mensajes)</p>
+</li>
+<li>
+<p>Cuando el costo importa</p>
+</li>
+<li>
+<p>Contexto reciente es suficiente</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_parámetro_k_window_size">Parámetro: k (window size)</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">Si k=3, solo guarda los últimos 3 mensajes:
+
+[Mensaje 100] ← Más antiguo guardado
+[Mensaje 101]
+[Mensaje 102] ← Más reciente
+
+Mensajes 1-99: Se olvidan</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_3_summary_memory_resumen">4.2.3. 3. Summary Memory (Resumen)</h4>
+<div class="paragraph">
+<p><strong>Qué es:</strong> Resume automáticamente la conversación.</p>
+</div>
+<div class="paragraph">
+<p><strong>Analogía:</strong> Alguien lee todo el chat y crea un resumen para el LLM.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">CONVERSACIÓN COMPLETA:
+Usuario: "Trabajo en una startup de IA"
+Assistant: "Qué interesante"
+Usuario: "Especializada en NLP"
+Assistant: "Excelente"
+... (50 mensajes más)
+
+RESUMEN GENERADO:
+"El usuario trabaja en una startup de IA
+especializada en NLP. Tiene 5 años de
+experiencia. Quiere aprender Langflow."</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Ventaja:</strong> Menos tokens, contexto resumido
+<strong>Desventaja:</strong> Pierde detalles específicos</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_4_vector_memory_búsqueda_semántica">4.2.4. 4. Vector Memory (Búsqueda Semántica)</h4>
+<div class="paragraph">
+<p><strong>Qué es:</strong> Busca conversaciones similares.</p>
+</div>
+<div class="paragraph">
+<p><strong>Analogía:</strong> Un motor de búsqueda para tus conversaciones anteriores.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">NUEVO MENSAJE: "¿Cómo hago un API?"
+
+VECTOR MEMORY BUSCA:
+- "¿Cómo crear una API?" (Coincidencia 92%)
+- "¿Qué es REST API?" (Coincidencia 85%)
+- "¿Python para APIs?" (Coincidencia 78%)
+
+RESULTADO:
+Inyecta estas conversaciones antiguas como contexto</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Ventaja:</strong> Contexto relevante sin guardar todo
+<strong>Desventaja:</strong> Requiere más computación</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_3_3_implementación_práctica">4.3. 3.3 Implementación Práctica</h3>
+<div class="sect3">
+<h4 id="_flujo_con_memoria">4.3.1. Flujo con Memoria</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">Usuario escribe "Hola, soy Juan"
+         ↓
+[Chat Input] recibe el mensaje
+         ↓
+[Memory Component] carga historial anterior
+         ↓
+[Prompt Template] integra:
+  - Mensaje actual: "Hola, soy Juan"
+  - Historial: "[Conversaciones previas]"
+         ↓
+[LLM Ollama] recibe prompt completo
+         ↓
+[Memory Component] guarda nueva entrada
+         ↓
+[Chat Output] muestra respuesta</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_flujo_de_multi_turn_múltiples_turnos">4.3.2. Flujo de Multi-Turn (Múltiples Turnos)</h4>
+<div class="paragraph">
+<p><strong>Caso:</strong> Usuario hace varias preguntas seguidas</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">Usuario: "¿Qué es Langflow?"
+LLM:     "Langflow es..."
+Memoria: Guardar esta Q&amp;A
+
+Usuario: "¿Cuáles son sus ventajas?"
+LLM:     "Las ventajas son... (recordando Q1)"
+Memoria: Guardar esta Q&amp;A
+
+Usuario: "¿Cómo instalo?"
+LLM:     "Pasos: 1. 2. 3. (recordando Q1 y Q2)"
+Memoria: Guardar esta Q&amp;A</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_módulo_4_integraciones">5. Módulo 4: Integraciones</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_4_1_web_search">5.1. 4.1 Web Search</h3>
+<div class="sect3">
+<h4 id="_problema">5.1.1. Problema</h4>
+<div class="paragraph">
+<p><strong>Sin integración:</strong>
+- Usuario: "¿Cuál es el clima hoy?"
+- LLM: "No tengo acceso a datos en tiempo real"</p>
+</div>
+<div class="paragraph">
+<p><strong>Con integración:</strong>
+- Usuario: "¿Cuál es el clima hoy?"
+- Flujo busca online
+- LLM: "Según búsquedas recientes, [resultado actual]"</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_4_2_apis_externas">5.2. 4.2 APIs Externas</h3>
+<div class="sect3">
+<h4 id="_http_request_component">5.2.1. HTTP Request Component</h4>
+<div class="paragraph">
+<p>Permite llamar cualquier API REST:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">┌─────────────────────────────┐
+│    HTTP Request             │
+├─────────────────────────────┤
+│ URL:      https://api...    │
+│ Método:   GET, POST, PUT    │
+│ Headers:  Content-Type      │
+│ Body:     JSON data         │
+│ Auth:     API Key           │
+├─────────────────────────────┤
+│ Salida: Response JSON       │
+└─────────────────────────────┘</code></pre>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_ejemplo_obtener_weather">Ejemplo: Obtener Weather</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">┌──────────────┐
+│ Chat Input   │ (Usuario pregunta: "¿clima en NYC?")
+└──────────────┘
+        ↓
+┌────────────────────────────┐
+│ Text Extractor             │ (Extrae "NYC")
+└────────────────────────────┘
+        ↓
+┌────────────────────────────┐
+│ HTTP Request               │ (Llama openweathermap API)
+│ URL: api.openweathermap.../NYC
+└────────────────────────────┘
+        ↓
+┌────────────────────────────┐
+│ JSON Parser                │ (Extrae temp, descripción)
+└────────────────────────────┘
+        ↓
+┌────────────────────────────┐
+│ Prompt Template            │ (Formatea respuesta bonita)
+│ "El clima en {city} es..."
+└────────────────────────────┘
+        ↓
+┌──────────────┐
+│ Chat Output  │ (Muestra: "El clima en NYC es 25°C...")
+└──────────────┘</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_4_3_database_connections">5.3. 4.3 Database Connections</h3>
+<div class="sect3">
+<h4 id="_tipos_soportados">5.3.1. Tipos Soportados</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 30%;">
+<col style="width: 70%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">BD</th>
+<th class="tableblock halign-left valign-top">Casos de Uso</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>PostgreSQL</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Producción, datos relacionales</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>MongoDB</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Documentos JSON, flexibilidad</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>SQLite</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Desarrollo, testing local</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Pinecone</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Vector store para embeddings</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Supabase</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Backend completo con auth</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_flujo_buscar_en_base_de_datos">5.3.2. Flujo: Buscar en Base de Datos</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">Usuario: "¿Cuál es el email de Juan?"
+         ↓
+[Chat Input]
+         ↓
+[Text Extractor] → "Juan"
+         ↓
+[SQL Query Builder]
+   SELECT email FROM users WHERE name = 'Juan'
+         ↓
+[Database Component] → Conecta a PostgreSQL
+         ↓
+[Result Parser] → juan@email.com
+         ↓
+[Chat Output] → "El email de Juan es juan@email.com"</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_módulo_5_casos_de_uso_prácticos">6. Módulo 5: Casos de Uso Prácticos</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_5_1_chatbot_de_atención_al_cliente">6.1. 5.1 Chatbot de Atención al Cliente</h3>
+<div class="sect3">
+<h4 id="_flujo_completo">6.1.1. Flujo Completo</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">┌─────────────┐
+│ Chat Input  │
+└─────────────┘
+      ↓
+┌────────────────────────┐
+│ Sentiment Analyzer     │ (¿Cliente enojado?)
+└────────────────────────┘
+      ├─ Negativo → Escalar a humano
+      └─ Positivo → Continuar
+      ↓
+┌────────────────────────┐
+│ Intent Classifier      │ (¿Qué quiere?)
+├────────────────────────┤
+│ - Queja
+│ - Pregunta
+│ - Sugerencia
+└────────────────────────┘
+      ↓
+┌────────────────────────┐
+│ Knowledge Base Lookup  │ (Buscar respuesta estándar)
+└────────────────────────┘
+      ├─ Encontrada → Enviar respuesta
+      └─ No encontrada → LLM generador
+      ↓
+┌────────────────────────┐
+│ Response Generator LLM │
+└────────────────────────┘
+      ↓
+┌──────────────┐
+│ Chat Output  │
+└──────────────┘</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_beneficios">6.1.2. Beneficios</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>70-80% de preguntas resueltas automáticamente</p>
+</li>
+<li>
+<p>Escala a 1000+ usuarios sin personal adicional</p>
+</li>
+<li>
+<p>Disponible 24/7</p>
+</li>
+<li>
+<p>Aprendizaje continuo de nuevas preguntas</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_5_2_rag_chatbot_sobre_tus_documentos">6.2. 5.2 RAG: Chatbot sobre Tus Documentos</h3>
+<div class="sect3">
+<h4 id="_qué_es_rag">6.2.1. Qué es RAG</h4>
+<div class="paragraph">
+<p><strong>RAG = Retrieval Augmented Generation</strong></p>
+</div>
+<div class="paragraph">
+<p><strong>Problema:</strong>
+- LLM: "No sé qué dice tu documento"
+- Usuario: "Pero está aquí, léelo!"
+- LLM: "No puedo leer archivos directamente"</p>
+</div>
+<div class="paragraph">
+<p><strong>Solución RAG:</strong>
+- Convertir documento → vectores
+- Buscar similitud con pregunta
+- Pasar documento relevante al LLM</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_flujo_rag_completo">6.2.2. Flujo RAG Completo</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">FASE 1: PREPARACIÓN (Una sola vez)
+┌──────────────────┐
+│ Upload documento │ (ej: manual_producto.pdf)
+└──────────────────┘
+      ↓
+┌──────────────────┐
+│ Text Splitter    │ Divide en chunks de 500 chars
+└──────────────────┘
+      ↓
+┌──────────────────┐
+│ Embeddings       │ Convierte a vectores 1536-dim
+│ (OllamaEmbeddings)
+└──────────────────┘
+      ↓
+┌──────────────────┐
+│ Vector Store     │ Guarda en FAISS/Pinecone
+│ (1000 vectores)
+└──────────────────┘
+
+FASE 2: CONSULTA (Cada pregunta del usuario)
+┌──────────────────┐
+│ User Query       │ "¿Cómo reseteo contraseña?"
+└──────────────────┘
+      ↓
+┌──────────────────┐
+│ Embed Query      │ Convierte pregunta a vector
+└──────────────────┘
+      ↓
+┌──────────────────┐
+│ Similarity Search│ Busca top 3 chunks similares
+└──────────────────┘
+      ↓
+┌──────────────────┐
+│ Retrieved Docs   │ "Para resetear: 1. Ir a settings..."
+└──────────────────┘
+      ↓
+┌──────────────────┐
+│ Prompt Template  │ "Basándote en:\n{docs}\nResponde: {query}"
+└──────────────────┘
+      ↓
+┌──────────────────┐
+│ LLM Ollama       │ Genera respuesta basada en documento
+└──────────────────┘
+      ↓
+┌──────────────────┐
+│ Chat Output      │ "Para resetear contraseña: [respuesta]"
+└──────────────────┘</code></pre>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_ventajas_del_rag">Ventajas del RAG</h5>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Precisión:</strong> Respuestas basadas en TUS datos</p>
+</li>
+<li>
+<p><strong>Escalabilidad:</strong> Múltiples documentos, mismo flujo</p>
+</li>
+<li>
+<p><strong>Actualmente:</strong> No necesitas entrenar modelos</p>
+</li>
+<li>
+<p><strong>Coste-efectivo:</strong> Solo embeddings + búsqueda</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_casos_de_uso_rag">6.2.3. Casos de Uso RAG</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 40%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Caso</th>
+<th class="tableblock halign-left valign-top">Ejemplo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Atención técnica</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bot responde basado en manual de producto</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Soporte legal</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Consulta contratos y leyes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Investigación</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Analiza papers académicos</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Recursos humanos</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Responde preguntas sobre políticas</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>E-commerce</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Recomendaciones basadas en catálogo</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_5_3_análisis_de_sentimiento">6.3. 5.3 Análisis de Sentimiento</h3>
+<div class="sect3">
+<h4 id="_flujo">6.3.1. Flujo</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">Usuario: "Este producto es horrible, me decepciono mucho"
+      ↓
+┌─────────────────────────────────┐
+│ Prompt: "Analiza el sentimiento" │
+│ Respuesta: NEGATIVE SCORE: 0.95 │
+└─────────────────────────────────┘
+      ├─ POSITIVE (&gt;0.7) → "Gracias, nos alegra!"
+      ├─ NEUTRAL (0.3-0.7) → Respuesta estándar
+      └─ NEGATIVE (&lt;0.3) → Escalar a manager
+      ↓
+┌──────────────────────────────────┐
+│ Database: Guardar retroalimentación
+└──────────────────────────────────┘</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_5_4_automatización_de_emails">6.4. 5.4 Automatización de Emails</h3>
+<div class="sect3">
+<h4 id="_caso_responder_automáticamente">6.4.1. Caso: Responder Automáticamente</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">┌──────────────────┐
+│ Email Webhook    │ (Nuevo email recibido)
+└──────────────────┘
+      ↓
+┌──────────────────┐
+│ Extract Subject  │ "Pregunta sobre billing"
+│ Extract Body     │ "¿Cuánto cuesta?"
+└──────────────────┘
+      ↓
+┌──────────────────┐
+│ Intent Classifier│ "Billing question"
+└──────────────────┘
+      ↓
+┌──────────────────┐
+│ Template Select  │ Selecciona template de respuesta
+└──────────────────┘
+      ↓
+┌──────────────────┐
+│ Variable Fill    │ Reemplaza {name}, {price}, etc.
+└──────────────────┘
+      ↓
+┌──────────────────┐
+│ Send Email       │ Envía respuesta
+└──────────────────┘
+      ↓
+┌──────────────────┐
+│ Log Database     │ Guarda que se respondió
+└──────────────────┘</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Resultado:</strong> 90% de emails contestados automáticamente en &lt; 1 segundo</p>
+</div>
+<hr>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_módulo_6_exportación_y_deployment">7. Módulo 6: Exportación y Deployment</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_6_1_exportar_como_api_rest">7.1. 6.1 Exportar como API REST</h3>
+<div class="sect3">
+<h4 id="_por_qué_exportar">7.1.1. ¿Por Qué Exportar?</h4>
+<div class="paragraph">
+<p><strong>Fase 1: Desarrollo</strong>
+- Usas Langflow UI (drag and drop)
+- Pruebas rápidas
+- Iteración fácil</p>
+</div>
+<div class="paragraph">
+<p><strong>Fase 2: Producción</strong>
+- Necesitas una API que otros sistemas usen
+- Langflow exporta el flujo como FastAPI</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_paso_1_preparar_flujo">7.1.2. Paso 1: Preparar Flujo</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Crear flujo funcional en Langflow</p>
+</li>
+<li>
+<p>Asegurar que tenga Input y Output claros</p>
+</li>
+<li>
+<p>Testear completamente</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_paso_2_exportar">7.1.3. Paso 2: Exportar</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">1. Botón "Export" en Langflow
+2. Seleccionar "FastAPI"
+3. Se descarga código Python
+4. Estructura generada:
+
+my_flow_api/
+├── main.py              ← FastAPI server
+├── requirements.txt     ← Dependencias
+├── flow.json          ← Configuración flujo
+└── README.md</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_paso_3_desplegar">7.1.4. Paso 3: Desplegar</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># 1. Instalar dependencias
+pip install -r requirements.txt
+
+# 2. Ejecutar servidor
+uvicorn main:app --host 0.0.0.0 --port 8000
+
+# 3. Acceder API en
+http://localhost:8000/docs</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_api_generada">7.1.5. API Generada</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># Ejemplo: Llamar tu flujo
+
+curl -X POST http://localhost:8000/predict \
+  -H "Content-Type: application/json" \
+  -d '{"user_input": "Hola, ¿cómo estás?"}'
+
+Respuesta:
+{
+  "output": "Hola, estoy bien. ¿En qué puedo ayudarte?"
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_6_2_deployment_en_la_nube">7.2. 6.2 Deployment en la Nube</h3>
+<div class="sect3">
+<h4 id="_opciones_disponibles">7.2.1. Opciones Disponibles</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 50%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Plataforma</th>
+<th class="tableblock halign-left valign-top">Cómo</th>
+<th class="tableblock halign-left valign-top">Coste</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Heroku</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Push código, auto-deploya</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">$5-50/mes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Railway</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Git integration</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">$5-50/mes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Replit</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UI web, run de inmediato</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">$5-100/mes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Docker</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Containerizar, push a AWS/GCP</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Variable</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Fly.io</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Deploy global</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">$5-100/mes</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_deployment_a_heroku_ejemplo">7.2.2. Deployment a Heroku (Ejemplo)</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># 1. Crear Procfile
+echo "web: uvicorn main:app --host 0.0.0.0 --port \$PORT" &gt; Procfile
+
+# 2. Crear Heroku app
+heroku create my-langflow-app
+
+# 3. Hacer push
+git push heroku main
+
+# 4. Ver logs
+heroku logs --tail
+
+# 5. API en vivo en
+https://my-langflow-app.herokuapp.com/docs</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_dockerfile_para_producción">7.2.3. Dockerfile para Producción</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-dockerfile hljs" data-lang="dockerfile">FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+COPY . .
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_6_3_variables_de_entorno_y_secrets">7.3. 6.3 Variables de Entorno y Secrets</h3>
+<div class="sect3">
+<h4 id="_problema_2">7.3.1. Problema</h4>
+<div class="paragraph">
+<p>¿Cómo proteges API keys?</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">❌ INCORRECTO:
+api_key = "sk-abc123xyz..."  # ¡Visible en GitHub!
+
+✅ CORRECTO:
+api_key = os.getenv("OPENAI_API_KEY")  # Variable de entorno</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_archivo_env_local">7.3.2. Archivo .env (Local)</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># .env
+OLLAMA_BASE_URL=http://localhost:11434
+OPENAI_API_KEY=sk-...
+DATABASE_URL=postgresql://...
+PINECONE_API_KEY=...
+JWT_SECRET=super-secret-key-12345</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># Cargar en Python
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+api_key = os.getenv("OPENAI_API_KEY")</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_en_producción">7.3.3. En Producción</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># Heroku
+heroku config:set OPENAI_API_KEY=sk-...
+heroku config:set OLLAMA_BASE_URL=http://...
+
+# Docker
+docker run -e OPENAI_API_KEY=sk-... my-app:latest
+
+# Railway/Fly.io
+Interfaz web para definir variables</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_módulo_7_componentes_personalizados">8. Módulo 7: Componentes Personalizados</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_7_1_por_qué_crear_componentes_personalizados">8.1. 7.1 Por Qué Crear Componentes Personalizados</h3>
+<div class="sect3">
+<h4 id="_limitaciones_de_componentes_estándar">8.1.1. Limitaciones de Componentes Estándar</h4>
+<div class="paragraph">
+<p><strong>Componentes de Langflow cubren 80% de casos.</strong></p>
+</div>
+<div class="paragraph">
+<p><strong>¿Qué pasa el otro 20%?</strong>
+- Lógica muy específica para tu negocio
+- Algoritmos personalizados
+- Integraciones únicas</p>
+</div>
+<div class="sect4">
+<h5 id="_ejemplo_validador_de_email_corporativo">Ejemplo: Validador de Email Corporativo</h5>
+<div class="paragraph">
+<p>Langflow tiene "Email Validator" genérico.</p>
+</div>
+<div class="paragraph">
+<p><strong>Pero tu empresa requiere:</strong>
+- Solo emails @tucompania.com
+- Dominio en lista blanca
+- Verificar contra LDAP</p>
+</div>
+<div class="paragraph">
+<p><strong>Solución:</strong> Crea componente personalizado</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_7_2_crear_componente_personalizado">8.2. 7.2 Crear Componente Personalizado</h3>
+<div class="sect3">
+<h4 id="_estructura_básica">8.2.1. Estructura Básica</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from langflow.custom.components import Component
+from langflow.custom.types import ComponentType
+
+class MiComponente(Component):
+    name = "Mi Componente"
+    description = "Descripción de qué hace"
+
+    # ENTRADAS
+    inputs = {
+        "texto": {"type": str, "description": "Texto a procesar"}
+    }
+
+    # SALIDAS
+    outputs = {
+        "resultado": str,
+        "longitud": int
+    }
+
+    def run(self, texto: str):
+        # Lógica aquí
+        resultado = texto.upper()
+        longitud = len(texto)
+
+        return {
+            "resultado": resultado,
+            "longitud": longitud
+        }</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_paso_1_definir_entradas">8.2.2. Paso 1: Definir Entradas</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">inputs = {
+    "nombre": {
+        "type": str,
+        "description": "Nombre de la persona"
+    },
+    "edad": {
+        "type": int,
+        "description": "Edad en años"
+    },
+    "activo": {
+        "type": bool,
+        "description": "¿Está activo?"
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_paso_2_definir_salidas">8.2.3. Paso 2: Definir Salidas</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">outputs = {
+    "saludo": str,
+    "validacion": bool
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_paso_3_implementar_lógica">8.2.4. Paso 3: Implementar Lógica</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">def run(self, nombre: str, edad: int, activo: bool):
+    # Validación
+    if edad &lt; 0 or edad &gt; 150:
+        return {"saludo": "Error: edad inválida", "validacion": False}
+
+    # Lógica
+    saludo = f"Hola {nombre}, tienes {edad} años"
+
+    return {
+        "saludo": saludo,
+        "validacion": activo
+    }</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_paso_4_registrar_componente">8.2.5. Paso 4: Registrar Componente</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python"># Agregar a components.py
+from my_components import MiComponente
+
+__all__ = ["MiComponente"]</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_paso_5_usar_en_langflow">8.2.6. Paso 5: Usar en Langflow</h4>
+<div class="paragraph">
+<p>Ahora aparecerá en la librería de componentes.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">┌──────────────────┐
+│ Chat Input       │
+└──────────────────┘
+      ↓
+┌──────────────────┐
+│ Mi Componente    │ (Tu componente personalizado)
+│ nombre: {input}
+│ edad: 25
+│ activo: true
+└──────────────────┘
+      ↓
+┌──────────────────┐
+│ Chat Output      │
+└──────────────────┘</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_7_3_componentes_avanzados">8.3. 7.3 Componentes Avanzados</h3>
+<div class="sect3">
+<h4 id="_componente_con_estado">8.3.1. Componente con Estado</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">class ContadorComponente(Component):
+    def __init__(self):
+        super().__init__()
+        self.contador = 0
+
+    def run(self, incremento: int = 1):
+        self.contador += incremento
+        return {"valor": self.contador}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_componente_asincrónico">8.3.2. Componente Asincrónico</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">async def run(self, url: str):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as response:
+            data = await response.json()
+    return {"resultado": data}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_módulo_8_optimización_y_performance">9. Módulo 8: Optimización y Performance</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_8_1_problemas_comunes_de_performance">9.1. 8.1 Problemas Comunes de Performance</h3>
+<div class="sect3">
+<h4 id="_latencia_alta">9.1.1. Latencia Alta</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">Usuario escribe mensaje
+      ↓
+[Sistema procesa] ← ¿Cuánto tarda?
+      ├─ &lt; 1s: Excelente
+      ├─ 1-3s: Bueno
+      ├─ 3-10s: Aceptable
+      └─ &gt; 10s: MALO
+      ↓
+Respuesta llega</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_bottlenecks_típicos">9.1.2. Bottlenecks Típicos</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 30%;">
+<col style="width: 40%;">
+<col style="width: 30%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Problema</th>
+<th class="tableblock halign-left valign-top">Síntoma</th>
+<th class="tableblock halign-left valign-top">Solución</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>LLM lento</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Esperar 10s por respuesta</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Modelo más rápido, cache</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>API externa</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Red lenta</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Timeout, retry</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Embeddings</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5s por query</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Caché, índices</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Database</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Queries lentas</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Índices SQL</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_8_2_estrategias_de_optimización">9.2. 8.2 Estrategias de Optimización</h3>
+<div class="sect3">
+<h4 id="_1_caching">9.2.1. 1. Caching</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">Pregunta 1: "¿Qué es Python?"
+      ↓
+LLM genera respuesta (5 segundos)
+      ↓
+GUARDAR EN CACHE
+
+Pregunta 2: "¿Qué es Python?" (misma pregunta)
+      ↓
+CACHE HIT → Respuesta inmediata (0.1 segundos)</code></pre>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_implementación">Implementación</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from functools import lru_cache
+
+@lru_cache(maxsize=100)
+def generar_respuesta(pregunta: str) -&gt; str:
+    # Esta función cacheará últimas 100 preguntas
+    return llm.generate(pregunta)</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_2_modelos_más_rápidos">9.2.2. 2. Modelos Más Rápidos</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 30%;">
+<col style="width: 20%;">
+<col style="width: 30%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Modelo</th>
+<th class="tableblock halign-left valign-top">Speed</th>
+<th class="tableblock halign-left valign-top">Quality</th>
+<th class="tableblock halign-left valign-top">Recomendado para</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Mistral-7B</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rápido</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8/10</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Producción</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Llama-13B</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Medio</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8.5/10</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Calidad</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>GPT-3.5</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rápido</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">9/10</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">API cloud</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Ollama local</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Variable</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">7/10</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Testing</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_3_batch_processing">9.2.3. 3. Batch Processing</h4>
+<div class="paragraph">
+<p><strong>Caso:</strong> Procesar 1000 documentos</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">❌ LENTO: 1 por 1
+Documento 1 → 30s
+Documento 2 → 30s
+...
+Documento 1000 → 30s
+TOTAL: 8.3 horas
+
+✅ RÁPIDO: Procesar en grupos de 10
+[Docs 1-10] → 5s (paralelo)
+[Docs 11-20] → 5s
+...
+TOTAL: 50 minutos</code></pre>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_implementación_2">Implementación</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import asyncio
+
+async def procesar_batch(documentos: list):
+    tasks = [procesar_doc(doc) for doc in documentos]
+    resultados = await asyncio.gather(*tasks)
+    return resultados
+
+# Usar
+await procesar_batch(documentos[:10])</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_4_índices_en_base_de_datos">9.2.4. 4. Índices en Base de Datos</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">❌ Sin índice:
+SELECT * FROM usuarios WHERE email = 'juan@...'
+→ Escanea 1,000,000 filas → 2 segundos
+
+✅ Con índice en email:
+SELECT * FROM usuarios WHERE email = 'juan@...'
+→ Búsqueda directa → 0.01 segundos</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_5_reducción_de_tokens">9.2.5. 5. Reducción de Tokens</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">Prompt largo: 2000 tokens → $0.04
+Prompt optimizado: 500 tokens → $0.01
+
+Si haces 10,000 requests/día:
+Ahorras: $300/mes</code></pre>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_cómo_reducir_tokens">Cómo Reducir Tokens</h5>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Prompts más cortos</p>
+</li>
+<li>
+<p>Quita explicaciones innecesarias</p>
+</li>
+<li>
+<p>Usa templates eficientes</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_8_3_monitoreo_de_performance">9.3. 8.3 Monitoreo de Performance</h3>
+<div class="sect3">
+<h4 id="_métricas_importantes">9.3.1. Métricas Importantes</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 30%;">
+<col style="width: 40%;">
+<col style="width: 30%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Métrica</th>
+<th class="tableblock halign-left valign-top">Importancia</th>
+<th class="tableblock halign-left valign-top">Objetivo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Latencia P50</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Media</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt; 1s</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Latencia P95</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Percentil 95</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt; 5s</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Latencia P99</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Percentil 99</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt; 10s</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Throughput</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Requests/seg</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&gt; 100/s</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Error rate</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Errores %</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt; 0.1%</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_logging_detallado">9.3.2. Logging Detallado</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import logging
+import time
+
+logger = logging.getLogger(__name__)
+
+def procesar_con_log(entrada):
+    inicio = time.time()
+    logger.info(f"Iniciando: {entrada}")
+
+    try:
+        resultado = hacer_algo(entrada)
+        duracion = time.time() - inicio
+        logger.info(f"OK en {duracion:.2f}s: {resultado}")
+        return resultado
+    except Exception as e:
+        logger.error(f"Error: {e}", exc_info=True)
+        raise</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_módulo_9_monitoreo_y_debugging">10. Módulo 9: Monitoreo y Debugging</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_9_1_logging_estructurado">10.1. 9.1 Logging Estructurado</h3>
+<div class="sect3">
+<h4 id="_niveles_de_log">10.1.1. Niveles de Log</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 50%;">
+<col style="width: 30%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Nivel</th>
+<th class="tableblock halign-left valign-top">Ejemplo</th>
+<th class="tableblock halign-left valign-top">Cuándo usar</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>DEBUG</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">"Variable x = 42"</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Desarrollo</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>INFO</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">"Usuario logueó"</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Operación normal</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>WARNING</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">"API timeout 1 vez"</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Potencial problema</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>ERROR</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">"API timeout 3 veces"</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Problema importante</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>CRITICAL</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">"Database offline"</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sistema fuera</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_configuración">10.1.2. Configuración</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+
+logger = logging.getLogger(__name__)
+logger.info("Aplicación iniciada")
+logger.warning("Conexión lenta detectada")
+logger.error("Error al procesar", exc_info=True)</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_9_2_error_handling_en_langflow">10.2. 9.2 Error Handling en Langflow</h3>
+<div class="sect3">
+<h4 id="_try_except_pattern">10.2.1. Try-Except Pattern</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">def procesar_datos(entrada):
+    try:
+        # Código principal
+        resultado = hacer_algo(entrada)
+        return resultado
+
+    except TimeoutError:
+        # Timeouts: reintentar
+        logger.warning("Timeout, reintentando...")
+        return hacer_algo_con_retry(entrada)
+
+    except ValueError as e:
+        # Validación fallida
+        logger.error(f"Entrada inválida: {e}")
+        return {"error": "Entrada inválida", "detalle": str(e)}
+
+    except Exception as e:
+        # Error desconocido
+        logger.critical(f"Error inesperado: {e}", exc_info=True)
+        return {"error": "Error del sistema"}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_fallback_graceful">10.2.2. Fallback Graceful</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">Intenta API 1 (OpenAI)
+    ├─ Éxito → Usar respuesta
+    └─ Error → Intenta API 2 (Ollama local)
+        ├─ Éxito → Usar respuesta
+        └─ Error → Respuesta por defecto</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_9_3_debug_en_tiempo_real">10.3. 9.3 Debug en Tiempo Real</h3>
+<div class="sect3">
+<h4 id="_play_button_debug">10.3.1. Play Button Debug</h4>
+<div class="paragraph">
+<p>En Langflow:
+1. Haz clic ▶️ Play
+2. Visualiza flujo paso a paso
+3. Inspecciona entrada/salida de cada componente</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_ejemplo_debug">10.3.2. Ejemplo Debug</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">[Chat Input] → input: "Hola" ✓
+    ↓
+[Prompt Template] → output: "Eres asistente..." ✓
+    ↓
+[LLM] → output: "Hola, ¿cómo estás?" ✓
+    ↓
+[Chat Output] → "Hola, ¿cómo estás?" ✓</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Si hay error:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">[Chat Input] → input: "Hola" ✓
+    ↓
+[Prompt Template] → ERROR: Variable {variable} no definida ✗
+    ↓
+SOLUCIÓN: Definir variable en template</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_módulo_10_mejores_prácticas">11. Módulo 10: Mejores Prácticas</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_10_1_diseño_de_flujos">11.1. 10.1 Diseño de Flujos</h3>
+<div class="sect3">
+<h4 id="_principio_1_modularidad">11.1.1. Principio 1: Modularidad</h4>
+<div class="paragraph">
+<p>✅ <strong>Bien:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">[Validación] → [Clasificación] → [Procesamiento] → [Salida]
+Cada paso es independiente, reutilizable</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>❌ <strong>Mal:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">[Todo en un mega-componente]
+Difícil de debuggear, imposible reutilizar</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_principio_2_testing_en_cada_paso">11.1.2. Principio 2: Testing en Cada Paso</h4>
+<div class="paragraph">
+<p>✅ <strong>Bien:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">1. Test [Validación] aislado
+2. Test [Clasificación] aislado
+3. Test flujo completo</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>❌ <strong>Mal:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">Construye flujo completo
+Luego testea
+Encontrar error es lentísimo</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_principio_3_documentación">11.1.3. Principio 3: Documentación</h4>
+<div class="paragraph">
+<p>✅ <strong>Bien:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">Cada componente tiene descripción clara
+Prompts tienen comentarios
+Variables tienen significado obvio</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>❌ <strong>Mal:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">{var1} → {var2} → {var3}
+¿Qué hacen? ¿Quién sabe?</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_10_2_error_handling_en_producción">11.2. 10.2 Error Handling en Producción</h3>
+<div class="sect3">
+<h4 id="_strategy_fail_fast_fail_gracefully">11.2.1. Strategy: Fail Fast, Fail Gracefully</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">FASE 1: VALIDACIÓN (Fail Fast)
+Usuario da input → Validar inmediatamente
+Si inválido → Error al usuario de una vez
+
+FASE 2: PROCESAMIENTO (Fail Gracefully)
+Intenta procesar
+Si falla → Fallback a opción alternativa
+Si todo falla → Respuesta útil al usuario</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_ejemplo_práctico">11.2.2. Ejemplo Práctico</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">Usuario: Sube archivo 500 MB (max: 100 MB)
+    ↓
+[Size Validator] → Error inmediato: "Archivo muy grande"
+    ↓
+Usuario no pierde tiempo
+
+vs.
+
+Usuario: Sube archivo 500 MB
+    ↓
+[Sistema comienza procesamiento]
+    ↓
+[15 minutos después] → Error: "Archivo muy grande"
+    ↓
+Usuario frustrado</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_10_3_versionado_de_flujos">11.3. 10.3 Versionado de Flujos</h3>
+<div class="sect3">
+<h4 id="_control_de_versiones">11.3.1. Control de Versiones</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">Flujo: chatbot_v1
+├─ v1.0: Inicial, solo respuestas estáticas
+├─ v1.1: Agregó memoria
+├─ v1.2: Agregó web search
+├─ v2.0: Completa refactorización
+└─ v2.1: Actual en producción</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_cómo_cambiar_versiones">11.3.2. Cómo Cambiar Versiones</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">┌─ En desarrollo: v2.1 (con nuevas features)
+│
+├─ En staging: v2.0 (testing)
+│
+└─ En producción: v1.2 (estable)
+
+Cuando v2.1 está lista:
+Producción: v1.2 → v2.1
+┌─ Con rollback si falla
+└─ Monitoreando constante</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_10_4_seguridad">11.4. 10.4 Seguridad</h3>
+<div class="sect3">
+<h4 id="_proteger_api_keys">11.4.1. Proteger API Keys</h4>
+<div class="paragraph">
+<p>❌ Mal:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">OPENAI_API_KEY = "sk-abc123"  # ¡En código!</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>✅ Bien:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import os
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_autenticación_en_apis_exportadas">11.4.2. Autenticación en APIs Exportadas</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from fastapi import Depends, HTTPException
+from fastapi.security import HTTPBearer
+
+security = HTTPBearer()
+
+@app.post("/chat")
+async def chat(user_input: str, credentials = Depends(security)):
+    # Validar token
+    if not validar_token(credentials.credentials):
+        raise HTTPException(status_code=401, detail="No autorizado")
+
+    # Procesar
+    return {"resultado": procesar(user_input)}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_rate_limiting">11.4.3. Rate Limiting</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from slowapi import Limiter
+
+limiter = Limiter(key_func=get_remote_address)
+
+@app.post("/chat")
+@limiter.limit("10/minute")  # Máximo 10 requests por minuto
+async def chat(user_input: str):
+    return procesar(user_input)</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_conclusión_y_próximos_pasos">12. Conclusión y Próximos Pasos</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Felicidades, has completado un curso completo de Langflow de nivel profesional.</p>
+</div>
+<div class="sect2">
+<h3 id="_has_aprendido">12.1. Has Aprendido</h3>
+<div class="paragraph">
+<p><strong>Fundamentos (Módulos 1-2):</strong>
+- ✅ Qué es Langflow y sus ventajas
+- ✅ Componentes, conexiones, prompts
+- ✅ Testing en interfaz Langflow</p>
+</div>
+<div class="paragraph">
+<p><strong>Aplicaciones (Módulos 3-5):</strong>
+- ✅ Memoria y conversaciones multi-turn
+- ✅ Integraciones (web, APIs, database)
+- ✅ RAG, chatbots, automatización</p>
+</div>
+<div class="paragraph">
+<p><strong>Producción (Módulos 6-10):</strong>
+- ✅ Exportación como APIs REST
+- ✅ Deployment en cloud
+- ✅ Componentes personalizados
+- ✅ Optimización y performance
+- ✅ Monitoreo, debugging, seguridad</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_próximas_acciones">12.2. Próximas Acciones</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Instalar Langflow:</strong>
+[source,bash]
+----
+pip install langflow
+langflow run
+----</p>
+</li>
+<li>
+<p><strong>Crear Primer Flujo:</strong></p>
+<div class="ulist">
+<ul>
+<li>
+<p>Chat simple (Input → LLM → Output)</p>
+</li>
+<li>
+<p>Test con el Play button</p>
+</li>
+<li>
+<p>Verifica funcionamiento</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Agregar Complejidad:</strong></p>
+<div class="ulist">
+<ul>
+<li>
+<p>Memoria (Buffer Memory)</p>
+</li>
+<li>
+<p>Busca web</p>
+</li>
+<li>
+<p>Procesamiento de datos</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Exportar:</strong></p>
+<div class="ulist">
+<ul>
+<li>
+<p>Generar código FastAPI</p>
+</li>
+<li>
+<p>Desplegar en Heroku/Railway</p>
+</li>
+<li>
+<p>Hacer API pública</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Iterar:</strong></p>
+<div class="ulist">
+<ul>
+<li>
+<p>Monitorear performance</p>
+</li>
+<li>
+<p>Recoger feedback</p>
+</li>
+<li>
+<p>Mejorar continuamente</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_recursos_oficiales">12.3. Recursos Oficiales</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>GitHub:</strong> <a href="https://github.com/logspace-ai/langflow" class="bare">https://github.com/logspace-ai/langflow</a></p>
+</li>
+<li>
+<p><strong>Documentación:</strong> <a href="https://docs.langflow.ai" class="bare">https://docs.langflow.ai</a></p>
+</li>
+<li>
+<p><strong>Discord Comunidad:</strong> <a href="https://discord.gg/langflow" class="bare">https://discord.gg/langflow</a></p>
+</li>
+<li>
+<p><strong>Langflow Hub:</strong> <a href="https://langflow.io/hub" class="bare">https://langflow.io/hub</a> (Comparte flujos)</p>
+</li>
+<li>
+<p><strong>YouTube:</strong> Tutoriales video oficiales</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_recursos_de_aprendizaje_complementarios">12.4. Recursos de Aprendizaje Complementarios</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>LangChain Docs:</strong> <a href="https://python.langchain.com" class="bare">https://python.langchain.com</a> (Fundamentos)</p>
+</li>
+<li>
+<p><strong>Ollama:</strong> <a href="https://ollama.ai" class="bare">https://ollama.ai</a> (LLMs locales)</p>
+</li>
+<li>
+<p><strong>FastAPI:</strong> <a href="https://fastapi.tiangolo.com" class="bare">https://fastapi.tiangolo.com</a> (APIs REST)</p>
+</li>
+<li>
+<p><strong>Docker:</strong> <a href="https://docker.com" class="bare">https://docker.com</a> (Containerización)</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_tipos_comunes_en_langflow">12.5. Tipos Comunes en Langflow</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 30%;">
+<col style="width: 70%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Tipo</th>
+<th class="tableblock halign-left valign-top">Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>string</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Texto ("Hola mundo")</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>number</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Números (42, 3.14)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>integer</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Números enteros (5, -10)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>boolean</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Verdadero/Falso (true, false)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>array</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Lista ([1, 2, 3])</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>object</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Datos complejos ({key: value})</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>file</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Ruta a archivo (/path/to/file)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>prompt</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Plantilla de prompt</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>any</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Cualquier tipo (flexible)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_estructura_de_componentes_básica">12.6. Estructura de Componentes Básica</h3>
+<div class="paragraph">
+<p>Cada componente sigue esta estructura:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">ENTRADAS:
+- Parámetros que recibe
+- Tipos de datos esperados
+
+LÓGICA:
+- Qué hace el componente
+- Transformaciones de datos
+
+SALIDAS:
+- Resultados procesados
+- Tipos de datos retornados</code></pre>
+</div>
+</div>
+<hr>
+<div class="paragraph">
+<p><strong>¡Felicidades y bienvenido al mundo de Langflow!</strong></p>
+</div>
+<div class="paragraph">
+<p>Ahora tienes las herramientas para construir aplicaciones IA sofisticadas sin escribir código complejo. Empieza a experimentar, crea flujos, aprende de los errores y construye algo increíble.</p>
+</div>
+<div class="paragraph">
+<p>¿Preguntas? Únete a la comunidad Discord de Langflow. ¡Mucha suerte!</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2025-11-16 22:43:04 +0100
+</div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>
+if (!hljs.initHighlighting.called) {
+  hljs.initHighlighting.called = true
+  ;[].slice.call(document.querySelectorAll('pre.highlight > code[data-lang]')).forEach(function (el) { hljs.highlightBlock(el) })
+}
+</script>
+</body>
+</html>

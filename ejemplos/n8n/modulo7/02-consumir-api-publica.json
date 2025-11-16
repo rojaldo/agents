@@ -1,0 +1,101 @@
+{
+  "name": "M7.2 - Consumir API Pública (OpenWeather)",
+  "description": "Llamar API pública y procesar respuesta",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "start",
+      "name": "Start",
+      "type": "n8n-nodes-base.start",
+      "typeVersion": 1,
+      "position": [100, 300]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "ciudad",
+              "value": "Madrid"
+            },
+            {
+              "name": "apikey",
+              "value": "demo"
+            }
+          ]
+        }
+      },
+      "id": "set",
+      "name": "Set - Parámetros",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [300, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://api.open-meteo.com/v1/forecast?latitude=40.4168&longitude=-3.7038&current=temperature_2m,weather_code,wind_speed_10m&timezone=Europe/Madrid",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        }
+      },
+      "id": "http",
+      "name": "HTTP - Obtener Clima",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Procesar respuesta de la API de clima\nconst data = $input.first().json;\nconst current = data.current;\n\nreturn {\n  json: {\n    ciudad: 'Madrid',\n    temperatura: current.temperature_2m + '°C',\n    codigo_clima: current.weather_code,\n    velocidad_viento: current.wind_speed_10m + ' km/h',\n    zona_horaria: data.timezone,\n    actualizado: current.time,\n    condicion: mapearClima(current.weather_code)\n  }\n};\n\nfunction mapearClima(codigo) {\n  const clima = {\n    0: 'Despejado',\n    1: 'Parcialmente nublado',\n    2: 'Nublado',\n    3: 'Muy nublado',\n    45: 'Niebla',\n    48: 'Niebla escarchada',\n    51: 'Llovizna ligera',\n    61: 'Lluvia ligera',\n    71: 'Nieve ligera',\n    80: 'Lluvia moderada',\n    95: 'Tormenta'\n  };\n  return clima[codigo] || 'Desconocido';\n}"
+      },
+      "id": "code",
+      "name": "Code - Procesar Clima",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [700, 300]
+    }
+  ],
+  "connections": {
+    "start": {
+      "main": [
+        [
+          {
+            "node": "set",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set": {
+      "main": [
+        [
+          {
+            "node": "http",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "http": {
+      "main": [
+        [
+          {
+            "node": "code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

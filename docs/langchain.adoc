@@ -1,0 +1,2489 @@
+= Curso Completo de LangChain - Desde Principiante hasta Producción
+:doctype: book
+:toc:
+:toclevels: 4
+:sectnums:
+:icons: font
+:source-highlighter: highlight.js
+:highlightjsdir: https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0
+:highlightjs-theme: atom-one-light
+:data-uri:
+
+== Introducción al Curso
+
+Bienvenido a este curso completo de LangChain. En esta guía aprenderás cómo construir aplicaciones inteligentes potenciadas por modelos de lenguaje (LLMs), desde conceptos básicos hasta patrones avanzados listos para producción.
+
+*Objetivos del Curso:*
+
+- Entender qué son los LLMs y cómo usarlos efectivamente
+- Construir cadenas complejas que combinen múltiples componentes
+- Implementar agentes autónomos que pueden tomar decisiones
+- Crear sistemas de búsqueda y recuperación de documentos (RAG)
+- Aplicar patrones de producción con error handling y logging
+- Integrar todo en una aplicación real con API REST
+
+---
+
+== Módulo 1: Introducción a LangChain
+
+=== 1.1 ¿Qué es LangChain?
+
+==== Concepto Fundamental
+
+Imagina que tienes un modelo de lenguaje potente (como GPT o similar) y quieres usarlo para hacer cosas útiles. Los LLMs por sí solos solo generan texto basado en prompts. Pero ¿qué si quieres que:
+
+- Mantenga una conversación con memoria (recordar lo que dijiste antes)
+- Busque información en una base de datos antes de responder
+- Use calculadoras, APIs, o herramientas externas
+- Tome decisiones y ejecute acciones complejas
+
+*LangChain es el framework que hace todo esto posible.* Es como un "orquestador" que coordina el LLM con otros componentes.
+
+==== Definición Formal
+
+LangChain es un framework de código abierto que simplifica la construcción de aplicaciones basadas en LLMs proporcionando:
+
+* *Interfaces unificadas*: Una forma consistente de trabajar con diferentes modelos (OpenAI, Anthropic, Ollama, etc.)
+* *Composición elegante*: Combinar componentes como bloques de Lego
+* *Gestión de estado*: Memoria para conversaciones continuadas
+* *Integración de herramientas*: Conexión con APIs y sistemas externos
+* *RAG (Recuperación Aumentada)*: Hacer preguntas sobre documentos propios
+
+==== ¿Por Qué LangChain y No Llamar Directamente a la API?
+
+Si llamaras a una API de LLM directamente:
+
+[source,python]
+----
+# Forma primitiva (sin LangChain)
+import requests
+
+response = requests.post(
+    "https://api.openai.com/v1/chat/completions",
+    headers={"Authorization": f"Bearer {api_key}"},
+    json={
+        "model": "gpt-4",
+        "messages": [{"role": "user", "content": "¿Hola?"}]
+    }
+)
+resultado = response.json()["choices"][0]["message"]["content"]
+print(resultado)
+----
+
+Ves el problema: mucho boilerplate, manejo manual de errores, sin gestión de memoria, sin herramientas.
+
+*Con LangChain:*
+
+[source,python]
+----
+from langchain_community.llms import Ollama
+
+llm = Ollama(model="mistral")
+respuesta = llm.invoke("¿Hola?")
+print(respuesta)
+----
+
+Mucho más limpio. LangChain encapsula toda la complejidad.
+
+==== Diferencias con AutoGen y CrewAI
+
+LangChain, AutoGen y CrewAI son frameworks para trabajar con LLMs, pero tienen enfoques distintos:
+
+[cols="25,25,25,25"]
+|===
+| Aspecto | LangChain | AutoGen | CrewAI
+
+| **Enfoque** | Framework general para LLMs | Agentes conversacionales | Equipos de agentes coordinados
+| **Complejidad** | Baja-Media | Media | Alta
+| **Curva Aprendizaje** | Gradual | Rápida | Empinada
+| **Mejor para** | Cadenas, RAG, Chatbots | 2-3 agentes conversando | Múltiples agentes especializados
+| **Memoria** | 6 tipos diferentes | Integrada automáticamente | Integrada y coordinada
+| **Herramientas** | Extensas integraciones | Básicas | Avanzadas y especializadas
+| **Comunidad** | Muy grande (30K+ stars) | Grande (10K+ stars) | Creciente (5K+ stars)
+| **Madurez** | Muy madura | Madura | En evolución
+|===
+
+**Recomendación**: Elige *LangChain* para:
+- Tu primer proyecto con LLMs
+- Sistemas RAG (búsqueda en documentos)
+- Chatbots simples a complejos
+- Prototipado rápido
+
+==== Casos de Uso Reales
+
+===== 1. Chatbot de Servicio al Cliente
+
+Imagina una empresa que quiere automatizar soporte:
+
+```
+Usuario: "¿Por qué no funciona mi producto?"
+Bot (con RAG): [Busca en base de conocimiento]
+    → Encuentra artículos sobre solución de problemas
+Bot (con cadena): Genera respuesta útil
+Usuario: "¿Qué es una garantía?"
+Bot (con memoria): Sabe que estamos hablando de su producto
+```
+
+===== 2. Análisis de Documentos
+
+Una empresa legal quiere revisar 100 contratos:
+
+```
+LLM + DocumentLoader → Lee PDFs automáticamente
+LLM + OutputParser → Extrae cláusulas importantes en JSON
+LLM + RAG → Busca precedentes similares
+```
+
+===== 3. Agente Autonomo
+
+Un agente que puede hacer múltiples cosas:
+
+```
+Usuario: "Dame un resumen de ventas de enero"
+Agente (Reasoning): "Necesito datos de enero, debo usar SQL"
+Agente (Action): Ejecuta query en BD
+Agente (Observation): Ve resultados
+Agente (Thought): "Ahora debo resumir esto"
+Agent (Final Answer): Devuelve resumen
+```
+
+==== Ventajas Clave
+
+* ✅ *Abstracción sobre proveedores*: Cambia de OpenAI a Ollama sin cambiar código
+* ✅ *LCEL (LangChain Expression Language)*: Sintaxis elegante con operador `|`
+* ✅ *Ecosistema rico*: 200+ integraciones (APIs, BBDDs, servicios)
+* ✅ *Comunidad activa*: Soluciones para casi cualquier problema
+* ✅ *Documentación excelente*: Ejemplos claros y actualizados
+
+==== Limitaciones a Considerar
+
+- ⚠️ *Complejidad agregada*: Para casos muy simples puede ser overkill
+- ⚠️ *Curva de aprendizaje*: Muchos conceptos nuevos (Prompts, Chains, Agents, Memory)
+- ⚠️ *Performance*: Varias abstracciones = overhead computacional
+- ⚠️ *Dependencias*: Requiere muchos paquetes (langchain, langchain-community, langchain-core)
+
+---
+
+=== 1.2 Instalación y Configuración
+
+==== Requisitos del Sistema
+
+Antes de comenzar, asegúrate de tener:
+
+* **Python 3.10+**: Verifica con `python --version`
+* **pip**: El gestor de paquetes de Python (viene con Python)
+* **Terminal/Consola**: Para ejecutar comandos
+* **Ollama instalado**: Descárgalo desde https://ollama.ai
+
+==== Paso 1: Crear un Entorno Virtual
+
+Un entorno virtual es una carpeta aislada donde viven tus dependencias de Python. Es como tener una "caja arenera" separada para cada proyecto.
+
+*¿Por qué?* Si instalas todas las librerías globalmente, proyectos diferentes pueden entrar en conflicto. Con entornos virtuales, cada proyecto es independiente.
+
+[source,bash]
+----
+# Crear entorno virtual
+python3 -m venv venv_langchain
+
+# Activarlo (en Linux/macOS)
+source venv_langchain/bin/activate
+
+# Activarlo (en Windows)
+venv_langchain\Scripts\activate
+
+# Desactivarlo (cuando termines)
+deactivate
+----
+
+Cuando el entorno está activo, verás `(venv_langchain)` al principio de tu prompt.
+
+==== Paso 2: Instalar LangChain y Dependencias
+
+[source,bash]
+----
+# Actualizar pip a la versión más reciente
+pip install --upgrade pip
+
+# Instalar LangChain (versión 0.1+)
+pip install langchain langchain-community langchain-core
+
+# Para trabajar con Ollama
+pip install ollama
+
+# Herramientas adicionales útiles
+pip install python-dotenv pydantic requests
+
+# Opcional: para mejor experiencia de desarrollo
+pip install ipython jupyter
+----
+
+*¿Qué es cada paquete?*
+
+|===
+| Paquete | Propósito
+
+| `langchain` | Módulo principal (cadenas, agentes, memoria)
+| `langchain-community` | Integraciones (Ollama, OpenAI, Chroma, FAISS, etc.)
+| `langchain-core` | Abstracciones base (Runnable, BaseModel, etc.)
+| `python-dotenv` | Cargar variables de entorno de archivo .env
+| `pydantic` | Validación de datos estructurados
+|===
+
+==== Paso 3: Configurar Ollama
+
+Ollama es un servicio que te permite ejecutar modelos LLM localmente, sin APIs externas.
+
+[source,bash]
+----
+# 1. Descargar un modelo (primera vez tarda 5-10 minutos)
+ollama pull mistral
+
+# 2. Iniciar el servidor Ollama (en otra terminal)
+ollama serve
+
+# 3. Verificar que Ollama está corriendo
+curl http://localhost:11434/api/tags
+
+# 4. Listar modelos disponibles
+ollama list
+----
+
+Ollama estará disponible en `http://localhost:11434` por defecto.
+
+**Modelos recomendados para este curso:**
+
+|===
+| Modelo | Tamaño | Velocidad | Calidad | Ideal para
+
+| `mistral` | 4.1 GB | Rápido | Buena | Desarrollo, testing
+| `neural-chat` | 3.8 GB | Muy rápido | Aceptable | Prototipos rápidos
+| `llama2` | 3.8 GB | Rápido | Muy buena | Aplicaciones
+| `openchat` | 3.5 GB | Muy rápido | Buena | Producción ligera
+|===
+
+==== Paso 4: Crear Archivo .env
+
+El archivo `.env` almacena configuración sensible sin cometerla a Git.
+
+[source]
+----
+# .env
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_MODEL=mistral
+LOG_LEVEL=INFO
+----
+
+Luego en tu código:
+
+[source,python]
+----
+import os
+from dotenv import load_dotenv
+
+load_dotenv()  # Carga variables de .env
+
+BASE_URL = os.getenv("OLLAMA_BASE_URL")
+MODEL = os.getenv("OLLAMA_MODEL")
+----
+
+==== Paso 5: Verificación de Instalación
+
+Crea un archivo de prueba `test_setup.py`:
+
+[source,python]
+----
+#!/usr/bin/env python3
+"""Verifica que LangChain está instalado correctamente"""
+
+print("1. Verificando imports...")
+try:
+    from langchain_community.llms import Ollama
+    from langchain_core.prompts import PromptTemplate
+    print("   ✅ Imports correctos")
+except ImportError as e:
+    print(f"   ❌ Error: {e}")
+    exit(1)
+
+print("\n2. Verificando conexión con Ollama...")
+try:
+    llm = Ollama(model="mistral", base_url="http://localhost:11434")
+    respuesta = llm.invoke("¿Hola?")
+    print(f"   ✅ Ollama responde: {respuesta[:50]}...")
+except Exception as e:
+    print(f"   ❌ Error: {e}")
+    print("   Asegúrate de que Ollama está ejecutándose: ollama serve")
+    exit(1)
+
+print("\n3. Probando PromptTemplate...")
+try:
+    template = "Hola {nombre}, ¿cómo estás?"
+    prompt = PromptTemplate.from_template(template)
+    resultado = prompt.format(nombre="Juan")
+    print(f"   ✅ Resultado: {resultado}")
+except Exception as e:
+    print(f"   ❌ Error: {e}")
+    exit(1)
+
+print("\n✅ ¡Configuración correcta! Listo para empezar.")
+----
+
+Ejecuta:
+[source,bash]
+----
+python test_setup.py
+----
+
+==== Estructura de Proyecto Recomendada
+
+Cuando creczcas, organiza tu proyecto así:
+
+[source]
+----
+mi_proyecto_langchain/
+├── .env                          # Variables de entorno (NO COMMITAR)
+├── .gitignore                    # Excluir venv, .env, __pycache__
+├── requirements.txt              # Dependencias del proyecto
+├── src/
+│   ├── __init__.py
+│   ├── config.py                 # Configuración centralizada
+│   ├── models/
+│   │   ├── __init__.py
+│   │   └── llm_factory.py        # Factory para crear instancias de LLM
+│   ├── chains/
+│   │   ├── __init__.py
+│   │   ├── qa_chain.py           # Cadena de Preguntas y Respuestas
+│   │   ├── summarization.py      # Cadena de resumen
+│   │   └── classification.py     # Cadena de clasificación
+│   ├── agents/
+│   │   ├── __init__.py
+│   │   └── my_agent.py           # Definición de agente
+│   ├── tools/
+│   │   ├── __init__.py
+│   │   ├── search.py             # Herramienta de búsqueda
+│   │   ├── calculator.py         # Herramienta de cálculo
+│   │   └── weather.py            # Herramienta de clima
+│   ├── memory/
+│   │   ├── __init__.py
+│   │   └── conversation.py       # Gestión de memoria conversacional
+│   ├── retrieval/
+│   │   ├── __init__.py
+│   │   └── document_store.py     # Vector store para RAG
+│   ├── utils/
+│   │   ├── __init__.py
+│   │   └── logger.py             # Logging configurado
+│   └── api/
+│       ├── __init__.py
+│       └── routes.py             # Rutas FastAPI
+├── data/
+│   ├── documents/                # Documentos para RAG (PDFs, TXT, etc)
+│   └── vectors/                  # Vector stores guardados (persistencia)
+├── tests/
+│   ├── __init__.py
+│   ├── test_chains.py
+│   ├── test_agents.py
+│   └── test_tools.py
+├── examples/
+│   ├── simple_chat.py
+│   ├── rag_example.py
+│   └── agent_example.py
+├── main.py                       # Punto de entrada principal
+└── README.md                     # Documentación del proyecto
+----
+
+Este patrón sigue el principio DRY (Don't Repeat Yourself) y mantiene el código organizado conforme crece.
+
+---
+
+== Módulo 2: Conceptos Fundamentales
+
+=== 2.1 Language Models (LLMs) - El Corazón de Todo
+
+==== Entender los LLMs
+
+Un Language Model es una red neuronal entrenada con texto de internet. Aprendió patrones de lenguaje.
+
+*¿Cómo funciona internamente?*
+
+Un LLM opera con "tokens" (palabras o fragmentos):
+
+```
+"Hola mundo" → ["Hol", "a", " ", "mundo"] (tokenizado)
+              → [2532, 5, 102, 3091]        (números)
+              → [vector1, vector2, ...]     (embeddings)
+```
+
+Cada token se convierte a un vector de números. Estos vectores se procesan a través de capas de redes neuronales que predicen el siguiente token. Luego esos 100 tokens predichos se convierten de nuevo a texto.
+
+*¿Por qué necesito saber esto?*
+
+Porque:
+
+- Los LLMs no "entienden", sino que predicen estadísticamente
+- Las primeras respuestas son más confiables que las últimas
+- No son gratis en APIs comerciales (se paga por token)
+- Tienen limitaciones de contexto (máximo de tokens)
+
+==== Interfaz LLM vs ChatModel
+
+LangChain proporciona dos interfaces principales:
+
+===== LLM (Interfaz Clásica)
+
+Un LLM toma un string y devuelve un string:
+
+[source,python]
+----
+from langchain_community.llms import Ollama
+
+llm = Ollama(model="mistral")
+
+# Input: string
+# Output: string
+respuesta = llm.invoke("¿Cuál es la capital de Francia?")
+print(respuesta)  # Output: "París es la capital de Francia..."
+----
+
+*Características:*
+
+- ✅ Simple y directo
+- ✅ Menos tokens (más barato)
+- ❌ No entiende roles (usuario/asistente/sistema)
+- ❌ Menos apropiado para conversaciones
+
+===== ChatModel (Recomendado)
+
+Un ChatModel toma una lista de mensajes y devuelve un mensaje:
+
+[source,python]
+----
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_community.llms import Ollama
+
+llm = Ollama(model="mistral")
+
+# Crear un prompt estructurado con roles
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "Eres un geógrafo experto"),
+    ("user", "{pregunta}")
+])
+
+# La cadena combina prompt + LLM
+cadena = prompt | llm
+
+# Invocar
+respuesta = cadena.invoke({"pregunta": "¿Cuál es la capital de Francia?"})
+print(respuesta)
+----
+
+*Características:*
+
+- ✅ Soporta múltiples roles (system, user, assistant)
+- ✅ Mejor para conversaciones
+- ✅ Más flexible y expresivo
+- ❌ Usa ligeramente más tokens
+
+**Recomendación: Usa ChatModel en casi todos los casos**
+
+==== Parámetros Clave de LLMs
+
+Al crear un LLM, puedes controlar su comportamiento:
+
+[source,python]
+----
+from langchain_community.llms import Ollama
+
+llm = Ollama(
+    model="mistral",
+    base_url="http://localhost:11434",
+
+    # Creatividad (0 = determinístico, 1 = aleatorio)
+    temperature=0.7,
+
+    # Diversidad de tokens (0 = más comunes, 1 = todos)
+    top_p=0.9,
+
+    # Cuántos tokens considera para siguiente (mayor = más diverso)
+    top_k=40,
+
+    # Máximo de tokens a generar
+    num_predict=256,
+
+    # Tiempo máximo de espera
+    request_timeout=120
+)
+----
+
+*Guía práctica:*
+
+|===
+| Parámetro | Usar Bajo | Usar Alto | Para Qué
+
+| `temperature` | 0.1-0.3 | 0.8-1.0 | Exactitud / Creatividad
+| `top_p` | 0.1-0.5 | 0.8-1.0 | Predictible / Diverso
+| `top_k` | 1-20 | 50-100 | Determinístico / Exploratorio
+|===
+
+**Ejemplos de configuración:**
+
+Para análisis de datos (necesitas exactitud):
+```python
+llm = Ollama(model="mistral", temperature=0.1, top_p=0.3)
+```
+
+Para escritura creativa (necesitas variedad):
+```python
+llm = Ollama(model="mistral", temperature=0.9, top_p=0.95)
+```
+
+==== Selección de Modelos
+
+No todos los modelos son iguales. Elige según tus necesidades:
+
+[cols="20,15,15,15,35"]
+|===
+| Modelo | Tamaño | Velocidad | Calidad | Mejor para
+
+| mistral | 4.1GB | Rápido | Buena | Uso general, recomendado
+| neural-chat | 3.8GB | Muy rápido | Aceptable | Prototipado rápido, desarrollo
+| llama2 | 3.8GB | Rápido | Muy buena | Cuando necesitas mejor calidad
+| openchat | 3.5GB | Muy rápido | Buena | Producción con recursos limitados
+| dolphin-mixtral | 27GB | Lento | Excelente | Máxima calidad (si tienes GPU)
+|===
+
+*Prueba de rendimiento rápida:*
+
+```python
+from langchain_community.llms import Ollama
+import time
+
+modelos = ["mistral", "neural-chat", "llama2"]
+pregunta = "¿Cuál es el propósito de la vida?"
+
+for modelo in modelos:
+    llm = Ollama(model=modelo)
+
+    inicio = time.time()
+    respuesta = llm.invoke(pregunta)
+    tiempo = time.time() - inicio
+
+    print(f"\n{modelo}:")
+    print(f"  Tiempo: {tiempo:.1f}s")
+    print(f"  Respuesta: {respuesta[:100]}...")
+```
+
+---
+
+=== 2.2 Prompts - El Arte de Hablar con LLMs
+
+==== ¿Qué es un Prompt?
+
+Un prompt es una instrucción que le das al LLM. Es como la pregunta que haces:
+
+**Prompt simple:**
+```
+"¿Cuál es la capital de Francia?"
+```
+
+**Prompt complejo:**
+```
+Eres un profesor de historia experto. Un estudiante te pregunta sobre la Revolución Francesa.
+Debes responder de forma educativa, con ejemplos, y hacer que sea interesante.
+
+Pregunta: "¿Por qué fue importante la Revolución Francesa?"
+Respuesta:
+```
+
+La **calidad del prompt** determina **la calidad de la respuesta**.
+
+==== PromptTemplate - Parametrizar Prompts
+
+A menudo quieres reutilizar prompts con diferentes variables:
+
+[source,python]
+----
+from langchain_core.prompts import PromptTemplate
+
+# Definir un template (nota los {variables})
+template = """Eres un experto en {tema}.
+Un estudiante te pregunta: {pregunta}
+Responde de forma clara y concisa."""
+
+# Crear el prompt
+prompt = PromptTemplate(
+    input_variables=["tema", "pregunta"],
+    template=template
+)
+
+# Usar el prompt con diferentes valores
+resultado1 = prompt.format(
+    tema="Python",
+    pregunta="¿Qué es un decorador?"
+)
+
+resultado2 = prompt.format(
+    tema="JavaScript",
+    pregunta="¿Qué es una closure?"
+)
+
+print(resultado1)
+# Salida:
+# Eres un experto en Python.
+# Un estudiante te pregunta: ¿Qué es un decorador?
+# Responde de forma clara y concisa.
+----
+
+*Ventajas:*
+- ✅ Reutilizable
+- ✅ Fácil de mantener
+- ✅ Menos propenso a errores
+
+==== ChatPromptTemplate - Prompts para Conversaciones
+
+Para chat, necesitas especificar el rol de cada mensaje:
+
+[source,python]
+----
+from langchain_core.prompts import ChatPromptTemplate
+from langchain.schema import HumanMessage, AIMessage, SystemMessage
+
+# Opción 1: Usando tuplas (role, template)
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "Eres un asistente matemático experto."),
+    ("user", "Explica: {concepto}"),
+])
+
+# Opción 2: Usando objetos (más explícito)
+from langchain_core.prompts import SystemMessagePromptTemplate, HumanMessagePromptTemplate
+
+system_prompt = SystemMessagePromptTemplate.from_template(
+    "Eres un asistente matemático experto."
+)
+human_prompt = HumanMessagePromptTemplate.from_template(
+    "Explica: {concepto}"
+)
+
+prompt = ChatPromptTemplate.from_messages([system_prompt, human_prompt])
+
+# Usar
+mensajes = prompt.format_messages(concepto="derivadas")
+print(mensajes)
+# Output:
+# [
+#   SystemMessage(content="Eres un asistente matemático experto."),
+#   HumanMessage(content="Explica: derivadas")
+# ]
+----
+
+==== Few-Shot Prompting - Enseñar con Ejemplos
+
+A veces el LLM entiende mejor si le das ejemplos:
+
+[source,python]
+----
+from langchain_core.prompts import FewShotPromptTemplate, PromptTemplate
+
+# Definir ejemplos
+ejemplos = [
+    {
+        "entrada": "2 + 2",
+        "salida": "4"
+    },
+    {
+        "entrada": "5 * 3",
+        "salida": "15"
+    },
+    {
+        "entrada": "10 - 7",
+        "salida": "3"
+    }
+]
+
+# Template para cada ejemplo
+ejemplo_prompt = PromptTemplate(
+    input_variables=["entrada", "salida"],
+    template="Entrada: {entrada}\nSalida: {salida}"
+)
+
+# FewShotPromptTemplate
+prompt = FewShotPromptTemplate(
+    examples=ejemplos,
+    example_prompt=ejemplo_prompt,
+    suffix="Ahora, resuelve: {entrada}",
+    input_variables=["entrada"],
+    example_separator="\n---\n"
+)
+
+# Usar
+resultado = prompt.format(entrada="100 / 5")
+print(resultado)
+# Output:
+# Entrada: 2 + 2
+# Salida: 4
+# ---
+# Entrada: 5 * 3
+# Salida: 15
+# ---
+# Entrada: 10 - 7
+# Salida: 3
+# ---
+# Ahora, resuelve: 100 / 5
+----
+
+*¿Por qué funciona?* El LLM ve el patrón y puede seguirlo.
+
+==== Partial Variables - Fijar Variables
+
+A veces algunas variables están fijas:
+
+[source,python]
+----
+from langchain_core.prompts import PromptTemplate
+
+template = "Eres {rol} especializado en {tema}. {pregunta}"
+
+prompt = PromptTemplate(
+    template=template,
+    input_variables=["pregunta"],  # Solo esta necesita input
+    partial_variables={
+        "rol": "Profesor Experto",
+        "tema": "Matemáticas"
+    }
+)
+
+# Solo necesitas proporcionar pregunta
+resultado = prompt.format(pregunta="¿Qué es una derivada?")
+
+# Output:
+# Eres Profesor Experto especializado en Matemáticas. ¿Qué es una derivada?
+----
+
+*Caso de uso:* Cuando tienes un system prompt fijo pero quieres cambiar el user input.
+
+==== Técnicas Avanzadas de Prompting
+
+===== Chain of Thought (CoT)
+
+Pedirle al LLM que piense paso a paso:
+
+```
+Pregunta: Si tengo 5 manzanas y doy 2 a un amigo, ¿cuántas tengo?
+Prompt: Pensemos paso a paso:
+  1. Empiezo con 5 manzanas
+  2. Doy 2 a un amigo (resto 2)
+  3. 5 - 2 = 3
+Respuesta: 3 manzanas
+
+vs.
+
+Pregunta: Si tengo 5 manzanas y doy 2 a un amigo, ¿cuántas tengo?
+Respuesta: 3
+```
+
+La primera forma es más explícita y el LLM comete menos errores.
+
+===== Role Playing
+
+Asignarle un rol específico:
+
+```
+Sin role:
+"¿Qué es Python?"
+
+Con role:
+"Eres un instructor de programación con 10 años de experiencia.
+Explica qué es Python en términos simples para un principiante."
+```
+
+Con rol, la respuesta es mejor estructurada y educativa.
+
+===== Structured Output
+
+Pedirle que devuelva formato específico:
+
+```
+Pregunta: Analiza el siguiente producto
+Producto: iPhone 15
+Devuelve en formato JSON con campos: nombre, precio_aproximado, características (lista)
+
+Respuesta esperada:
+{
+  "nombre": "iPhone 15",
+  "precio_aproximado": "999 USD",
+  "características": ["Pantalla OLED", "A17 Bionic", "Cámara mejorada"]
+}
+```
+
+---
+
+=== 2.3 Output Parsers - Convertir Texto en Datos
+
+==== Problema
+
+Los LLMs devuelven strings. A veces necesitas estructurar esos strings:
+
+```python
+respuesta = llm.invoke("Dame una lista de frutas")
+# Output: "Las frutas incluyen manzana, plátano, naranja, uva"
+
+# Quieres:
+frutas = ["manzana", "plátano", "naranja", "uva"]
+```
+
+Los Output Parsers resuelven esto.
+
+==== StrOutputParser - El Más Simple
+
+[source,python]
+----
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_community.llms import Ollama
+
+llm = Ollama(model="mistral")
+prompt = ChatPromptTemplate.from_messages([
+    ("user", "{pregunta}")
+])
+
+# El parser simplemente deja el string tal cual
+parser = StrOutputParser()
+
+# Combinar
+cadena = prompt | llm | parser
+
+respuesta = cadena.invoke({"pregunta": "¿Hola?"})
+print(type(respuesta))  # <class 'str'>
+----
+
+==== PydanticOutputParser - Validación Estructurada
+
+[source,python]
+----
+from langchain_core.output_parsers import PydanticOutputParser
+from pydantic import BaseModel, Field
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_community.llms import Ollama
+
+# Definir la estructura esperada
+class Persona(BaseModel):
+    nombre: str = Field(description="Nombre completo")
+    edad: int = Field(description="Edad en años")
+    ciudad: str = Field(description="Ciudad de residencia")
+
+# Crear parser
+parser = PydanticOutputParser(pydantic_object=Persona)
+
+# El prompt debe incluir instrucciones de formato
+prompt = ChatPromptTemplate.from_messages([
+    ("user", "Extrae información de esta persona: {texto}"),
+    ("user", "{format_instructions}")
+])
+
+llm = Ollama(model="mistral")
+cadena = prompt | llm | parser
+
+resultado = cadena.invoke({
+    "texto": "Juan tiene 30 años y vive en Madrid",
+    "format_instructions": parser.get_format_instructions()
+})
+
+print(resultado.nombre)  # "Juan"
+print(resultado.edad)    # 30
+print(resultado.ciudad)  # "Madrid"
+----
+
+El parser automáticamente:
+
+- ✅ Valida que edad sea un número
+- ✅ Verifica que todos los campos estén presentes
+- ✅ Lanza error si el formato es inválido
+
+==== JsonOutputParser - JSON Flexible
+
+[source,python]
+----
+from langchain_core.output_parsers import JsonOutputParser
+
+parser = JsonOutputParser()
+
+# Útil cuando el LLM devuelve JSON
+respuesta_texto = '''
+{
+  "nombre": "María",
+  "edad": 25,
+  "habilidades": ["Python", "JavaScript"]
+}
+'''
+
+datos = parser.parse(respuesta_texto)
+print(datos["nombre"])  # "María"
+----
+
+==== Parsers Personalizados
+
+Para casos especiales:
+
+[source,python]
+----
+from langchain_core.output_parsers import BaseOutputParser
+
+class ListaParserPersonalizado(BaseOutputParser):
+    """Parser que divide por líneas"""
+
+    def parse(self, text: str) -> list:
+        lineas = text.strip().split("\n")
+        # Filtrar líneas vacías y limpiar
+        return [l.strip() for l in lineas if l.strip()]
+
+parser = ListaParserPersonalizado()
+
+respuesta = """
+Manzana
+Plátano
+Naranja
+Uva
+"""
+
+frutas = parser.parse(respuesta)
+print(frutas)  # ["Manzana", "Plátano", "Naranja", "Uva"]
+----
+
+---
+
+== Módulo 3: Cadenas (Chains) - Combinando Componentes
+
+=== 3.1 Concepto de Cadena
+
+==== ¿Qué es una Cadena?
+
+Una cadena es una secuencia de operaciones conectadas:
+
+```
+[Entrada] → [Prompt] → [LLM] → [Parser] → [Salida]
+```
+
+*Ejemplo simple:*
+
+```
+Usuario pregunta: "Explica Python"
+         ↓
+    PromptTemplate: "Eres experto. Explica: {concepto}"
+         ↓
+    LLM: Genera explicación
+         ↓
+    StrOutputParser: Limpia respuesta
+         ↓
+    "Python es un lenguaje de programación..."
+```
+
+*Ejemplo complejo:*
+
+```
+[Entrada] → [Clasificar tipo] → [Rama técnica] → [Respuesta técnica]
+                            ↘ [Rama general] → [Respuesta general]
+
+Según el tipo de pregunta, toma ruta diferente
+```
+
+==== Forma Clásica vs LCEL
+
+===== Forma Clásica (Antigua)
+
+[source,python]
+----
+from langchain.chains import LLMChain
+from langchain_core.prompts import PromptTemplate
+from langchain_community.llms import Ollama
+
+llm = Ollama(model="mistral")
+prompt = PromptTemplate.from_template("Explica: {concepto}")
+
+# Crear cadena clásica
+chain = LLMChain(llm=llm, prompt=prompt)
+
+respuesta = chain.run(concepto="Decoradores en Python")
+----
+
+===== Forma Moderna con LCEL (Recomendada)
+
+[source,python]
+----
+from langchain_core.prompts import PromptTemplate
+from langchain_community.llms import Ollama
+
+llm = Ollama(model="mistral")
+prompt = PromptTemplate.from_template("Explica: {concepto}")
+
+# Usar operador pipe (|) para conectar
+cadena = prompt | llm
+
+respuesta = cadena.invoke({"concepto": "Decoradores en Python"})
+----
+
+*¿Por qué LCEL es mejor?*
+- ✅ Más legible (línea de operaciones clara)
+- ✅ Más flexible (fácil agregar componentes)
+- ✅ Mejor rendimiento (streaming, paralización)
+- ✅ Es el futuro de LangChain
+
+**Usaremos LCEL en todo el curso.**
+
+=== 3.2 LCEL (LangChain Expression Language)
+
+==== Operador Pipe |
+
+El operador `|` conecta componentes en secuencia:
+
+[source,python]
+----
+# Encadenamiento básico
+cadena = prompt | llm | output_parser
+
+# Es equivalente a:
+# 1. Aplica prompt
+# 2. Pasa resultado al llm
+# 3. Pasa resultado al parser
+----
+
+*Ejemplo paso a paso:*
+
+[source,python]
+----
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_community.llms import Ollama
+from langchain_core.output_parsers import StrOutputParser
+
+# Componente 1: Prompt
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "Eres poeta"),
+    ("user", "Escribe un poema sobre {tema}")
+])
+
+# Componente 2: LLM
+llm = Ollama(model="mistral")
+
+# Componente 3: Parser
+parser = StrOutputParser()
+
+# Conectar con | (pipe)
+cadena = prompt | llm | parser
+
+# Invocar
+resultado = cadena.invoke({"tema": "la lluvia"})
+print(resultado)  # El poema
+----
+
+¿Qué pasa internamente?
+
+1. `prompt | llm`:
+   - Input: `{"tema": "la lluvia"}`
+   - Prompt genera: `"Eres poeta.\nEscribe un poema sobre la lluvia"`
+   - LLM responde: `"En gotas cae la lluvia..."`
+   - Output: `"En gotas cae la lluvia..."`
+
+2. `(prompt | llm) | parser`:
+   - Input: `"En gotas cae la lluvia..."`
+   - Parser limpia: `"En gotas cae la lluvia..."`
+   - Output: `"En gotas cae la lluvia..."`
+
+==== RunnableLambda - Funciones Personalizadas
+
+A veces necesitas lógica personalizada:
+
+[source,python]
+----
+from langchain_core.runnables import RunnableLambda
+
+# Función simple
+def procesar_entrada(x):
+    return x.upper()
+
+# Convertir función a Runnable
+runnable = RunnableLambda(procesar_entrada)
+
+# Usar en cadena
+cadena = runnable | prompt | llm
+
+resultado = cadena.invoke("hola")
+# Resultado: LLM recibe "HOLA"
+----
+
+*Caso más complejo:*
+
+[source,python]
+----
+from langchain_core.runnables import RunnableLambda
+from datetime import datetime
+
+def enriquecer_entrada(texto):
+    """Agregar contexto a la entrada"""
+    return {
+        "texto": texto,
+        "timestamp": datetime.now().isoformat(),
+        "idioma": "es"
+    }
+
+# Esto entra a prompt como diccionario
+prompt = ChatPromptTemplate.from_messages([
+    ("user", "Texto: {texto}, enviado a las {timestamp}")
+])
+
+cadena = (
+    RunnableLambda(enriquecer_entrada)
+    | prompt
+    | llm
+)
+
+resultado = cadena.invoke("Mi mensaje")
+----
+
+==== RunnableParallel - Ejecutar Múltiples Cadenas
+
+A veces quieres ejecutar varias cosas al mismo tiempo:
+
+[source,python]
+----
+from langchain_core.runnables import RunnableParallel, RunnablePassthrough
+
+llm = Ollama(model="mistral")
+
+# Definir múltiples cadenas
+cadena_qa = PromptTemplate.from_template("Q: {pregunta}\nA:") | llm
+cadena_resumen = PromptTemplate.from_template("Resume: {pregunta}") | llm
+cadena_traduccion = PromptTemplate.from_template("Traduce al inglés: {pregunta}") | llm
+
+# Paralelizar
+paralelo = RunnableParallel(
+    respuesta=cadena_qa,
+    resumen=cadena_resumen,
+    traduccion=cadena_traduccion
+)
+
+resultado = paralelo.invoke({"pregunta": "¿Qué es Python?"})
+
+print(resultado)
+# Output:
+# {
+#   "respuesta": "Python es un lenguaje...",
+#   "resumen": "Lenguaje de programación...",
+#   "traduccion": "Python is a programming language..."
+# }
+----
+
+*Ventaja:* Las tres cadenas se ejecutan en paralelo, no secuencialmente. Mucho más rápido.
+
+==== RunnableBranch - Lógica Condicional
+
+Tomar decisiones en base a la entrada:
+
+[source,python]
+----
+from langchain_core.runnables import RunnableBranch
+
+# Definir ramas
+rama_programacion = PromptTemplate.from_template(
+    "Eres experto en programación. {pregunta}"
+) | llm
+
+rama_escritura = PromptTemplate.from_template(
+    "Eres escritor experto. {pregunta}"
+) | llm
+
+rama_default = PromptTemplate.from_template(
+    "Eres asistente general. {pregunta}"
+) | llm
+
+# Crear rama condicional
+rama_inteligente = RunnableBranch(
+    # Si pregunta contiene "código", usar rama_programacion
+    (lambda x: "código" in x["pregunta"].lower(), rama_programacion),
+    # Si pregunta contiene "escribe", usar rama_escritura
+    (lambda x: "escribe" in x["pregunta"].lower(), rama_escritura),
+    # Si ninguna, usar default
+    rama_default
+)
+
+# Usar
+print(rama_inteligente.invoke({"pregunta": "¿Cómo hago un código en Python?"}))
+# Usa rama_programacion
+
+print(rama_inteligente.invoke({"pregunta": "Escribe un poema"}))
+# Usa rama_escritura
+----
+
+==== Métodos de Invocación
+
+Una cadena puede ejecutarse de diferentes formas:
+
+[source,python]
+----
+cadena = prompt | llm
+
+# 1. invoke: Una sola entrada, una sola salida
+resultado = cadena.invoke({"pregunta": "¿Hola?"})
+
+# 2. batch: Múltiples entradas, múltiples salidas (más rápido que invoke)
+resultados = cadena.batch([
+    {"pregunta": "¿Hola?"},
+    {"pregunta": "¿Cómo estás?"},
+    {"pregunta": "¿Qué es Python?"}
+])
+
+# 3. stream: Respuesta en tiempo real (para UI)
+print("Respuesta: ", end="", flush=True)
+for chunk in cadena.stream({"pregunta": "Cuéntame un chiste"}):
+    print(chunk, end="", flush=True)
+
+# 4. ainvoke: Asincrónica (para aplicaciones web)
+import asyncio
+resultado = await cadena.ainvoke({"pregunta": "¿Hola?"})
+----
+
+*¿Cuándo usar cada uno?*
+
+| Método | Cuándo | Ventaja
+| `invoke` | Una sola pregunta | Simple
+| `batch` | 10+ preguntas | Más rápido
+| `stream` | Mostrar respuesta en vivo | Usuario ve progreso
+| `ainvoke` | Aplicación web/Telegram | No bloquea
+
+---
+
+== Módulo 4: Memoria (Memory) - Conversaciones con Contexto
+
+=== 4.1 Problema que Resuelve
+
+==== Sin Memoria
+
+```
+Usuario: "Mi nombre es Juan"
+Bot: "Hola Juan"
+
+Usuario: "¿Cuál es mi nombre?"
+Bot: "No tengo información sobre tu nombre"  ❌
+```
+
+Cada mensaje es independiente. El bot no "recuerda".
+
+==== Con Memoria
+
+```
+Usuario: "Mi nombre es Juan"
+Bot: "Hola Juan"
+[Se guarda: Usuario dijo "Mi nombre es Juan"]
+
+Usuario: "¿Cuál es mi nombre?"
+Bot: [Recupera historial] "Tu nombre es Juan" ✅
+```
+
+La memoria mantiene un historial que las cadenas pueden usar.
+
+=== 4.2 ConversationBufferMemory
+
+La forma más simple: guarda todo.
+
+[source,python]
+----
+from langchain.memory import ConversationBufferMemory
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_community.llms import Ollama
+
+# Crear memoria
+memoria = ConversationBufferMemory(
+    memory_key="chat_history",    # Nombre de la variable
+    return_messages=True           # Devolver como lista de mensajes
+)
+
+# Crear cadena
+llm = Ollama(model="mistral")
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "Eres un asistente útil"),
+    ("placeholder", "{chat_history}"),  # Aquí entra el historial
+    ("user", "{input}")
+])
+cadena = prompt | llm
+
+# Simulación de conversación
+turnos = [
+    "Mi nombre es Juan",
+    "¿Cuál es mi nombre?",
+    "Trabajo en tecnología",
+    "¿En qué trabajas?"
+]
+
+for entrada in turnos:
+    print(f"\nUsuario: {entrada}")
+
+    # Obtener historial actual
+    historial = memoria.load_memory_variables({})
+
+    # Invocar cadena
+    respuesta = cadena.invoke({
+        "chat_history": historial["chat_history"],
+        "input": entrada
+    })
+
+    print(f"Bot: {respuesta}")
+
+    # Guardar en memoria
+    memoria.save_context(
+        {"input": entrada},
+        {"output": respuesta}
+    )
+----
+
+*Resultado esperado:*
+```
+Usuario: Mi nombre es Juan
+Bot: Hola Juan, es un placer conocerte.
+Memoria: [HumanMessage("Mi nombre es Juan"), AIMessage("Hola...")]
+
+Usuario: ¿Cuál es mi nombre?
+Bot: Tu nombre es Juan, como mencionaste anteriormente.
+Memoria: [HumanMessage("Mi nombre es Juan"), ..., HumanMessage("¿Cuál..."), AIMessage("Tu nombre es Juan...")]
+```
+
+==== Limitación: Los Tokens
+
+ConversationBufferMemory guarda TODO. Para conversaciones largas, esto es un problema:
+
+```
+Conversación de 100 turnos = 5000 tokens
+Al LLM le quedan solo 500 tokens para generar respuesta
+El contexto disponible es limitado
+```
+
+=== 4.3 ConversationWindowMemory
+
+Guarda solo los últimos N turnos:
+
+[source,python]
+----
+from langchain.memory import ConversationBufferWindowMemory
+
+# Mantener solo los últimos 2 turnos
+memoria = ConversationBufferWindowMemory(
+    k=2,                           # Número de turnos
+    memory_key="chat_history",
+    return_messages=True
+)
+
+# El resto del código es igual
+cadena = prompt | llm
+
+for entrada in turnos:
+    historial = memoria.load_memory_variables({})
+    respuesta = cadena.invoke({
+        "chat_history": historial["chat_history"],
+        "input": entrada
+    })
+    memoria.save_context({"input": entrada}, {"output": respuesta})
+----
+
+*Comportamiento:*
+```
+Turno 1: "Mi nombre es Juan" → Se guarda
+Turno 2: "¿Cuál es mi nombre?" → Se guarda (total: 2)
+Turno 3: "¿Qué día es hoy?" → Se guarda, turno 1 se olvida
+        Memory now: [Turno 2, Turno 3]
+Turno 4: "¿Cuál es mi nombre?" → Bot no lo sabe (perdió turno 1)
+```
+
+*Ventajas:*
+- ✅ Menos tokens
+- ✅ Conversaciones más rápidas
+- ❌ Olvida información antigua
+
+==== ConversationSummaryMemory
+
+Resume la conversación automáticamente:
+
+[source,python]
+----
+from langchain.memory import ConversationSummaryMemory
+from langchain_community.llms import Ollama
+
+llm = Ollama(model="mistral")
+
+memoria = ConversationSummaryMemory(
+    llm=llm,
+    buffer="",
+    memory_key="chat_history"
+)
+
+# El resto funciona igual
+cadena = prompt | llm
+
+# A medida que agregas mensajes, se resumen automáticamente
+memoria.save_context(
+    {"input": "Soy ingeniero, trabajo en Madrid, me llamo Juan"},
+    {"output": "Entendido, eres ingeniero en Madrid"}
+)
+
+# Memoria en lugar de todo el texto:
+historial = memoria.load_memory_variables({})
+print(historial)
+# Output: "Usuario es ingeniero, trabaja en Madrid, se llama Juan"
+----
+
+*Ventajas:*
+
+- ✅ Usa pocos tokens
+- ✅ Mantiene información importante
+- ❌ Requiere un LLM (más lento)
+
+==== ConversationTokenBufferMemory
+
+Limita por tokens, no por turnos:
+
+[source,python]
+----
+from langchain.memory import ConversationTokenBufferMemory
+
+memoria = ConversationTokenBufferMemory(
+    llm=llm,
+    max_token_limit=100,  # Máximo 100 tokens
+    memory_key="chat_history",
+    return_messages=True
+)
+
+# La memoria guarda lo máximo que cabe en 100 tokens
+----
+
+*Matriz de selección:*
+
+|===
+| Tipo | Tokens | Info Completa | Mejor Para
+
+| BufferMemory | Alto | Sí | Conversaciones cortas
+| WindowMemory | Bajo | Últimos N turnos | Conversaciones largas rápidas
+| SummaryMemory | Bajo | Resumen | Cuando necesitas contexto completo sin tokens
+| TokenBufferMemory | Exacto | Máximo posible | Límite de tokens estricto
+|===
+
+---
+
+== Módulo 5: Agentes (Agents) - Sistemas Inteligentes y Autónomos
+
+=== 5.1 ¿Qué es un Agente?
+
+==== Comparación: Cadena vs Agente
+
+*Cadena:* Flujo predeterminado
+
+```
+[Prompt] → [LLM] → [Output] → [Usuario]
+
+Siempre la misma ruta
+```
+
+*Agente:* Toma decisiones
+
+```
+        ┌─ ¿Necesito usar herramientas?
+[Pensar] ─ Sí → [Seleccionar herramienta] → [Ejecutar]
+        └─ No → [Responder directamente]
+
+La ruta depende de la pregunta
+```
+
+==== Ejemplo Real
+
+**Usuario:** "¿Cuánto es 15 * 27 y dime la respuesta en texto?"
+
+*Cadena (no puede):*
+```
+LLM: "15 * 27 = 405" (intenta calcular, puede fallar)
+```
+
+*Agente (sí puede):*
+```
+Pensamiento: "Necesito calcular 15 * 27"
+Acción: Uso herramienta "Multiplicar"
+Observación: 405
+Pensamiento: "Ahora debo convertir a texto"
+Acción: Generar respuesta
+Respuesta Final: "El resultado es cuatrocientos cinco"
+```
+
+=== 5.2 Componentes de un Agente
+
+Un agente necesita:
+
+1. **LLM**: Para pensar y decidir
+2. **Herramientas (Tools)**: Para actuar
+3. **Memoria**: Para recordar contexto (opcional)
+4. **Prompt**: Instrucciones sobre cómo actuar
+
+==== Creando Herramientas con @tool
+
+[source,python]
+----
+from langchain_core.tools import tool
+
+# Forma simple: decorador @tool
+@tool
+def multiplicar(a: int, b: int) -> int:
+    """Multiplica dos números.
+
+    Args:
+        a: Primer número
+        b: Segundo número
+    """
+    return a * b
+
+# El decorador automáticamente convierte la función a una Tool
+print(multiplicar.name)           # "multiplicar"
+print(multiplicar.description)   # "Multiplica dos números..."
+----
+
+*Ejemplo más complejo:*
+
+[source,python]
+----
+@tool
+def buscar_informacion(tema: str) -> str:
+    """Busca información sobre un tema.
+
+    Realiza una búsqueda en Wikipedia sobre el tema proporcionado.
+    """
+    # En un caso real, usarías una API
+    resultados = {
+        "Python": "Lenguaje de programación creado por Guido van Rossum",
+        "JavaScript": "Lenguaje para desarrollo web",
+        "Rust": "Lenguaje seguro y rápido"
+    }
+    return resultados.get(tema, "No encontrado")
+
+# Usar la herramienta
+resultado = buscar_informacion.invoke({"tema": "Python"})
+print(resultado)
+----
+
+==== Creando Agentes con create_react_agent
+
+ReAct = Reasoning + Acting (Pensar + Actuar)
+
+[source,python]
+----
+from langchain.agents import create_react_agent, AgentExecutor
+from langchain_core.prompts import PromptTemplate
+from langchain_community.llms import Ollama
+from langchain_core.tools import tool
+
+# Paso 1: Definir herramientas
+@tool
+def sumar(a: int, b: int) -> int:
+    """Suma dos números"""
+    return a + b
+
+@tool
+def multiplicar(a: int, b: int) -> int:
+    """Multiplica dos números"""
+    return a * b
+
+herramientas = [sumar, multiplicar]
+
+# Paso 2: Crear el agente
+llm = Ollama(model="mistral")
+
+prompt_template = """Eres un asistente que puede usar herramientas matemáticas.
+Tienes acceso a las siguientes herramientas:
+
+{tools}
+
+Usa el siguiente formato exactamente:
+
+Question: la pregunta que debes responder
+Thought: piensa en qué hacer
+Action: la acción a tomar, debe ser una de [{tool_names}]
+Action Input: el input para la acción (como JSON)
+Observation: el resultado de la acción
+... (repite Thought/Action/Observation si es necesario)
+Thought: ya sé la respuesta final
+Final Answer: la respuesta final
+
+Comienza!
+
+Question: {{input}}"""
+
+prompt = PromptTemplate.from_template(prompt_template)
+
+agente = create_react_agent(llm, herramientas, prompt)
+
+# Paso 3: Crear executor
+executor = AgentExecutor(
+    agent=agente,
+    tools=herramientas,
+    verbose=True,           # Ver pasos intermedios
+    max_iterations=5        # Máximo de pasos antes de parar
+)
+
+# Paso 4: Usar el agente
+resultado = executor.invoke({
+    "input": "¿Cuánto es (5 + 3) * 2?"
+})
+
+print(resultado)
+----
+
+*Salida esperada (con verbose=True):*
+```
+> Entering new AgentExecutor chain...
+Thought: Primero necesito sumar 5 + 3
+Action: sumar
+Action Input: {"a": 5, "b": 3}
+Observation: 8
+Thought: Ahora necesito multiplicar 8 * 2
+Action: multiplicar
+Action Input: {"a": 8, "b": 2}
+Observation: 16
+Thought: Ya tengo la respuesta final
+Final Answer: (5 + 3) * 2 = 16
+
+> Finished AgentExecutor chain.
+```
+
+==== AgentExecutor - Configuración Avanzada
+
+[source,python]
+----
+executor = AgentExecutor(
+    agent=agente,
+    tools=herramientas,
+
+    # Control de ejecución
+    verbose=True,                       # Ver pasos
+    max_iterations=10,                  # Máximo de iteraciones
+    early_stopping_method="force",      # Detener si supera max
+
+    # Manejo de errores
+    handle_parsing_errors=True,        # No fallar si LLM da formato raro
+
+    # Memoria
+    memory=memoria,                     # Conversación con contexto
+
+    # Logging
+    return_all_intermiate_steps=True   # Devolver todos los pasos
+)
+----
+
+---
+
+== Módulo 6: Herramientas (Tools) - Extendiendo Capacidades
+
+=== 6.1 ¿Por Qué Herramientas?
+
+Los LLMs solo generan texto. Las herramientas les permiten:
+
+- Usar calculadoras (sin errores aritméticos)
+- Consultar APIs (información actualizada)
+- Acceder a BBDDs (datos reales)
+- Ejecutar código (acciones complejas)
+
+==== Herramienta Simple
+
+[source,python]
+----
+from langchain_core.tools import tool
+
+@tool
+def obtener_clima(ciudad: str) -> str:
+    """Obtiene el clima actual de una ciudad.
+
+    Args:
+        ciudad: El nombre de la ciudad
+
+    Returns:
+        Descripción del clima
+    """
+    # En la realidad, consultarías una API
+    climas = {
+        "Madrid": "Soleado, 25°C",
+        "Barcelona": "Nublado, 22°C",
+        "Valencia": "Lluvioso, 18°C"
+    }
+    return climas.get(ciudad, "Ciudad no encontrada")
+
+# Usar directamente
+clima = obtener_clima("Madrid")
+print(clima)  # "Soleado, 25°C"
+----
+
+==== Herramienta con Validación
+
+[source,python]
+----
+from pydantic import BaseModel, Field, validator
+from langchain_core.tools import tool
+
+class ParametrosCalculadora(BaseModel):
+    a: float = Field(description="Primer número", ge=-1000, le=1000)
+    b: float = Field(description="Segundo número", ge=-1000, le=1000)
+
+    @validator('a', 'b')
+    def validar_rango(cls, v):
+        if not (-1000 <= v <= 1000):
+            raise ValueError("Los números deben estar entre -1000 y 1000")
+        return v
+
+@tool(args_schema=ParametrosCalculadora)
+def sumar(a: float, b: float) -> float:
+    """Suma dos números validados"""
+    return a + b
+
+# El agente no puede pasar valores inválidos
+----
+
+==== Herramienta Asincrónica
+
+Para operaciones que tardan (APIs, BBDDs):
+
+[source,python]
+----
+import asyncio
+from langchain_core.tools import tool
+
+@tool
+async def buscar_en_internet(query: str) -> str:
+    """Busca un tema en la web"""
+    # Simular búsqueda asincrónica
+    await asyncio.sleep(1)  # Simula latencia de red
+    return f"Resultados para '{query}': ..."
+
+# En un agente async
+async def ejecutar_agente_async():
+    resultado = await executor.ainvoke({
+        "input": "Busca información sobre Python"
+    })
+    return resultado
+----
+
+---
+
+== Módulo 7: Recuperación de Documentos (Retrieval)
+
+=== 7.1 Problema: LLMs no saben sobre tus datos
+
+El LLM fue entrenado con datos públicos de internet. No sabe de:
+
+- Tu documentación privada
+- Tu base de conocimiento interna
+- Archivos PDF/Word específicos
+- Datos de tu empresa
+
+**Solución: RAG (Retrieval Augmented Generation)**
+
+=== 7.2 Embeddings - Convertir Texto a Vectores
+
+Un embedding es una representación numérica del significado del texto.
+
+```
+Texto: "Python es un lenguaje de programación"
+Embedding: [0.234, -0.123, 0.567, 0.890, ..., 0.345]  (1536 números)
+```
+
+*¿Para qué?* Para medir similitud entre textos usando matemática vectorial:
+
+```
+Preguntas: "¿Qué es Python?"
+Embedding pregunta: [0.240, -0.125, 0.560, 0.895, ..., 0.340]
+
+Documento: "Python es un lenguaje..."
+Embedding documento: [0.234, -0.123, 0.567, 0.890, ..., 0.345]
+
+Similitud = 99.5%  ← Están relacionados!
+```
+
+[source,python]
+----
+from langchain_community.embeddings import OllamaEmbeddings
+
+# Crear embeddings
+embeddings = OllamaEmbeddings(
+    model="mistral",
+    base_url="http://localhost:11434"
+)
+
+# Convertir texto a vector
+vector1 = embeddings.embed_query("Python es un lenguaje")
+vector2 = embeddings.embed_query("JavaScript es un lenguaje")
+
+# Comparar
+from sklearn.metrics.pairwise import cosine_similarity
+import numpy as np
+
+similaridad = cosine_similarity(
+    [vector1],
+    [vector2]
+)[0][0]
+
+print(f"Similaridad: {similaridad:.2%}")  # Alto porcentaje
+----
+
+=== 7.3 Vector Stores - Guardar Documentos para Búsqueda
+
+==== FAISS (Local, Rápido)
+
+[source,python]
+----
+from langchain_community.vectorstores import FAISS
+from langchain.schema import Document
+from langchain_community.embeddings import OllamaEmbeddings
+from langchain_text_splitters import CharacterTextSplitter
+
+# Paso 1: Preparar documentos
+textos = [
+    "Python es un lenguaje de programación interpretado",
+    "JavaScript se usa para desarrollo web",
+    "Rust es un lenguaje seguro y rápido",
+    "Java se usa en aplicaciones empresariales"
+]
+
+documentos = [Document(page_content=texto) for texto in textos]
+
+# Paso 2: Crear embeddings
+embeddings = OllamaEmbeddings(model="mistral")
+
+# Paso 3: Crear vector store
+vector_store = FAISS.from_documents(documentos, embeddings)
+
+# Paso 4: Buscar documentos similares
+query = "¿Qué es Python?"
+resultados = vector_store.similarity_search(query, k=2)
+
+for resultado in resultados:
+    print(f"- {resultado.page_content}")
+----
+
+*Salida:*
+```
+- Python es un lenguaje de programación interpretado
+- JavaScript se usa para desarrollo web
+```
+
+==== Búsqueda con Scores
+
+[source,python]
+----
+# Ver puntuación de similaridad
+resultados = vector_store.similarity_search_with_relevance_scores(
+    "¿Qué es Python?",
+    k=3
+)
+
+for documento, score in resultados:
+    print(f"({score:.2%}) {documento.page_content}")
+----
+
+*Salida:*
+```
+(98.5%) Python es un lenguaje de programación interpretado
+(42.1%) JavaScript se usa para desarrollo web
+(38.9%) Rust es un lenguaje seguro y rápido
+```
+
+==== MMR - Resultados Diversos
+
+A veces quieres variedad, no solo lo más similar:
+
+[source,python]
+----
+# Sin MMR: los 3 resultados serían muy similares
+resultados = vector_store.similarity_search("lenguaje", k=3)
+
+# Con MMR: resultados similares pero diversos
+resultados = vector_store.max_marginal_relevance_search(
+    "lenguaje",
+    k=3,
+    fetch_k=10  # Busca 10, devuelve 3 más diversos
+)
+----
+
+*Diferencia:*
+```
+Sin MMR:  [99% similar, 98% similar, 97% similar]
+Con MMR:  [99% similar, 65% similar, 50% similar]
+          (Más variedad)
+```
+
+---
+
+== Módulo 8: RAG (Retrieval Augmented Generation)
+
+=== 8.1 ¿Qué es RAG?
+
+RAG es un patrón que combina:
+
+1. **R (Retrieve)**: Buscar documentos relevantes
+2. **A (Augment)**: Incluirlos en el prompt
+3. **G (Generate)**: El LLM genera respuesta basada en documentos
+
+```
+Pregunta: "¿Qué dice el documento X sobre Y?"
+
+[Retrieve]
+Vector store → Busca documentos similares a "Y"
+→ Devuelve: [Doc1, Doc2, Doc3]
+
+[Augment]
+Prompt:
+"Based on these documents:
+{Doc1}
+{Doc2}
+{Doc3}
+
+Answer: {pregunta}"
+
+[Generate]
+LLM → Genera respuesta
+```
+
+===  8.2 RAG Simple
+
+[source,python]
+----
+from langchain.chains import RetrievalQA
+from langchain_community.llms import Ollama
+from langchain_community.vectorstores import FAISS
+from langchain_community.embeddings import OllamaEmbeddings
+from langchain.schema import Document
+
+# Preparar documentos
+textos = [
+    "La Revolución Francesa fue un movimiento político y social (1789-1799)",
+    "Causó cambios fundamentales en la estructura de la sociedad europea",
+    "Tuvo líderes como Robespierre, Danton y Marat",
+    "Resultó en la Declaration of Rights of Man and Citizen"
+]
+
+documentos = [Document(page_content=texto) for texto in textos]
+
+# Crear vector store
+embeddings = OllamaEmbeddings(model="mistral")
+vector_store = FAISS.from_documents(documentos, embeddings)
+
+# Crear cadena RAG
+llm = Ollama(model="mistral")
+
+rag_chain = RetrievalQA.from_chain_type(
+    llm=llm,
+    chain_type="stuff",  # Tipo de cadena (explicado abajo)
+    retriever=vector_store.as_retriever(search_kwargs={"k": 2})
+)
+
+# Usar
+pregunta = "¿Quién fue Robespierre?"
+respuesta = rag_chain.invoke({"query": pregunta})
+
+print(respuesta["result"])
+----
+
+*¿Qué pasa internamente?*
+
+1. Pregunta: "¿Quién fue Robespierre?"
+2. Vector store busca documentos similares → Devuelve Docs 1 y 3
+3. Prompt se crea:
++
+----
+Basado en estos documentos:
+1. La Revolución Francesa fue...
+3. Tuvo líderes como Robespierre...
+
+Pregunta: ¿Quién fue Robespierre?
+Respuesta:
+----
++
+4. LLM genera respuesta completa
+
+=== 8.3 Tipos de Cadenas RAG
+
+[source,python]
+----
+# stuff: Incluir todos los docs en un prompt
+# Pros: Simple, rápido
+# Contras: Falla si docs son muy largos
+rag_stuff = RetrievalQA.from_chain_type(
+    llm=llm,
+    chain_type="stuff",
+    retriever=vector_store.as_retriever()
+)
+
+# map_reduce: Procesar cada doc por separado, luego resumir
+# Pros: Maneja documentos largos
+# Contras: Más lento
+rag_map_reduce = RetrievalQA.from_chain_type(
+    llm=llm,
+    chain_type="map_reduce",
+    retriever=vector_store.as_retriever()
+)
+
+# refine: Mejorar respuesta iterativamente
+# Pros: Respuesta muy completa
+# Contras: Muy lento
+rag_refine = RetrievalQA.from_chain_type(
+    llm=llm,
+    chain_type="refine",
+    retriever=vector_store.as_retriever()
+)
+----
+
+---
+
+== Módulo 9: Evaluación, Debugging y Testing
+
+=== 9.1 Debugging con Verbose Mode
+
+[source,python]
+----
+from langchain.agents import AgentExecutor
+
+executor = AgentExecutor(
+    agent=agente,
+    tools=herramientas,
+    verbose=True  # Activa debugging
+)
+
+resultado = executor.invoke({"input": "¿Cuánto es 5 * 3?"})
+
+# Output muestra cada paso:
+# > Entering AgentExecutor chain...
+# Thought: Necesito multiplicar 5 * 3
+# Action: multiplicar
+# ...
+----
+
+=== 9.2 Logging Estructurado
+
+[source,python]
+----
+import logging
+import json
+from datetime import datetime
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+
+logger = logging.getLogger("langchain_app")
+
+def log_invoke(entrada, salida, tiempo):
+    log_data = {
+        "tipo": "invoke",
+        "timestamp": datetime.now().isoformat(),
+        "input": entrada,
+        "output_length": len(salida),
+        "tiempo_ms": tiempo
+    }
+    logger.info(json.dumps(log_data))
+
+# Usar
+import time
+
+inicio = time.time()
+resultado = cadena.invoke({"pregunta": "¿Hola?"})
+tiempo = (time.time() - inicio) * 1000
+
+log_invoke("¿Hola?", resultado, tiempo)
+----
+
+=== 9.3 Testing
+
+[source,python]
+----
+def test_llm_basico():
+    """Test que el LLM responde"""
+    llm = Ollama(model="mistral")
+    respuesta = llm.invoke("¿Cuánto es 2+2?")
+
+    assert respuesta is not None
+    assert len(respuesta) > 0
+    assert "4" in respuesta  # Esperamos ver "4" en la respuesta
+
+def test_cadena():
+    """Test que la cadena funciona"""
+    llm = Ollama(model="mistral")
+    prompt = PromptTemplate.from_template("Saluda a {nombre}")
+    cadena = prompt | llm
+
+    resultado = cadena.invoke({"nombre": "Juan"})
+    assert "Juan" in resultado
+    assert "Hola" in resultado or "hola" in resultado
+
+def test_memoria():
+    """Test que memoria retiene información"""
+    memoria = ConversationBufferMemory()
+
+    memoria.save_context(
+        {"input": "Me llamo Juan"},
+        {"output": "Hola Juan"}
+    )
+
+    historial = memoria.load_memory_variables({})
+    assert len(historial['chat_history']) > 0
+    assert "Juan" in historial['chat_history'][0].content
+
+# Ejecutar tests
+if __name__ == "__main__":
+    test_llm_basico()
+    print("✓ test_llm_basico pasó")
+
+    test_cadena()
+    print("✓ test_cadena pasó")
+
+    test_memoria()
+    print("✓ test_memoria pasó")
+
+    print("\n✅ Todos los tests pasaron")
+----
+
+---
+
+== Módulo 10: Patrones y Arquitectura
+
+=== 10.1 Patrón Sequential (Secuencial)
+
+Ejecutar cadenas una tras otra, cada una refinando el resultado:
+
+[source,python]
+----
+# Paso 1: Clasificar el tipo de pregunta
+clasificador = PromptTemplate.from_template(
+    "¿Es esta pregunta técnica o general? Pregunta: {pregunta}"
+) | llm
+
+# Paso 2: Responder según clasificación
+respondedor_tecnico = PromptTemplate.from_template(
+    "Como experto técnico, responde: {pregunta}"
+) | llm
+
+respondedor_general = PromptTemplate.from_template(
+    "Como asistente general, responde: {pregunta}"
+) | llm
+
+def pipeline(pregunta):
+    # Paso 1: Clasificar
+    clasificacion = clasificador.invoke({"pregunta": pregunta})
+
+    # Paso 2: Responder según clasificación
+    if "técnica" in clasificacion.lower():
+        respuesta = respondedor_tecnico.invoke({"pregunta": pregunta})
+    else:
+        respuesta = respondedor_general.invoke({"pregunta": pregunta})
+
+    return respuesta
+
+resultado = pipeline("¿Cómo implemento decoradores en Python?")
+----
+
+=== 10.2 Patrón Branching (Bifurcación)
+
+[source,python]
+----
+from langchain_core.runnables import RunnableBranch
+
+rama_programacion = PromptTemplate.from_template(
+    "Eres experto en programación. {pregunta}"
+) | llm
+
+rama_general = PromptTemplate.from_template(
+    "Eres asistente general. {pregunta}"
+) | llm
+
+rama_branch = RunnableBranch(
+    (lambda x: "código" in x["pregunta"].lower() or "programa" in x["pregunta"].lower(),
+     rama_programacion),
+    rama_general
+)
+
+resultado = rama_branch.invoke({
+    "pregunta": "¿Cómo escribo un código en Python?"
+})
+----
+
+=== 10.3 Patrón Fallback (Respaldo)
+
+Si una cadena falla, usa una respaldo:
+
+[source,python]
+----
+cadena_principal = PromptTemplate.from_template(
+    "Eres un experto. {pregunta}"
+) | llm
+
+cadena_respaldo = PromptTemplate.from_template(
+    "Responde simplemente: {pregunta}"
+) | llm
+
+cadena_segura = cadena_principal.with_fallbacks([cadena_respaldo])
+
+# Si principal falla, usa respaldo
+resultado = cadena_segura.invoke({"pregunta": "..."})
+----
+
+---
+
+== Módulo 11: Casos de Uso Prácticos
+
+=== 11.1 Chatbot Conversacional
+
+[source,python]
+----
+from langchain.memory import ConversationBufferMemory
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_community.llms import Ollama
+
+class ChatAssistant:
+    def __init__(self):
+        self.llm = Ollama(model="mistral")
+        self.memoria = ConversationBufferMemory(return_messages=True)
+        self.prompt = ChatPromptTemplate.from_messages([
+            ("system", "Eres un asistente amable y útil"),
+            ("placeholder", "{chat_history}"),
+            ("user", "{input}")
+        ])
+        self.cadena = self.prompt | self.llm
+
+    def chat(self, user_input):
+        historial = self.memoria.load_memory_variables({})
+        respuesta = self.cadena.invoke({
+            "chat_history": historial['chat_history'],
+            "input": user_input
+        })
+        self.memoria.save_context(
+            {"input": user_input},
+            {"output": respuesta}
+        )
+        return respuesta
+
+    def run(self):
+        print("Chat iniciado (escribe 'salir' para terminar)")
+        while True:
+            usuario_input = input("\nTú: ").strip()
+            if usuario_input.lower() in ["salir", "exit"]:
+                break
+            respuesta = self.chat(usuario_input)
+            print(f"Bot: {respuesta}")
+
+# Usar
+if __name__ == "__main__":
+    asistente = ChatAssistant()
+    asistente.run()
+----
+
+=== 11.2 Sistema RAG
+
+[source,python]
+----
+# Este es el ejemplo de RAG que vimos en Módulo 8
+# Se implementa completo en ejemplos/langchain/06_rag_system.py
+----
+
+=== 11.3 Agente Autónomo
+
+[source,python]
+----
+# Implementado en ejemplos/langchain/04_agents.py
+# El agente puede:
+# - Tomar decisiones
+# - Usar múltiples herramientas
+# - Razonar sobre problemas complejos
+----
+
+---
+
+== Módulo 12: Producción y Optimización
+
+=== 12.1 Error Handling
+
+[source,python]
+----
+import logging
+from typing import Optional
+
+logger = logging.getLogger(__name__)
+
+def invocar_seguro(cadena, inputs: dict) -> Optional[str]:
+    """Invocar cadena con manejo completo de errores"""
+
+    try:
+        resultado = cadena.invoke(inputs)
+        logger.info(f"✓ Éxito: {len(resultado)} caracteres")
+        return resultado
+
+    except TimeoutError:
+        logger.error("⏱️  Timeout: La cadena tardó más de 30 segundos")
+        return "Disculpa, el sistema tardó demasiado. Por favor intenta de nuevo."
+
+    except ValueError as e:
+        logger.error(f"❌ Error de validación: {e}")
+        return f"Error: Input inválido. {str(e)}"
+
+    except ConnectionError as e:
+        logger.error(f"🔌 Error de conexión: {e}")
+        return "No se pudo conectar al servidor. Por favor intenta más tarde."
+
+    except Exception as e:
+        logger.critical(f"💥 Error inesperado: {e}", exc_info=True)
+        return "Error inesperado. El equipo ha sido notificado."
+
+# Usar
+resultado = invocar_seguro(cadena, {"pregunta": "..."})
+print(resultado)
+----
+
+=== 12.2 Caching
+
+[source,python]
+----
+from langchain.cache import InMemoryCache
+import langchain
+
+# Activar caching global
+langchain.llm_cache = InMemoryCache()
+
+llm = Ollama(model="mistral")
+
+# Primera llamada: realiza cálculo
+import time
+
+inicio = time.time()
+respuesta1 = llm.invoke("¿Cuál es la capital de Francia?")
+tiempo1 = time.time() - inicio
+
+# Segunda llamada: devuelve del caché (instantáneo)
+inicio = time.time()
+respuesta2 = llm.invoke("¿Cuál es la capital de Francia?")
+tiempo2 = time.time() - inicio
+
+print(f"Primera: {tiempo1:.2f}s")
+print(f"Segunda (caché): {tiempo2:.4f}s")
+print(f"Mejora: {tiempo1/tiempo2:.0f}x más rápido")
+----
+
+=== 12.3 Batch Processing
+
+[source,python]
+----
+# Procesar múltiples items es más rápido que uno a uno
+preguntas = [
+    {"pregunta": "¿Qué es Python?"},
+    {"pregunta": "¿Qué es JavaScript?"},
+    {"pregunta": "¿Qué es Rust?"},
+    {"pregunta": "¿Qué es Go?"},
+]
+
+# Forma lenta (invoke 4 veces)
+# respuestas = [cadena.invoke(p) for p in preguntas]
+
+# Forma rápida (batch)
+respuestas = cadena.batch(preguntas)
+
+for pregunta, respuesta in zip(preguntas, respuestas):
+    print(f"{pregunta['pregunta']}: {respuesta[:50]}...")
+----
+
+=== 12.4 Async/Await para Concurrencia
+
+[source,python]
+----
+import asyncio
+
+async def procesar_asincrono():
+    """Procesar múltiples requests concurrentemente"""
+
+    # Crear tareas concurrentes
+    tareas = [
+        cadena.ainvoke({"pregunta": "¿Qué es Python?"}),
+        cadena.ainvoke({"pregunta": "¿Qué es JavaScript?"}),
+        cadena.ainvoke({"pregunta": "¿Qué es Rust?"}),
+    ]
+
+    # Esperar a que todas terminen
+    resultados = await asyncio.gather(*tareas)
+    return resultados
+
+# Ejecutar
+resultados = asyncio.run(procesar_asincrono())
+for resultado in resultados:
+    print(resultado[:100] + "...")
+----
+
+---
+
+== Módulo 13: Proyecto Final Integrado
+
+=== 13.1 Arquitectura de Sistema Completo
+
+```
+┌────────────────┐
+│   Usuario      │
+│   (CLI/API)    │
+└────────┬───────┘
+         │
+┌────────▼──────────────┐
+│    FastAPI Server     │
+│ /chat, /ask, /health  │
+└────────┬──────────────┘
+         │
+    ┌────┴────────────────┐
+    │                     │
+┌───▼────┐  ┌──────┐  ┌──▼───┐
+│  Chat  │  │Agent │  │ RAG  │
+│ Memoria│  │Tools │  │Search│
+└───┬────┘  └──┬───┘  └──┬───┘
+    │         │        │
+    └─────────┼────────┘
+              │
+     ┌────────▼─────────┐
+     │  Ollama LLM      │
+     │ (mistral/etc)    │
+     └──────────────────┘
+```
+
+=== 13.2 Implementación del Proyecto Final
+
+El proyecto final está completamente implementado en:
+**ejemplos/langchain/16_project_final.py**
+
+Características:
+- SmartAssistant class que integra Chat + RAG + Agent
+- ConfigManager para configuración centralizada
+- Proper error handling y logging
+- Demo funcional lista para ejecutar
+
+[source,bash]
+----
+# Para ejecutar
+cd ejemplos/langchain
+python 16_project_final.py
+----
+
+---
+
+== Conclusión y Próximos Pasos
+
+*Has aprendido:*
+
+- ✅ Conceptos fundamentales (LLMs, Prompts, Output Parsers)
+- ✅ Composición de cadenas con LCEL
+- ✅ Memoria para conversaciones contextuales
+- ✅ Agentes autónomos con herramientas
+- ✅ RAG para búsqueda en documentos
+- ✅ Patrones de producción (error handling, logging)
+- ✅ Arquitectura de sistemas complejos
+
+*Próximas acciones:*
+
+1. Ejecuta todos los ejemplos: `python 01_basic_llm.py` a `16_project_final.py`
+2. Modifica los ejemplos para tus casos de uso
+3. Construye tu primer proyecto
+4. Contribuye con mejoras a LangChain
+
+*Recursos:*
+
+- Documentación oficial: https://docs.langchain.com
+- GitHub: https://github.com/langchain-ai/langchain
+- Discord: https://discord.gg/langchain
+- Stack Overflow: tag `langchain`

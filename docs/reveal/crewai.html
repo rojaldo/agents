@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curso de CrewAI</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/theme/white.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-light.min.css">
+
+    <style>
+        .reveal { text-align: left; color: #555555; }
+        .reveal section { text-align: left; padding: 40px; display: flex; flex-direction: column; justify-content: flex-start; }
+        .reveal h1, .reveal h2, .reveal h3 { text-transform: none; text-align: left; color: #555555; }
+
+        /* Encabezados */
+        .reveal h1 { font-size: 1.05em; margin-bottom: 0.5em; }
+        .reveal h2 { font-size: 1em; margin-bottom: 0.5em; }
+        .reveal h3 { font-size: 0.75em; margin-bottom: 0.3em; }
+
+        /* Párrafos y énfasis */
+        .reveal p { font-size: 0.6em; margin: 0.3em 0; color: #555555; }
+        .reveal strong { font-size: 1em; font-weight: bold; }
+
+        /* Código */
+        .reveal pre { background: #f8f8f8; border: 1px solid #ddd; width: 100%; padding: 0.5em; margin: 0.5em 0; }
+        .reveal pre code { font-size: 0.7em; color: #555555; }
+
+        /* Listas y elementos */
+        .reveal ul { font-size: 0.55em; text-align: left; margin-left: 0.5em; color: #555555; }
+        .reveal li { margin: 0.3em 0; color: #555555; }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+<!-- Slide 1: Portada -->
+<section>
+    <h1>Curso de CrewAI</h1>
+    <p><strong>Framework de Orquestación Multi-Agente</strong></p>
+    <p>Construyendo Equipos de Agentes Coordinados</p>
+</section>
+
+<!-- Slide 2: Tabla de Contenidos -->
+<section>
+    <h2>Tabla de Contenidos</h2>
+    <ul>
+        <li>Introducción a CrewAI</li>
+        <li>Conceptos Fundamentales</li>
+        <li>Herramientas y Tools</li>
+        <li>Procesos de Coordinación</li>
+        <li>Configuración Avanzada</li>
+        <li>Casos de Uso Prácticos</li>
+        <li>Monitoreo y Debugging</li>
+        <li>Mejores Prácticas</li>
+        <li>Escalabilidad y Arquitectura</li>
+        <li>Proyecto Final</li>
+    </ul>
+</section>
+
+<!-- MÓDULO 1: INTRODUCCIÓN -->
+<section>
+    <h1>Módulo 1: Introducción a CrewAI</h1>
+</section>
+
+<section>
+    <h2>¿Qué es CrewAI?</h2>
+    <p><strong>Definición:</strong> Framework de código abierto para crear sistemas multi-agente coordinados.</p>
+    <p>CrewAI proporciona una abstracción de alto nivel para orquestar "equipos" de agentes (crews) que trabajan juntos.</p>
+    <p><strong>Diferenciador clave:</strong> Enfocado específicamente en la coordinación de equipos, no solo en agentes individuales.</p>
+</section>
+
+<section>
+    <h2>Definición Formal de CrewAI</h2>
+    <p>CrewAI es un framework Python que permite:</p>
+    <ul>
+        <li>Definir agentes con roles, goals y backstories específicos</li>
+        <li>Crear tareas con descripciones claras y outputs esperados</li>
+        <li>Coordinar múltiples agentes en un "crew" con procesos definidos</li>
+        <li>Integrar herramientas externas de forma declarativa</li>
+        <li>Ejecutar flujos de trabajo complejos de forma resiliente</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Características Principales</h2>
+    <ul>
+        <li><strong>Agentes Especializados:</strong> Cada agente tiene rol, objetivo y contexto (backstory)</li>
+        <li><strong>Tareas Declarativas:</strong> Las tareas describen QUÉ hacer, no CÓMO</li>
+        <li><strong>Procesos de Coordinación:</strong> Secuencial, jerárquico, etc.</li>
+        <li><strong>Herramientas Integradas:</strong> Búsqueda web, lectura de archivos, ejecución de código</li>
+        <li><strong>Memoria Persistente:</strong> Los agentes aprenden de interacciones previas</li>
+        <li><strong>Callbacks y Eventos:</strong> Hooks para monitorizar y personalizar comportamiento</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Comparativa con Otros Frameworks</h2>
+    <pre><code class="language-text">
+Aspecto          | CrewAI                  | AutoGen           | LangChain
+--------------------------------------------------------------------------------
+Enfoque          | Orquestación de equipos | Conversaciones    | Cadenas de LLM
+Declaratividad   | Alto (YAML/Python)      | Programático      | Programático
+Herramientas     | Integradas              | Manuales          | Integradas
+Memoria          | Nativa                  | Manual            | Limitada
+Curva aprendizaje| Baja                    | Media             | Media
+    </code></pre>
+</section>
+
+<section>
+    <h2>Casos de Uso Principales</h2>
+    <ul>
+        <li><strong>Investigación y Análisis:</strong> Market research, análisis competitivo, recopilación de información</li>
+        <li><strong>Desarrollo de Software:</strong> Code review automático, análisis de arquitectura, testing</li>
+        <li><strong>Marketing y Contenido:</strong> Estrategia de contenido, generación de posts, adaptación multi-canal</li>
+        <li><strong>Análisis de Datos:</strong> Procesamiento de datasets, generación de reportes, visualización</li>
+        <li><strong>Automatización Empresarial:</strong> Procesos repetitivos, flujos de aprobación, documentación</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Ventajas de CrewAI</h2>
+    <ul>
+        <li>Sintaxis simple e intuitiva</li>
+        <li>Integración con modelos locales (Ollama) y APIs (OpenAI, etc.)</li>
+        <li>Sistema de herramientas flexible</li>
+        <li>Memoria nativa para agentes</li>
+        <li>Comunidad activa en GitHub</li>
+        <li>Documentación en constante mejora</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Limitaciones</h2>
+    <ul>
+        <li>Menos maduro que LangChain</li>
+        <li>Documentación en evolución</li>
+        <li>Limitado a arquitecturas lineales/jerárquicas</li>
+        <li>Requiere configuración explícita de herramientas</li>
+    </ul>
+</section>
+
+<!-- Instalación -->
+<section>
+    <h2>Instalación y Configuración</h2>
+    <p><strong>Requisitos Previos:</strong></p>
+    <ul>
+        <li>Python 3.8 o superior</li>
+        <li>pip (gestor de paquetes)</li>
+        <li>Sistema operativo: Linux, macOS o Windows</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Instalación Básica</h2>
+    <pre><code class="language-bash">
+# 1. Crear entorno virtual
+python -m venv crewai_env
+
+# 2. Activar entorno
+# Linux/macOS
+source crewai_env/bin/activate
+# Windows
+crewai_env\Scripts\activate
+
+# 3. Instalar CrewAI
+pip install crewai
+
+# 4. Verificar instalación
+python -c "import crewai; print(crewai.__version__)"
+    </code></pre>
+</section>
+
+<section>
+    <h2>Instalación con Herramientas</h2>
+    <pre><code class="language-bash">
+# Instalar con todas las herramientas integradas
+pip install crewai[tools]
+
+# Incluye:
+# - crewai-tools (herramientas integradas)
+# - requests (para llamadas HTTP)
+# - langchain (dependencia base)
+    </code></pre>
+</section>
+
+<section>
+    <h2>Configuración con Ollama Local</h2>
+    <pre><code class="language-bash">
+# 1. Instalar Ollama desde https://ollama.ai
+
+# 2. Ejecutar servidor
+ollama serve
+
+# 3. Descargar modelo
+ollama pull mistral
+
+# 4. Verificar
+ollama list
+    </code></pre>
+</section>
+
+<section>
+    <h2>Configuración de Agent con Ollama</h2>
+    <pre><code class="language-python">
+from crewai import Agent
+
+agent = Agent(
+    role="Experto en Python",
+    goal="Ayudar con programación Python",
+    backstory="Desarrollador con 10 años de experiencia",
+    llm="ollama:mistral"  # Modelo local
+)
+    </code></pre>
+</section>
+
+<section>
+    <h2>Estructura de Proyecto Recomendada</h2>
+    <pre><code class="language-text">
+proyecto-crewai/
+├── .env
+├── .gitignore
+├── requirements.txt
+├── main.py
+├── config/
+│   ├── agents.yaml
+│   └── tasks.yaml
+├── agents/
+│   └── custom_agents.py
+├── tools/
+│   └── custom_tools.py
+├── crews/
+│   └── main_crew.py
+└── output/
+    </code></pre>
+</section>
+
+<!-- MÓDULO 2: CONCEPTOS FUNDAMENTALES -->
+<section>
+    <h1>Módulo 2: Conceptos Fundamentales</h1>
+</section>
+
+<section>
+    <h2>Agentes: Unidad Fundamental</h2>
+    <p><strong>Concepto:</strong> Un agente es un "miembro del equipo" con un rol específico, objetivo claro y contexto.</p>
+    <p>Cada agente puede usar herramientas para lograr sus objetivos.</p>
+</section>
+
+<section>
+    <h2>Estructura Básica de un Agente</h2>
+    <pre><code class="language-python">
+from crewai import Agent
+
+agent = Agent(
+    role="Analista de Datos",
+    goal="Analizar datasets y generar insights",
+    backstory="Experto en análisis con 10 años de experiencia",
+    verbose=True,  # Mostrar reasoning
+    allow_delegation=False,  # No delega tareas
+    tools=[tool1, tool2]  # Herramientas disponibles
+)
+    </code></pre>
+</section>
+
+<section>
+    <h2>Componentes Clave de un Agente</h2>
+    <ul>
+        <li><strong>Role:</strong> Descripción del rol del agente (claro y específico)</li>
+        <li><strong>Goal:</strong> Objetivo que el agente intenta lograr</li>
+        <li><strong>Backstory:</strong> Contexto y experiencia (afecta razonamiento)</li>
+        <li><strong>Tools:</strong> Herramientas disponibles para el agente</li>
+        <li><strong>LLM:</strong> Modelo de lenguaje (opcional, por defecto usa global)</li>
+        <li><strong>Max Iterations:</strong> Máximo de iteraciones permitidas</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Ejemplo: Role</h2>
+    <pre><code class="language-python">
+# Claro y específico
+role = "Experto en Python"
+    </code></pre>
+</section>
+
+<section>
+    <h2>Ejemplo: Goal</h2>
+    <pre><code class="language-python">
+# Objetivo medible
+goal = "Escribir código Python limpio y eficiente que resuelva el problema"
+    </code></pre>
+</section>
+
+<section>
+    <h2>Ejemplo: Backstory</h2>
+    <pre><code class="language-python">
+# Contexto rico
+backstory = "Soy un desarrollador Python con 15 años de experiencia en sistemas distribuidos"
+    </code></pre>
+</section>
+
+<section>
+    <h2>Tareas: Unidades de Trabajo</h2>
+    <p><strong>Concepto:</strong> Una tarea describe QUÉ debe hacer un agente, no CÓMO hacerlo.</p>
+</section>
+
+<section>
+    <h2>Estructura Básica de una Tarea</h2>
+    <pre><code class="language-python">
+from crewai import Task
+
+task = Task(
+    description="Analiza el dataset customer.csv e identifica tendencias",
+    expected_output="Reporte con 5 tendencias principales y recomendaciones",
+    agent=data_analyst_agent
+)
+    </code></pre>
+</section>
+
+<section>
+    <h2>Tareas con Dependencias</h2>
+    <pre><code class="language-python">
+task1 = Task(
+    description="Investigar datos",
+    expected_output="Datos recopilados",
+    agent=researcher
+)
+
+task2 = Task(
+    description="Analizar los datos investigados",
+    expected_output="Análisis completo",
+    agent=analyst,
+    depends_on=[task1]  # Espera a task1
+)
+    </code></pre>
+</section>
+
+<section>
+    <h2>Crews: Equipos Coordinados</h2>
+    <p><strong>Concepto:</strong> Un crew es el "equipo" de agentes que trabajan coordinadamente.</p>
+    <p>Define cómo interactúan los agentes y en qué orden ejecutan sus tareas.</p>
+</section>
+
+<section>
+    <h2>Estructura Básica de un Crew</h2>
+    <pre><code class="language-python">
+from crewai import Crew, Process
+
+crew = Crew(
+    agents=[agent1, agent2, agent3],
+    tasks=[task1, task2, task3],
+    process=Process.sequential  # Ejecuta una tras otra
+)
+    </code></pre>
+</section>
+
+<section>
+    <h2>Ejecutar un Crew</h2>
+    <pre><code class="language-python">
+# Ejecutar crew
+result = crew.kickoff(inputs={"query": "Analiza el mercado de IA"})
+
+# Ver resultado
+print(result.raw_output)
+    </code></pre>
+</section>
+
+<!-- MÓDULO 3: HERRAMIENTAS -->
+<section>
+    <h1>Módulo 3: Herramientas (Tools)</h1>
+</section>
+
+<section>
+    <h2>Herramientas Integradas</h2>
+    <p>CrewAI proporciona herramientas preconstruidas que los agentes pueden usar directamente.</p>
+</section>
+
+<section>
+    <h2>SerperDevTool: Búsqueda Web</h2>
+    <pre><code class="language-python">
+from crewai_tools import SerperDevTool
+
+search_tool = SerperDevTool()
+# Requiere API key de Serper
+    </code></pre>
+</section>
+
+<section>
+    <h2>FileReadTool: Lectura de Archivos</h2>
+    <pre><code class="language-python">
+from crewai_tools import FileReadTool
+
+file_reader = FileReadTool(file_path="datos.csv")
+    </code></pre>
+</section>
+
+<section>
+    <h2>CodeInterpreterTool: Ejecución de Código</h2>
+    <pre><code class="language-python">
+from crewai_tools import CodeInterpreterTool
+
+code_tool = CodeInterpreterTool(sandbox_type="local")
+    </code></pre>
+</section>
+
+<section>
+    <h2>Herramientas Personalizadas: Decorador @tool</h2>
+    <pre><code class="language-python">
+from crewai_tools import tool
+
+@tool
+def calculate_average(numbers: list) -> float:
+    """Calcula el promedio de una lista de números"""
+    if not numbers:
+        return 0
+    return sum(numbers) / len(numbers)
+    </code></pre>
+</section>
+
+<section>
+    <h2>Herramientas Personalizadas: Clase BaseTool</h2>
+    <pre><code class="language-python">
+from crewai_tools import BaseTool
+
+class DataProcessingTool(BaseTool):
+    name: str = "data_processor"
+    description: str = "Procesa datos con transformaciones específicas"
+
+    def _run(self, data: str) -> str:
+        return f"Procesado: {data}"
+    </code></pre>
+</section>
+
+<section>
+    <h2>Registrar Herramientas en Agentes</h2>
+    <pre><code class="language-python">
+agent = Agent(
+    role="Analista",
+    goal="Analizar datos",
+    backstory="...",
+    tools=[search_tool, file_reader, calculate_average]
+)
+    </code></pre>
+</section>
+
+<section>
+    <h2>Importancia de las Descripciones</h2>
+    <pre><code class="language-python">
+@tool("calculate_stats")
+def calculate_statistics(data: list) -> dict:
+    """
+    Calcula estadísticas descriptivas de un dataset.
+    Útil para: análisis exploratorio, resumen de datos numéricos.
+    Retorna: media, mediana, desviación estándar.
+    """
+    return {"mean": 0, "median": 0, "std": 0}
+    </code></pre>
+</section>
+
+<!-- MÓDULO 4: CONFIGURACIÓN AVANZADA -->
+<section>
+    <h1>Módulo 4: Configuración Avanzada</h1>
+</section>
+
+<section>
+    <h2>Configuración mediante YAML</h2>
+    <p>Separar la configuración de agentes y tareas en archivos YAML mejora la mantenibilidad.</p>
+</section>
+
+<section>
+    <h2>agents.yaml</h2>
+    <pre><code class="language-yaml">
+researcher:
+  role: "Investigador Senior"
+  goal: "Recopilar información de alta calidad"
+  backstory: |
+    Eres un investigador experimentado con acceso a múltiples fuentes.
+
+analyst:
+  role: "Analista de Datos"
+  goal: "Analizar información y generar insights"
+  backstory: |
+    Eres un analista experto en transformar datos en decisiones.
+    </code></pre>
+</section>
+
+<section>
+    <h2>tasks.yaml</h2>
+    <pre><code class="language-yaml">
+research_task:
+  description: "Investiga el mercado de IA en 2024"
+  expected_output: "Reporte con 10 tendencias principales"
+  agent: "researcher"
+
+analysis_task:
+  description: "Analiza los hallazgos de la investigación"
+  expected_output: "Análisis con recomendaciones estratégicas"
+  agent: "analyst"
+  depends_on:
+    - research_task
+    </code></pre>
+</section>
+
+<section>
+    <h2>Cargar Configuración YAML</h2>
+    <pre><code class="language-python">
+from crewai import Crew
+from crewai.configs import AgentConfig, TaskConfig
+
+crew = Crew.from_configs(
+    agents_config=AgentConfig.load_from_yaml("agents.yaml"),
+    tasks_config=TaskConfig.load_from_yaml("tasks.yaml")
+)
+    </code></pre>
+</section>
+
+<section>
+    <h2>Memoria en CrewAI</h2>
+    <pre><code class="language-python">
+# Habilitar memoria
+agent = Agent(
+    role="Asistente",
+    goal="Ayudar al usuario",
+    backstory="...",
+    memory=True,  # Habilita memoria
+    long_term_memory=True  # Memoria persistente
+)
+
+# Acceder a memoria
+agent.memory.get_memory()
+agent.memory.save_memory(key="context", value="información")
+    </code></pre>
+</section>
+
+<!-- MÓDULO 5: CASOS DE USO -->
+<section>
+    <h1>Módulo 5: Casos de Uso Prácticos</h1>
+</section>
+
+<section>
+    <h2>Caso 1: Investigación de Mercado</h2>
+    <p><strong>Objetivo:</strong> Sistema automático para investigar mercados, analizar tendencias y generar reportes.</p>
+</section>
+
+<section>
+    <h2>Arquitectura: Investigación de Mercado</h2>
+    <pre><code class="language-text">
+Entrada (Query)
+  ↓
+[Investigador] → Búsqueda de tendencias
+  ↓
+[Analista] → Análisis de datos
+  ↓
+[Reportero] → Generación de reporte
+  ↓
+Salida (Reporte Ejecutivo)
+    </code></pre>
+</section>
+
+<section>
+    <h2>Implementación: Agentes</h2>
+    <pre><code class="language-python">
+researcher = Agent(
+    role="Investigador de Mercado",
+    goal="Identificar tendencias emergentes",
+    backstory="Especialista con 10 años en investigación",
+    tools=[search_tool]
+)
+
+analyst = Agent(
+    role="Analista Estratégico",
+    goal="Generar insights accionables",
+    backstory="Analista con experiencia en datos empresariales"
+)
+
+reporter = Agent(
+    role="Redactor Ejecutivo",
+    goal="Presentar hallazgos en formato profesional",
+    backstory="Comunicador especializado en reportes ejecutivos"
+)
+    </code></pre>
+</section>
+
+<section>
+    <h2>Implementación: Tareas</h2>
+    <pre><code class="language-python">
+research_task = Task(
+    description="Investiga las tendencias del mercado de {topic}",
+    expected_output="Reporte con 5-10 tendencias principales",
+    agent=researcher
+)
+
+analysis_task = Task(
+    description="Analiza las tendencias y genera recomendaciones",
+    expected_output="Análisis con implicaciones estratégicas",
+    agent=analyst,
+    depends_on=[research_task]
+)
+
+report_task = Task(
+    description="Genera un reporte ejecutivo con conclusiones",
+    expected_output="Reporte de 1-2 páginas",
+    agent=reporter,
+    depends_on=[analysis_task]
+)
+    </code></pre>
+</section>
+
+<section>
+    <h2>Implementación: Crew y Ejecución</h2>
+    <pre><code class="language-python">
+crew = Crew(
+    agents=[researcher, analyst, reporter],
+    tasks=[research_task, analysis_task, report_task],
+    process=Process.sequential
+)
+
+result = crew.kickoff(inputs={"topic": "Inteligencia Artificial 2024"})
+print(result.raw_output)
+    </code></pre>
+</section>
+
+<section>
+    <h2>Caso 2: Desarrollo de Software</h2>
+    <p><strong>Objetivo:</strong> Sistema para revisar código, analizar arquitectura y sugerir mejoras.</p>
+</section>
+
+<section>
+    <h2>Arquitectura: Code Review</h2>
+    <pre><code class="language-text">
+Código fuente
+  ↓
+[Code Reviewer] → Análisis de calidad
+  ↓
+[Architect] → Análisis de diseño
+  ↓
+[Security Auditor] → Verificación de seguridad
+  ↓
+Reporte de calidad
+    </code></pre>
+</section>
+
+<section>
+    <h2>Caso 3: Marketing y Contenido</h2>
+    <p><strong>Objetivo:</strong> Crear estrategia de contenido multi-canal coordinada.</p>
+</section>
+
+<section>
+    <h2>Arquitectura: Marketing Multi-canal</h2>
+    <pre><code class="language-text">
+Estrategia de contenido
+  ↓
+[Content Strategist] → Plan de contenido
+  ↓
+[Content Writer] → Generación de posts
+  ↓
+[Social Media Manager] → Adaptación de canales
+  ↓
+[SEO Specialist] → Optimización
+  ↓
+Contenido multi-canal listo
+    </code></pre>
+</section>
+
+<section>
+    <h2>Caso 4: Análisis de Datos</h2>
+    <p><strong>Objetivo:</strong> Pipeline automático para exploración, análisis y visualización de datasets.</p>
+</section>
+
+<section>
+    <h2>Arquitectura: Pipeline de Datos</h2>
+    <pre><code class="language-text">
+Dataset raw
+  ↓
+[Data Cleaner] → Limpieza y preparación
+  ↓
+[Data Analyst] → Análisis exploratorio
+  ↓
+[Statistician] → Análisis estadístico
+  ↓
+[Data Visualizer] → Reportes visuales
+  ↓
+Insights y recomendaciones
+    </code></pre>
+</section>
+
+<!-- MÓDULO 6: MONITOREO Y DEBUGGING -->
+<section>
+    <h1>Módulo 6: Monitoreo y Debugging</h1>
+</section>
+
+<section>
+    <h2>Logging Básico</h2>
+    <pre><code class="language-python">
+crew = Crew(
+    agents=agents,
+    tasks=tasks,
+    verbose=True,  # Mostrar todos los pasos
+    output_log_file="crew_execution.log"
+)
+
+result = crew.kickoff()
+    </code></pre>
+</section>
+
+<section>
+    <h2>Logger Personalizado</h2>
+    <pre><code class="language-python">
+import logging
+from datetime import datetime
+
+class CrewLogger:
+    def __init__(self, verbose=True):
+        self.verbose = verbose
+        self.logs = []
+
+    def log_task_start(self, task_name, agent_name):
+        log_entry = {
+            "timestamp": datetime.now().isoformat(),
+            "event": "task_start",
+            "task": task_name,
+            "agent": agent_name
+        }
+        self.logs.append(log_entry)
+        if self.verbose:
+            print(f"[TASK START] {task_name} - {agent_name}")
+    </code></pre>
+</section>
+
+<section>
+    <h2>Debugging con Callbacks</h2>
+    <pre><code class="language-python">
+def on_task_start(task_name, agent_name):
+    print(f"→ Iniciando tarea: {task_name}")
+
+def on_task_complete(task_name, output):
+    print(f"✓ Completada: {task_name}")
+
+crew = Crew(
+    agents=agents,
+    tasks=tasks,
+    on_task_start_callback=on_task_start,
+    on_task_complete_callback=on_task_complete
+)
+    </code></pre>
+</section>
+
+<section>
+    <h2>Evaluación de Resultados</h2>
+    <pre><code class="language-python">
+def validate_output(task_output, expected_format=None):
+    """Valida si el output cumple con criterios"""
+    if not task_output or len(task_output.strip()) == 0:
+        return False, "Output vacío"
+
+    if len(task_output.split()) < 10:
+        return False, "Output muy corto"
+
+    return True, "Output válido"
+
+# Usar
+result = crew.kickoff()
+for task_output in result.tasks_output:
+    valid, message = validate_output(task_output.raw_output)
+    print(f"{task_output.description}: {'✓' if valid else '✗'} {message}")
+    </code></pre>
+</section>
+
+<!-- MÓDULO 7: MEJORES PRÁCTICAS -->
+<section>
+    <h1>Módulo 7: Mejores Prácticas</h1>
+</section>
+
+<section>
+    <h2>Diseño de Agentes: Roles Específicos</h2>
+    <pre><code class="language-python">
+# ✓ BIEN: Rol específico
+role = "Analista de Tendencias de Mercado Junior"
+
+# ✗ MAL: Rol demasiado genérico
+role = "Analista"
+
+# ✓ BIEN: Goal claro y medible
+goal = "Identificar 5-10 tendencias emergentes en el mercado de IA"
+
+# ✗ MAL: Goal vago
+goal = "Analizar el mercado"
+    </code></pre>
+</section>
+
+<section>
+    <h2>Backstories que Añadan Contexto</h2>
+    <pre><code class="language-python">
+# ✓ BIEN: Backstory detallado
+backstory = """
+Eres un especialista en análisis de mercado con 10 años de experiencia
+en tecnología. Has publicado 20+ reportes sobre tendencias de IA en
+Forbes, TechCrunch y medios especializados.
+"""
+
+# ✗ MAL: Backstory genérico
+backstory = "Eres un analista"
+    </code></pre>
+</section>
+
+<section>
+    <h2>Estructuración de Tareas</h2>
+    <pre><code class="language-python">
+# ✓ BIEN: Descripción detallada
+task = Task(
+    description="""
+    Investiga las tendencias emergentes del mercado de IA en 2024.
+    Busca información sobre: modelos de IA, aplicaciones nuevas,
+    regulaciones, y empresas líderes.
+    """,
+    expected_output="""
+    Reporte en markdown con:
+    - 5-10 tendencias principales
+    - Análisis de impacto (alto/medio/bajo)
+    - Empresas afectadas
+    """,
+    agent=researcher
+)
+    </code></pre>
+</section>
+
+<section>
+    <h2>Dependencias Lógicas</h2>
+    <pre><code class="language-python">
+# Orden correcto de dependencias
+task1 = Task(
+    description="Investigar datos",
+    expected_output="Datos brutos",
+    agent=researcher
+)
+
+task2 = Task(
+    description="Analizar datos investigados",
+    expected_output="Análisis",
+    agent=analyst,
+    depends_on=[task1]  # Espera a investigación
+)
+
+task3 = Task(
+    description="Escribir reporte basado en análisis",
+    expected_output="Reporte ejecutivo",
+    agent=writer,
+    depends_on=[task2]  # Espera a análisis
+)
+    </code></pre>
+</section>
+
+<section>
+    <h2>Optimización de Costos: Modelos Pequeños</h2>
+    <pre><code class="language-python">
+# Para tareas simples: Modelos más pequeños
+simple_agent = Agent(
+    role="Clasificador",
+    goal="Clasificar documentos",
+    backstory="...",
+    llm="gpt-3.5-turbo"  # Más económico
+)
+
+# Para tareas complejas: Modelos poderosos
+complex_agent = Agent(
+    role="Analista Estratégico",
+    goal="Generar estrategia competitiva",
+    backstory="...",
+    llm="gpt-4"
+)
+    </code></pre>
+</section>
+
+<section>
+    <h2>Limitar Iteraciones</h2>
+    <pre><code class="language-python">
+agent = Agent(
+    role="Investigador",
+    goal="...",
+    backstory="...",
+    max_iterations=3  # Limitar intentos
+)
+    </code></pre>
+</section>
+
+<!-- MÓDULO 8: ESCALABILIDAD -->
+<section>
+    <h1>Módulo 8: Escalabilidad y Arquitectura</h1>
+</section>
+
+<section>
+    <h2>Crews Complejos: Múltiples Crews</h2>
+    <pre><code class="language-python">
+# Crew 1: Investigación
+research_crew = Crew(
+    agents=[researcher],
+    tasks=[research_task],
+    process=Process.sequential
+)
+
+# Crew 2: Análisis
+analysis_crew = Crew(
+    agents=[analyst],
+    tasks=[analysis_task],
+    process=Process.sequential
+)
+
+# Ejecutar secuencialmente
+research_result = research_crew.kickoff()
+analysis_result = analysis_crew.kickoff(
+    inputs={"research": research_result}
+)
+    </code></pre>
+</section>
+
+<section>
+    <h2>Integración Web con FastAPI</h2>
+    <pre><code class="language-python">
+from fastapi import FastAPI
+from pydantic import BaseModel
+
+app = FastAPI(title="CrewAI API")
+
+class TaskInput(BaseModel):
+    topic: str
+    analysis_type: str
+
+@app.post("/api/research")
+async def research_endpoint(input_data: TaskInput):
+    crew = Crew(
+        agents=[researcher, analyst],
+        tasks=[research_task, analysis_task],
+        process=Process.sequential
+    )
+
+    result = crew.kickoff(inputs={"topic": input_data.topic})
+
+    return {
+        "status": "completed",
+        "result": result.raw_output
+    }
+    </code></pre>
+</section>
+
+<!-- MÓDULO 9: TROUBLESHOOTING -->
+<section>
+    <h1>Módulo 9: Troubleshooting</h1>
+</section>
+
+<section>
+    <h2>Problema: Herramientas Mal Descritas</h2>
+    <pre><code class="language-python">
+# PROBLEMA
+@tool
+def search_web(query):
+    """Busca en la web"""  # Muy vago
+    pass
+
+# SOLUCIÓN
+@tool
+def search_web(query: str) -> str:
+    """
+    Busca información en internet usando Serper API.
+    Útil para: investigación de mercado, búsqueda de tendencias.
+    Retorna: resultados relevantes con URLs.
+    """
+    pass
+    </code></pre>
+</section>
+
+<section>
+    <h2>Problema: Tareas que Tardan Demasiado</h2>
+    <pre><code class="language-python">
+# PROBLEMA
+task = Task(
+    description="Analiza todo el internet sobre IA",
+    expected_output="Análisis completo"
+)
+
+# SOLUCIÓN: Ser específico y limitado
+task = Task(
+    description="""
+    Analiza las 10 noticias más recientes sobre IA en los últimos 7 días.
+    Enfócate en: regulación, tendencias tecnológicas, adopción empresarial.
+    """,
+    expected_output="Resumen de 3-5 párrafos"
+)
+    </code></pre>
+</section>
+
+<section>
+    <h2>Debugging Avanzado</h2>
+    <pre><code class="language-python">
+# 1. Aumentar verbosidad
+crew = Crew(
+    agents=agents,
+    tasks=tasks,
+    verbose=True,
+    log_file="debug.log"
+)
+
+# 2. Ejecutar tasks independientemente
+result = task1.execute()
+print(f"Task 1 output: {result}")
+
+# 3. Verificar agent memory
+print(agent.memory.get_memory())
+
+# 4. Usar try-except
+try:
+    result = crew.kickoff()
+except Exception as e:
+    print(f"Error: {e}")
+    import traceback
+    traceback.print_exc()
+    </code></pre>
+</section>
+
+<!-- MÓDULO 10: PROYECTO FINAL -->
+<section>
+    <h1>Módulo 10: Proyecto Final</h1>
+</section>
+
+<section>
+    <h2>Proyecto: Sistema de Análisis Multi-Fuente</h2>
+    <p><strong>Objetivo:</strong> Crear un sistema completo que investigue, analice y prediga tendencias de mercado.</p>
+</section>
+
+<section>
+    <h2>Requisitos del Sistema</h2>
+    <ul>
+        <li><strong>Investigación:</strong> Buscar tendencias en múltiples fuentes, validar información, clasificar por relevancia</li>
+        <li><strong>Análisis:</strong> Extraer insights, identificar patrones, calcular impacto potencial</li>
+        <li><strong>Predicción:</strong> Proyectar tendencias futuras, estimar timelines, calcular probabilidades</li>
+        <li><strong>Reporte:</strong> Sintetizar hallazgos, crear visualizaciones, exportar en múltiples formatos</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Implementación: Agentes</h2>
+    <pre><code class="language-python">
+researcher = Agent(
+    role="Market Researcher",
+    goal="Identificar tendencias emergentes",
+    backstory="10+ años en research de mercado",
+    tools=[search_tool, web_scraper]
+)
+
+analyst = Agent(
+    role="Data Analyst",
+    goal="Extraer insights de datos",
+    backstory="PhD en Estadística",
+    tools=[data_analyzer, visualization_tool]
+)
+
+forecaster = Agent(
+    role="Trend Forecaster",
+    goal="Predecir tendencias futuras",
+    backstory="Especialista en forecasting",
+    tools=[statistical_tool]
+)
+    </code></pre>
+</section>
+
+<section>
+    <h2>Implementación: Tareas</h2>
+    <pre><code class="language-python">
+research_task = Task(
+    description="Investiga tendencias en {market}",
+    expected_output="Reporte con 10 tendencias",
+    agent=researcher
+)
+
+analysis_task = Task(
+    description="Analiza las tendencias investigadas",
+    expected_output="Análisis con insights",
+    agent=analyst,
+    depends_on=[research_task]
+)
+
+forecast_task = Task(
+    description="Predice evolución de tendencias",
+    expected_output="Predicciones con probabilidades",
+    agent=forecaster,
+    depends_on=[analysis_task]
+)
+    </code></pre>
+</section>
+
+<section>
+    <h2>Implementación: Crew</h2>
+    <pre><code class="language-python">
+crew = Crew(
+    agents=[researcher, analyst, forecaster, reporter],
+    tasks=[research_task, analysis_task, forecast_task, report_task],
+    process=Process.sequential,
+    verbose=True
+)
+
+# Ejecutar
+result = crew.kickoff(inputs={"market": "Inteligencia Artificial"})
+print(result.raw_output)
+    </code></pre>
+</section>
+
+<section>
+    <h2>Entregables del Proyecto</h2>
+    <ul>
+        <li>Código fuente completamente funcional</li>
+        <li>Documentación técnica del sistema</li>
+        <li>Reporte de tendencias generado</li>
+        <li>Predicciones con análisis de confianza</li>
+        <li>Guía de uso y configuración</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Criterios de Éxito</h2>
+    <ul>
+        <li>Sistema ejecuta sin errores</li>
+        <li>Todos los agentes se ejecutan correctamente</li>
+        <li>Outputs tienen calidad y formato esperado</li>
+        <li>Sistema es escalable a nuevos agentes/tareas</li>
+        <li>Documentación clara y completa</li>
+        <li>Código mantenible y reutilizable</li>
+    </ul>
+</section>
+
+<!-- CONCLUSIÓN -->
+<section>
+    <h2>Resumen del Curso</h2>
+    <p>Has aprendido:</p>
+    <ul>
+        <li>Fundamentos de CrewAI y orquestación multi-agente</li>
+        <li>Diseño de agentes, tareas y crews</li>
+        <li>Integración de herramientas y configuración avanzada</li>
+        <li>Casos de uso prácticos en diferentes dominios</li>
+        <li>Monitoreo, debugging y mejores prácticas</li>
+        <li>Arquitectura escalable y troubleshooting</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Recursos Adicionales</h2>
+    <ul>
+        <li>Documentación oficial de CrewAI</li>
+        <li>GitHub: github.com/joaomdmoura/crewai</li>
+        <li>Comunidad en Discord</li>
+        <li>Ejemplos en GitHub</li>
+        <li>Comparativas con otros frameworks</li>
+    </ul>
+</section>
+
+<section>
+    <h1>¡Gracias!</h1>
+    <p>Ahora estás listo para construir sistemas multi-agente con CrewAI</p>
+</section>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/plugin/highlight/highlight.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            plugins: [RevealHighlight],
+            slideNumber: true,
+            transition: 'slide'
+        });
+    </script>
+</body>
+</html>

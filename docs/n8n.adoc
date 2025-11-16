@@ -1,0 +1,5031 @@
+= Temario Completo: n8n - Automatización de Workflows
+:doctype: book
+:toc:
+:toclevels: 4
+:sectnums:
+:icons: font
+:source-highlighter: highlight.js
+:highlightjsdir: https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0
+:highlightjs-theme: atom-one-light
+:data-uri:
+
+[preface]
+== Introducción a n8n
+
+n8n es una plataforma de código abierto para automatización de workflows que permite conectar aplicaciones y servicios sin escribir código complejo. Este temario cubre desde conceptos básicos hasta implementaciones avanzadas en producción.
+
+---
+
+== MÓDULO 1: Fundamentos de n8n
+
+=== 1.1 ¿Qué es n8n?
+
+==== Definición y características principales
+
+**n8n** (pronunciado "n-eight-n") es una plataforma de automatización de workflows de código abierto que permite conectar aplicaciones, servicios y APIs sin necesidad de escribir código complejo. Su nombre proviene de la palabra "nodemation" (node + automation).
+
+**Características principales:**
+
+* **Visual Workflow Builder**: Editor visual basado en nodos que permite crear flujos de trabajo de manera intuitiva mediante drag-and-drop
+* **Código Abierto**: Licencia fair-code, permitiendo revisar y modificar el código fuente
+* **Self-hosted**: Control total sobre tus datos al alojar n8n en tu propia infraestructura
+* **Extensible**: Más de 400+ integraciones nativas y posibilidad de crear nodos personalizados
+* **Flexible**: Soporta JavaScript, Python y expresiones personalizadas para lógica compleja
+* **REST API**: API completa para gestionar workflows programáticamente
+
+==== Comparación con otras plataformas
+
+[cols="1,1,1,1", options="header"]
+|===
+|Característica|n8n|Zapier|Make (Integromat)
+
+|Tipo
+|Open Source
+|SaaS Propietario
+|SaaS Propietario
+
+|Hosting
+|Self-hosted / Cloud
+|Solo Cloud
+|Solo Cloud
+
+|Precio
+|Gratis (self-hosted)
+|Desde $20/mes
+|Desde $9/mes
+
+|Privacidad de datos
+|Total (self-hosted)
+|Limitada
+|Limitada
+
+|Nodos personalizados
+|Sí
+|No
+|Limitado
+
+|Código JavaScript/Python
+|Sí
+|No
+|Limitado
+
+|Complejidad workflows
+|Alta
+|Media
+|Alta
+
+|Curva de aprendizaje
+|Media
+|Baja
+|Media-Alta
+|===
+
+==== Ventajas de n8n
+
+**1. Código Abierto y Transparencia**
+* Auditable: puedes revisar exactamente qué hace cada nodo
+* Comunidad activa: contribuciones constantes y mejoras
+* Sin vendor lock-in: libertad para migrar o modificar
+
+**2. Self-hosted y Control de Datos**
+* Datos sensibles permanecen en tu infraestructura
+* Cumplimiento con GDPR, HIPAA y otras regulaciones
+* Sin límites de ejecución o transferencia de datos
+
+**3. Escalabilidad**
+* Horizontal: múltiples workers para distribuir carga
+* Vertical: ajustar recursos según necesidades
+* Queue system: gestión eficiente de workflows concurrentes
+
+**4. Flexibilidad Técnica**
+* Code nodes para lógica compleja en JavaScript/Python
+* Expresiones personalizadas con sintaxis similar a JavaScript
+* HTTP Request node universal para cualquier API
+
+**5. Costo-Efectivo**
+* Gratis para instalaciones self-hosted
+* Sin costos por ejecución o transferencia de datos
+* Cloud version con precios competitivos
+
+==== Casos de uso reales
+
+**1. Automatización de Marketing**
+* Sincronizar leads entre CRM y herramientas de email marketing
+* Enviar emails personalizados basados en comportamiento del usuario
+* Publicar contenido automáticamente en redes sociales
+
+**2. Integración de Sistemas**
+* ETL: Extraer datos de múltiples fuentes, transformar y cargar en data warehouse
+* Sincronización bidireccional entre ERP y e-commerce
+* Integrar sistemas legacy con aplicaciones modernas
+
+**3. DevOps y Monitoreo**
+* Notificaciones de alertas de monitoreo en Slack/Teams
+* Deployment automático tras merge en repositorio
+* Recolección de métricas y generación de reportes
+
+**4. Procesamiento de Datos**
+* Scraping de sitios web y almacenamiento en base de datos
+* Procesamiento de archivos CSV/Excel y distribución
+* Validación y limpieza de datos en tiempo real
+
+**5. Atención al Cliente**
+* Crear tickets automáticamente desde emails/formularios
+* Enriquecer información de clientes desde múltiples fuentes
+* Automatizar respuestas basadas en keywords
+
+**6. E-commerce**
+* Sincronizar inventario entre plataformas
+* Procesar pedidos y notificar a sistemas de fulfillment
+* Generar reportes de ventas y enviarlos diariamente
+
+=== 1.2 Instalación y Configuración Inicial
+
+==== Requisitos del sistema
+
+**Mínimos:**
+* CPU: 2 cores
+* RAM: 2 GB
+* Disco: 10 GB
+* Node.js: v18.x o superior (para instalación local)
+* Docker: v20.x o superior (para instalación con contenedores)
+
+**Recomendados para producción:**
+* CPU: 4+ cores
+* RAM: 4+ GB
+* Disco: 50+ GB (dependiendo de volumen de ejecuciones)
+* PostgreSQL: v12+ (para persistencia en producción)
+
+==== Instalación con Docker
+
+**Opción 1: Docker Run (básico)**
+
+[source,bash]
+----
+# Ejecutar n8n con SQLite (desarrollo)
+docker run -it --rm \
+  --name n8n \
+  -p 5678:5678 \
+  -v ~/.n8n:/home/node/.n8n \
+  n8nio/n8n
+----
+
+**Opción 2: Docker Compose (recomendado)**
+
+Crear archivo `docker-compose.yml`:
+
+[source,yaml]
+----
+version: '3.8'
+
+services:
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=changeme
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - WEBHOOK_URL=http://localhost:5678/
+      - GENERIC_TIMEZONE=Europe/Madrid
+    volumes:
+      - n8n_data:/home/node/.n8n
+
+volumes:
+  n8n_data:
+    driver: local
+----
+
+Iniciar con:
+[source,bash]
+----
+docker-compose up -d
+----
+
+**Opción 3: Docker Compose con PostgreSQL (producción)**
+
+Ver archivo completo en: `./ejemplos/n8n/docker-compose-postgres.yml`
+
+[source,yaml]
+----
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: n8n_postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=n8n
+      - POSTGRES_PASSWORD=n8n_secure_password
+      - POSTGRES_DB=n8n
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U n8n"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n_app
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_DATABASE=n8n
+      - DB_POSTGRESDB_USER=n8n
+      - DB_POSTGRESDB_PASSWORD=n8n_secure_password
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=changeme123
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - WEBHOOK_URL=http://localhost:5678/
+      - GENERIC_TIMEZONE=Europe/Madrid
+      - EXECUTIONS_DATA_PRUNE=true
+      - EXECUTIONS_DATA_MAX_AGE=168
+    volumes:
+      - n8n_data:/home/node/.n8n
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+    driver: local
+  n8n_data:
+    driver: local
+----
+
+==== Instalación local (Node.js)
+
+**Requisitos previos:**
+[source,bash]
+----
+# Verificar versión de Node.js
+node --version  # Debe ser v18 o superior
+
+# Verificar npm
+npm --version
+----
+
+**Instalación global:**
+[source,bash]
+----
+# Instalar n8n globalmente
+npm install n8n -g
+
+# Iniciar n8n
+n8n start
+
+# O con configuración personalizada
+n8n start --tunnel
+----
+
+**Instalación local en proyecto:**
+[source,bash]
+----
+# Crear directorio del proyecto
+mkdir mi-n8n-app
+cd mi-n8n-app
+
+# Inicializar npm
+npm init -y
+
+# Instalar n8n
+npm install n8n
+
+# Agregar script en package.json
+# "scripts": { "start": "n8n start" }
+
+# Ejecutar
+npm start
+----
+
+==== Instalación en la nube
+
+**AWS EC2:**
+[source,bash]
+----
+# Conectar a instancia EC2
+ssh -i mi-clave.pem ubuntu@mi-instancia.amazonaws.com
+
+# Instalar Docker
+sudo apt update
+sudo apt install -y docker.io docker-compose
+
+# Clonar configuración o crear docker-compose.yml
+# Iniciar n8n
+sudo docker-compose up -d
+
+# Configurar seguridad (security group)
+# Abrir puerto 5678 o configurar reverse proxy con nginx
+----
+
+**DigitalOcean Droplet:**
+[source,bash]
+----
+# Crear droplet Ubuntu 22.04
+# Conectar via SSH
+
+# Opción 1: One-click Docker app desde marketplace
+# Opción 2: Instalación manual con Docker
+
+# Instalar Docker
+curl -fsSL https://get.docker.com -o get-docker.sh
+sh get-docker.sh
+
+# Iniciar n8n
+docker run -d \
+  --name n8n \
+  --restart unless-stopped \
+  -p 5678:5678 \
+  -v n8n_data:/home/node/.n8n \
+  n8nio/n8n
+----
+
+**Heroku:**
+[source,bash]
+----
+# Instalar Heroku CLI
+# https://devcenter.heroku.com/articles/heroku-cli
+
+# Login
+heroku login
+
+# Crear app
+heroku create mi-n8n-app
+
+# Agregar PostgreSQL addon
+heroku addons:create heroku-postgresql:hobby-dev
+
+# Configurar variables de entorno
+heroku config:set N8N_BASIC_AUTH_ACTIVE=true
+heroku config:set N8N_BASIC_AUTH_USER=admin
+heroku config:set N8N_BASIC_AUTH_PASSWORD=secure123
+
+# Deploy
+git push heroku main
+----
+
+==== Acceso a la interfaz web
+
+Una vez instalado y ejecutado, acceder a:
+
+* **Local**: http://localhost:5678
+* **Con tunnel**: URL proporcionada por n8n (ej: https://xxxxx.tunnel.n8n.cloud)
+* **Producción**: https://tu-dominio.com
+
+**Primera vez:**
+1. Crear cuenta de usuario (si no hay Basic Auth)
+2. Configurar email y contraseña
+3. Explorar la interfaz
+
+==== Configuración básica de seguridad
+
+**1. Autenticación básica:**
+[source,bash]
+----
+export N8N_BASIC_AUTH_ACTIVE=true
+export N8N_BASIC_AUTH_USER=admin
+export N8N_BASIC_AUTH_PASSWORD=password_muy_seguro
+----
+
+**2. Variables de entorno importantes:**
+[source,bash]
+----
+# Deshabilitar registro de nuevos usuarios
+export N8N_PERSONALIZATION_ENABLED=false
+
+# Restringir acceso a workflows
+export N8N_USER_MANAGEMENT_DISABLED=false
+
+# Configurar HTTPS
+export N8N_PROTOCOL=https
+export N8N_HOST=mi-dominio.com
+
+# Webhook URL segura
+export WEBHOOK_URL=https://mi-dominio.com/
+----
+
+**3. Reverse Proxy con Nginx (recomendado para producción):**
+[source,nginx]
+----
+server {
+    listen 80;
+    server_name n8n.mi-dominio.com;
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name n8n.mi-dominio.com;
+
+    ssl_certificate /etc/letsencrypt/live/n8n.mi-dominio.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/n8n.mi-dominio.com/privkey.pem;
+
+    location / {
+        proxy_pass http://localhost:5678;
+        proxy_set_header Connection '';
+        proxy_http_version 1.1;
+        chunked_transfer_encoding off;
+        proxy_buffering off;
+        proxy_cache off;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+----
+
+**4. Firewall básico (UFW en Ubuntu):**
+[source,bash]
+----
+# Permitir solo SSH y HTTP/HTTPS
+sudo ufw allow OpenSSH
+sudo ufw allow 'Nginx Full'
+sudo ufw enable
+
+# Bloquear acceso directo al puerto 5678
+sudo ufw deny 5678
+----
+
+=== 1.3 Interfaz de Usuario
+
+==== Visión general de la interfaz
+
+La interfaz de n8n se divide en varias áreas principales que facilitan la creación y gestión de workflows.
+
+[source,text]
+----
+┌─────────────────────────────────────────────────────────────────┐
+│  n8n                                    [User] [Settings] [?]   │
+├─────────────────────────────────────────────────────────────────┤
+│ Workflows  │                                                     │
+│ Executions │              CANVAS (Área de trabajo)              │
+│ Templates  │                                                     │
+│            │    ┌──────┐      ┌──────┐      ┌──────┐           │
+│            │    │Start │─────>│HTTP  │─────>│Email │           │
+│            │    └──────┘      └──────┘      └──────┘           │
+│            │                                                     │
+│            │                                                     │
+│ Panel de   │                                                     │
+│ Nodos      │                                                     │
+│            │                                                     │
+│ ┌────────┐ │                                                     │
+│ │Trigger │ │              [Execute Workflow]                    │
+│ │HTTP    │ │                                                     │
+│ │Schedule│ ├─────────────────────────────────────────────────────┤
+│ │Webhook │ │             INSPECTOR DE PROPIEDADES               │
+│ └────────┘ │  Node: HTTP Request                                │
+│ ┌────────┐ │  • Method: GET                                     │
+│ │Actions │ │  • URL: https://api.example.com                    │
+│ │Email   │ │  • Authentication: None                            │
+│ │Slack   │ │  • Options: ...                                    │
+│ │HTTP    │ │                                                     │
+│ └────────┘ │                                                     │
+└─────────────────────────────────────────────────────────────────┘
+----
+
+==== Panel de control principal
+
+**Barra superior:**
+* **Logo n8n**: Acceso rápido al home
+* **Nombre del workflow**: Editable al hacer click
+* **Usuario**: Perfil y configuración de cuenta
+* **Settings**: Configuración global de n8n
+* **Help**: Documentación y recursos
+
+**Menú lateral izquierdo:**
+* **Workflows**: Lista de todos los workflows creados
+* **Executions**: Historial de ejecuciones
+* **Credentials**: Gestión de credenciales y autenticaciones
+* **Variables**: Variables de entorno globales
+* **Templates**: Plantillas de la comunidad
+
+==== Área de trabajo (Canvas)
+
+El canvas es el área principal donde construyes visualmente tus workflows.
+
+**Características:**
+* **Zoom**: Controles de zoom (+/-) o rueda del ratón
+* **Pan**: Arrastrar con click central o barra espaciadora + arrastrar
+* **Grid snapping**: Los nodos se alinean automáticamente
+* **Minimap**: Vista previa del workflow completo (workflows grandes)
+
+**Interacciones:**
+* **Agregar nodo**: Click en el botón "+" entre nodos o en el panel lateral
+* **Conectar nodos**: Arrastrar desde el punto de conexión (círculo a la derecha)
+* **Mover nodos**: Arrastrar el nodo
+* **Eliminar**: Seleccionar y presionar Delete/Backspace
+* **Copiar/Pegar**: Ctrl+C / Ctrl+V
+* **Deshacer/Rehacer**: Ctrl+Z / Ctrl+Shift+Z
+
+**Diagrama de flujo de datos:**
+[source,text]
+----
+    Trigger               Acción               Acción
+   ┌─────────┐          ┌─────────┐          ┌─────────┐
+   │         │          │         │          │         │
+   │ Webhook │─────────>│ Filter  │─────────>│  Email  │
+   │         │  datos   │  Data   │  datos   │  Send   │
+   └─────────┘          └─────────┘          └─────────┘
+                             │
+                             │ datos filtrados
+                             ▼
+                        ┌─────────┐
+                        │Database │
+                        │  Save   │
+                        └─────────┘
+----
+
+==== Panel de nodos
+
+El panel de nodos muestra todos los nodos disponibles organizados por categorías.
+
+**Categorías principales:**
+* **Triggers**: Nodos que inician workflows
+  - Manual Trigger
+  - Webhook
+  - Schedule Trigger
+  - Email Trigger
+  - etc.
+
+* **Actions**: Nodos que realizan acciones
+  - HTTP Request
+  - Email Send
+  - Slack
+  - Database operations
+  - File operations
+
+* **Core Nodes**: Nodos de lógica y control
+  - IF
+  - Switch
+  - Merge
+  - Split
+  - Set
+  - Code
+
+* **Data Transformation**: Nodos para transformar datos
+  - Item Lists
+  - Aggregate
+  - Sort
+  - Filter
+
+**Búsqueda de nodos:**
+[source,text]
+----
+┌────────────────────────┐
+│ 🔍 Search nodes...    │
+├────────────────────────┤
+│ ⚡ Triggers            │
+│   • Webhook            │
+│   • Schedule           │
+│   • Email Trigger      │
+├────────────────────────┤
+│ 🔧 Actions             │
+│   • HTTP Request       │
+│   • Email Send         │
+│   • Slack              │
+├────────────────────────┤
+│ 🎯 Core                │
+│   • IF                 │
+│   • Switch             │
+│   • Code               │
+└────────────────────────┘
+----
+
+==== Inspector de propiedades
+
+El inspector se abre al hacer click en un nodo y muestra todas sus configuraciones.
+
+**Secciones comunes:**
+* **Parameters**: Parámetros principales del nodo
+* **Settings**: Configuraciones avanzadas
+  - Node name: Nombre personalizado
+  - Notes: Notas y documentación
+  - Continue On Fail: No detener workflow si falla
+  - Retry On Fail: Reintentar automáticamente
+  - Always Output Data: Forzar salida de datos
+
+**Ejemplo de inspector HTTP Request:**
+[source,text]
+----
+┌────────────────────────────────┐
+│ HTTP Request                   │
+├────────────────────────────────┤
+│ Parameters                     │
+│                                │
+│ Method:                        │
+│ [▼ GET                      ]  │
+│                                │
+│ URL:                           │
+│ [https://api.example.com    ]  │
+│                                │
+│ Authentication:                │
+│ [▼ None                     ]  │
+│                                │
+│ Query Parameters:              │
+│ [ Add Parameter            ]   │
+│                                │
+│ Headers:                       │
+│ [ Add Header               ]   │
+│                                │
+├────────────────────────────────┤
+│ Settings                       │
+│ ☑ Continue On Fail            │
+│ ☐ Retry On Fail               │
+│ Timeout: 300s                  │
+└────────────────────────────────┘
+----
+
+**Expresiones:**
+En cualquier campo puedes usar expresiones para datos dinámicos:
+[source,text]
+----
+Campo normal:
+┌────────────────────────────┐
+│ john@example.com           │
+└────────────────────────────┘
+
+Campo con expresión:
+┌────────────────────────────┐
+│ = {{$json.email}}         │
+└────────────────────────────┘
+----
+
+==== Panel de ejecución
+
+Cuando ejecutas un workflow, se muestra información detallada de la ejecución.
+
+**Información mostrada:**
+* **Status**: Success, Error, Running
+* **Execution time**: Duración total
+* **Data flow**: Datos que pasan entre nodos
+* **Output data**: Datos de salida de cada nodo
+* **Error messages**: Mensajes de error si falla
+
+**Visualización de datos:**
+[source,text]
+----
+┌─────────────────────────────────────────┐
+│ Execution #1234                         │
+│ Status: ✓ Success                       │
+│ Time: 2.3s                              │
+├─────────────────────────────────────────┤
+│                                         │
+│ Webhook (Item 1)                        │
+│ ┌─────────────────────────────────────┐ │
+│ │ {                                   │ │
+│ │   "name": "John Doe",              │ │
+│ │   "email": "john@example.com",     │ │
+│ │   "message": "Hello World"         │ │
+│ │ }                                   │ │
+│ └─────────────────────────────────────┘ │
+│          ▼                              │
+│ HTTP Request (Item 1)                   │
+│ ┌─────────────────────────────────────┐ │
+│ │ {                                   │ │
+│ │   "status": 200,                   │ │
+│ │   "data": {...}                    │ │
+│ │ }                                   │ │
+│ └─────────────────────────────────────┘ │
+└─────────────────────────────────────────┘
+----
+
+**Modos de visualización:**
+* **JSON**: Vista de datos en formato JSON
+* **Table**: Vista tabular para múltiples items
+* **Binary**: Vista de datos binarios (imágenes, archivos)
+* **Raw**: Vista raw sin formato
+
+==== Historial de ejecuciones
+
+Accesible desde el menú lateral, muestra todas las ejecuciones pasadas.
+
+**Información disponible:**
+* **Workflow name**: Nombre del workflow ejecutado
+* **Status**: Estado final (Success, Error, Waiting)
+* **Start time**: Fecha y hora de inicio
+* **Execution time**: Duración
+* **Mode**: Manual, Trigger, Webhook, etc.
+
+**Tabla de ejecuciones:**
+[source,text]
+----
+┌─────────────────────────────────────────────────────────────────┐
+│ Executions                                    [Filter] [Delete] │
+├────┬──────────────┬─────────┬──────────────┬──────────┬────────┤
+│ ID │ Workflow     │ Status  │ Start Time   │ Duration │ Mode   │
+├────┼──────────────┼─────────┼──────────────┼──────────┼────────┤
+│1234│Send Email    │✓ Success│2025-01-15... │   2.3s   │Webhook │
+│1233│Process Data  │✗ Error  │2025-01-15... │   1.1s   │Manual  │
+│1232│Daily Report  │✓ Success│2025-01-15... │  45.7s   │Schedule│
+│1231│Send Email    │✓ Success│2025-01-15... │   2.1s   │Webhook │
+└────┴──────────────┴─────────┴──────────────┴──────────┴────────┘
+----
+
+**Filtros disponibles:**
+* Por status: Success, Error, Waiting
+* Por fecha: Última hora, día, semana, mes
+* Por workflow: Seleccionar workflow específico
+* Por modo: Manual, Trigger, Webhook, etc.
+
+==== Atajos de teclado útiles
+
+[cols="1,2", options="header"]
+|===
+|Atajo|Acción
+
+|Ctrl/Cmd + S
+|Guardar workflow
+
+|Ctrl/Cmd + Enter
+|Ejecutar workflow
+
+|Ctrl/Cmd + C
+|Copiar nodo seleccionado
+
+|Ctrl/Cmd + V
+|Pegar nodo
+
+|Ctrl/Cmd + Z
+|Deshacer
+
+|Ctrl/Cmd + Shift + Z
+|Rehacer
+
+|Delete/Backspace
+|Eliminar nodo seleccionado
+
+|Ctrl/Cmd + A
+|Seleccionar todos los nodos
+
+|Tab
+|Abrir búsqueda de nodos
+
+|Esc
+|Cerrar panel/modal
+
+|Space + Drag
+|Pan por el canvas
+
+|Ctrl/Cmd + Scroll
+|Zoom in/out
+|===
+
+=== 1.4 Conceptos Fundamentales
+
+==== Workflows (flujos de trabajo)
+
+Un **workflow** es una secuencia de pasos automatizados que se ejecutan en orden para completar una tarea específica.
+
+**Componentes de un workflow:**
+* **Nombre**: Identificador único y descriptivo
+* **Descripción**: Documentación del propósito
+* **Nodos**: Elementos individuales que realizan acciones
+* **Conexiones**: Enlaces que determinan el flujo de datos
+* **Trigger**: Punto de inicio del workflow
+* **Settings**: Configuración global del workflow
+
+**Ciclo de vida de un workflow:**
+[source,text]
+----
+┌─────────┐     ┌──────────┐     ┌──────────┐     ┌─────────┐
+│ Trigger │────>│ Process  │────>│ Process  │────>│  End    │
+│ (Inicio)│     │  Data    │     │  Data    │     │         │
+└─────────┘     └──────────┘     └──────────┘     └─────────┘
+     ▲                                                   │
+     │                                                   │
+     └───────────────── Loop/Retry ─────────────────────┘
+----
+
+**Estados de un workflow:**
+* **Inactive**: No está ejecutándose
+* **Active**: Activado y esperando trigger
+* **Running**: En ejecución actual
+* **Error**: Falló durante la ejecución
+* **Success**: Completado exitosamente
+
+**Ejemplo básico - Estructura JSON:**
+Ver archivo completo: `./ejemplos/n8n/01-workflow-basico.json`
+
+==== Nodos y conexiones
+
+**Nodos:**
+Los nodos son los bloques de construcción de n8n. Cada nodo realiza una tarea específica.
+
+**Tipos de nodos:**
+* **Trigger nodes**: Inician el workflow
+* **Regular nodes**: Procesan o transforman datos
+* **Conditional nodes**: Toman decisiones (IF, Switch)
+* **Merge nodes**: Combinan datos de múltiples fuentes
+
+**Anatomía de un nodo:**
+[source,text]
+----
+┌───────────────────────────────┐
+│  ⚡ HTTP Request              │  ← Nombre del nodo
+│  ────────────────────────     │
+│  URL: api.example.com         │  ← Configuración
+│  Method: GET                  │
+│  ────────────────────────     │
+│  ● Input  │  Output ●        │  ← Puntos de conexión
+└───────────────────────────────┘
+----
+
+**Conexiones:**
+Las conexiones determinan cómo fluyen los datos entre nodos.
+
+[source,text]
+----
+Conexión simple:
+Node A ──────> Node B
+
+Conexión condicional (IF):
+              ┌──> Node B (true)
+Node A ───────┤
+              └──> Node C (false)
+
+Conexión múltiple (múltiples outputs):
+         ┌──> Node B
+Node A ──┼──> Node C
+         └──> Node D
+----
+
+**Flujo de datos:**
+Los datos se pasan de nodo a nodo como un array de items:
+[source,json]
+----
+[
+  {
+    "json": {
+      "name": "Item 1",
+      "value": 100
+    }
+  },
+  {
+    "json": {
+      "name": "Item 2",
+      "value": 200
+    }
+  }
+]
+----
+
+==== Triggers (disparadores)
+
+Los triggers son nodos especiales que inician la ejecución de un workflow.
+
+**Tipos de triggers:**
+
+**1. Manual Trigger**
+* Se ejecuta manualmente desde la interfaz
+* Útil para testing y desarrollo
+
+**2. Webhook Trigger**
+* Se ejecuta cuando recibe una petición HTTP
+* Proporciona una URL única
+* Soporta GET, POST, PUT, DELETE
+
+[source,text]
+----
+Diagrama Webhook:
+┌──────────────┐      HTTP Request       ┌─────────────┐
+│   Cliente    │─────────────────────────>│  Webhook    │
+│  (Frontend)  │<─────────────────────────│  (n8n)      │
+└──────────────┘      HTTP Response       └─────────────┘
+                                                 │
+                                                 ▼
+                                          ┌─────────────┐
+                                          │  Workflow   │
+                                          │  Execution  │
+                                          └─────────────┘
+----
+
+**3. Schedule Trigger (Cron)**
+* Se ejecuta en intervalos de tiempo específicos
+* Usa expresiones cron
+* Ejemplo: `0 9 * * *` (todos los días a las 9 AM)
+
+**4. Email Trigger**
+* Se ejecuta cuando llega un email
+* Monitorea una cuenta de email (IMAP)
+
+**5. Form Trigger**
+* Crea un formulario web
+* Se ejecuta cuando se envía el formulario
+
+**Ejemplo de trigger webhook:**
+Ver archivo: `./ejemplos/n8n/02-webhook-trigger.json`
+
+==== Acciones
+
+Las acciones son nodos que realizan operaciones específicas.
+
+**Categorías principales:**
+
+**1. Comunicación:**
+* Email Send: Enviar emails
+* Slack: Enviar mensajes a Slack
+* Telegram: Enviar mensajes a Telegram
+* Discord: Enviar mensajes a Discord
+
+**2. Datos:**
+* HTTP Request: Llamar a APIs
+* Database: Operaciones CRUD en BD
+* Google Sheets: Leer/escribir hojas
+* File Operations: Leer/escribir archivos
+
+**3. Lógica:**
+* IF: Condicionales
+* Switch: Múltiples condiciones
+* Merge: Combinar datos
+* Split: Dividir items
+
+**4. Transformación:**
+* Set: Establecer valores
+* Code: Ejecutar JavaScript/Python
+* Function: Transformaciones simples
+* Item Lists: Manipular arrays
+
+**Diagrama de flujo con acciones:**
+[source,text]
+----
+┌─────────┐    ┌──────────┐    ┌─────────┐    ┌─────────┐
+│ Webhook │───>│   HTTP   │───>│   IF    │───>│  Email  │
+│ Trigger │    │ Request  │    │         │    │  Send   │
+└─────────┘    └──────────┘    └────┬────┘    └─────────┘
+                                     │
+                                     ▼
+                                ┌─────────┐
+                                │  Slack  │
+                                │  Send   │
+                                └─────────┘
+----
+
+==== Datos y tipos de datos
+
+**Estructura de datos en n8n:**
+
+Todos los datos en n8n se pasan entre nodos como un array de **items**:
+
+[source,json]
+----
+[
+  {
+    "json": { ... },        // Datos principales (JSON)
+    "binary": { ... },      // Datos binarios (opcional)
+    "pairedItem": { ... }   // Referencia al item origen
+  }
+]
+----
+
+**Tipos de datos soportados:**
+
+**1. JSON (más común):**
+[source,json]
+----
+{
+  "json": {
+    "id": 123,
+    "name": "John Doe",
+    "email": "john@example.com",
+    "active": true,
+    "tags": ["customer", "premium"],
+    "metadata": {
+      "created": "2025-01-15",
+      "updated": "2025-01-15"
+    }
+  }
+}
+----
+
+**2. Binary (archivos, imágenes):**
+[source,json]
+----
+{
+  "json": {
+    "fileName": "document.pdf"
+  },
+  "binary": {
+    "data": {
+      "data": "base64_encoded_data...",
+      "mimeType": "application/pdf",
+      "fileName": "document.pdf",
+      "fileSize": 1024000
+    }
+  }
+}
+----
+
+**3. Múltiples items:**
+[source,json]
+----
+[
+  { "json": { "id": 1, "name": "Item 1" } },
+  { "json": { "id": 2, "name": "Item 2" } },
+  { "json": { "id": 3, "name": "Item 3" } }
+]
+----
+
+**Acceso a datos:**
+
+En expresiones, puedes acceder a datos usando:
+* `$json`: Datos del item actual
+* `$input`: Datos de entrada del nodo
+* `$node`: Datos de un nodo específico
+* `$binary`: Datos binarios
+
+**Ejemplos:**
+[source,javascript]
+----
+// Acceder a un campo
+{{ $json.email }}
+
+// Acceder a campo anidado
+{{ $json.user.address.city }}
+
+// Acceder a array
+{{ $json.items[0].name }}
+
+// Datos de nodo anterior específico
+{{ $node["HTTP Request"].json.status }}
+----
+
+==== Expresiones y variables
+
+Las expresiones permiten usar datos dinámicos en lugar de valores estáticos.
+
+**Sintaxis básica:**
+[source,text]
+----
+Valor estático:
+john@example.com
+
+Expresión:
+{{ $json.email }}
+----
+
+**Operadores:**
+
+**Aritméticos:**
+[source,javascript]
+----
+{{ $json.price * 1.21 }}           // Multiplicación
+{{ $json.total - $json.discount }} // Resta
+{{ $json.quantity + 10 }}          // Suma
+{{ $json.price / 2 }}              // División
+{{ $json.count % 10 }}             // Módulo
+----
+
+**Comparación:**
+[source,javascript]
+----
+{{ $json.age > 18 }}               // Mayor que
+{{ $json.status === 'active' }}    // Igual
+{{ $json.count !== 0 }}            // Diferente
+{{ $json.price >= 100 }}           // Mayor o igual
+----
+
+**Lógicos:**
+[source,javascript]
+----
+{{ $json.active && $json.verified }}   // AND
+{{ $json.premium || $json.trial }}     // OR
+{{ !$json.deleted }}                   // NOT
+----
+
+**Funciones integradas:**
+
+**String:**
+[source,javascript]
+----
+{{ $json.email.toLowerCase() }}
+{{ $json.name.toUpperCase() }}
+{{ $json.text.trim() }}
+{{ $json.message.substring(0, 10) }}
+{{ $json.name.split(' ')[0] }}
+----
+
+**Array:**
+[source,javascript]
+----
+{{ $json.tags.length }}
+{{ $json.items.join(', ') }}
+{{ $json.numbers.filter(x => x > 10) }}
+{{ $json.users.map(u => u.name) }}
+----
+
+**Date:**
+[source,javascript]
+----
+{{ new Date().toISOString() }}
+{{ new Date($json.createdAt).getFullYear() }}
+{{ Date.now() }}
+----
+
+**Variables de entorno:**
+[source,javascript]
+----
+{{ $env.API_KEY }}
+{{ $env.DATABASE_URL }}
+----
+
+**Variables del workflow:**
+[source,javascript]
+----
+{{ $execution.id }}                // ID de ejecución
+{{ $execution.mode }}              // Modo (manual, trigger, etc.)
+{{ $workflow.id }}                 // ID del workflow
+{{ $workflow.name }}               // Nombre del workflow
+{{ $now }}                         // Fecha/hora actual
+{{ $today }}                       // Fecha actual (sin hora)
+----
+
+**Ejemplo completo:**
+Ver archivo: `./ejemplos/n8n/03-expresiones-ejemplo.json`
+
+**Expresiones complejas:**
+[source,javascript]
+----
+// Condicional ternario
+{{ $json.age >= 18 ? 'Adulto' : 'Menor' }}
+
+// Concatenación
+{{ $json.firstName + ' ' + $json.lastName }}
+
+// Template literals
+{{ `Hola ${$json.name}, bienvenido!` }}
+
+// Cálculo complejo
+{{ ($json.subtotal * 1.21).toFixed(2) }}
+
+// Validación
+{{ $json.email && $json.email.includes('@') ? $json.email : 'sin-email@ejemplo.com' }}
+----
+
+**Debugging de expresiones:**
+[source,text]
+----
+┌────────────────────────────────────┐
+│ Expression Editor                  │
+├────────────────────────────────────┤
+│ {{ $json.price * 1.21 }}          │
+│                                    │
+│ Result Preview:                    │
+│ 121.00                             │
+│                                    │
+│ Available Data:                    │
+│ • $json.price = 100                │
+│ • $json.currency = "EUR"           │
+└────────────────────────────────────┘
+----
+
+---
+
+== MÓDULO 2: Primeros Pasos
+
+=== 2.1 Crear tu Primer Workflow
+
+==== Introducción a la creación de workflows
+
+Crear un workflow en n8n es un proceso sencillo y directo. Todos los workflows comienzan en la pantalla principal de Workflows y se construyen mediante drag-and-drop de nodos.
+
+==== Paso a paso: Crear un nuevo workflow
+
+**Paso 1: Acceder a la pantalla de Workflows**
+
+[source,text]
+----
+1. Abre http://localhost:5678 en tu navegador
+2. Inicia sesión con tus credenciales
+3. Haz click en "Workflows" en el menú lateral izquierdo
+----
+
+**Paso 2: Crear un nuevo workflow**
+
+[source,text]
+----
+┌─────────────────────────────────────────┐
+│ Workflows                               │
+├─────────────────────────────────────────┤
+│                                         │
+│  [+ New] [Import] [Search...]           │
+│                                         │
+│  Mi Primer Workflow  📝                 │
+│  ├─ 5 executions • Last: 2 hours ago    │
+│  ├─ Created: Jan 15, 2025               │
+│                                         │
+│  Mi Segundo Workflow 📝                 │
+│  ├─ 0 executions                        │
+│  └─ Created: Today                      │
+│                                         │
+└─────────────────────────────────────────┘
+
+Para crear uno nuevo:
+• Haz click en el botón "+ New"
+• O usa el atajo: Ctrl+Shift+N
+----
+
+**Paso 3: Configurar nombre y descripción**
+
+Una vez creas un nuevo workflow, verás una ventana para configurar detalles básicos:
+
+[source,text]
+----
+┌─────────────────────────────────────────┐
+│ Create New Workflow                     │
+├─────────────────────────────────────────┤
+│                                         │
+│ Workflow Name: *                        │
+│ [Mi Primer Workflow              ]      │
+│                                         │
+│ Description:                            │
+│ [Un workflow para enviar un         ]   │
+│ [correo electrónico cada mañana    ]   │
+│                                         │
+│         [Cancel]  [Create]              │
+│                                         │
+└─────────────────────────────────────────┘
+
+RECOMENDACIONES PARA NOMBRES:
+✓ "Email Diario de Reportes"
+✓ "Sincronizar Google Sheets con Airtable"
+✓ "Procesar Pedidos desde Shopify"
+✓ "Notificar Errores en Slack"
+
+✗ "workflow1"
+✗ "test"
+✗ "temp"
+----
+
+**Consejos para nombrar workflows:**
+
+* **Descriptivos**: El nombre debe indicar qué hace el workflow
+* **Claros**: Evita abreviaturas que solo tú entiendas
+* **Accionables**: Comienza con verbos (Enviar, Sincronizar, Procesar)
+* **Únicos**: No uses nombres duplicados
+
+==== Guardar un workflow
+
+**Guardado automático:**
+n8n **guarda automáticamente** tu trabajo cada vez que haces cambios:
+
+[source,text]
+----
+┌─────────────────────────────────┐
+│ Workflow                         │
+│                                 │
+│ 💾 Guardando...    (1-2 seg)     │
+│ ✓ Guardado        (cuando termina)
+│                                 │
+└─────────────────────────────────┘
+----
+
+**Guardado manual:**
+También puedes guardar manualmente:
+* **Teclado**: Ctrl+S (Windows/Linux) o Cmd+S (Mac)
+* **Botón**: Busca el icono de guardar en la interfaz
+
+**Información de guardado:**
+[source,text]
+----
+En la esquina superior derecha verás:
+
+[Timestamp] • Última actualización hace 2 minutos
+[Usuario] • Por: admin@example.com
+[Status] ✓ Todos los cambios guardados
+----
+
+==== Versionamiento de workflows
+
+n8n mantiene un historial de versiones de tus workflows. Puedes ver y restaurar versiones anteriores.
+
+**Acceder al historial de versiones:**
+
+[source,text]
+----
+1. Abre el workflow
+2. Click en "Workflow" (esquina superior izquierda)
+3. Selecciona "Show Versions"
+4. Verás todas las versiones anteriores:
+
+Versión  Fecha/Hora           Cambios
+─────────────────────────────────────
+#5       Jan 15, 12:45 PM     Agregué nodo Email
+#4       Jan 15, 11:20 AM     Cambié condición IF
+#3       Jan 14, 09:30 AM     Creado workflow
+----
+
+**Restaurar una versión anterior:**
+
+[source,text]
+----
+1. Abre el historial de versiones
+2. Haz click en la versión que quieres restaurar
+3. Confirma la acción
+4. El workflow se restaurará a ese estado
+
+⚠️ IMPORTANTE: Esto sobrescribirá la versión actual
+Guarda una copia si necesitas mantener el cambio reciente
+----
+
+==== Copiar y duplicar workflows
+
+A veces necesitas crear un workflow similar a uno existente. Puedes duplicarlo fácilmente.
+
+**Duplicar desde la lista de workflows:**
+
+[source,text]
+----
+1. Ve a la lista de Workflows
+2. Haz click derecho (o en los 3 puntos) en el workflow
+3. Selecciona "Duplicate"
+4. Se creará una copia con el nombre:
+   "Mi Workflow Original - Copy"
+
+┌─────────────────────────────────┐
+│ Actions Menu                    │
+├─────────────────────────────────┤
+│ ⚙️  Edit                        │
+│ 📋 Duplicate                    │
+│ 📤 Export                       │
+│ 🗑️  Delete                     │
+│ 📊 Statistics                   │
+└─────────────────────────────────┘
+----
+
+**Ventajas de duplicar:**
+* Crear versiones de un workflow para diferentes propósitos
+* Testing y desarrollo sin afectar el original
+* Crear templates basados en workflows existentes
+* Ahorrar tiempo en workflows similares
+
+==== Importar workflows
+
+Puedes importar workflows desde archivos JSON (compartidos o descargados):
+
+**Importar desde archivo:**
+
+[source,text]
+----
+1. Abre la lista de Workflows
+2. Click en el botón "Import"
+3. Selecciona el archivo JSON
+4. Revisa los nodos y configuraciones
+5. Click en "Import"
+
+⚠️ Nota: Si hay credenciales en el JSON:
+   - Tendrás que configurarlas nuevamente por seguridad
+   - n8n no almacena contraseñas en los archivos JSON
+----
+
+**Estructura de un archivo JSON importable:**
+
+El formato JSON de n8n tiene esta estructura:
+
+[source,json]
+----
+{
+  "name": "Mi Primer Workflow",
+  "nodes": [
+    {
+      "name": "Start",
+      "type": "n8n-nodes-base.manualTriggerNode",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "parameters": {}
+    },
+    {
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [450, 300],
+      "parameters": {
+        "method": "GET",
+        "url": "https://api.example.com/data"
+      }
+    }
+  ],
+  "connections": {
+    "Start": {
+      "main": [[{"node": "HTTP Request", "branch": 0, "socket": 0}]]
+    }
+  }
+}
+----
+
+==== Exportar workflows
+
+Para compartir tus workflows o hacer backup:
+
+**Exportar desde la lista:**
+
+[source,text]
+----
+1. Ve a Workflows
+2. Haz click derecho en el workflow
+3. Selecciona "Export"
+4. Se descargará un archivo JSON con el nombre del workflow
+
+El archivo se guarda como: "NombreWorkflow.json"
+----
+
+**Exportar desde dentro del workflow:**
+
+[source,text]
+----
+1. Abre el workflow
+2. Click en "Workflow" (esquina superior)
+3. Selecciona "Export"
+4. Elige si deseas:
+   - Export current workflow
+   - Export with full data
+5. Descargará el archivo JSON
+----
+
+**Casos de uso para exportar:**
+* Compartir workflows con el equipo
+* Hacer backup de workflows importantes
+* Usar como templates para otros proyectos
+* Documentar flujos de trabajo
+* Control de versiones en Git
+
+==== Buenas prácticas para workflows
+
+**Estructura recomendada:**
+
+[source,text]
+----
+┌──────────────────────────────────────┐
+│ 1. Trigger (Inicio del workflow)     │
+│    └─ Webhook, Schedule, Manual      │
+├──────────────────────────────────────┤
+│ 2. Data Input (Entrada de datos)     │
+│    └─ HTTP Request, Base de datos    │
+├──────────────────────────────────────┤
+│ 3. Processing (Procesamiento)        │
+│    └─ IF, Loop, Transform            │
+├──────────────────────────────────────┤
+│ 4. Output (Salida de datos)          │
+│    └─ Email, Slack, Base de datos    │
+├──────────────────────────────────────┤
+│ 5. Logging (Registro/Documentación)  │
+│    └─ Guardar en archivo o DB        │
+└──────────────────────────────────────┘
+----
+
+**Documentación interna:**
+Cada nodo tiene un campo "Notes" para agregar documentación:
+
+[source,text]
+----
+Abre el nodo
+├─ Settings (pestaña)
+│  └─ Notes (campo de texto)
+│     └─ Escribe explicación del nodo
+│
+Ejemplo:
+"Este nodo valida que el email tenga
+un formato correcto usando regex"
+----
+
+=== 2.2 Trabajar con Nodos Básicos
+
+==== Introducción a los nodos
+
+Los nodos son los bloques de construcción de n8n. Cada nodo realiza una tarea específica y se conectan entre sí para crear un flujo de trabajo.
+
+**Anatomía de un nodo en la interfaz:**
+
+[source,text]
+----
+┌─────────────────────────────────────┐
+│  ⚡ Manual Trigger               │ ← Icono + Nombre
+├─────────────────────────────────────┤
+│                                     │
+│  Input  ●───────────────────● Output│
+│         (Conexión entrada)  (Conexión salida)
+│                                     │
+└─────────────────────────────────────┘
+
+En el inspector (lado derecho):
+┌─────────────────────────────────────┐
+│ Node Settings                       │
+├─────────────────────────────────────┤
+│                                     │
+│ Parameters:                         │
+│ ┌─────────────────────────────────┐ │
+│ │ Configuraciones específicas...   │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+│ Settings:                           │
+│ ☐ Continue on Fail                 │
+│ ☐ Retry on Fail                    │
+│ ☐ Always Output Data               │
+│                                     │
+└─────────────────────────────────────┘
+----
+
+==== Nodo: Manual Trigger
+
+El **Manual Trigger** es el nodo más simple. Se usa para iniciar un workflow manualmente desde la interfaz.
+
+**Casos de uso:**
+* Testing y desarrollo
+* Ejecuciones bajo demanda
+* Flujos que no necesitan disparador automático
+
+**Configuración:**
+
+[source,text]
+----
+┌─────────────────────────────────┐
+│ Manual Trigger                  │
+├─────────────────────────────────┤
+│                                 │
+│ Este nodo NO tiene parámetros   │
+│ Solo sirve como punto de inicio │
+│                                 │
+│ Para ejecutar:                  │
+│ Click en [Execute Workflow]     │
+│                                 │
+└─────────────────────────────────┘
+----
+
+**Diagrama visual:**
+
+[source,text]
+----
+┌──────────────────┐
+│ Manual Trigger   │
+│                  │
+│  (Click aquí     │
+│   para ejecutar) │
+│                  │
+│        ●         │ ← Output
+└──────────────────┘
+        │
+        │ (Datos iniciales)
+        ▼
+   Siguiente nodo
+----
+
+==== Nodo: HTTP Request
+
+El **HTTP Request** es uno de los nodos más versátiles. Permite llamar a cualquier API externa.
+
+**Parámetros principales:**
+
+[source,text]
+----
+┌───────────────────────────────────────┐
+│ HTTP Request                          │
+├───────────────────────────────────────┤
+│                                       │
+│ Method: [GET ▼]                       │
+│         ├─ GET (Obtener datos)        │
+│         ├─ POST (Enviar datos)        │
+│         ├─ PUT (Actualizar)           │
+│         ├─ PATCH (Actualizar parcial) │
+│         ├─ DELETE (Eliminar)          │
+│         └─ HEAD                       │
+│                                       │
+│ URL:                                  │
+│ [https://api.ejemplo.com/data      ]  │
+│                                       │
+│ Authentication: [None ▼]              │
+│                                       │
+│ Query Parameters:                     │
+│ [+ Add Parameter]                     │
+│                                       │
+│ Headers:                              │
+│ [+ Add Header]                        │
+│                                       │
+│ Body Type: [JSON ▼]                   │
+│ Body:                                 │
+│ [{"key": "value"}]                    │
+│                                       │
+└───────────────────────────────────────┘
+----
+
+**Ejemplo 1: Llamada GET simple**
+
+[source,text]
+----
+Configuración:
+• Method: GET
+• URL: https://jsonplaceholder.typicode.com/posts/1
+• Authentication: None
+
+Resultado esperado:
+{
+  "userId": 1,
+  "id": 1,
+  "title": "sunt aut facere repellat...",
+  "body": "quia et suscipit..."
+}
+----
+
+**Ejemplo 2: Llamada POST con body**
+
+[source,text]
+----
+Configuración:
+• Method: POST
+• URL: https://jsonplaceholder.typicode.com/posts
+• Body Type: JSON (raw)
+• Body:
+{
+  "userId": 1,
+  "title": "Mi nuevo post",
+  "body": "Este es el contenido"
+}
+
+Headers automáticos:
+• Content-Type: application/json
+----
+
+**Ejemplo 3: Usando expresiones dinámicas**
+
+[source,text]
+----
+Tienes un workflow que recibe datos de un webhook:
+
+Webhook Output:
+{
+  "email": "john@example.com",
+  "name": "John Doe"
+}
+
+En HTTP Request puedes usar:
+• URL: https://api.example.com/users/{{ $json.email }}
+• Body:
+{
+  "name": "{{ $json.name }}",
+  "timestamp": "{{ $now }}"
+}
+
+Resultado en ejecución:
+• URL: https://api.example.com/users/john@example.com
+• Body:
+{
+  "name": "John Doe",
+  "timestamp": "2025-01-15T10:30:00Z"
+}
+----
+
+**Respuesta HTTP:**
+
+[source,text]
+----
+n8n captura automáticamente:
+
+{
+  "json": {
+    // Cuerpo de la respuesta (JSON)
+    "status": "success",
+    "data": {...}
+  },
+  "headers": {
+    // Headers de la respuesta
+    "content-type": "application/json",
+    "content-length": "1234"
+  },
+  "statusCode": 200,
+  "statusMessage": "OK"
+}
+
+En siguiente nodo accedes con:
+{{ $json.json.status }}
+{{ $json.statusCode }}
+{{ $json.headers['content-type'] }}
+----
+
+==== Nodo: Set
+
+El nodo **Set** se usa para establecer o transformar datos de forma simple.
+
+**Casos de uso:**
+* Crear nuevos campos
+* Renombrar campos
+* Establecer valores por defecto
+* Transformar tipos de datos
+
+**Ejemplo 1: Agregar nuevos campos**
+
+Entrada:
+[source,json]
+----
+{
+  "name": "John",
+  "email": "john@example.com"
+}
+----
+
+Configuración del nodo Set:
+[source,text]
+----
+Assign:
+Key              | Type | Value
+─────────────────┼──────┼──────────────────
+name             | json | = John (del input)
+email            | json | = john@... (del input)
+id               | num  | 12345
+timestamp        | str  | = {{ $now }}
+status           | str  | active
+----
+
+Salida:
+[source,json]
+----
+{
+  "name": "John",
+  "email": "john@example.com",
+  "id": 12345,
+  "timestamp": "2025-01-15T10:30:00.000Z",
+  "status": "active"
+}
+----
+
+**Ejemplo 2: Transformar datos**
+
+[source,text]
+----
+Entrada: { "email": "JOHN@EXAMPLE.COM" }
+
+Configuración Set:
+Key      | Type | Value
+─────────┼──────┼──────────────────────
+email    | str  | = {{ $json.email.toLowerCase() }}
+domain   | str  | = {{ $json.email.split('@')[1] }}
+
+Salida:
+{
+  "email": "john@example.com",
+  "domain": "example.com"
+}
+----
+
+==== Nodo: Function
+
+El **Function** node es similar a Set pero soporta JavaScript.
+
+**Ejemplo con Function:**
+
+[source,javascript]
+----
+// Entrada
+items.forEach((item) => {
+  item.json.fullName = `${item.json.firstName} ${item.json.lastName}`;
+  item.json.email = item.json.email.toLowerCase();
+  item.json.age = new Date().getFullYear() - item.json.birthYear;
+  return item;
+});
+
+return items;
+----
+
+==== Conectar nodos
+
+**Cómo conectar dos nodos:**
+
+[source,text]
+----
+1. Abre el workflow
+2. Selecciona el primer nodo
+3. Busca el punto de conexión (●) en la derecha
+4. Arrastra desde ese punto hasta el siguiente nodo
+5. Se creará una línea de conexión
+
+Visual:
+┌──────────┐
+│ Node 1   │
+│          ●──────────┐
+└──────────┘          │
+                      ▼
+                ┌──────────┐
+                │ Node 2   │
+                │          │
+                └──────────┘
+----
+
+**Múltiples conexiones (IF):**
+
+[source,text]
+----
+Si tienes un nodo IF que produce dos outputs:
+
+┌──────────┐
+│   IF     │
+│          ├─true──────┐
+│          │           │
+│          ├─false─┐   │
+│          │       │   │
+└──────────┘       ▼   ▼
+            ┌────────────────┐
+            │ Node A (true)  │
+            │ Node B (false) │
+            └────────────────┘
+----
+
+**Desconectar nodos:**
+
+[source,text]
+----
+• Selecciona la conexión (la línea se pondrá azul)
+• Presiona Delete o haz click en el icono de borrar
+• La conexión se eliminará
+
+⚠️ Nota: Los nodos seguirán existiendo
+       Solo se elimina la conexión entre ellos
+----
+
+==== Ejecutar un workflow
+
+**Ejecutar manualmente:**
+
+[source,text]
+----
+1. Asegúrate de que el workflow tenga al menos:
+   • Un trigger (Manual, Webhook, Schedule, etc.)
+   • Un nodo adicional (opcional)
+
+2. Click en el botón [Execute Workflow]
+   Ubicación: Generalmente en la parte superior o lado derecho
+
+3. Verás la ejecución en tiempo real:
+   - Los nodos se iluminarán cuando se ejecuten
+   - Se mostrarán los datos en el inspector
+
+4. Ver resultados:
+   - Panel derecho: Muestra salida de cada nodo
+   - JSON view: Ver datos en formato JSON
+   - Table view: Ver datos en tabla
+----
+
+**Resultado de ejecución:**
+
+[source,text]
+----
+Ejecución exitosa:
+┌───────────────────────────────┐
+│ ✓ Success                     │
+│ Execution time: 2.3 seconds   │
+├───────────────────────────────┤
+│ Manual Trigger (Item 1)       │
+│ ┌─────────────────────────────┤
+│ │ {}                          │
+│ └─────────────────────────────┤
+│           ▼                   │
+│ HTTP Request (Item 1)         │
+│ ┌─────────────────────────────┤
+│ │ {                           │
+│ │   "status": 200,            │
+│ │   "data": {...}             │
+│ │ }                           │
+│ └─────────────────────────────┤
+└───────────────────────────────┘
+
+Ejecución fallida:
+┌───────────────────────────────┐
+│ ✗ Error                       │
+│ Execution time: 1.2 seconds   │
+├───────────────────────────────┤
+│ HTTP Request                  │
+│ ┌─────────────────────────────┤
+│ │ Error: Connection timeout   │
+│ │ Code: ETIMEDOUT             │
+│ │ URL: https://api.down...    │
+│ └─────────────────────────────┤
+└───────────────────────────────┘
+----
+
+**Debugging durante la ejecución:**
+
+[source,text]
+----
+1. Click en un nodo durante/después ejecución
+2. El inspector mostrará:
+   - Datos de entrada
+   - Configuración del nodo
+   - Datos de salida
+   - Tiempo de ejecución
+
+3. Haz click en cada pestaña:
+   ├─ Data: Datos procesados
+   ├─ Settings: Configuración del nodo
+   ├─ Info: Información del nodo
+   └─ Details: Detalles técnicos
+----
+
+=== 2.3 Triggers Básicos
+
+==== Introducción a triggers
+
+Los triggers son **especiales**: sin ellos, el workflow no se ejecuta automáticamente. Pueden ser:
+* **Manuales**: Ejecución manual desde la interfaz
+* **Automáticos**: Se ejecutan por eventos (horario, webhook, email, etc.)
+
+**Diagrama de trigger:**
+
+[source,text]
+----
+┌──────────────────────────────────────┐
+│ TRIGGER (Punto de inicio)            │
+├──────────────────────────────────────┤
+│                                      │
+│  Evento externo                      │
+│  └─> Webhook request                 │
+│  └─> Scheduled time                  │
+│  └─> Email received                  │
+│  └─> Manual click                    │
+│                                      │
+│           │                          │
+│           ▼                          │
+│       Ejecutar workflow              │
+│           │                          │
+│           ▼                          │
+│  Siguiente nodo...                   │
+│                                      │
+└──────────────────────────────────────┘
+----
+
+==== Trigger: Manual
+
+Ya lo cubrimos en la sección anterior. Es el más simple:
+
+[source,text]
+----
+Características:
+✓ Sin configuración necesaria
+✓ Ideal para testing
+✓ Útil para ejecuciones bajo demanda
+✓ Perfecto para aprender
+
+Desventajas:
+✗ No es automático
+✗ Requiere intervención manual
+✗ No es práctico para producción
+----
+
+==== Trigger: HTTP (Webhook)
+
+El **HTTP Trigger** (Webhook) crea una URL única que inicia el workflow cuando recibe una petición HTTP.
+
+**Cómo crear un Webhook Trigger:**
+
+[source,text]
+----
+1. Abre/crea un workflow
+2. Click en [+ Add Node]
+3. Busca "Webhook" o "HTTP"
+4. Selecciona "Webhook"
+5. Verás una URL única generada
+
+Ejemplo de URL:
+https://n8n.example.com/webhook/abc123def456ghi789
+
+Esta URL es:
+✓ Única por workflow
+✓ Pública (accesible desde cualquier lugar)
+✓ Segura si usas HTTPS
+✓ Personalizable
+----
+
+**Configuración del Webhook:**
+
+[source,text]
+----
+┌──────────────────────────────────────┐
+│ Webhook Node Settings                │
+├──────────────────────────────────────┤
+│                                      │
+│ Path (Ruta personalizada):           │
+│ [webhook                          ]  │
+│                                      │
+│ HTTP Method:                         │
+│ ☑ GET    ☑ POST    ☑ PUT    ☑ DELETE│
+│ ☑ HEAD   ☑ PATCH   ☑ OPTIONS        │
+│                                      │
+│ Response:                            │
+│ ○ First Item Only                   │
+│ ○ Last Item Only                    │
+│ ◉ All Items                         │
+│ ○ Custom                            │
+│                                      │
+│ Webhook URL:                         │
+│ https://n8n.example.com/webhook/...  │
+│ [Copy to Clipboard]                 │
+│                                      │
+└──────────────────────────────────────┘
+----
+
+**Ejemplo: Webhook para recibir pedidos**
+
+[source,bash]
+----
+URL del Webhook:
+https://n8n.example.com/webhook/orders
+
+Un cliente envía un pedido:
+curl -X POST https://n8n.example.com/webhook/orders \
+  -H "Content-Type: application/json" \
+  -d '{
+    "orderId": "ORD-12345",
+    "customer": "John Doe",
+    "amount": 99.99,
+    "items": ["item1", "item2"]
+  }'
+
+El workflow recibe estos datos automáticamente
+y el nodo Webhook output será:
+{
+  "orderId": "ORD-12345",
+  "customer": "John Doe",
+  "amount": 99.99,
+  "items": ["item1", "item2"]
+}
+----
+
+**Diagrama de flujo Webhook:**
+
+[source,text]
+----
+Cliente/Aplicación
+        │
+        │ HTTP Request (POST/GET/etc)
+        ▼
+┌──────────────────┐
+│ Webhook URL      │
+│ /webhook/orders  │
+└──────────────────┘
+        │
+        │ Datos recibidos
+        ▼
+┌──────────────────┐
+│ Webhook Node     │
+│ (n8n)            │
+└──────────────────┘
+        │
+        │ Inicia ejecución
+        ▼
+   Siguiente nodo
+   (Procesar datos)
+        │
+        ▼
+   Guardar o enviar
+   información
+----
+
+==== Trigger: Schedule (Cron)
+
+El **Schedule Trigger** ejecuta el workflow en intervalos regulares según una expresión cron.
+
+**Expresiones Cron básicas:**
+
+[source,text]
+----
+Formato:
+┌──────────┬──────────┬──────────┬──────────┬──────────┐
+│ Minuto   │ Hora     │ Día      │ Mes      │ Día Sem. │
+│ (0-59)   │ (0-23)   │ (1-31)   │ (1-12)   │ (0-6)    │
+│ *        │ *        │ *        │ *        │ *        │
+├──────────┼──────────┼──────────┼──────────┼──────────┤
+│   30     │   9      │   *      │   *      │   *      │
+│ (Minuto) │ (Hora)   │ (Todos)  │ (Todos)  │ (Todos)  │
+└──────────┴──────────┴──────────┴──────────┴──────────┘
+
+Ejemplos comunes:
+
+"0 9 * * *"
+= Todos los días a las 9:00 AM
+= Minuto 0, Hora 9
+
+"*/15 * * * *"
+= Cada 15 minutos
+= * = todos, /15 = cada 15
+
+"0 0 * * 0"
+= Todos los domingos a las 00:00
+= Día de semana 0 = domingo
+
+"0 9-17 * * 1-5"
+= De lunes a viernes, cada hora 9-17 (9 AM a 5 PM)
+
+"0 0 1 * *"
+= El primer día de cada mes a las 00:00
+
+"30 23 * * *"
+= Todos los días a las 23:30 (11:30 PM)
+
+"0 */6 * * *"
+= Cada 6 horas (00:00, 06:00, 12:00, 18:00)
+----
+
+**Herramienta de generador Cron:**
+
+https://crontab.guru/ es una excelente herramienta para generar y validar expresiones cron.
+
+**Configuración en n8n:**
+
+[source,text]
+----
+┌──────────────────────────────────┐
+│ Schedule Trigger                 │
+├──────────────────────────────────┤
+│                                  │
+│ Trigger Type:                    │
+│ ◉ Cron                          │
+│ ○ Simple interval                │
+│ ○ Every custom interval          │
+│                                  │
+│ Cron Expression:                 │
+│ [0 9 * * * ]                    │
+│  ↑ = Cada día a las 9:00 AM     │
+│                                  │
+│ Time Zone:                       │
+│ [Europe/Madrid           ▼]      │
+│                                  │
+│ [Copy Cron]                      │
+│ [Cron Guru Link] 🔗              │
+│                                  │
+└──────────────────────────────────┘
+----
+
+**Ejemplo: Reporte diario**
+
+Configurar un workflow que envíe un reporte todos los días a las 9 AM:
+
+[source,text]
+----
+Trigger: Schedule
+├─ Type: Cron
+├─ Expression: 0 9 * * *
+└─ Time Zone: Europe/Madrid
+
+Workflow:
+Schedule → Query Database → Generate Report → Send Email
+
+Resultado:
+Cada día a las 9:00 AM:
+1. Se ejecuta automáticamente
+2. Obtiene datos de BD
+3. Genera reporte
+4. Envía por email
+----
+
+==== Trigger: Email
+
+El **Email Trigger** monitorea una cuenta de email y ejecuta el workflow cuando llega un nuevo email.
+
+**Configuración:**
+
+[source,text]
+----
+┌──────────────────────────────┐
+│ Email Trigger                │
+├──────────────────────────────┤
+│                              │
+│ Mailbox:                     │
+│ [admin@example.com      ▼]   │
+│                              │
+│ Conditions:                  │
+│ Search Query: (opcional)     │
+│ [                         ]  │
+│ Ej: "subject:invoice"        │
+│                              │
+│ Attachment Download:         │
+│ ☑ Download attachments       │
+│                              │
+│ Include Headers:             │
+│ ☑ Include email headers      │
+│                              │
+│ Metadata:                    │
+│ ☑ Include email metadata     │
+│                              │
+│ Simple Interval:             │
+│ Check every: [5] minutes     │
+│                              │
+└──────────────────────────────┘
+----
+
+**Datos disponibles:**
+
+[source,json]
+----
+Cuando llega un email, n8n captura:
+{
+  "from": "cliente@example.com",
+  "to": "admin@example.com",
+  "subject": "Nuevo pedido #123",
+  "body": "El cuerpo del email...",
+  "text": "Versión texto plano...",
+  "html": "Versión HTML...",
+  "id": "email-id-12345",
+  "uid": "unique-identifier",
+  "attachments": [
+    {
+      "filename": "invoice.pdf",
+      "content": "base64_encoded_data",
+      "mimeType": "application/pdf"
+    }
+  ],
+  "headers": { ... },
+  "date": "2025-01-15T10:30:00.000Z"
+}
+----
+
+**Caso de uso: Procesar facturas recibidas por email**
+
+[source,text]
+----
+Email Trigger
+├─ Monitorea: facturas@example.com
+├─ Search: "subject:factura"
+├─ Download attachments: ✓
+│
+└──> Extraer datos del email
+     ├─ De: remitente
+     ├─ Asunto: factura
+     └─ Adjunto: PDF/Excel
+
+    │
+    └──> Extraer texto del PDF
+
+    │
+    └──> Guardar en base de datos
+
+    │
+    └──> Enviar confirmación
+----
+
+==== Trigger: Interval (Intervalo simple)
+
+Una forma simplificada de Schedule para principiantes.
+
+**Vs Cron:**
+- **Interval**: Más fácil, intervalos simples (cada X minutos/horas/días)
+- **Cron**: Más potente, horarios específicos complejos
+
+**Configuración:**
+
+[source,text]
+----
+┌──────────────────────────────┐
+│ Simple Interval Trigger      │
+├──────────────────────────────┤
+│                              │
+│ Interval:                    │
+│ [5 ] [minutes  ▼]            │
+│                              │
+│ Opciones:                    │
+│ ├─ seconds (segundos)        │
+│ ├─ minutes (minutos)         │
+│ ├─ hours (horas)             │
+│ └─ days (días)               │
+│                              │
+│ Resultado:                   │
+│ "Cada 5 minutos"             │
+│                              │
+└──────────────────────────────┘
+----
+
+**Ejemplos:**
+* 5 minutes = Cada 5 minutos
+* 1 hour = Cada hora
+* 3 days = Cada 3 días
+
+==== Consideraciones de TimeZone
+
+**¿Por qué es importante?**
+
+Si tu schedule es "9 AM", ¿qué timezone?
+- Madrid: 9:00 AM (UTC+1)
+- Nueva York: 9:00 AM (UTC-5)
+- Tokio: 9:00 AM (UTC+9)
+
+Son **diferentes horarios reales**.
+
+**Configurar TimeZone:**
+
+[source,text]
+----
+1. Abre Schedule Trigger
+2. Busca campo "Time Zone"
+3. Selecciona tu zona horaria
+
+Zonas comunes:
+├─ Europe/Madrid
+├─ Europe/London
+├─ America/New_York
+├─ America/Los_Angeles
+├─ Asia/Tokyo
+├─ Australia/Sydney
+├─ etc.
+
+Recomendación:
+Usa la zona horaria de tu empresa/clientes
+----
+
+=== 2.4 Mi Primer Workflow Práctico
+
+==== Proyecto: Sistema de Notificación por Slack
+
+Vamos a crear un workflow práctico que:
+1. Recibe una solicitud por webhook
+2. Procesa los datos
+3. Envía una notificación a Slack
+
+**Requisitos previos:**
+
+- n8n instalado y corriendo
+- Acceso a un workspace de Slack (o crear uno gratis)
+- Token de Slack (bot token)
+
+**Paso 1: Crear el workflow**
+
+Crea un nuevo workflow llamado: "Notificación Slack"
+
+**Paso 2: Agregar Webhook Trigger**
+
+[source,text]
+----
+1. Click en "Add Node"
+2. Busca "Webhook"
+3. Selecciona "Webhook"
+4. Copia la URL del webhook (la necesitarás para testing)
+
+Configuración:
+├─ HTTP Method: POST
+├─ Response: All items
+└─ URL: https://[tu-n8n]/webhook/slack-notification
+----
+
+**Paso 3: Agregar nodo HTTP Request para Slack**
+
+[source,text]
+----
+1. Conecta un nodo HTTP Request al Webhook
+2. Configuración:
+
+Method: POST
+URL: https://hooks.slack.com/services/[TU_WEBHOOK_URL]
+
+Body:
+{
+  "text": "Nueva notificación",
+  "blocks": [
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "*Nuevo mensaje*\n{{ $json.message }}"
+      }
+    }
+  ]
+}
+----
+
+**Paso 4: Testing**
+
+Enviar datos al webhook:
+
+[source,bash]
+----
+curl -X POST https://[tu-n8n]/webhook/slack-notification \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message": "Hola desde n8n!"
+  }'
+----
+
+**JSON Importable (Ejemplo completo):**
+
+Este archivo se puede importar directamente en n8n.
+
+Ver archivo: `./ejemplos/n8n/01-webhook-slack-notification.json`
+
+[source,json]
+----
+{
+  "name": "Notificación Slack",
+  "nodes": [
+    {
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "webhook123",
+      "parameters": {
+        "path": "slack-notification",
+        "httpMethod": "POST"
+      }
+    },
+    {
+      "name": "HTTP Request - Slack",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [450, 300],
+      "parameters": {
+        "url": "https://hooks.slack.com/services/YOUR/WEBHOOK/URL",
+        "method": "POST",
+        "jsonBody": true,
+        "body": {
+          "text": "Nueva notificación",
+          "blocks": [
+            {
+              "type": "section",
+              "text": {
+                "type": "mrkdwn",
+                "text": "*Mensaje:*\n{{ $json.message }}"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{"node": "HTTP Request - Slack", "branch": 0, "socket": 0}]]
+    }
+  }
+}
+----
+
+**Proyecto 2: Procesar Datos de Formulario**
+
+Este workflow:
+1. Recibe datos de un formulario
+2. Valida los datos
+3. Guarda en una hoja de cálculo
+
+[source,text]
+----
+Webhook (formulario)
+    │
+    ▼
+IF (validar email)
+    │
+    ├─ True → Google Sheets (guardar)
+    │         │
+    │         ▼
+    │         Email (confirmación)
+    │
+    └─ False → Email (error)
+
+JSON importable:
+Ver: ./ejemplos/n8n/02-form-processor.json
+----
+
+**Proyecto 3: Llamada a API y Procesamiento**
+
+[source,text]
+----
+Nombre: "Obtener datos de clima"
+
+Trigger: Schedule (cada 6 horas)
+    │
+    ▼
+HTTP Request (OpenWeatherAPI)
+    │
+    ▼
+Set (transformar datos)
+    │
+    ▼
+Slack (enviar notificación)
+
+Datos:
+- Obtiene clima de una ciudad
+- Extrae temperatura, humedad, condiciones
+- Envía resumen a Slack
+
+JSON importable:
+Ver: ./ejemplos/n8n/03-weather-api.json
+----
+
+==== Repositorio de Ejemplos
+
+Todos los archivos JSON están disponibles en:
+`./ejemplos/n8n/`
+
+Para importar uno:
+1. Click en "Workflows"
+2. Click en "Import"
+3. Selecciona el archivo JSON
+4. Click en "Import"
+
+**Archivos disponibles:**
+
+[cols="1,2", options="header"]
+|===
+|Archivo|Descripción
+
+|01-webhook-slack-notification.json
+|Webhook → Slack (nivel básico)
+
+|02-form-processor.json
+|Formulario con validación → Google Sheets
+
+|03-weather-api.json
+|API externa → Transformación → Notificación
+
+|04-database-sync.json
+|Base de datos → Sincronización → Backup
+
+|05-email-daily-report.json
+|Schedule → Query BD → Email con reporteaudit
+|===
+
+==== Próximos pasos
+
+Ahora que conoces los conceptos básicos:
+
+1. **Practica con los ejemplos**
+   - Importa cada archivo JSON
+   - Modifica los parámetros
+   - Ajusta a tus necesidades
+
+2. **Crea tus propios workflows**
+   - Empieza simple (webhook → slack)
+   - Agrega paso a paso más nodos
+   - Prueba diferentes triggers
+
+3. **Explora la documentación**
+   - Lee sobre nodos específicos que necesites
+   - Mira ejemplos en la comunidad
+   - Únete al Discord de n8n
+
+4. **Experimenta con APIs**
+   - Prueba APIs públicas (JSONPlaceholder, OpenWeather)
+   - Aprende a manejar errores
+   - Domina las expresiones dinámicas
+
+---
+
+== MÓDULO 3: Nodos y Conectores
+
+Los nodos son los bloques básicos de construcción en n8n, similares a LEGO: cada pieza tiene un propósito específico y se conectan entre sí para crear flujos complejos. En este módulo aprenderás todos los tipos de nodos disponibles y cómo utilizarlos.
+
+=== 3.1 Tipos de Nodos
+
+==== ¿Qué es un Nodo?
+
+Un **nodo** es una unidad de trabajo que realiza una acción específica:
+- Recibe datos de entrada (de otros nodos o del usuario)
+- Procesa esos datos según su configuración
+- Emite datos de salida hacia otros nodos
+
+La belleza de n8n está en que puedes conectar nodos sin escribir código (aunque también puedes hacerlo si lo necesitas).
+
+==== 3.1.1 Nodos de Entrada (Triggers)
+
+Los **triggers** son nodos que inician un workflow. Sin un trigger, el workflow nunca se ejecuta.
+
+[cols="1,2,1", options="header"]
+|===
+|Tipo|Descripción|Ejemplo
+
+|**Webhook**
+|Escucha HTTP requests en una URL única
+|Formulario web → n8n
+
+|**Schedule**
+|Ejecuta en horarios específicos (cron)
+|Cada día a las 9 AM
+
+|**Manual**
+|Se ejecuta al hacer clic en "Execute Workflow"
+|Desarrollo y testing
+
+|**File**
+|Se activa cuando se sube un archivo
+|Procesamiento de documentos
+
+|**Email**
+|Se activa cuando llega un email
+|Procesamiento de mensajes
+
+|**Database**
+|Polling: verifica BD regularmente
+|Sincronización de datos
+|===
+
+**Analogía:** Si un workflow fuese una película, los triggers serían el evento que hace que empiece (ej: "cuando el usuario presiona un botón").
+
+**Ejemplo práctico - Webhook:**
+[source,text]
+----
+1. Crear webhook en n8n
+2. n8n genera URL: https://hook.n8n.io/webhook/abc123
+3. Configurar formulario web para enviar datos a esa URL
+4. Cuando alguien envía el formulario → webhook dispara el workflow
+----
+
+==== 3.1.2 Nodos de Acción (Actions)
+
+Los **nodos de acción** realizan tareas específicas: enviar emails, crear tickets, guardar datos, etc.
+
+[cols="1,2,2", options="header"]
+|===
+|Categoría|Nodos|Casos de Uso
+
+|**Comunicación**
+|Slack, Email, Discord, Telegram, Teams
+|Notificaciones, alertas
+
+|**Datos**
+|Google Sheets, HTTP Request, Database
+|Lectura/escritura de información
+
+|**CRM/Business**
+|Salesforce, HubSpot, Pipedrive
+|Gestión de clientes
+
+|**E-commerce**
+|Shopify, WooCommerce, Stripe
+|Procesamiento de pedidos
+
+|**Social**
+|Twitter, Instagram, LinkedIn
+|Publicar y monitorear redes
+|===
+
+**Ejemplo:** Un nodo de **Email** puede:
+- Enviar emails simples
+- Usar templates con variables dinámicas
+- Adjuntar archivos
+- Enviar en lotes
+
+==== 3.1.3 Nodos de Flujo de Control (Flow Control)
+
+Estos nodos **controlan la lógica** de tu workflow: tomar decisiones, repetir acciones, combinar datos.
+
+[cols="1,2,3", options="header"]
+|===
+|Nodo|Función|Ejemplo
+
+|**IF**
+|Ejecuta código si condición es verdadera
+|Si precio > 1000 → notificar gerente
+
+|**Switch**
+|Elige uno de N caminos según valor
+|Si estado = "premium" → camino A, si "básico" → camino B
+
+|**Loop**
+|Repite un conjunto de nodos
+|Procesar cada item en un array
+
+|**Merge**
+|Combina datos de múltiples ramas
+|Juntar resultados de 2 búsquedas
+
+|**Aggregate**
+|Agrupa datos de múltiples ejecuciones
+|Recopilar logs antes de enviar
+|===
+
+**Ejemplo visual - IF Statement:**
+[source,text]
+----
+┌─────────────────┐
+│  Webhook Input  │
+│  (monto: 500)   │
+└────────┬────────┘
+         │
+    ┌────▼─────┐
+    │    IF    │
+    │monto>1000│
+    └────┬────┬┘
+         │    │
+        YES  NO
+         │    │
+    ┌────▼─┐ ┌─▼────┐
+    │Slack │ │Email │
+    │Alert │ │Ticket│
+    └──────┘ └──────┘
+----
+
+==== 3.1.4 Nodos de Transformación
+
+Los nodos de transformación **modifican datos** sin llamar a servicios externos.
+
+[cols="1,2,3", options="header"]
+|===
+|Nodo|Función|Casos de Uso
+
+|**Set**
+|Asigna valores a campos
+|Crear estructura de datos
+
+|**Function**
+|Ejecuta expresiones n8n
+|Operaciones simples sin código
+
+|**Code (JS/Python)**
+|Escribe lógica personalizada
+|Transformaciones complejas
+
+|**Merge**
+|Combina objetos/arrays
+|Consolidar datos
+
+|**Split/Batch**
+|Divide datos en múltiples items
+|Procesar en lotes
+|===
+
+**Ejemplo - Set Node:**
+```
+Entrada: { nombre: "Juan", apellido: "Pérez" }
+Configuración Set: fullName = nombre + " " + apellido
+Salida: { nombre: "Juan", apellido: "Pérez", fullName: "Juan Pérez" }
+```
+
+==== 3.1.5 Nodos de Salida (Output)
+
+Aunque cualquier nodo puede ser final, estos están optimizados para devolver datos al usuario o sistema externo.
+
+[cols="1,2", options="header"]
+|===
+|Nodo|Uso
+
+|**Webhook Response**
+|Devuelve datos HTTP al llamador
+
+|**HTTP Request** (GET)
+|Puede devolver respuestas
+
+|**Database** (SELECT)
+|Retorna resultados de queries
+|===
+
+=== 3.2 Nodos de Comunicación
+
+Los nodos de comunicación permiten **notificar a usuarios o sistemas**. Son esenciales para automatizaciones prácticas.
+
+==== 3.2.1 Email Node
+
+El nodo más versátil para comunicación asíncrona.
+
+**Características principales:**
+
+1. **Envío simple:**
+   - To, Cc, Bcc
+   - Subject dinámico (usando expresiones)
+   - Texto plano o HTML
+
+2. **Emails avanzados:**
+   - Templates con variables
+   - Attachments (adjuntos)
+   - Headers personalizados
+   - Retry automático
+
+**Ejemplo de workflow:**
+[source,text]
+----
+Webhook (recibe nuevo cliente)
+    ↓
+[Usar nombre y email de cliente]
+    ↓
+Email Node
+  - To: cliente@email.com
+  - Subject: "Bienvenido {{name}}!"
+  - Body: "Hola {{name}}, tu código es {{code}}"
+    ↓
+Database (guardar envío)
+----
+
+==== 3.2.2 Slack Node
+
+Para notificaciones en tiempo real dentro de Slack.
+
+**Capacidades:**
+- Enviar mensajes a canales
+- Mencionar usuarios (@user)
+- Threads (conversaciones encadenadas)
+- Rich formatting (negrita, código, listas)
+- Reacciones emoji
+- Botones interactivos
+
+**Ejemplo:**
+```
+mensaje = "📊 Nuevo pedido de ${{amount}}\nCliente: {{customer}}\nEstado: {{status}}"
+canal = "#ventas"
+→ Slack muestra mensaje formateado en tiempo real
+```
+
+==== 3.2.3 Discord, Telegram, Teams
+
+Similares a Slack pero para diferentes plataformas:
+
+- **Discord:** Comunidades, gaming, comunidad tech
+- **Telegram:** Chats privados, bots livianos
+- **Microsoft Teams:** Entornos corporativos, integración Office 365
+
+**Ventaja key:** Usar el que tu equipo ya utiliza para máxima adopción.
+
+=== 3.3 Nodos de Datos
+
+Para leer y escribir información desde/hacia diferentes fuentes.
+
+==== 3.3.1 HTTP Request Node
+
+El "suiza" de n8n: funciona con cualquier API que siga estándares REST.
+
+**Configuración:**
+- **URL:** Endpoint de la API
+- **Method:** GET, POST, PUT, DELETE, PATCH
+- **Headers:** Authentication, Content-Type
+- **Body:** Datos a enviar (JSON, form-data, raw)
+- **Params:** Query parameters
+
+**Ejemplo - Obtener datos de JSONPlaceholder:**
+[source,text]
+----
+URL: https://jsonplaceholder.typicode.com/posts/1
+Method: GET
+Response:
+{
+  "userId": 1,
+  "id": 1,
+  "title": "...",
+  "body": "..."
+}
+----
+
+==== 3.3.2 Database Nodes
+
+Conectar directamente a bases de datos: MySQL, PostgreSQL, MongoDB, SQLite.
+
+**Operaciones comunes:**
+
+[cols="1,2,2", options="header"]
+|===
+|Operación|SQL|Uso
+
+|**Read**
+|SELECT * FROM users WHERE id = 1
+|Obtener datos
+
+|**Create**
+|INSERT INTO users VALUES (...)
+|Insertar registros
+
+|**Update**
+|UPDATE users SET name = 'Juan' WHERE id = 1
+|Modificar datos
+
+|**Delete**
+|DELETE FROM users WHERE id = 1
+|Eliminar registros
+|===
+
+==== 3.3.3 Google Sheets Node
+
+Integración nativa con Google Sheets, ideal para workflows menos técnicos.
+
+**Capacidades:**
+- Leer filas
+- Agregar filas
+- Actualizar filas
+- Crear spreadsheets
+- Trabajar con múltiples sheets
+
+**Caso de uso común:**
+```
+Webhook (datos de formulario) → Set (organizar) → Google Sheets (append row) → Email (confirmación)
+```
+
+==== 3.3.4 Otros Nodos de Datos
+
+- **Airtable:** Base de datos visual, similar a Sheets pero más potente
+- **Notion:** Documentación y bases de datos colaborativas
+- **Supabase:** PostgreSQL con interfaz visual
+- **CSV:** Leer/escribir archivos CSV
+- **JSON:** Manipular archivos JSON
+
+=== 3.4 Nodos de Lógica
+
+==== 3.4.1 IF Node
+
+**Condicionales simples:** Si X es verdad, ejecuta rama A. Si falso, rama B.
+
+**Sintaxis:**
+```
+Condition: {{$node.previousNode.data.price}} > 1000
+True branch: [Slack notification]
+False branch: [Log in database]
+```
+
+**Operadores soportados:**
+- `>`, `<`, `>=`, `<=`, `===`, `!==`
+- `&&` (AND), `||` (OR), `!` (NOT)
+- `contains`, `startsWith`, `endsWith`
+
+**Ejemplo real:**
+```
+Si {{$node.HTTPRequest.data.statusCode}} === 200
+  → Guardar en base de datos
+Sino
+  → Enviar alerta a Slack
+```
+
+==== 3.4.2 Switch Node
+
+Para **múltiples condiciones** (como switch en programación).
+
+```
+switch(status) {
+  case "premium": → aplicar descuento
+  case "básico": → precio normal
+  case "trial": → hacer seguimiento
+  default: → contactar soporte
+}
+```
+
+==== 3.4.3 Loop Node
+
+Para **iterar sobre arrays** y procesar cada item.
+
+```
+Entrada: [item1, item2, item3]
+Loop:
+  - Para cada item
+    - HTTP POST a API
+    - Guardar resultado
+Salida: [resultado1, resultado2, resultado3]
+```
+
+==== 3.4.4 Merge y Aggregate
+
+- **Merge:** Combina dos ramas que divergieron. Ideal después de IF/Switch.
+- **Aggregate:** Espera múltiples ejecuciones para recopilar datos.
+
+=== 3.5 Conectar Aplicaciones Populares
+
+n8n soporta 400+ integraciones nativas. Los requisitos típicos:
+
+1. **Crear cuenta en el servicio** (si no la tienes)
+2. **Generar credenciales:**
+   - API Key
+   - OAuth token
+   - Contraseña de app
+3. **Conectar en n8n:** Click en el nodo → "Create new credential"
+4. **Autorizar:** Permitir que n8n acceda al servicio
+
+==== Ejemplos principales:
+
+**Google Workspace:**
+- Gmail: Enviar emails, leer buzón
+- Google Sheets: CRUD en spreadsheets
+- Google Calendar: Crear eventos
+- Google Drive: Gestionar archivos
+
+**Microsoft 365:**
+- Outlook: Enviar emails, leer calendario
+- Teams: Enviar mensajes
+- Excel: Leer/escribir hojas
+- OneDrive: Gestionar archivos
+
+**Ventas & CRM:**
+- Salesforce: Crear leads, deals, accounts
+- HubSpot: Sincronizar contactos
+- Pipedrive: Gestionar pipeline de ventas
+
+**E-commerce:**
+- Shopify: Leer pedidos, sincronizar productos
+- WooCommerce: Gestionar tienda WordPress
+- Stripe: Procesar pagos
+
+**Productividad:**
+- Asana: Crear tareas y proyectos
+- Jira: Crear tickets
+- Trello: Crear tarjetas
+
+=== 3.6 Autenticación
+
+La autenticación permite que n8n acceda a APIs de forma segura.
+
+==== Tipos de autenticación:
+
+**1. API Key**
+```
+GET /api/endpoint?api_key=sk_1234567890
+```
+- Simple
+- Guardar key en credenciales de n8n
+- Riesgo: si se expone la key, alguien puede usarla
+
+**2. OAuth 2.0** (estándar seguro)
+```
+1. Usuario hace click en "Connect Google"
+2. Se abre ventana de login de Google
+3. Usuario autoriza n8n
+4. Google envía token a n8n
+5. n8n guarda token encriptado
+```
+- Seguro (n8n nunca ve la contraseña)
+- Permite permiso granular ("solo lectura en Sheets")
+- Se usa con: Google, GitHub, Slack, Microsoft, Stripe
+
+**3. Basic Auth**
+```
+Header: Authorization: Basic base64(user:password)
+```
+- Simple pero menos seguro
+- Usar solo en conexiones HTTPS/SSL
+
+**4. Bearer Token**
+```
+Header: Authorization: Bearer token_aqui
+```
+- Usado por muchas APIs modernas (ej: OpenAI, HuggingFace)
+
+**5. Custom Headers**
+```
+Header: X-API-Key: sk_1234567890
+Header: X-Custom-Auth: valor
+```
+- Cuando la API tiene requerimientos especiales
+
+**Best Practices:**
+- Nunca poner keys en hardcode en nodos
+- Siempre usar credenciales de n8n (encriptadas)
+- Rotar keys regularmente
+- Usar secrets management en producción (env variables)
+- Auditar quién tiene acceso a qué credenciales
+
+---
+
+== MÓDULO 4: Expresiones y Variables
+
+Las expresiones son el "pegamento" que permite que los datos fluyan dinámicamente a través de los nodos. Sin expresiones, n8n solo podría trabajar con valores estáticos.
+
+=== 4.1 Sintaxis de Expresiones
+
+==== ¿Qué es una expresión?
+
+Una **expresión** es código que accede, transforma y usa datos de nodos anteriores.
+
+**Sintaxis básica:**
+```
+{{$node.nombreNodo.data.campo}}
+```
+
+**Desglose:**
+- `{{` y `}}` → Delimitador de expresión
+- `$node` → Especial: acceso a datos de nodos
+- `nombreNodo` → Nombre del nodo anterior
+- `.data` → Los datos output del nodo
+- `.campo` → Campo específico
+
+**Ejemplo real:**
+```
+Si tengo un nodo "HTTP Request" que devuelve:
+{
+  "status": 200,
+  "user": { "name": "Juan", "email": "juan@email.com" }
+}
+
+Puedo acceder a:
+{{$node.HTTPRequest.data.status}}        → 200
+{{$node.HTTPRequest.data.user.name}}    → "Juan"
+{{$node.HTTPRequest.data.user.email}}   → "juan@email.com"
+```
+
+==== 4.1.1 Acceder a Datos de Nodos Anteriores
+
+```
+$node.NombreNodo.data.campo
+$node.NombreNodo.data.campo[0]          # Primer item
+$node.NombreNodo.data[0].campo          # Arrays
+$node.NombreNodo.data.objeto.propiedad  # Objetos anidados
+```
+
+**Tabla de operadores:**
+
+[cols="1,2,3", options="header"]
+|===
+|Operador|Uso|Ejemplo
+
+|`.`
+|Acceder a propiedades
+|{{$node.HTTP.data.user.name}}
+
+|`[]`
+|Acceder a arrays/índices
+|{{$node.HTTP.data.items[0]}}
+
+|`?`
+|Safe navigation (no falla si undefined)
+|{{$node.HTTP.data?.user?.name}}
+
+|`\|\|`
+|OR: valor por defecto
+|{{$node.data.email \|\| "sin-email@example.com"}}
+|===
+
+==== 4.1.2 Variables de Entorno
+
+Variables que define n8n automáticamente:
+
+[cols="1,2,3", options="header"]
+|===
+|Variable|Descripción|Ejemplo
+
+|`$env.VARIABLE_NAME`
+|Acceder a env vars del sistema
+|{{$env.DATABASE_URL}}
+
+|`$now`
+|Fecha/hora actual
+|{{$now.toISOString()}}
+
+|`$item()`
+|Item actual en loops
+|{{$item(0).id}}
+
+|`$workflow.id`
+|ID del workflow
+|{{$workflow.id}}
+
+|`$execution.id`
+|ID de la ejecución actual
+|{{$execution.id}}
+|===
+
+==== 4.1.3 Funciones Integradas
+
+n8n proporciona funciones JavaScript estándar:
+
+**Strings:**
+```
+.toUpperCase()    → MINÚSCULAS a MAYÚSCULAS
+.toLowerCase()    → MAY a min
+.trim()           → Quitar espacios
+.split(",")       → Dividir por separador
+.includes("text") → ¿Contiene?
+.substring(0, 5)  → Extraer parte
+```
+
+**Arrays:**
+```
+.length           → Número de items
+.filter()         → Filtrar items
+.map()            → Transformar cada item
+.join(",")        → Unir items
+.includes()       → ¿Contiene valor?
+```
+
+**Math:**
+```
+Math.round()      → Redondear
+Math.floor()      → Redondear hacia abajo
+Math.ceil()       → Redondear hacia arriba
+Math.pow(x, y)    → Potencia
+Math.sqrt()       → Raíz cuadrada
+```
+
+**Dates:**
+```
+new Date()        → Fecha actual
+.toISOString()    → Formato ISO
+.getTime()        → Milisegundos desde 1970
+```
+
+==== 4.1.4 Operadores
+
+**Aritméticos:**
+```
++  Suma: {{5 + 3}}  → 8
+-  Resta: {{10 - 4}} → 6
+*  Multiplicación: {{4 * 5}} → 20
+/  División: {{20 / 4}} → 5
+%  Módulo (resto): {{17 % 5}} → 2
+```
+
+**Comparación:**
+```
+===  Igual: {{5 === 5}} → true
+!==  Diferente: {{5 !== 3}} → true
+>    Mayor: {{10 > 5}} → true
+<    Menor: {{10 < 5}} → false
+>=   Mayor o igual
+<=   Menor o igual
+```
+
+**Lógicos:**
+```
+&&   AND: {{true && false}} → false
+||   OR:  {{true || false}} → true
+!    NOT: {{!false}} → true
+?:   Ternario: {{edad >= 18 ? "mayor" : "menor"}}
+```
+
+=== 4.2 Expresiones Comunes
+
+==== 4.2.1 Filtrado de Datos
+
+Extraer datos específicos de un array:
+
+```javascript
+// Datos de entrada:
+// items = [{id:1,status:"active"}, {id:2,status:"inactive"}]
+
+// Obtener solo activos:
+{{$node.HTTP.data.items.filter(item => item.status === "active")}}
+
+// Resultado: [{id:1,status:"active"}]
+```
+
+==== 4.2.2 Transformación de Strings
+
+```javascript
+// Convertir a mayúsculas
+{{$node.Webhook.data.name.toUpperCase()}}
+
+// Crear email desde nombre
+nombre = "juan pérez"
+{{nombre.toLowerCase().replace(" ", ".") + "@empresa.com"}}
+// Resultado: juan.pérez@empresa.com
+
+// Extraer parte de texto
+{{$node.data.email.split("@")[0]}}  // Parte antes de @
+```
+
+==== 4.2.3 Cálculos Matemáticos
+
+```javascript
+// Aplicar descuento
+precio = 100
+descuento = 20
+{{precio * (1 - descuento / 100)}}  // 80
+
+// Calcular edad
+fechaNacimiento = "1990-01-15"
+{{Math.floor(((new Date() - new Date(fechaNacimiento)) / (365 * 24 * 60 * 60 * 1000)))}}
+```
+
+==== 4.2.4 Manipulación de Fechas
+
+```javascript
+// Fecha actual
+{{$now.toISOString()}}  // 2024-01-15T14:30:00.000Z
+
+// Fecha de hace 7 días
+fecha_hace_7_dias = new Date($now.getTime() - (7 * 24 * 60 * 60 * 1000))
+{{fecha_hace_7_dias.toISOString()}}
+
+// Formatear fecha (mes-día-año)
+{{$now.toLocaleDateString('es-ES')}}
+```
+
+==== 4.2.5 Acceso a Arrays y Objetos
+
+```javascript
+// Primer elemento
+{{$node.data.items[0]}}
+
+// Último elemento
+{{$node.data.items[-1]}}  // O
+{{$node.data.items[$node.data.items.length - 1]}}
+
+// Contar items
+{{$node.data.items.length}}
+
+// Crear array de nombres
+{{$node.data.users.map(u => u.name)}}
+// Resultado: ["Juan", "María", "Pedro"]
+
+// Crear objeto desde datos
+{{JSON.stringify({
+  nombre: $node.Webhook.data.name,
+  email: $node.Webhook.data.email,
+  timestamp: $now.toISOString()
+})}}
+```
+
+=== 4.3 Variables Globales
+
+Las variables globales permiten reutilizar valores en múltiples nodos.
+
+==== 4.3.1 Definir Variables Globales
+
+En el nodo **Set** o **Code**:
+
+```javascript
+// Usando Set Node:
+1. Click en "Add Value"
+2. Key: "nombreVariable"
+3. Value: "tu_valor"
+
+// Resultado en otros nodos:
+{{$node.SetVariables.data.nombreVariable}}
+```
+
+==== 4.3.2 Usar en Workflows
+
+```javascript
+// Definir una variable de timestamp
+// Set Node:
+- Key: "startTime"
+- Value: {{$now.toISOString()}}
+
+// Usarla en un logging node 50 nodos después:
+{{$node.SetVariables.data.startTime}}
+```
+
+==== 4.3.3 Expresiones Dinámicas
+
+```javascript
+// Variable con expresión, no valor fijo
+// Set Node:
+- Key: "mensajePersonalizado"
+- Value: {{`Hola ${$node.Webhook.data.nombre}, tu correo es ${$node.Webhook.data.email}`}}
+
+// Resultado: "Hola Juan, tu correo es juan@email.com"
+```
+
+==== 4.3.4 Scope de Variables
+
+```javascript
+// Variables locales (dentro de Set):
+{{$node.MySetNode.data.variable}}
+
+// Variables globales (definidas en credentials):
+// (requiere acceso admin)
+```
+
+=== 4.4 Transformación de Datos
+
+==== 4.4.1 Mapeo de Campos
+
+Cambiar estructura de datos:
+
+```javascript
+// Entrada:
+{
+  "id": "123",
+  "first_name": "Juan",
+  "last_name": "Pérez"
+}
+
+// Usar Set Node para reorganizar:
+Key: "usuario"
+Value: {{JSON.stringify({
+  id: $node.Webhook.data.id,
+  nombre_completo: $node.Webhook.data.first_name + " " + $node.Webhook.data.last_name,
+  email_tipo: "empresa"
+})}}
+
+// Salida:
+{
+  "usuario": {
+    "id": "123",
+    "nombre_completo": "Juan Pérez",
+    "email_tipo": "empresa"
+  }
+}
+```
+
+==== 4.4.2 Conversión de Tipos
+
+```javascript
+// String a número
+{{Number("42")}}  → 42
+{{parseInt("42")}}  → 42
+
+// Número a string
+{{String(42)}}  → "42"
+{{(42).toString()}}  → "42"
+
+// String a JSON
+{{JSON.parse('{"id": 123}')}}  → {id: 123}
+
+// JSON a string
+{{JSON.stringify({id: 123})}}  → '{"id":123}'
+
+// String a boolean
+{{$node.data.valor === "true" ? true : false}}
+```
+
+==== 4.4.3 Validación de Datos
+
+```javascript
+// ¿Es email válido?
+{{/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($node.Webhook.data.email)}}
+
+// ¿Tiene valor?
+{{$node.Webhook.data.nombre !== undefined && $node.Webhook.data.nombre !== ""}}
+
+// ¿Número es positivo?
+{{$node.Webhook.data.precio > 0}}
+```
+
+==== 4.4.4 Limpieza de Datos
+
+```javascript
+// Remover espacios
+{{$node.data.nombre.trim()}}
+
+// Remover espacios extras
+{{$node.data.descripcion.replace(/\s+/g, " ")}}
+
+// Convertir a minúsculas y eliminar acentos
+{{$node.data.ciudad.toLowerCase()}}
+
+// Sanitizar para SQL (cuidado con inyección)
+{{$node.data.username.replace(/[';\"]/g, "")}}
+
+// Truncar texto a X caracteres
+{{$node.data.descripcion.substring(0, 100)}}
+```
+
+---
+
+== MÓDULO 5: Control de Flujo
+
+El control de flujo permite que tus workflows tomen decisiones automáticas y procesen datos complejos.
+
+=== 5.1 Condicionales (IF)
+
+==== Concepto Básico
+
+El nodo IF evalúa una condición (verdadero/falso) y ejecuta uno de dos caminos:
+
+```
+┌──────────────┐
+│   Entrada    │
+└──────┬───────┘
+       │
+   ┌───▼────┐
+   │ Condición│ ¿Es precio > 100?
+   └───┬────┬┘
+       │    │
+      SÍ   NO
+       │    │
+    ┌──▼─┐┌─▼──┐
+    │PATH│PATH │
+    │ A  │ B   │
+    └────┴─────┘
+```
+
+==== Ejemplos Prácticos
+
+**Ejemplo 1: Notificar solo si monto es alto**
+```
+Condición: {{$node.Webhook.data.amount}} > 1000
+- True: Slack notification "¡Venta grande!"
+- False: Log en base de datos (sin notificación)
+```
+
+**Ejemplo 2: Validar antes de procesar**
+```
+Condición: {{$node.Webhook.data.email}}.includes("@")
+- True: Procesar cliente
+- False: Enviar email de error
+```
+
+**Ejemplo 3: Condición compleja (AND/OR)**
+```
+Condición:
+({{$node.data.cantidad}} > 0 && {{$node.data.precio}} > 0)
+||
+({{$node.data.estado}} === "promocion")
+
+- True: Crear pedido
+- False: Rechazar solicitud
+```
+
+==== 5.1.1 Operadores Soportados
+
+[cols="1,2,3", options="header"]
+|===
+|Operador|Significado|Ejemplo
+
+|`===`
+|Igual (exacto)
+|{{status}} === "activo"
+
+|`!==`
+|Diferente
+|{{status}} !== "cancelado"
+
+|`>`
+|Mayor
+|{{price}} > 100
+
+|`>=`
+|Mayor o igual
+|{{edad}} >= 18
+
+|`<`
+|Menor
+|{{stock}} < 10
+
+|`<=`
+|Menor o igual
+|{{dias_vencimiento}} <= 0
+
+|`.includes()`
+|Contiene (string/array)
+|{{email}}.includes("@")
+
+|`.startsWith()`
+|Comienza con
+|{{codigo}}.startsWith("PRE")
+
+|`&&`
+|AND (ambas verdaderas)
+|{{a}} > 0 && {{b}} > 0
+
+|`\|\|`
+|OR (una es verdadera)
+|{{tipo}} === "A" \|\| {{tipo}} === "B"
+
+|`!`
+|NOT (negación)
+|!{{enviado}}
+|===
+
+=== 5.2 Switch y Ramificación
+
+Para múltiples opciones (más que SÍ/NO), usa **Switch**:
+
+```
+┌─────────────┐
+│  tipo_dato  │
+└──────┬──────┘
+       │
+   ┌───▼───────────┐
+   │    SWITCH     │
+   └─┬─┬──┬──┬──┬──┘
+     │ │  │  │  │
+   "A""B""C""D"otro
+     │ │  │  │  │
+    ┌─▼─┴──┴──┴──┴────┐
+    │ Ejecuta camino   │
+    │ correspondiente  │
+    └──────────────────┘
+```
+
+**Ejemplo:**
+```
+Variable: {{$node.data.tipocliente}}
+
+Switch cases:
+- "premium" → Aplicar 20% descuento
+- "básico" → Aplicar 0% descuento
+- "trial" → Enviar seguimiento
+- default → Contactar soporte
+```
+
+=== 5.3 Loops e Iteración
+
+Procesa cada item en un array automáticamente:
+
+```
+Entrada: [item1, item2, item3, item4, item5]
+
+┌─────────────────┐
+│    LOOP Node    │
+└────────┬────────┘
+         │
+    ┌────┴────────────────┐
+    │ Para CADA item:      │
+    │ - HTTP POST a API    │
+    │ - Log resultado      │
+    └────┬─────────────────┘
+         │
+Salida: [result1, result2, result3, result4, result5]
+```
+
+**Caso de uso:** Procesar 100 órdenes en un workflow, no 100 workflows diferentes.
+
+**Configuración:**
+```
+Loop sobre: {{$node.HTTPRequest.data}}
+(itera automáticamente si es array)
+
+Acceder al item actual:
+{{$item().id}}        // ID del item
+{{$item().name}}      // Nombre del item
+{{$index()}}          // Índice actual (0, 1, 2, ...)
+```
+
+=== 5.4 Merge y Combinación de Datos
+
+Después de un IF/Switch con dos ramas, necesitas **Merge** para combinarlas:
+
+```
+         IF
+        ╱  ╲
+    Rama A  Rama B
+    [out1]  [out2]
+        ╲  ╱
+       MERGE
+        │
+   [out1, out2]
+```
+
+**Tipos de Merge:**
+
+1. **Merge simple:** Combina todos los datos
+2. **Merge con lógica:** Solo datos que cumplan criterios
+3. **Merge customizado:** Código personalizado
+
+=== 5.5 Error Handling (Manejo de Errores)
+
+Los errores suceden. Los workflows roburos los manejan.
+
+==== 5.5.1 Continue on Fail
+
+```
+┌──────────────┐
+│ HTTP Request │
+│ (puede fallar)
+└──────┬───────┘
+       │
+   ¿Falló? SÍ → [Continue] → Ejecutar siguiente nodo
+       │
+       NO → Ejecutar siguiente nodo
+       │
+   ┌───▼────────┐
+   │ Siguiente  │
+   │ nodo igual │
+   │ en ambos   │
+   │ casos      │
+   └────────────┘
+```
+
+**Uso:** Cuando una acción es "nice to have" pero no es crítica.
+
+==== 5.5.2 Try-Catch Equivalente
+
+Combina IF + mensaje de error:
+
+```
+┌─────────────┐
+│ HTTP Request│ URL: {{url}}
+└──────┬──────┘
+       │
+   ¿Status===200?
+       │
+   SÍ  NO
+   │   │
+ ÉXITO ERROR
+   │   │
+   │  Email admin: "HTTP falló"
+   │  Slack: "Workflow error"
+   │
+   └─→ Merge → Siguiente nodo
+```
+
+==== 5.5.3 Reintentos Automáticos
+
+n8n permite reintentos en nodos específicos:
+
+```
+Nodo: HTTP Request
+Configuración:
+- Retry on error: YES
+- Max retries: 3
+- Wait between: 5 segundos
+- Retry on: 500, 502, 503 (errores de servidor)
+```
+
+Beneficio: Recuperación automática de fallos temporales.
+
+==== 5.5.4 Notificaciones de Error
+
+```
+Si workflow falla:
+1. n8n envía email al owner
+2. Opcionalmente: enviar a Slack
+3. Log en dashboard
+
+Configuración en workflow:
+Settings → Error handling → Email on error
+```
+
+---
+
+== MÓDULO 6: Gestión de Datos
+
+En este módulo aprenderemos a trabajar con datos en n8n: lectura desde múltiples fuentes, transformación, almacenamiento y manipulación usando patrones CRUD.
+
+=== 6.1 Lectura de Datos
+
+==== Conceptos Fundamentales
+
+La lectura de datos es la base de cualquier workflow. n8n permite obtener datos de múltiples fuentes:
+
+**1. HTTP GET Requests**
+
+El nodo HTTP Request es el más versátil para obtener datos de APIs REST:
+
+[source,javascript]
+----
+// Ejemplo de lectura simple desde una API
+GET https://api.ejemplo.com/usuarios?limite=10
+
+// Headers comunes
+Content-Type: application/json
+Authorization: Bearer {token}
+----
+
+**Ventajas:**
+* No requiere integración específica
+* Funciona con cualquier API REST
+* Soporta autenticación (Basic, Bearer, OAuth)
+* Manejo flexible de respuestas
+
+**2. Bases de Datos (MySQL, PostgreSQL, SQLite)**
+
+Para conectar a bases de datos, n8n proporciona nodos específicos que ejecutan queries SQL:
+
+[source,sql]
+----
+-- Lectura básica
+SELECT * FROM usuarios WHERE activo = 1;
+
+-- Con filtros dinámicos
+SELECT * FROM usuarios WHERE email LIKE $1;
+
+-- Aggregación de datos
+SELECT fecha, COUNT(*) as total FROM pedidos GROUP BY fecha;
+----
+
+**3. Google Sheets**
+
+Integración nativa para leer datos directamente desde hojas de cálculo:
+
+* Acceso con credenciales de Google
+* Rango especificado de celdas
+* Conversión automática de tipos de datos
+* Caché de lecturas para mejor performance
+
+**4. Airtable**
+
+API de Airtable integrada en n8n:
+
+[source,javascript]
+----
+// Leer registro de Airtable
+GET https://api.airtable.com/v0/{baseId}/{tableId}
+
+// Filtrar registros
+GET https://api.airtable.com/v0/{baseId}/{tableId}?filterByFormula={FIELD}='{value}'
+----
+
+**Ejemplo Práctico: Lectura de API REST**
+
+Archivo: `ejemplos/n8n/modulo6/01-lectura-api-rest.json`
+
+Este workflow demuestra:
+1. Obtener usuario desde JSONPlaceholder API
+2. Obtener posts del usuario con segunda request
+3. Transformar datos en formato útil
+
+[source,json]
+----
+{
+  "nodo": "HTTP Request",
+  "método": "GET",
+  "url": "https://jsonplaceholder.typicode.com/users/1",
+  "resultado": {
+    "id": 1,
+    "name": "Leanne Graham",
+    "email": "Bret@april.biz",
+    "phone": "1-770-736-8031 x56442",
+    "website": "hildegard.org"
+  }
+}
+----
+
+=== 6.2 Escritura de Datos
+
+==== Almacenamiento y Persistencia
+
+Una vez procesados, los datos deben guardarse en algún destino:
+
+**1. HTTP POST Requests**
+
+Enviar datos a APIs externas:
+
+[source,javascript]
+----
+POST https://api.ejemplo.com/usuarios
+Content-Type: application/json
+
+{
+  "nombre": "Juan García",
+  "email": "juan@example.com",
+  "edad": 28
+}
+----
+
+**2. Escritura en Bases de Datos**
+
+Insertar registros en bases de datos:
+
+[source,sql]
+----
+INSERT INTO usuarios (nombre, email, edad)
+VALUES ($1, $2, $3);
+
+-- Insertar múltiples registros
+INSERT INTO usuarios (nombre, email, edad) VALUES
+('Juan', 'juan@example.com', 28),
+('María', 'maria@example.com', 32),
+('Carlos', 'carlos@example.com', 25);
+----
+
+**3. Archivos (JSON, CSV)**
+
+Guardar datos en el filesystem:
+
+[source,bash]
+----
+# JSON con estructura anidada
+{
+  "usuarios": [
+    {"id": 1, "nombre": "Juan", "email": "juan@example.com"},
+    {"id": 2, "nombre": "María", "email": "maria@example.com"}
+  ],
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+
+# CSV con encabezados
+id,nombre,email,edad
+1,Juan,juan@example.com,28
+2,María,maria@example.com,32
+----
+
+**4. Google Sheets**
+
+Agregar filas a hojas de cálculo automáticamente
+
+**5. Airtable**
+
+Crear registros en tablas de Airtable
+
+**Ejemplo Práctico: Escritura de Archivos JSON**
+
+Archivo: `ejemplos/n8n/modulo6/02-escritura-archivo-json.json`
+
+Este workflow:
+1. Prepara una estructura JSON con usuarios
+2. Procesa y valida los datos
+3. Guarda el archivo en `/tmp/n8n_usuarios.json`
+4. Lee el archivo para verificar la escritura
+
+=== 6.3 Actualización y Eliminación
+
+==== Operaciones UPDATE y DELETE
+
+Modificar datos existentes es fundamental en workflows de gestión:
+
+**1. HTTP PUT/PATCH Requests**
+
+[source,javascript]
+----
+// PUT: Reemplazar el recurso completo
+PUT https://api.ejemplo.com/usuarios/123
+Content-Type: application/json
+
+{
+  "nombre": "Juan García Actualizado",
+  "email": "juan_nuevo@example.com",
+  "edad": 29
+}
+
+// PATCH: Actualización parcial
+PATCH https://api.ejemplo.com/usuarios/123
+Content-Type: application/json
+
+{
+  "edad": 29
+}
+----
+
+**2. UPDATE en Bases de Datos**
+
+[source,sql]
+----
+-- Actualizar un registro
+UPDATE usuarios
+SET edad = edad + 1,
+    fecha_actualizacion = NOW()
+WHERE id = 123;
+
+-- Actualizar múltiples registros con condición
+UPDATE usuarios
+SET estado = 'inactivo'
+WHERE última_actividad < NOW() - INTERVAL 90 DAY;
+
+-- Actualizar con JOIN
+UPDATE usuarios u
+SET u.estado = 'vip'
+WHERE u.id IN (
+  SELECT user_id FROM pedidos
+  WHERE total > 1000
+  GROUP BY user_id
+);
+----
+
+**3. DELETE - Eliminación de Registros**
+
+[source,sql]
+----
+-- Eliminar registros específicos
+DELETE FROM usuarios WHERE id = 123;
+
+-- Eliminar con condición
+DELETE FROM usuarios WHERE estado = 'inactivo' AND última_actividad < DATE_SUB(NOW(), INTERVAL 1 YEAR);
+
+-- Truncate: Limpiar tabla completamente (más rápido)
+TRUNCATE TABLE usuarios_temporales;
+----
+
+**Ejemplo Práctico: Transformación de Datos**
+
+Archivo: `ejemplos/n8n/modulo6/03-transformacion-datos.json`
+
+Este workflow demuestra:
+1. Recibir datos sin procesar (normalizados)
+2. Transformar y normalizar nombres/emails
+3. Enriquecer con campos calculados
+4. Crear estadísticas resumidas
+
+=== 6.4 Trabajar con Bases de Datos
+
+==== Opciones de Bases de Datos
+
+**SQLite (Recomendado para desarrollo local)**
+
+Ventajas:
+* Sin configuración, ya incluido en n8n
+* Perfecto para prototipos
+* Archivo único, fácil de hacer backup
+
+[source,sql]
+----
+-- Crear tabla
+CREATE TABLE usuarios (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  nombre TEXT NOT NULL,
+  email TEXT UNIQUE,
+  edad INTEGER,
+  estado TEXT DEFAULT 'activo',
+  fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Índices para mejorar performance
+CREATE INDEX idx_email ON usuarios(email);
+CREATE INDEX idx_estado ON usuarios(estado);
+----
+
+**PostgreSQL (Producción)**
+
+Ventajas:
+* Robusto y escalable
+* Soporte para tipos complejos (JSON, Arrays)
+* Transacciones ACID completas
+* Connection pooling
+
+[source,sql]
+----
+-- Crear tabla con tipos avanzados
+CREATE TABLE usuarios (
+  id SERIAL PRIMARY KEY,
+  nombre VARCHAR(255) NOT NULL,
+  email VARCHAR(255) UNIQUE,
+  edad INTEGER,
+  metadata JSONB,
+  estado VARCHAR(20) DEFAULT 'activo',
+  fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Query JSONB
+SELECT * FROM usuarios WHERE metadata->>'tipo' = 'premium';
+----
+
+**MySQL**
+
+Ventajas:
+* Ampliamente soportado
+* Buena performance en lectura
+* Compatible con muchas aplicaciones
+
+**Conexiones Persistentes**
+
+En n8n, las conexiones a BD se pueden configurar para:
+* Reutilización en múltiples workflows
+* Pool de conexiones
+* Timeout y reintentos
+
+**Ejemplo Práctico: CRUD Completo con SQLite**
+
+Archivo: `ejemplos/n8n/modulo6/04-crud-sqlite.json`
+
+Este workflow implementa todas las operaciones:
+1. CREATE TABLE: Crear estructura de tabla
+2. INSERT: Añadir registros iniciales
+3. SELECT: Leer datos con filtros
+4. UPDATE: Modificar registros existentes
+5. DELETE: Eliminar registros según condición
+6. Verificación final de datos
+
+=== 6.5 CSV y Excel
+
+==== Procesamiento de Archivos Estructurados
+
+**Leer Archivos CSV**
+
+[source,javascript]
+----
+// n8n automatiza el parsing de CSV
+// El nodo "Read File" puede procesar CSV
+
+// Ejemplo de contenido CSV
+id,nombre,email,departamento,salario
+1,Juan García,juan@company.com,Ventas,35000
+2,María López,maria@company.com,Desarrollo,42000
+3,Carlos Rodríguez,carlos@company.com,Operaciones,38000
+
+// n8n lo convierte automáticamente a JSON array
+[
+  {
+    "id": "1",
+    "nombre": "Juan García",
+    "email": "juan@company.com",
+    "departamento": "Ventas",
+    "salario": "35000"
+  },
+  ...
+]
+----
+
+**Procesar Datos**
+
+Una vez en formato JSON, se pueden:
+* Filtrar registros
+* Transformar valores
+* Validar datos
+* Enriquecer con información adicional
+
+**Crear Archivos CSV**
+
+[source,javascript]
+----
+// Usar Code Node o expresiones para convertir a CSV
+const headers = Object.keys(data[0]).join(',');
+const rows = data.map(obj =>
+  Object.values(obj).join(',')
+);
+const csv = [headers, ...rows].join('\n');
+
+// Luego guardar con Write File
+----
+
+**Trabajar con Excel (Microsoft 365)**
+
+* Leer y escribir hojas específicas
+* Conservar formato
+* Acceso a múltiples hojas en un libro
+* Compatible con fórmulas Excel
+
+==== Mejores Prácticas de Gestión de Datos
+
+**1. Validación**
+
+Siempre validar antes de escribir:
+
+[source,javascript]
+----
+const validar = (usuario) => {
+  const errores = [];
+
+  if (!usuario.email || !usuario.email.includes('@')) {
+    errores.push('Email inválido');
+  }
+  if (!usuario.nombre || usuario.nombre.length < 3) {
+    errores.push('Nombre muy corto');
+  }
+  if (usuario.edad && (usuario.edad < 18 || usuario.edad > 120)) {
+    errores.push('Edad fuera de rango');
+  }
+
+  return {
+    valido: errores.length === 0,
+    errores: errores
+  };
+};
+----
+
+**2. Manejo de Errores**
+
+Implementar reintentos y fallbacks:
+
+[source,javascript]
+----
+// Retry logic en n8n
+try {
+  // Intentar operación
+  const resultado = await escribirEnBD(datos);
+  return resultado;
+} catch (error) {
+  if (error.code === 'DUPLICATE_KEY') {
+    // Manejar duplicados
+    return actualizarEnLugarDeInsertar(datos);
+  }
+  throw error;
+}
+----
+
+**3. Performance**
+
+* Batch inserts: Insertar múltiples registros en una query
+* Índices: Crear índices para búsquedas frecuentes
+* Queries eficientes: Evitar N+1 queries
+* Caché: Guardar datos frecuentes en memoria
+
+**Ejemplo Práctico: Procesamiento con Ollama**
+
+Archivo: `ejemplos/n8n/modulo6/05-ollama-data-processing.json`
+
+Este workflow demuestra integración con IA:
+1. Preparar textos para análisis
+2. Enviar a Ollama (modelo local) para procesamiento
+3. Extraer resultados
+4. Crear resumen de sentimientos
+
+Requisito: `ollama serve` corriendo en http://localhost:11434
+
+==== Resumen del Módulo 6
+
+Has aprendido a:
+✓ Leer datos de múltiples fuentes (APIs, BD, archivos)
+✓ Escribir y guardar datos en destinos diversos
+✓ Transformar y normalizar datos
+✓ Implementar operaciones CRUD completas
+✓ Procesar datos con IA local (Ollama)
+✓ Validar y manejar errores
+✓ Optimizar rendimiento en operaciones de datos
+
+**Próximo paso:** Módulo 7 - Webhooks y APIs
+
+---
+
+== MÓDULO 7: Webhooks y APIs
+
+En este módulo aprenderemos a crear webhooks en n8n para recibir datos externos, y a consumir APIs de terceros de forma segura y eficiente.
+
+=== 7.1 Crear Webhooks en n8n
+
+==== ¿Qué es un Webhook?
+
+Un webhook es un mecanismo que permite a aplicaciones externas enviar datos a n8n de forma proactiva. Es lo opuesto a una API REST donde el cliente solicita datos.
+
+**Características de Webhooks en n8n:**
+
+* **URL Única**: Cada workflow con trigger webhook genera una URL única
+* **Métodos HTTP**: Soporta GET, POST, PUT, DELETE, PATCH
+* **Asincronía**: Procesa solicitudes en segundo plano
+* **Escalabilidad**: Maneja múltiples solicitudes simultáneas
+
+**Estructura de URL del Webhook:**
+
+[source,bash]
+----
+https://tu-instancia-n8n.com/webhook/nombre-unique
+https://localhost:5678/webhook/form-signup
+----
+
+**Métodos HTTP Soportados:**
+
+* **GET**: Recibir parámetros en query string
+* **POST**: Recibir datos en body (JSON, form-data)
+* **PUT/PATCH**: Actualizar recursos
+* **DELETE**: Eliminar recursos
+
+**Parámetros y Query Strings:**
+
+[source,javascript]
+----
+// Acceder a parámetros en n8n
+$input.first().json.queryParameters    // Query strings
+$input.first().json.body              // Body POST
+$input.first().json.headers           // Headers HTTP
+$input.first().json.method            // Método HTTP usado
+----
+
+**Headers Personalizados:**
+
+[source,bash]
+----
+# Enviar datos al webhook con headers
+curl -X POST http://localhost:5678/webhook/mi-webhook \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer token123" \
+  -d '{"nombre": "Juan", "email": "juan@example.com"}'
+
+# En n8n, acceder a headers
+$input.first().json.headers['authorization']
+----
+
+**Ejemplo Práctico: Webhook Básico**
+
+Archivo: `ejemplos/n8n/modulo7/01-webhook-basico.json`
+
+Este workflow:
+1. Expone un endpoint HTTP
+2. Recibe datos POST
+3. Procesa los datos
+4. Retorna respuesta
+
+=== 7.2 Consumir APIs Externas
+
+==== Nodo HTTP Request
+
+El nodo HTTP Request es el más versátil para consumir APIs:
+
+**Métodos HTTP:**
+
+[source,javascript]
+----
+// GET - Obtener datos
+GET /api/usuarios/123
+
+// POST - Crear recursos
+POST /api/usuarios
+Body: { "nombre": "Juan", "email": "juan@example.com" }
+
+// PUT - Reemplazar completo
+PUT /api/usuarios/123
+Body: { "nombre": "Juan García", ... }
+
+// PATCH - Actualización parcial
+PATCH /api/usuarios/123
+Body: { "nombre": "Juan García" }
+
+// DELETE - Eliminar
+DELETE /api/usuarios/123
+----
+
+**Headers Personalizados:**
+
+[source,javascript]
+----
+// Headers comunes
+Content-Type: application/json
+Accept: application/json
+User-Agent: n8n/1.0
+
+// Headers de autenticación
+Authorization: Bearer {token}
+X-API-Key: {apikey}
+----
+
+**Body y Parámetros:**
+
+[source,javascript]
+----
+// JSON Body
+{
+  "nombre": "Juan",
+  "email": "juan@example.com",
+  "edad": 28,
+  "activo": true
+}
+
+// Query Parameters
+?filtro=activos&limite=10&pagina=1
+
+// Form Data
+name=Juan&email=juan@example.com
+----
+
+**Manejo de Respuestas:**
+
+[source,javascript]
+----
+// Acceder a respuesta JSON
+$input.first().json.data
+$input.first().json.usuarios[0].nombre
+
+// Acceder a headers de respuesta
+$input.first().json.headers['content-type']
+
+// Código de estado HTTP
+$input.first().json.statusCode
+----
+
+**Errores y Códigos HTTP:**
+
+[source,javascript]
+----
+// Códigos de éxito
+200 OK             - Solicitud exitosa
+201 Created        - Recurso creado
+204 No Content     - Éxito sin contenido
+
+// Errores de cliente
+400 Bad Request    - Solicitud inválida
+401 Unauthorized   - Sin autenticación
+403 Forbidden      - Sin permiso
+404 Not Found      - Recurso no existe
+429 Too Many       - Rate limit excedido
+
+// Errores de servidor
+500 Server Error   - Error interno
+503 Service Unavailable - Servicio no disponible
+----
+
+**Ejemplo Práctico: Consumir API Pública**
+
+Archivo: `ejemplos/n8n/modulo7/02-consumir-api-publica.json`
+
+Este workflow obtiene datos de Open-Meteo (clima sin autenticación):
+1. Solicita datos de clima para Madrid
+2. Procesa la respuesta
+3. Transforma a formato legible
+
+=== 7.3 Autenticación en APIs
+
+==== Métodos de Autenticación
+
+**1. API Key**
+
+Método simple, la API key va en header:
+
+[source,bash]
+----
+# Header
+X-API-Key: tu_api_key_aqui
+
+# Query Parameter
+?api_key=tu_api_key_aqui
+
+# Bearer Style
+Authorization: ApiKey tu_api_key_aqui
+----
+
+Uso en n8n:
+
+[source,javascript]
+----
+// En HTTP Request node
+Headers:
+  X-API-Key: {{ $env.MI_API_KEY }}
+----
+
+**2. Bearer Token / JWT**
+
+Token en Authorization header (estándar OAuth2):
+
+[source,bash]
+----
+Authorization: Bearer eyJhbGc...
+----
+
+Ventajas:
+* Estándar HTTP
+* Soporta JWT
+* Control de expiración
+* Refresh tokens
+
+**3. Basic Authentication**
+
+Usuario y contraseña en Base64:
+
+[source,bash]
+----
+Authorization: Basic dXNlcjpwYXNzd29yZA==
+# (user:password en Base64)
+----
+
+Código en n8n:
+
+[source,javascript]
+----
+const auth = Buffer.from('usuario:contraseña').toString('base64');
+headers: {
+  'Authorization': 'Basic ' + auth
+}
+----
+
+**4. OAuth 2.0**
+
+Flujo seguro para delegación de acceso:
+
+[source,javascript]
+----
+// 1. Redirigir a servidor de autorización
+GET https://oauth-server.com/authorize
+  ?client_id=tu_cliente_id
+  &redirect_uri=https://n8n.com/callback
+  &scope=read%20write
+
+// 2. Usuario autoriza
+// 3. Recibir authorization code
+// 4. Intercambiar por access token
+POST https://oauth-server.com/token
+  client_id=tu_cliente_id
+  client_secret=tu_secreto
+  code=authorization_code
+
+// 5. Usar access token
+Authorization: Bearer access_token_aqui
+----
+
+**5. Custom Headers**
+
+APIs que requieren headers personalizados:
+
+[source,javascript]
+----
+// Ejemplo: API que requiere versión
+X-API-Version: v2
+X-Client-ID: tu_cliente_id
+X-Timestamp: 1234567890
+X-Signature: hash_del_payload
+
+// En n8n, crear dinámicamente
+const timestamp = Math.floor(Date.now() / 1000);
+const signature = crypto
+  .createHmac('sha256', apiSecret)
+  .update(body + timestamp)
+  .digest('hex');
+----
+
+**Ejemplo Práctico: Autenticación en APIs**
+
+Archivo: `ejemplos/n8n/modulo7/05-autenticacion-apis.json`
+
+Este workflow demuestra:
+1. API Key en headers
+2. Bearer Token
+3. Basic Authentication
+4. Documentación de métodos
+
+=== 7.4 APIs Públicas Populares
+
+==== Ejemplos de Integración
+
+**Open-Meteo (Clima)**
+
+[source,bash]
+----
+GET https://api.open-meteo.com/v1/forecast
+  ?latitude=40.4168
+  &longitude=-3.7038
+  &current=temperature_2m,weather_code
+
+# No requiere autenticación
+# Límite: 10,000 requests/día gratis
+----
+
+**JSONPlaceholder (Testing)**
+
+[source,bash]
+----
+# API de prueba con datos ficticios
+GET https://jsonplaceholder.typicode.com/users
+GET https://jsonplaceholder.typicode.com/posts
+GET https://jsonplaceholder.typicode.com/comments
+
+# Perfecto para desarrollo y testing
+----
+
+**GraphQL**
+
+[source,graphql]
+----
+query {
+  user(id: 1) {
+    name
+    email
+    posts(first: 10) {
+      edges {
+        node {
+          id
+          title
+        }
+      }
+    }
+  }
+}
+----
+
+Usar en n8n:
+
+[source,javascript]
+----
+Method: POST
+URL: https://api.example.com/graphql
+Body: {
+  query: `query { user(id: 1) { name email } }`
+}
+----
+
+=== 7.5 Rate Limiting y Throttling
+
+==== Proteger APIs contra Sobrecarga
+
+**Rate Limiting Básico:**
+
+[source,javascript]
+----
+// Limitar a 10 requests por minuto
+const ventana = 60000;  // 1 minuto
+const limite = 10;
+const ahora = Date.now();
+
+// Verificar límite
+if (requestsEnVentana >= limite) {
+  throw new Error('Rate limit excedido');
+}
+----
+
+**Implementar Delay entre Requests:**
+
+[source,javascript]
+----
+// Usar nodo Delay en n8n
+// Esperar 1 segundo entre requests
+Delay node: 1 second
+
+// Para múltiples requests, esperar entre cada uno
+for (let i = 0; i < items.length; i++) {
+  // Procesar item
+  await wait(1000);  // 1 segundo
+}
+----
+
+**Manejar 429 Too Many Requests:**
+
+[source,javascript]
+----
+// Implementar retry con backoff exponencial
+async function fetchConRetry(url, maxRetries = 3) {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const response = await fetch(url);
+      if (response.status === 429) {
+        const delay = Math.pow(2, i) * 1000; // Backoff exponencial
+        await new Promise(resolve => setTimeout(resolve, delay));
+        continue;
+      }
+      return response;
+    } catch (error) {
+      if (i === maxRetries - 1) throw error;
+    }
+  }
+}
+----
+
+**Colas de Procesamiento:**
+
+[source,javascript]
+----
+// Procesar en paralelo limitado (ej: 3 a la vez)
+const items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const parallelLimit = 3;
+
+for (let i = 0; i < items.length; i += parallelLimit) {
+  const batch = items.slice(i, i + parallelLimit);
+  await Promise.all(batch.map(item => processItem(item)));
+}
+----
+
+**Ejemplo Práctico: Rate Limiting**
+
+Archivo: `ejemplos/n8n/modulo7/04-rate-limiting.json`
+
+Este workflow implementa:
+1. Verificación de límites
+2. Delay entre solicitudes
+3. Consulta a Ollama con rate limiting
+
+==== Resumen del Módulo 7
+
+Has aprendido a:
+✓ Crear webhooks para recibir datos externos
+✓ Consumir APIs REST con diversos métodos
+✓ Implementar autenticación segura
+✓ Trabajar con APIs públicas
+✓ Proteger contra rate limiting
+✓ Manejar errores y reintentos
+
+**Próximo paso:** Módulo 8 - Casos de Uso Prácticos
+
+---
+
+== MÓDULO 8: Casos de Uso Prácticos
+
+=== 8.1 Automatización de Email
+* Enviar emails automáticos
+* Emails con templates
+* Attachments
+* Triggers por eventos
+* Listas de correo
+
+=== 8.2 Sincronización de Datos
+* Sincronizar Google Sheets con Airtable
+* Sincronizar CRM con base de datos
+* Duplicar registros entre servicios
+* Bi-directional sync
+
+=== 8.3 Procesamiento de Formularios
+* Capturar datos de formularios
+* Validación
+* Guardar en base de datos
+* Enviar confirmaciones
+* Integrar con email
+
+=== 8.4 Gestión de Redes Sociales
+* Publicar en Twitter
+* Programar posts
+* Responder mensajes
+* Monitoreo de menciones
+
+=== 8.5 E-commerce
+* Sincronización de pedidos
+* Inventario
+* Notificaciones a clientes
+* Integración con Shopify
+
+=== 8.6 CRM y Ventas
+* Crear leads
+* Actualizar oportunidades
+* Seguimiento automático
+* Integración Salesforce/HubSpot
+
+=== 8.7 Reportes y Análisis
+* Generar reportes diarios
+* Enviar por email
+* Visualizaciones
+* Exportar a Excel
+
+=== 8.8 Backup y Archivado
+* Backup de bases de datos
+* Archivado de archivos
+* Limpiar datos antiguos
+* Copias en la nube
+
+---
+
+== MÓDULO 9: Nodos Avanzados
+
+=== 9.1 Code Node (JavaScript)
+* Ejecutar código JavaScript
+* Acceder a datos de nodos anteriores
+* Transformaciones complejas
+* Librerías disponibles
+* Debugging
+
+=== 9.2 Function Node
+* Expresiones simples
+* Lógica sin escribir código
+* Performance vs Code Node
+
+=== 9.3 Python Node (con docker)
+* Ejecutar código Python
+* Librerías disponibles
+* Transformaciones complejas
+
+=== 9.4 SQLite Node
+* Crear queries
+* Transacciones
+* Migraciones
+
+=== 9.5 Nodos de Programación
+* Schedule (Cron expressions)
+* Delay
+* Wait
+* Pause
+
+---
+
+== MÓDULO 10: Monitoreo y Debugging
+
+=== 10.1 Testing Workflows
+* Test individual nodes
+* Test flujos completos
+* Datos de prueba
+* Simular triggers
+
+=== 10.2 Ejecución y Logs
+* Historial de ejecuciones
+* Ver logs detallados
+* Identificar errores
+* Performance metrics
+
+=== 10.3 Debugging Avanzado
+* Breakpoints
+* Inspeccionar variables
+* Pasos de ejecución
+* Console output
+
+=== 10.4 Monitoreo de Workflows
+* Estado de workflows
+* Alertas de errores
+* Notificaciones
+* Estadísticas de uso
+
+---
+
+== MÓDULO 11: Seguridad y Mejores Prácticas
+
+=== 11.1 Seguridad
+* Credenciales y secrets
+* Variables de entorno
+* Encriptación de datos
+* Control de acceso
+* Auditoría
+
+=== 11.2 Mejores Prácticas
+* Nombrar workflows descriptivamente
+* Documentar workflows
+* Versionamiento
+* Reutilización de workflows
+* Modularización
+
+=== 11.3 Rendimiento
+* Optimizar queries
+* Limitar loops
+* Caché de datos
+* Paralelización
+
+=== 11.4 Manejo de Errores
+* Try-catch patterns
+* Retry logic
+* Fallback actions
+* Logging de errores
+
+=== 11.5 Organización
+* Carpetas y categorías
+* Tags
+* Búsqueda
+* Importar/Exportar
+
+---
+
+== MÓDULO 12: Integración Avanzada
+
+=== 12.1 Webhooks Bidireccionales
+* Recibir y enviar datos
+* Confirmaciones
+* Reintentos
+
+=== 12.2 APIs GraphQL
+* Queries
+* Mutations
+* Subscriptions
+
+=== 12.3 Integraciones Complejas
+* Multi-step workflows
+* Dependencias entre nodos
+* Estados persistentes
+
+=== 12.4 Webhook Templates
+* Reutilizar webhooks
+* Dinámicos según parámetros
+
+---
+
+== MÓDULO 13: Instalación y Deployment
+
+=== 13.1 Instalación Local
+* Node.js requirements
+* npm install
+* Iniciar n8n
+* Configuración inicial
+
+=== 13.2 Docker Deployment
+* Dockerfile
+* docker-compose.yml
+* Volúmenes
+* Redes
+* Environment variables
+
+=== 13.3 Deployment en Nube
+* AWS (EC2, ECS, Lambda)
+* Azure (App Service, Container Instances)
+* Google Cloud (Compute Engine, Cloud Run)
+* DigitalOcean
+* Heroku
+
+=== 13.4 Configuración de Base de Datos
+* SQLite (default)
+* PostgreSQL (producción)
+* MySQL
+* Connection strings
+* Migraciones
+
+=== 13.5 Configuración de Persistencia
+* Almacenamiento de ejecuciones
+* Historial de workflows
+* Backups
+* Restauración
+
+---
+
+== MÓDULO 14: Escalabilidad y Producción
+
+=== 14.1 Escalabilidad Horizontal
+* Workers
+* Multiple instances
+* Load balancing
+* Queue management
+
+=== 14.2 Performance Optimization
+* Caching
+* Database indexing
+* Workflow optimization
+* Resource limits
+
+=== 14.3 Monitoring en Producción
+* Logs centralizados
+* Métricas
+* Alertas
+* Dashboards
+
+=== 14.4 Backup y Disaster Recovery
+* Backup estrategia
+* Puntos de recuperación
+* Testing de restauración
+* Documentación
+
+=== 14.5 Upgrades y Mantenimiento
+* Actualizar n8n
+* Breaking changes
+* Testing en staging
+* Rollback plans
+
+---
+
+== MÓDULO 15: Extensibilidad
+
+=== 15.1 Custom Nodes
+* Estructura de un nodo personalizado
+* Crear tu primer custom node
+* Propiedades y métodos
+* Publicar nodos
+
+=== 15.2 Comunidad Nodes
+* Usar nodos de la comunidad
+* Instalar custom nodes
+* Recursos comunitarios
+
+=== 15.3 Contribuir a n8n
+* Reportar bugs
+* Sugerencias de features
+* Pull requests
+* Comunidad
+
+---
+
+== MÓDULO 16: Casos de Estudio
+
+=== 16.1 Automatización de RR.HH.
+* Registro de empleados
+* Notificaciones
+* Generación de reportes
+* Integración con Slack
+
+=== 16.2 E-commerce Avanzado
+* Gestión de pedidos
+* Sincronización de inventario
+* Notificaciones a clientes
+* Análisis de ventas
+
+=== 16.3 Marketing Automation
+* Lead scoring
+* Email campaigns
+* Social media posting
+* Analytics
+
+=== 16.4 Data Pipeline
+* Extracción de datos
+* Transformación
+* Carga en warehouse
+* Reportes automáticos
+
+=== 16.5 Integraciones Complejas
+* Multi-service workflows
+* Transacciones distribuidas
+* Compensación de errores
+
+---
+
+== MÓDULO 17: Herramientas Complementarias
+
+=== 17.1 Otras Plataformas de Automatización
+* Comparativa n8n vs alternativas
+* Cuándo usar cada una
+
+=== 17.2 Stack Tecnológico
+* n8n + Docker + PostgreSQL
+* n8n + Kubernetes
+* n8n + CI/CD (GitHub Actions)
+
+=== 17.3 Monitoreo Externo
+* Datadog
+* New Relic
+* Prometheus
+* Grafana
+
+---
+
+== MÓDULO 18: Proyectos Finales
+
+=== 18.1 Proyecto 1: Sistema de Notificaciones
+* Integración múltiple de canales
+* Priorización de mensajes
+* Retry logic
+* Dashboard de seguimiento
+
+=== 18.2 Proyecto 2: ETL Pipeline
+* Extracción de múltiples fuentes
+* Transformación de datos
+* Validación
+* Carga en warehouse
+
+=== 18.3 Proyecto 3: CRM Integration Hub
+* Sincronización con Salesforce
+* Webhooks
+* Error handling
+* Auditoría
+
+=== 18.4 Proyecto 4: Automatización E-commerce
+* Integración Shopify
+* Inventario en tiempo real
+* Notificaciones
+* Reportes
+
+=== 18.5 Proyecto 5: Platform as a Service
+* Multitenancy
+* Custom workflows por cliente
+* Facturación
+* Escalabilidad
+
+---
+
+== Recursos Adicionales
+
+=== Documentación Oficial
+* https://docs.n8n.io/
+* Community Forum
+* GitHub Repository
+
+=== Comunidad
+* Discord Community
+* GitHub Issues
+* Reddit r/n8n
+* YouTube tutorials
+
+=== Herramientas Útiles
+* n8n CLI
+* n8n Desktop
+* Node Red (alternativa)
+* n8n Cloud (versión managed)
+
+---
+
+== Roadmap de Aprendizaje Sugerido
+
+1. **Semana 1**: Módulos 1-3 (Fundamentos)
+2. **Semana 2**: Módulos 4-5 (Expresiones y Control de Flujo)
+3. **Semana 3**: Módulos 6-7 (Datos y Webhooks)
+4. **Semana 4**: Módulos 8-9 (Casos de Uso y Nodos Avanzados)
+5. **Semana 5**: Módulos 10-11 (Debugging y Seguridad)
+6. **Semana 6**: Módulos 12-13 (Integración y Deployment)
+7. **Semana 7**: Módulos 14-15 (Escalabilidad y Extensibilidad)
+8. **Semana 8**: Módulos 16-18 (Casos Reales y Proyectos Finales)
+
+---
+
+== Conclusión
+
+Este temario proporciona una ruta completa para dominar n8n, desde conceptos básicos hasta implementaciones avanzadas en producción. Se recomienda complementar con práctica constante y exploración de la comunidad.
+

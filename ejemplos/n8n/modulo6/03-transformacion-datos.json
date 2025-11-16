@@ -1,0 +1,85 @@
+{
+  "name": "M6.3 - Transformación de Datos con Code Node",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "start",
+      "name": "Start",
+      "type": "n8n-nodes-base.start",
+      "typeVersion": 1,
+      "position": [100, 300]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "datos_raw",
+              "value": "[{\"id\":1,\"nombre\":\"juan\",\"email\":\"JUAN@EXAMPLE.COM\",\"edad\":\"25\"},{\"id\":2,\"nombre\":\"maria\",\"email\":\"MARIA@EXAMPLE.COM\",\"edad\":\"30\"}]"
+            }
+          ]
+        }
+      },
+      "id": "set-raw-data",
+      "name": "Set - Datos Sin Procesar",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [300, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const dataString = $input.first().json.datos_raw; const datos = JSON.parse(dataString); return datos.map((usuario, index) => ({ id: usuario.id, nombre: usuario.nombre.toUpperCase(), email: usuario.email.toLowerCase(), edad: parseInt(usuario.edad), tipo: usuario.edad >= 30 ? 'Senior' : 'Junior', email_valido: usuario.email.includes('@'), posicion: index + 1, timestamp: new Date().toISOString() }));"
+      },
+      "id": "code-transform",
+      "name": "Code - Normalizar y Transformar",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all(); const total_users = items.length; const avg_age = items.reduce((sum, item) => sum + item.json.edad, 0) / total_users; return { json: { resumen: { total_usuarios: total_users, edad_promedio: avg_age.toFixed(2), usuarios_senior: items.filter(item => item.json.tipo === 'Senior').length, usuarios_junior: items.filter(item => item.json.tipo === 'Junior').length }, usuarios_procesados: items.map(item => item.json) } };"
+      },
+      "id": "code-summary",
+      "name": "Code - Crear Resumen",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [700, 300]
+    }
+  ],
+  "connections": {
+    "start": {
+      "main": [
+        [
+          {
+            "node": "set-raw-data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set-raw-data": {
+      "main": [
+        [
+          {
+            "node": "code-transform",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "code-transform": {
+      "main": [
+        [
+          {
+            "node": "code-summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

@@ -1,0 +1,171 @@
+{
+  "name": "M7.5 - Autenticación en APIs",
+  "description": "Diferentes métodos de autenticación en APIs",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "start",
+      "name": "Start",
+      "type": "n8n-nodes-base.start",
+      "typeVersion": 1,
+      "position": [100, 300]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "api_key",
+              "value": "tu_api_key_aqui"
+            },
+            {
+              "name": "bearer_token",
+              "value": "tu_bearer_token_aqui"
+            },
+            {
+              "name": "username",
+              "value": "usuario"
+            },
+            {
+              "name": "password",
+              "value": "contraseña"
+            }
+          ]
+        }
+      },
+      "id": "set-auth",
+      "name": "Set - Credenciales",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [300, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://api.ejemplo.com/datos",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "{{ $input.first().json.api_key }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        }
+      },
+      "id": "http-api-key",
+      "name": "HTTP - API Key",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [500, 100]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://api.ejemplo.com/datos",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer {{ $input.first().json.bearer_token }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        }
+      },
+      "id": "http-bearer",
+      "name": "HTTP - Bearer Token",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://api.ejemplo.com/datos",
+        "authentication": "none",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": []
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Basic {{ Buffer.from($input.first().json.username + ':' + $input.first().json.password).toString('base64') }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        }
+      },
+      "id": "http-basic",
+      "name": "HTTP - Basic Auth",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [500, 500]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Documentar los diferentes métodos de autenticación\nreturn {\n  json: {\n    metodos_autenticacion: {\n      api_key: {\n        descripcion: 'Clave de API en headers',\n        ejemplo_header: 'X-API-Key: tu_api_key',\n        ventajas: ['Simple', 'Fácil de implementar'],\n        desventajas: ['No seguro si se expone']\n      },\n      bearer_token: {\n        descripcion: 'Token Bearer en Authorization header',\n        ejemplo_header: 'Authorization: Bearer tu_token',\n        ventajas: ['Estándar HTTP', 'Soporta JWT'],\n        desventajas: ['Necesita gestión de expiración']\n      },\n      basic_auth: {\n        descripcion: 'Usuario y contraseña codificados en Base64',\n        ejemplo_header: 'Authorization: Basic base64(user:pass)',\n        ventajas: ['Estándar HTTP', 'Compatible universal'],\n        desventajas: ['Menos seguro que Bearer']\n      },\n      oauth2: {\n        descripcion: 'Flujo OAuth2 para delegación segura',\n        flujo: 'Authorization Code Flow',\n        ventajas: ['Muy seguro', 'No compartir credenciales'],\n        desventajas: ['Implementación compleja']\n      },\n      custom: {\n        descripcion: 'Headers personalizados por API',\n        ventajas: ['Flexible', 'Adaptable'],\n        desventajas: ['Específico por servicio']\n      }\n    }\n  }\n};"
+      },
+      "id": "code-doc",
+      "name": "Code - Documentación",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [700, 300]
+    }
+  ],
+  "connections": {
+    "start": {
+      "main": [
+        [
+          {
+            "node": "set-auth",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set-auth": {
+      "main": [
+        [
+          {
+            "node": "http-api-key",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "http-bearer",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "http-basic",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "code-doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

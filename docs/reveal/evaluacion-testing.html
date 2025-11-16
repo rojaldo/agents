@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación y Testing de Agentes de IA</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/theme/white.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-light.min.css">
+    <style>
+        .reveal { text-align: left; color: #555555; }
+        .reveal section { text-align: left; padding: 40px; display: flex; flex-direction: column; justify-content: flex-start; }
+        .reveal h1, .reveal h2, .reveal h3 { text-transform: none; text-align: left; color: #555555; }
+
+        /* Encabezados */
+        .reveal h1 { font-size: 1.05em; margin-bottom: 0.5em; }
+        .reveal h2 { font-size: 1em; margin-bottom: 0.5em; }
+        .reveal h3 { font-size: 0.75em; margin-bottom: 0.3em; }
+
+        /* Párrafos y énfasis */
+        .reveal p { font-size: 0.6em; margin: 0.3em 0; color: #555555; }
+        .reveal strong { font-size: 1em; font-weight: bold; }
+
+        /* Código */
+        .reveal pre { background: #f8f8f8; border: 1px solid #ddd; width: 100%; padding: 0.5em; margin: 0.5em 0; }
+        .reveal pre code { font-size: 0.7em; color: #555555; }
+
+        /* Listas y elementos */
+        .reveal ul { font-size: 0.55em; text-align: left; margin-left: 0.5em; color: #555555; }
+        .reveal li { margin: 0.3em 0; color: #555555; }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- SLIDES DE INTRODUCCIÓN -->
+            <section>
+                <h1>Evaluación y Testing</h1>
+                <h2>de Agentes de IA</h2>
+                <p>Cómo medir, probar y monitorear agentes inteligentes</p>
+            </section>
+
+            <section>
+                <h2>¿Por qué Importa la Evaluación?</h2>
+                <ul>
+                    <li>Los agentes son sistemas complejos con múltiples objetivos</li>
+                    <li>Necesitamos medir qué tan bien funcionan</li>
+                    <li>Sin evaluación, no sabemos si mejoramos o empeoramos</li>
+                    <li>Producción requiere monitoreo continuo</li>
+                    <li>Los errores tienen consecuencias reales</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Objetivos del Curso</h2>
+                <ul>
+                    <li>Definir métricas apropiadas para diferentes contextos</li>
+                    <li>Crear y usar benchmarks efectivos</li>
+                    <li>Implementar estrategias de testing integral</li>
+                    <li>Debuggear agentes cuando fallan</li>
+                    <li>Monitorear sistemas en producción</li>
+                    <li>Evaluar con herramientas modernas (LLMs como jueces)</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Estructura del Curso</h2>
+                <ul>
+                    <li>Módulo 1: Cómo medir (métricas)</li>
+                    <li>Módulo 2: Contra qué medir (benchmarks)</li>
+                    <li>Módulo 3: Cómo probar (testing)</li>
+                    <li>Módulo 4: Qué comportamientos probar</li>
+                    <li>Módulo 5: Debugging cuando falla</li>
+                    <li>Módulo 6: Sistemas multi-agente</li>
+                    <li>Módulo 7: Evaluación en producción</li>
+                    <li>Módulo 8: Evaluación con LLMs</li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 1: MÉTRICAS -->
+            <section>
+                <h2>MÓDULO 1: Métricas de Desempeño</h2>
+            </section>
+
+            <section>
+                <h3>Framework de Métricas</h3>
+                <ul>
+                    <li><strong>Efectividad:</strong> ¿Hace lo correcto? (Exactitud de respuestas)</li>
+                    <li><strong>Eficiencia:</strong> ¿Lo hace rápido? (Latencia, throughput)</li>
+                    <li><strong>Robustez:</strong> ¿Es confiable? (Tasa de errores, recuperación)</li>
+                    <li><strong>Seguridad:</strong> ¿Respeta restricciones? (Sin violar reglas)</li>
+                    <li><strong>Escalabilidad:</strong> ¿Crece bien? (Con más usuarios/datos)</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Matriz de Confusión</h3>
+                <ul>
+                    <li><strong>TP (True Positive):</strong> Predijo positivo, era positivo ✓</li>
+                    <li><strong>TN (True Negative):</strong> Predijo negativo, era negativo ✓</li>
+                    <li><strong>FP (False Positive):</strong> Predijo positivo, era negativo ✗</li>
+                    <li><strong>FN (False Negative):</strong> Predijo negativo, era positivo ✗</li>
+                    <li><strong>Ejemplo:</strong> Detector de spam</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Métricas de Efectividad (1)</h3>
+                <ul>
+                    <li><strong>Accuracy:</strong> (TP + TN) / Total
+                        <ul>
+                            <li>Usa cuando: Clases balanceadas</li>
+                            <li>No usa cuando: Clases desbalanceadas (solo 1% spam)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Precision:</strong> TP / (TP + FP)
+                        <ul>
+                            <li>De los que dijimos positivo, cuántos eran realmente</li>
+                            <li>Usa cuando: Falsos positivos son costosos (ej: marcar email legítimo como spam)</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Métricas de Efectividad (2)</h3>
+                <ul>
+                    <li><strong>Recall:</strong> TP / (TP + FN)
+                        <ul>
+                            <li>De los realmente positivos, cuántos encontramos</li>
+                            <li>Usa cuando: Falsos negativos son costosos (ej: perder detección de fraude)</li>
+                        </ul>
+                    </li>
+                    <li><strong>F1-Score:</strong> 2 × (Precision × Recall) / (Precision + Recall)
+                        <ul>
+                            <li>Balance entre precision y recall</li>
+                            <li>Usa cuando: Importan ambos errores por igual</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Métricas de Eficiencia: Latencia</h3>
+                <ul>
+                    <li><strong>Latencia:</strong> Tiempo de respuesta (ms o segundos)</li>
+                    <li><strong>P50 (Mediana):</strong> 50% de requests más rápido que esto</li>
+                    <li><strong>P95:</strong> 95% de requests más rápido que esto</li>
+                    <li><strong>P99:</strong> 99% de requests más rápido que esto</li>
+                    <li><strong>Analogía:</strong> Tiempo de espera en restaurante
+                        <ul>
+                            <li>P50 = 15 min (mitad espera ≤15 min)</li>
+                            <li>P95 = 45 min (95% espera ≤45 min)</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Métricas de Eficiencia: Throughput</h3>
+                <ul>
+                    <li><strong>Throughput:</strong> Requests por segundo (RPS)</li>
+                    <li><strong>Diferencia con latencia:</strong>
+                        <ul>
+                            <li>Latencia: Tiempo para UN request</li>
+                            <li>Throughput: Cuántos requests/segundo TOTAL</li>
+                        </ul>
+                    </li>
+                    <li><strong>Ejemplo:</strong>
+                        <ul>
+                            <li>Chef rápido (latencia baja) pero solo 1 cliente a la vez = bajo throughput</li>
+                            <li>Múltiples chefs (latencia media) pero 10 clientes simultáneos = alto throughput</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Métricas de Eficiencia: Recursos</h3>
+                <ul>
+                    <li><strong>CPU:</strong> Porcentaje de procesador usado
+                        <ul>
+                            <li>Impacta: Costo, capacidad de múltiples agentes en servidor</li>
+                        </ul>
+                    </li>
+                    <li><strong>Memoria (RAM):</strong> MB o GB usados
+                        <ul>
+                            <li>Crítico: Si memoria llena, servidor crashea</li>
+                        </ul>
+                    </li>
+                    <li><strong>Disco:</strong> Almacenamiento usado
+                        <ul>
+                            <li>Para logs, datos del agente, modelo</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Métricas de Eficiencia: Costo</h3>
+                <ul>
+                    <li><strong>Costo por operación:</strong> $ / request
+                        <ul>
+                            <li>Ejemplo: LLM cuesta $ por token</li>
+                            <li>Calculamos: Costo promedio por consulta</li>
+                        </ul>
+                    </li>
+                    <li><strong>Presupuesto total:</strong> $ / mes para correr agente
+                        <ul>
+                            <li>Importante para productos SaaS</li>
+                        </ul>
+                    </li>
+                    <li><strong>ROI:</strong> Beneficio vs. costo
+                        <ul>
+                            <li>Ahorro de 10 horas/semana vs. costo mensual $500</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Métricas de Robustez</h3>
+                <ul>
+                    <li><strong>Error Rate:</strong> % de requests que fallan
+                        <ul>
+                            <li>Meta: < 0.1% en producción</li>
+                        </ul>
+                    </li>
+                    <li><strong>MTBF:</strong> Mean Time Between Failures (horas)
+                        <ul>
+                            <li>Cuántas horas en promedio antes de que falle</li>
+                            <li>MTBF = 1000 horas = falla una vez cada ~40 días</li>
+                        </ul>
+                    </li>
+                    <li><strong>Recovery Time:</strong> Cuánto tarda recuperarse
+                        <ul>
+                            <li>Idealmente < 1 minuto</li>
+                        </ul>
+                    </li>
+                    <li><strong>Consistency:</strong> Mismas inputs = Mismas outputs</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Métricas de Seguridad</h3>
+                <ul>
+                    <li><strong>Violation Rate:</strong> % que violan restricciones
+                        <ul>
+                            <li>Ejemplo: "No puedes transferir > $10000" pero transferencia es $11000</li>
+                        </ul>
+                    </li>
+                    <li><strong>Adversarial Robustness:</strong> Resistencia a ataques
+                        <ul>
+                            <li>¿Puedo engañar al agente con inputs especiales?</li>
+                        </ul>
+                    </li>
+                    <li><strong>Fairness:</strong> Sin discriminación
+                        <ul>
+                            <li>¿Trata diferente a usuarios por género, edad, etc?</li>
+                            <li>Medir: Disparidad en tasa de aceptación entre grupos</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Seleccionar las Métricas Correctas</h3>
+                <ul>
+                    <li><strong>Alineación con negocio:</strong> ¿Qué importa al cliente?
+                        <ul>
+                            <li>E-commerce: velocidad importa (latencia)</li>
+                            <li>Medicina: exactitud importa (accuracy)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Interpretabilidad:</strong> ¿Stakeholders entienden?</li>
+                    <li><strong>Eficiencia computacional:</strong> ¿Se calcula rápido?</li>
+                    <li><strong>Múltiples perspectivas:</strong> No solo una métrica
+                        <ul>
+                            <li>Medir 3-5 métricas complementarias</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 2: BENCHMARKS -->
+            <section>
+                <h2>MÓDULO 2: Benchmarks y Datasets</h2>
+            </section>
+
+            <section>
+                <h3>Características de Buen Benchmark</h3>
+                <ul>
+                    <li><strong>Representativo:</strong> Refleja problemas reales
+                        <ul>
+                            <li>No: 100% casos fáciles</li>
+                            <li>Sí: Mix de casos fáciles, medio, difíciles</li>
+                        </ul>
+                    </li>
+                    <li><strong>Challenging:</strong> No todos puntúan 100%
+                        <ul>
+                            <li>Baseline humano ≈ 95%, mejor modelo ≈ 98%</li>
+                        </ul>
+                    </li>
+                    <li><strong>Reproducible:</strong> Mismos resultados si repites
+                        <ul>
+                            <li>Datos públicos, no cambian</li>
+                        </ul>
+                    </li>
+                    <li><strong>Interpretable:</strong> Entiendes qué está fallando</li>
+                    <li><strong>Shareable:</strong> Puedes comparar con otros</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Crear Dataset de Evaluación</h3>
+                <ul>
+                    <li><strong>Paso 1: Definir.</strong> ¿Qué queremos evaluar?</li>
+                    <li><strong>Paso 2: Recolectar.</strong> Ejemplos reales</li>
+                    <li><strong>Paso 3: Anotar.</strong> Humanos marcan respuesta correcta
+                        <ul>
+                            <li>Opción A: 1 persona (costo bajo, posible sesgo)</li>
+                            <li>Opción B: 3 personas, consenso (mejor calidad)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Paso 4: Versionear.</strong> Cambios controlados</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Tamaño del Dataset</h3>
+                <ul>
+                    <li><strong>Desarrollo (Dev):</strong> 20-30% - Para prototipado rápido
+                        <ul>
+                            <li>Ejemplo: 100 ejemplos de 500 total</li>
+                        </ul>
+                    </li>
+                    <li><strong>Validación (Val):</strong> 10-15% - Para tuning de parámetros
+                        <ul>
+                            <li>No usar para testing final</li>
+                        </ul>
+                    </li>
+                    <li><strong>Test:</strong> 60-70% - Para evaluación FINAL
+                        <ul>
+                            <li>Nunca lo ves hasta al final</li>
+                        </ul>
+                    </li>
+                    <li><strong>Distribución:</strong> Balanceada o estratificada según necesidad</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Sesgo en Benchmarks</h3>
+                <ul>
+                    <li><strong>Selection Bias:</strong> Ejemplos no representativos
+                        <ul>
+                            <li>Todos casos fáciles → métrica inflada</li>
+                        </ul>
+                    </li>
+                    <li><strong>Annotation Bias:</strong> Anotadores sesgan
+                        <ul>
+                            <li>Solución: 3 anotadores, consenso, Cohen's Kappa</li>
+                        </ul>
+                    </li>
+                    <li><strong>Temporal Bias:</strong> Dataset viejo vs. presente
+                        <ul>
+                            <li>Dataset 2020 vs. problema 2025 pueden diferir</li>
+                        </ul>
+                    </li>
+                    <li><strong>Domain Bias:</strong> Datos de un dominio, usas en otro
+                        <ul>
+                            <li>Datos médicos USA vs. otro país pueden diferir</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Benchmarks Públicos Disponibles</h3>
+                <ul>
+                    <li><strong>NLP:</strong> SQuAD (comprensión), GLUE (lenguaje general)</li>
+                    <li><strong>Conversación:</strong> MultiWOZ (diálogos), ConvAI (chatbot)</li>
+                    <li><strong>Razonamiento:</strong> BoolQ (lógica), CommonsenseQA (sentido común)</li>
+                    <li><strong>Multimodal:</strong> COCO (imágenes+texto), VQA (visual Q&A)</li>
+                    <li><strong>Dónde encontrar:</strong> HuggingFace, Papers with Code, GLUE Leaderboard</li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 3: TESTING -->
+            <section>
+                <h2>MÓDULO 3: Testing de Agentes</h2>
+            </section>
+
+            <section>
+                <h3>Test Pyramid</h3>
+                <ul>
+                    <li><strong>Nivel 1 (Base): Unit Tests - 70%</strong>
+                        <ul>
+                            <li>Rápidos, aislados, muchos</li>
+                        </ul>
+                    </li>
+                    <li><strong>Nivel 2 (Medio): Integration Tests - 20%</strong>
+                        <ul>
+                            <li>Múltiples componentes, menos cantidad</li>
+                        </ul>
+                    </li>
+                    <li><strong>Nivel 3 (Arriba): Functional/E2E Tests - 10%</strong>
+                        <ul>
+                            <li>Sistema completo, los más lentos y valiosos</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Unit Tests (1)</h3>
+                <ul>
+                    <li><strong>Qué es:</strong> Prueba UNA función o método en aislamiento</li>
+                    <li><strong>Características:</strong>
+                        <ul>
+                            <li>Rápidos (ms)</li>
+                            <li>Independientes (sin dependencias externas)</li>
+                            <li>Determinísticos (mismo resultado siempre)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Herramienta:</strong> pytest (Python)</li>
+                    <li><strong>Estructura:</strong>
+                        <ul>
+                            <li>Arrange: Preparar datos</li>
+                            <li>Act: Ejecutar función</li>
+                            <li>Assert: Verificar resultado</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Unit Tests (2): Ejemplo Simple</h3>
+                <p style="font-size: 0.5em; background: #f8f8f8; padding: 10px; text-align: left;">
+                    def test_agent_health_decreases():<br>
+                    &nbsp;&nbsp;agent = Agent(health=100)<br>
+                    &nbsp;&nbsp;agent.take_damage(25)<br>
+                    &nbsp;&nbsp;assert agent.health == 75<br>
+                    <br>
+                    def test_agent_dies_at_zero_health():<br>
+                    &nbsp;&nbsp;agent = Agent(health=10)<br>
+                    &nbsp;&nbsp;agent.take_damage(10)<br>
+                    &nbsp;&nbsp;assert agent.is_alive() == False
+                </p>
+                <ul>
+                    <li>Claros, específicos, fáciles de entender</li>
+                    <li>Nombre describe qué testa: test_&lt;verb&gt;_&lt;object&gt;</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Unit Tests (3): Con Mocks</h3>
+                <ul>
+                    <li><strong>Mock:</strong> Simular dependencia externa
+                        <ul>
+                            <li>Evitar llamar API real, base de datos real</li>
+                            <li>Controlar su comportamiento para testing</li>
+                        </ul>
+                    </li>
+                    <li><strong>Ejemplo:</strong> Testear agente sin llamar LLM real
+                        <ul>
+                            <li>Mockear respuesta LLM: "Fixed response"</li>
+                            <li>Testear que agente procesa correctamente</li>
+                        </ul>
+                    </li>
+                    <li><strong>Beneficio:</strong> Tests rápidos, no dependen de APIs externas</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Unit Tests (4): Con Fixtures</h3>
+                <ul>
+                    <li><strong>Fixture:</strong> Configuración reutilizable para tests
+                        <ul>
+                            <li>Setup: Crear objetos de prueba</li>
+                            <li>Teardown: Limpiar después (cierra DB, archivos)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Ventaja:</strong> No repetir código de setup
+                        <ul>
+                            <li>Sin fixture: Cada test repite setup</li>
+                            <li>Con fixture: Reutilizable</li>
+                        </ul>
+                    </li>
+                    <li><strong>Uso:</strong> @pytest.fixture decorator</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Unit Tests (5): Mejores Prácticas</h3>
+                <ul>
+                    <li><strong>Nombres descriptivos:</strong> test_describe_what_happens()
+                        <ul>
+                            <li>NO: test_1(), test_agent()</li>
+                            <li>SÍ: test_agent_calculates_path_with_obstacles()</li>
+                        </ul>
+                    </li>
+                    <li><strong>Una aserción por test:</strong> Si es posible
+                        <ul>
+                            <li>Más fácil identificar qué falló</li>
+                        </ul>
+                    </li>
+                    <li><strong>Code Coverage > 80%:</strong> Líneas de código testeadas
+                        <ul>
+                            <li>Herramienta: pytest-cov</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Integration Tests</h3>
+                <ul>
+                    <li><strong>Qué es:</strong> Prueba múltiples componentes juntos</li>
+                    <li><strong>Ejemplo:</strong> Agent + Memory + Database
+                        <ul>
+                            <li>Agent decide guardar información</li>
+                            <li>Se guarda en Memory</li>
+                            <li>Se persiste en DB</li>
+                            <li>Agent recupera después</li>
+                        </ul>
+                    </li>
+                    <li><strong>vs Unit Tests:</strong>
+                        <ul>
+                            <li>Unit: Testea Memory aislado</li>
+                            <li>Integration: Testea Agent + Memory + DB juntos</li>
+                        </ul>
+                    </li>
+                    <li><strong>Velocidad:</strong> Más lento que unit (segundos vs. ms)</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Functional Tests (E2E)</h3>
+                <ul>
+                    <li><strong>Qué es:</strong> Prueba sistema completo usuario a usuario
+                        <ul>
+                            <li>Usuario hace acción → Sistema responde correctamente</li>
+                        </ul>
+                    </li>
+                    <li><strong>Ejemplo:</strong> Chat bot conversación
+                        <ul>
+                            <li>Usuario: "¿Cuál es tu nombre?"</li>
+                            <li>Bot responde sensiblemente</li>
+                            <li>Usuario: Pregunta de seguimiento</li>
+                            <li>Bot recuerda contexto anterior</li>
+                        </ul>
+                    </li>
+                    <li><strong>Ventaja:</strong> Valida experiencia real del usuario</li>
+                    <li><strong>Desventaja:</strong> Lento y frágil (muchas dependencias)</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Stress Testing</h3>
+                <ul>
+                    <li><strong>Qué es:</strong> Prueba bajo carga EXTREMA
+                        <ul>
+                            <li>100 agentes simultáneos vs. 1</li>
+                            <li>10,000 requests vs. 10</li>
+                        </ul>
+                    </li>
+                    <li><strong>Escenarios:</strong>
+                        <ul>
+                            <li>Concurrencia: Múltiples usuarios al mismo tiempo</li>
+                            <li>Throughput: Máximo de requests/segundo</li>
+                            <li>Memory: Límite de RAM disponible</li>
+                        </ul>
+                    </li>
+                    <li><strong>Herramientas:</strong> Apache JMeter, Locust, pytest-xdist</li>
+                    <li><strong>Objetivo:</strong> Encontrar breaking point</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Regression Testing</h3>
+                <ul>
+                    <li><strong>Qué es:</strong> Verificar que cambios no rompan lo que ya funcionaba</li>
+                    <li><strong>Cuándo:</strong> Después de cada cambio de código
+                        <ul>
+                            <li>Nueva feature</li>
+                            <li>Bug fix</li>
+                            <li>Refactoring</li>
+                        </ul>
+                    </li>
+                    <li><strong>Proceso:</strong>
+                        <ul>
+                            <li>Runear todos los tests de versión anterior</li>
+                            <li>Si alguno falla: Tu cambio rompió algo</li>
+                        </ul>
+                    </li>
+                    <li><strong>Automatizar:</strong> GitHub Actions, Jenkins, etc</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>CI/CD Pipeline</h3>
+                <ul>
+                    <li><strong>CI (Continuous Integration):</strong>
+                        <ul>
+                            <li>Cada commit → Runean todos los tests</li>
+                            <li>Si falla un test: Rechazar el cambio</li>
+                        </ul>
+                    </li>
+                    <li><strong>CD (Continuous Deployment):</strong>
+                        <ul>
+                            <li>Si todos los tests pasan → Deploy automático a producción</li>
+                        </ul>
+                    </li>
+                    <li><strong>Herramientas:</strong> GitHub Actions, GitLab CI, Jenkins</li>
+                    <li><strong>Beneficio:</strong> Confianza al hacer cambios
+                        <ul>
+                            <li>Sabes que no rompiste nada (los tests lo dicen)</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 4: BEHAVIORAL TESTING -->
+            <section>
+                <h2>MÓDULO 4: Testing de Comportamiento</h2>
+            </section>
+
+            <section>
+                <h3>Propiedades Correctas</h3>
+                <ul>
+                    <li><strong>Definición:</strong> Características que SIEMPRE deben ser verdad
+                        <ul>
+                            <li>NO: "A veces el agente es correcto"</li>
+                            <li>SÍ: "El agente SIEMPRE respeta el budget"</li>
+                        </ul>
+                    </li>
+                    <li><strong>Ejemplos:</strong>
+                        <ul>
+                            <li>Presupuesto: Nunca gastar más que límite</li>
+                            <li>Salud: Nunca < 0 o > 100</li>
+                            <li>Loops: Agente debe terminar eventualmente</li>
+                        </ul>
+                    </li>
+                    <li><strong>Testing:</strong> Probar múltiples iteraciones
+                        <ul>
+                            <li>Ejecutar agente 1000 veces, verificar propiedad cada vez</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Edge Cases y Límites</h3>
+                <ul>
+                    <li><strong>Boundary Values:</strong> Extremos de rango
+                        <ul>
+                            <li>Si budget max es $1000: Test $0, $1, $999, $1000, $1001</li>
+                            <li>Si array max 100: Test 0, 1, 99, 100, 101</li>
+                        </ul>
+                    </li>
+                    <li><strong>Special Conditions:</strong> Casos raros
+                        <ul>
+                            <li>Input vacío: []</li>
+                            <li>Input None o null</li>
+                            <li>String muy largo: 10,000 caracteres</li>
+                            <li>Valores negativos</li>
+                        </ul>
+                    </li>
+                    <li><strong>Objetivo:</strong> Encontrar bugs antes que usuarios</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Consistencia Temporal</h3>
+                <ul>
+                    <li><strong>Determinístico:</strong> Misma input siempre = Misma output
+                        <ul>
+                            <li>Ejemplo: Buscar en DB por ID = resultado idéntico</li>
+                            <li>Test: Ejecutar 2 veces, comparar resultado</li>
+                        </ul>
+                    </li>
+                    <li><strong>Probabilístico:</strong> Mismo input, outputs varían pero distribución es consistente
+                        <ul>
+                            <li>Ejemplo: LLM sampling (temperatura=0.5)</li>
+                            <li>Test: Ejecutar 100 veces, verificar distribución</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Reproducibilidad</h3>
+                <ul>
+                    <li><strong>Problema:</strong> Bugs intermitentes (aparecen a veces)
+                        <ul>
+                            <li>Difíciles de debuggear si no puedes reproducir</li>
+                        </ul>
+                    </li>
+                    <li><strong>Solución: Random Seed</strong>
+                        <ul>
+                            <li>Fijar seed = resultados reproducibles</li>
+                            <li>Python: <code>random.seed(42)</code></li>
+                        </ul>
+                    </li>
+                    <li><strong>Beneficio:</strong> Ejecutar bug 10 veces, mismo resultado = fácil debuggear</li>
+                    <li><strong>Documentar:</strong> Qué seed usaste para reproducir</li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 5: DEBUGGING -->
+            <section>
+                <h2>MÓDULO 5: Debugging de Agentes</h2>
+            </section>
+
+            <section>
+                <h3>Logging Estratégico</h3>
+                <ul>
+                    <li><strong>Niveles de Log:</strong>
+                        <ul>
+                            <li>DEBUG: Detalles internos (para desarrolladores)</li>
+                            <li>INFO: Eventos importantes (normal operation)</li>
+                            <li>WARNING: Algo sospechoso pero OK</li>
+                            <li>ERROR: Algo rompió</li>
+                            <li>CRITICAL: Sistema en peligro</li>
+                        </ul>
+                    </li>
+                    <li><strong>Qué loguear:</strong>
+                        <ul>
+                            <li>Entrada a función (parámetros)</li>
+                            <li>Decisiones importantes (si/no branches)</li>
+                            <li>Valores críticos (budget, health)</li>
+                            <li>Salida de función (resultado)</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Execution Traces</h3>
+                <ul>
+                    <li><strong>Trace:</strong> Registro detallado de CADA paso ejecutado
+                        <ul>
+                            <li>Cuándo: timestamp</li>
+                            <li>Dónde: función/línea</li>
+                            <li>Qué: variables, valores</li>
+                            <li>Call stack: dónde fue llamado</li>
+                        </ul>
+                    </li>
+                    <li><strong>vs Logging:</strong>
+                        <ul>
+                            <li>Logging: Lo que programador eligió loguear</li>
+                            <li>Trace: TODO (más detallado, más datos)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Tools:</strong> Python debugger (pdb), custom tracers</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>State Inspection</h3>
+                <ul>
+                    <li><strong>Qué inspectar:</strong>
+                        <ul>
+                            <li><strong>Beliefs:</strong> ¿Qué cree el agente?</li>
+                            <li><strong>Goals:</strong> ¿Qué quiere lograr?</li>
+                            <li><strong>Health:</strong> ¿Estado del agente?</li>
+                            <li><strong>Inventory:</strong> ¿Qué objetos tiene?</li>
+                            <li><strong>Memory:</strong> ¿Qué recuerda?</li>
+                        </ul>
+                    </li>
+                    <li><strong>Herramientas:</strong>
+                        <ul>
+                            <li>Breakpoints: Pausar ejecución</li>
+                            <li>Inspectors: Ver variables en momento específico</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Execution Replay</h3>
+                <ul>
+                    <li><strong>Idea:</strong> Grabar estado del agente en cada paso, luego reproducir</li>
+                    <li><strong>Cómo funciona:</strong>
+                        <ul>
+                            <li>Ejecutar agente 1 vez: Grabar cada estado</li>
+                            <li>Vuelve a fallar: Cargar estado grabado, pausar en ese punto</li>
+                            <li>Inspeccionar: ¿Qué pasó?</li>
+                        </ul>
+                    </li>
+                    <li><strong>Ventaja:</strong> No necesitas código en vivo, puedes analizar después
+                        <ul>
+                            <li>Recrea bug exactamente como pasó</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Bottleneck Identification</h3>
+                <ul>
+                    <li><strong>Problema:</strong> "Sistema es lento" - ¿Dónde?
+                        <ul>
+                            <li>Lectura de DB? Cálculos? API externa?</li>
+                        </ul>
+                    </li>
+                    <li><strong>Profiling:</strong> Medir tiempo en cada función
+                        <ul>
+                            <li><strong>cProfile:</strong> CPU time por función</li>
+                            <li><strong>memory_profiler:</strong> RAM por línea</li>
+                            <li><strong>line_profiler:</strong> Tiempo por línea específica</li>
+                        </ul>
+                    </li>
+                    <li><strong>Resultado:</strong> Identificar cuál función toma 80% del tiempo</li>
+                    <li><strong>Acción:</strong> Optimizar esa función</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Post-Mortem Analysis</h3>
+                <ul>
+                    <li><strong>Cuándo:</strong> Sistema falla en producción
+                        <ul>
+                            <li>Crash inesperado</li>
+                            <li>Comportamiento anómalo</li>
+                            <li>Performance degradation</li>
+                        </ul>
+                    </li>
+                    <li><strong>Proceso:</strong>
+                        <ul>
+                            <li>1. Recolectar: Logs, metrics, traces</li>
+                            <li>2. Analizar: ¿Cuándo empezó? Qué cambió?</li>
+                            <li>3. Reproducir: Crear test que reproduce bug</li>
+                            <li>4. Fix: Arreglar root cause</li>
+                            <li>5. Verificar: Test pasa ahora</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 6: MULTI-AGENT -->
+            <section>
+                <h2>MÓDULO 6: Sistemas Multi-Agente</h2>
+            </section>
+
+            <section>
+                <h3>Métricas de Cooperación</h3>
+                <ul>
+                    <li><strong>Joint Efficiency:</strong> Sistema completo es eficiente
+                        <ul>
+                            <li>Todos los agentes trabajando = mejor que uno solo</li>
+                            <li>Métrica: (Tiempo con 1 agente) / (Tiempo con N agentes)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Task Completion:</strong> ¿Tareas se completan?
+                        <ul>
+                            <li>% de tareas exitosas vs. total</li>
+                        </ul>
+                    </li>
+                    <li><strong>Fairness:</strong> ¿Trabajos distribuidos equitativamente?
+                        <ul>
+                            <li>Agente A hace 80%, B hace 20% = injusto</li>
+                            <li>Detectar: Free-riding (algunos no trabajan)</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Métricas de Comunicación</h3>
+                <ul>
+                    <li><strong>Volume:</strong> ¿Cuánto comunican?
+                        <ul>
+                            <li>Número de mensajes</li>
+                            <li>Bits total enviados</li>
+                            <li>Alto volume = ineficiente</li>
+                        </ul>
+                    </li>
+                    <li><strong>Clarity:</strong> ¿Se entienden?
+                        <ul>
+                            <li>Understanding rate: % que entiende el mensaje</li>
+                            <li>Retransmissions: ¿Tiene que repetir?</li>
+                        </ul>
+                    </li>
+                    <li><strong>Efficiency:</strong> Mensajes por decisión
+                        <ul>
+                            <li>Ideal: 1 mensaje = 1 decisión</li>
+                            <li>Malo: 10 mensajes = 1 decisión</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Convergencia</h3>
+                <ul>
+                    <li><strong>Qué es:</strong> Sistema alcanza acuerdo/estabilidad
+                        <ul>
+                            <li>Todos votan: ¿Cuándo llegan a consensus?</li>
+                            <li>Negociación: ¿Acuerdan un precio?</li>
+                        </ul>
+                    </li>
+                    <li><strong>Medir:</strong>
+                        <ul>
+                            <li>Tiempo a convergencia: Cuántos pasos hasta acuerdo</li>
+                            <li>Stability: ¿Siguen cambiando decisión o permanecen?</li>
+                        </ul>
+                    </li>
+                    <li><strong>Problemas:</strong>
+                        <ul>
+                            <li>No converge: Se quedan en loop infinito</li>
+                            <li>Oscilación: Acuerdan, luego desacuerdan</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Comportamientos Emergentes</h3>
+                <ul>
+                    <li><strong>Qué son:</strong> Comportamientos globales que NO programaste
+                        <ul>
+                            <li>Agentes individuales siguen reglas simples</li>
+                            <li>Emergen patrones complejos a nivel sistema</li>
+                        </ul>
+                    </li>
+                    <li><strong>Ejemplos:</strong>
+                        <ul>
+                            <li>Hormigas siguen feromona → Emergencia: Trail complejo</li>
+                            <li>Bancos de peces: Cada uno evita vecino → Emergencia: Rebaños</li>
+                        </ul>
+                    </li>
+                    <li><strong>Detección:</strong>
+                        <ul>
+                            <li>Estadísticas: Distribución de comportamientos</li>
+                            <li>Clustering: Agrupar agentes similares</li>
+                            <li>Anomaly detection: Detectar patrones raros</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 7: PRODUCCIÓN -->
+            <section>
+                <h2>MÓDULO 7: Evaluación en Producción</h2>
+            </section>
+
+            <section>
+                <h3>Continuous Monitoring</h3>
+                <ul>
+                    <li><strong>Qué monitorear:</strong>
+                        <ul>
+                            <li>Latencia: P50, P95, P99</li>
+                            <li>Error Rate: % fallos</li>
+                            <li>Volume: Requests/segundo</li>
+                            <li>Quality: Métricas de negocio</li>
+                            <li>Resources: CPU, RAM, Disco</li>
+                        </ul>
+                    </li>
+                    <li><strong>Tools:</strong> Prometheus (recolectar), Grafana (visualizar)</li>
+                    <li><strong>Alertas:</strong> Notificar si métrica sale de rango
+                        <ul>
+                            <li>Umbral: Error rate > 1%</li>
+                            <li>Tasa de cambio: Latencia aumentó 50% en 5 min</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Anomaly Detection</h3>
+                <ul>
+                    <li><strong>Problema:</strong> ¿Cuándo algo está mal?
+                        <ul>
+                            <li>Umbral fijo: Error rate > 1% → Alerta</li>
+                            <li>Pero: Si promedio es 0.1%, entonces 0.5% podría ser anomalía</li>
+                        </ul>
+                    </li>
+                    <li><strong>Métodos:</strong>
+                        <ul>
+                            <li>Z-score: Cuántas desviaciones estándar lejos del promedio</li>
+                            <li>IQR: Quartile-based detection</li>
+                            <li>LSTM: Neural network para patterns complejos</li>
+                            <li>Isolation Forest: Detectar outliers</li>
+                        </ul>
+                    </li>
+                    <li><strong>Beneficio:</strong> Detectar problemas antes de ser críticos</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>A/B Testing</h3>
+                <ul>
+                    <li><strong>Idea:</strong> Comparar versión A vs. B en producción
+                        <ul>
+                            <li>A: Sistema actual (control)</li>
+                            <li>B: Cambio nuevo (treatment)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Proceso:</strong>
+                        <ul>
+                            <li>1. Split traffic: 50% → A, 50% → B</li>
+                            <li>2. Ejecutar: Por 1-2 semanas</li>
+                            <li>3. Medir: Métrica primaria (accuracy), secundarias (latency)</li>
+                            <li>4. Analizar: t-test para significancia estadística</li>
+                            <li>5. Decidir: B es mejor → Deploy, o A es mejor → Rechazar</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Audit y Compliance</h3>
+                <ul>
+                    <li><strong>Audit Log:</strong> Registro de TODAS las acciones
+                        <ul>
+                            <li><strong>Qué:</strong> Qué pasó (acción, cambio)</li>
+                            <li><strong>Quién:</strong> Qué usuario/agente</li>
+                            <li><strong>Cuándo:</strong> Timestamp exacto</li>
+                            <li><strong>Dónde:</strong> Sistema/módulo</li>
+                            <li><strong>Por qué:</strong> Razón si es disponible</li>
+                        </ul>
+                    </li>
+                    <li><strong>Retención:</strong> Guardar logs 1-7 años
+                        <ul>
+                            <li>Activo: En DB rápido</li>
+                            <li>Archivo: En S3/cold storage</li>
+                        </ul>
+                    </li>
+                    <li><strong>GDPR:</strong> Derecho a ser olvidado
+                        <ul>
+                            <li>Usuario pide eliminar datos → Anonimizar en logs</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>SLA (Service Level Agreements)</h3>
+                <ul>
+                    <li><strong>Qué es:</strong> Promesa de calidad de servicio
+                        <ul>
+                            <li>Disponibilidad: 99.9% uptime</li>
+                            <li>Latencia: P99 < 200ms</li>
+                            <li>Error rate: < 0.1%</li>
+                            <li>Throughput: >= 1000 RPS</li>
+                        </ul>
+                    </li>
+                    <li><strong>Monitoreo:</strong> Verificar cumplimiento continuamente</li>
+                    <li><strong>Consecuencias:</strong> Si no cumplo
+                        <ul>
+                            <li>Crédito/descuento al cliente</li>
+                            <li>Multa contractual</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 8: LLM EVALUATION -->
+            <section>
+                <h2>MÓDULO 8: Evaluación con LLMs</h2>
+            </section>
+
+            <section>
+                <h3>LLMs como Evaluadores</h3>
+                <ul>
+                    <li><strong>Idea:</strong> Usar LLM (GPT, Claude) para juzgar calidad
+                        <ul>
+                            <li>Pregunta: "¿Esta respuesta es buena?"</li>
+                            <li>LLM responde: "Sí, porque..."</li>
+                        </ul>
+                    </li>
+                    <li><strong>Casos de uso:</strong>
+                        <ul>
+                            <li>Relevancia: ¿Respuesta es relevante a pregunta?</li>
+                            <li>Coherencia: ¿Tiene sentido?</li>
+                            <li>Factualidad: ¿Es verdad?</li>
+                            <li>Fairness: ¿No tiene sesgo?</li>
+                        </ul>
+                    </li>
+                    <li><strong>Ventaja:</strong> Automático, escalable, rápido
+                        <ul>
+                            <li>Sin evaluadores humanos costosos</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Automático vs Manual vs Híbrido</h3>
+                <ul>
+                    <li><strong>Automático (LLM):</strong>
+                        <ul>
+                            <li>Ventajas: Rápido, escalable, barato</li>
+                            <li>Desventajas: Puede estar sesgado, no entiende contexto</li>
+                        </ul>
+                    </li>
+                    <li><strong>Manual (Humanos):</strong>
+                        <ul>
+                            <li>Ventajas: Preciso, contextual, confiable</li>
+                            <li>Desventajas: Caro, lento, inconsistente</li>
+                        </ul>
+                    </li>
+                    <li><strong>Híbrido (Mejor opción):</strong>
+                        <ul>
+                            <li>LLM juzga 1000 ejemplos (barato)</li>
+                            <li>Humanos juzgan 100 (validación)</li>
+                            <li>Comparar: LLM vs. Humano = medir bias del LLM</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Quantitativo vs Qualitativo</h3>
+                <ul>
+                    <li><strong>Quantitativo:</strong> Número exacto
+                        <ul>
+                            <li>1 (malo), 2 (medio), 3 (bueno), 4 (excelente)</li>
+                            <li>Promedio de 100 ejemplos = score 3.4</li>
+                            <li>Ventaja: Agregable, comparable</li>
+                        </ul>
+                    </li>
+                    <li><strong>Qualitativo:</strong> Descriptivo
+                        <ul>
+                            <li>"Respuesta es clara pero le falta detalle"</li>
+                            <li>Ventaja: Más información, más útil para mejorar</li>
+                        </ul>
+                    </li>
+                    <li><strong>Conversión:</strong> Likert scale, Rubric scoring</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Variabilidad en Evaluaciones</h3>
+                <ul>
+                    <li><strong>Problema:</strong> LLM juzga diferente cada vez
+                        <ul>
+                            <li>Misma respuesta, primer juzgamiento: 3/5</li>
+                            <li>Segundo juzgamiento: 2/5</li>
+                        </ul>
+                    </li>
+                    <li><strong>Causas:</strong>
+                        <ul>
+                            <li>LLM randomness (temperature, sampling)</li>
+                            <li>Prompt engineering (palabras clave)</li>
+                            <li>Context window (no ve todo contexto)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Soluciones:</strong>
+                        <ul>
+                            <li>Fijar seed para reproducibilidad</li>
+                            <li>Juzgar 3-5 veces, tomar promedio</li>
+                            <li>Ensemble: Usar múltiples LLMs</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Best Practices para LLM Evaluation</h3>
+                <ul>
+                    <li><strong>Prompt Design:</strong>
+                        <ul>
+                            <li>Claro: Explica qué juzgar</li>
+                            <li>Ejemplos: Dale casos de ejemplo</li>
+                            <li>Estructura: Pide formato de respuesta (JSON, escala 1-5)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Calibración:</strong>
+                        <ul>
+                            <li>Comparar LLM vs. Humano en muestra</li>
+                            <li>Ajustar prompt si hay sesgo</li>
+                        </ul>
+                    </li>
+                    <li><strong>Validación:</strong>
+                        <ul>
+                            <li>Review periódico: ¿Sigue siendo correcto?</li>
+                            <li>Appeal process: Usuarios pueden apelar decisión</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- CIERRE -->
+            <section>
+                <h2>Proyecto Integrador</h2>
+            </section>
+
+            <section>
+                <h3>Framework Completo de Evaluación</h3>
+                <ul>
+                    <li><strong>Requisitos:</strong>
+                        <ul>
+                            <li>Definir 5+ métricas apropiadas</li>
+                            <li>Crear benchmark con 50+ ejemplos</li>
+                            <li>Implementar tests: Unit (>80%), Integration, Functional</li>
+                            <li>Setup de monitoreo: Prometheus + Grafana</li>
+                            <li>A/B testing entre 2 versiones</li>
+                        </ul>
+                    </li>
+                    <li><strong>Entregables:</strong>
+                        <ul>
+                            <li>Test suite ejecutable con CI/CD</li>
+                            <li>Benchmark dataset documentado</li>
+                            <li>Dashboards de monitoreo</li>
+                            <li>Reporte de evaluación</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Checklist Rápido</h2>
+            </section>
+
+            <section>
+                <h3>Métricas Definidas</h3>
+                <ul>
+                    <li>☐ 1-2 métricas de efectividad (Accuracy, F1, etc)</li>
+                    <li>☐ 1-2 métricas de eficiencia (Latencia, Throughput)</li>
+                    <li>☐ 1-2 métricas de robustez (Error rate, MTBF)</li>
+                    <li>☐ 1-2 métricas de seguridad (Violation rate, Fairness)</li>
+                    <li>☐ Documentado cuándo usar cada métrica</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Testing Completo</h3>
+                <ul>
+                    <li>☐ Unit tests (>80% code coverage)</li>
+                    <li>☐ Integration tests (múltiples componentes)</li>
+                    <li>☐ Functional tests (caso de uso completo)</li>
+                    <li>☐ Stress tests (bajo carga extrema)</li>
+                    <li>☐ Regression tests (cambios no rompen nada)</li>
+                    <li>☐ CI/CD pipeline (automated testing)</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Debugging Listo</h3>
+                <ul>
+                    <li>☐ Logging en puntos críticos</li>
+                    <li>☐ Capabilities de replay execution</li>
+                    <li>☐ State inspection tools</li>
+                    <li>☐ Profiling identificado cuellos de botella</li>
+                    <li>☐ Post-mortem analysis process</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Producción Ready</h3>
+                <ul>
+                    <li>☐ Monitoring continuo (Prometheus/Grafana)</li>
+                    <li>☐ Alertas configuradas (umbral, anomalía)</li>
+                    <li>☐ A/B testing capability</li>
+                    <li>☐ Audit logs completos (retención, GDPR)</li>
+                    <li>☐ SLA definido y monitoreado</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Recursos</h2>
+            </section>
+
+            <section>
+                <h3>Herramientas Mencionadas</h3>
+                <ul>
+                    <li><strong>Testing:</strong> pytest, pytest-cov, unittest</li>
+                    <li><strong>Stress:</strong> Apache JMeter, Locust, pytest-xdist</li>
+                    <li><strong>Monitoring:</strong> Prometheus, Grafana, AlertManager</li>
+                    <li><strong>Logging:</strong> ELK Stack (Elasticsearch, Logstash, Kibana)</li>
+                    <li><strong>CI/CD:</strong> GitHub Actions, GitLab CI, Jenkins</li>
+                    <li><strong>Profiling:</strong> cProfile, memory_profiler, line_profiler</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Conceptos Clave Revisados</h3>
+                <ul>
+                    <li>Métricas: Effectividad, Eficiencia, Robustez, Seguridad</li>
+                    <li>Benchmarks: Representativos, desafiantes, reproducibles</li>
+                    <li>Testing: Pirámide (Unit, Integration, Functional, Stress)</li>
+                    <li>Debugging: Logging, Traces, State, Replay, Profiling</li>
+                    <li>Monitoreo: Métricas, Alertas, Anomalía, A/B Testing</li>
+                    <li>LLM Evaluation: Automático, Híbrido, Variabilidad</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Próximos Pasos</h3>
+                <ul>
+                    <li>1. Define tu agente y objetivos claros</li>
+                    <li>2. Selecciona 5 métricas apropiadas</li>
+                    <li>3. Crea benchmark pequeño (20 ejemplos)</li>
+                    <li>4. Escribe 10 unit tests</li>
+                    <li>5. Setup basic monitoring (una métrica)</li>
+                    <li>6. Itera: Agregar tests y métricas incrementalmente</li>
+                </ul>
+            </section>
+
+
+            <section>
+                <h2>¡Gracias!</h2>
+                <p>Ahora tienes las herramientas para evaluar, probar y monitorear agentes de IA en producción</p>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: true,
+            transition: 'slide',
+            backgroundTransition: 'fade'
+        });
+    </script>
+</body>
+</html>

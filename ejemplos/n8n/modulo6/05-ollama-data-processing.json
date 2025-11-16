@@ -1,0 +1,80 @@
+{
+  "name": "M6.5 - Procesamiento de Datos con Ollama",
+  "description": "Usa Ollama para procesar datos con IA local",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "start",
+      "name": "Start",
+      "type": "n8n-nodes-base.start",
+      "typeVersion": 1,
+      "position": [100, 300]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "textos",
+              "value": "[\"El producto es excelente\", \"Horrible calidad\", \"Muy satisfecho\", \"Pésimo servicio\"]"
+            }
+          ]
+        }
+      },
+      "id": "set-textos",
+      "name": "Set - Textos",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [300, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const textos = JSON.parse($input.first().json.textos); return textos.map((texto, idx) => ({ id: idx + 1, texto: texto, longitud: texto.length }));"
+      },
+      "id": "code-prepare",
+      "name": "Code - Preparar",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:11434/api/generate",
+        "authentication": "none",
+        "sendBody": true,
+        "bodyContentType": "application/json",
+        "body": "{\"model\": \"llama2\", \"prompt\": \"Clasifica: POSITIVO, NEGATIVO o NEUTRO. Texto: {{$input.item.json.texto}}\", \"stream\": false}"
+      },
+      "id": "ollama-analyze",
+      "name": "HTTP - Ollama",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [700, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = $input.first().json.response || ''; const sentimiento = response.includes('POSITIVO') ? 'POSITIVO' : response.includes('NEGATIVO') ? 'NEGATIVO' : 'NEUTRO'; return { json: { id: $input.first().json.id, sentimiento: sentimiento } };"
+      },
+      "id": "code-extract",
+      "name": "Code - Extraer",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 300]
+    }
+  ],
+  "connections": {
+    "start": {
+      "main": [[{"node": "set-textos", "type": "main", "index": 0}]]
+    },
+    "set-textos": {
+      "main": [[{"node": "code-prepare", "type": "main", "index": 0}]]
+    },
+    "code-prepare": {
+      "main": [[{"node": "ollama-analyze", "type": "main", "index": 0}]]
+    },
+    "ollama-analyze": {
+      "main": [[{"node": "code-extract", "type": "main", "index": 0}]]
+    }
+  }
+}

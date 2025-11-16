@@ -1,0 +1,3904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.26">
+<title>Curso Completo de LangChain - Desde Principiante hasta Producción</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<style>
+/*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
+/* Uncomment the following line when using as a custom stylesheet */
+/* @import "https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"; */
+html{font-family:sans-serif;-webkit-text-size-adjust:100%}
+a{background:none}
+a:focus{outline:thin dotted}
+a:active,a:hover{outline:0}
+h1{font-size:2em;margin:.67em 0}
+b,strong{font-weight:bold}
+abbr{font-size:.9em}
+abbr[title]{cursor:help;border-bottom:1px dotted #dddddf;text-decoration:none}
+dfn{font-style:italic}
+hr{height:0}
+mark{background:#ff0;color:#000}
+code,kbd,pre,samp{font-family:monospace;font-size:1em}
+pre{white-space:pre-wrap}
+q{quotes:"\201C" "\201D" "\2018" "\2019"}
+small{font-size:80%}
+sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}
+sup{top:-.5em}
+sub{bottom:-.25em}
+img{border:0}
+svg:not(:root){overflow:hidden}
+figure{margin:0}
+audio,video{display:inline-block}
+audio:not([controls]){display:none;height:0}
+fieldset{border:1px solid silver;margin:0 2px;padding:.35em .625em .75em}
+legend{border:0;padding:0}
+button,input,select,textarea{font-family:inherit;font-size:100%;margin:0}
+button,input{line-height:normal}
+button,select{text-transform:none}
+button,html input[type=button],input[type=reset],input[type=submit]{-webkit-appearance:button;cursor:pointer}
+button[disabled],html input[disabled]{cursor:default}
+input[type=checkbox],input[type=radio]{padding:0}
+button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0}
+textarea{overflow:auto;vertical-align:top}
+table{border-collapse:collapse;border-spacing:0}
+*,::before,::after{box-sizing:border-box}
+html,body{font-size:100%}
+body{background:#fff;color:rgba(0,0,0,.8);padding:0;margin:0;font-family:"Noto Serif","DejaVu Serif",serif;line-height:1;position:relative;cursor:auto;-moz-tab-size:4;-o-tab-size:4;tab-size:4;word-wrap:anywhere;-moz-osx-font-smoothing:grayscale;-webkit-font-smoothing:antialiased}
+a:hover{cursor:pointer}
+img,object,embed{max-width:100%;height:auto}
+object,embed{height:100%}
+img{-ms-interpolation-mode:bicubic}
+.left{float:left!important}
+.right{float:right!important}
+.text-left{text-align:left!important}
+.text-right{text-align:right!important}
+.text-center{text-align:center!important}
+.text-justify{text-align:justify!important}
+.hide{display:none}
+img,object,svg{display:inline-block;vertical-align:middle}
+textarea{height:auto;min-height:50px}
+select{width:100%}
+.subheader,.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{line-height:1.45;color:#7a2518;font-weight:400;margin-top:0;margin-bottom:.25em}
+div,dl,dt,dd,ul,ol,li,h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6,pre,form,p,blockquote,th,td{margin:0;padding:0}
+a{color:#2156a5;text-decoration:underline;line-height:inherit}
+a:hover,a:focus{color:#1d4b8f}
+a img{border:0}
+p{line-height:1.6;margin-bottom:1.25em;text-rendering:optimizeLegibility}
+p aside{font-size:.875em;line-height:1.35;font-style:italic}
+h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{font-family:"Open Sans","DejaVu Sans",sans-serif;font-weight:300;font-style:normal;color:#ba3925;text-rendering:optimizeLegibility;margin-top:1em;margin-bottom:.5em;line-height:1.0125em}
+h1 small,h2 small,h3 small,#toctitle small,.sidebarblock>.content>.title small,h4 small,h5 small,h6 small{font-size:60%;color:#e99b8f;line-height:0}
+h1{font-size:2.125em}
+h2{font-size:1.6875em}
+h3,#toctitle,.sidebarblock>.content>.title{font-size:1.375em}
+h4,h5{font-size:1.125em}
+h6{font-size:1em}
+hr{border:solid #dddddf;border-width:1px 0 0;clear:both;margin:1.25em 0 1.1875em}
+em,i{font-style:italic;line-height:inherit}
+strong,b{font-weight:bold;line-height:inherit}
+small{font-size:60%;line-height:inherit}
+code{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;font-weight:400;color:rgba(0,0,0,.9)}
+ul,ol,dl{line-height:1.6;margin-bottom:1.25em;list-style-position:outside;font-family:inherit}
+ul,ol{margin-left:1.5em}
+ul li ul,ul li ol{margin-left:1.25em;margin-bottom:0}
+ul.circle{list-style-type:circle}
+ul.disc{list-style-type:disc}
+ul.square{list-style-type:square}
+ul.circle ul:not([class]),ul.disc ul:not([class]),ul.square ul:not([class]){list-style:inherit}
+ol li ul,ol li ol{margin-left:1.25em;margin-bottom:0}
+dl dt{margin-bottom:.3125em;font-weight:bold}
+dl dd{margin-bottom:1.25em}
+blockquote{margin:0 0 1.25em;padding:.5625em 1.25em 0 1.1875em;border-left:1px solid #ddd}
+blockquote,blockquote p{line-height:1.6;color:rgba(0,0,0,.85)}
+@media screen and (min-width:768px){h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2}
+h1{font-size:2.75em}
+h2{font-size:2.3125em}
+h3,#toctitle,.sidebarblock>.content>.title{font-size:1.6875em}
+h4{font-size:1.4375em}}
+table{background:#fff;margin-bottom:1.25em;border:1px solid #dedede;word-wrap:normal}
+table thead,table tfoot{background:#f7f8f7}
+table thead tr th,table thead tr td,table tfoot tr th,table tfoot tr td{padding:.5em .625em .625em;font-size:inherit;color:rgba(0,0,0,.8);text-align:left}
+table tr th,table tr td{padding:.5625em .625em;font-size:inherit;color:rgba(0,0,0,.8)}
+table tr.even,table tr.alt{background:#f8f8f7}
+table thead tr th,table tfoot tr th,table tbody tr td,table tr td,table tfoot tr td{line-height:1.6}
+h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2;word-spacing:-.05em}
+h1 strong,h2 strong,h3 strong,#toctitle strong,.sidebarblock>.content>.title strong,h4 strong,h5 strong,h6 strong{font-weight:400}
+.center{margin-left:auto;margin-right:auto}
+.stretch{width:100%}
+.clearfix::before,.clearfix::after,.float-group::before,.float-group::after{content:" ";display:table}
+.clearfix::after,.float-group::after{clear:both}
+:not(pre).nobreak{word-wrap:normal}
+:not(pre).nowrap{white-space:nowrap}
+:not(pre).pre-wrap{white-space:pre-wrap}
+:not(pre):not([class^=L])>code{font-size:.9375em;font-style:normal!important;letter-spacing:0;padding:.1em .5ex;word-spacing:-.15em;background:#f7f7f8;border-radius:4px;line-height:1.45;text-rendering:optimizeSpeed}
+pre{color:rgba(0,0,0,.9);font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;line-height:1.45;text-rendering:optimizeSpeed}
+pre code,pre pre{color:inherit;font-size:inherit;line-height:inherit}
+pre.nowrap,pre.nowrap pre{white-space:pre;word-wrap:normal}
+em em{font-style:normal}
+strong strong{font-weight:400}
+.keyseq{color:rgba(51,51,51,.8)}
+kbd{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;display:inline-block;color:rgba(0,0,0,.8);font-size:.65em;line-height:1.45;background:#f7f7f7;border:1px solid #ccc;border-radius:3px;box-shadow:0 1px 0 rgba(0,0,0,.2),inset 0 0 0 .1em #fff;margin:0 .15em;padding:.2em .5em;vertical-align:middle;position:relative;top:-.1em;white-space:nowrap}
+.keyseq kbd:first-child{margin-left:0}
+.keyseq kbd:last-child{margin-right:0}
+.menuseq,.menuref{color:#000}
+.menuseq b:not(.caret),.menuref{font-weight:inherit}
+.menuseq{word-spacing:-.02em}
+.menuseq b.caret{font-size:1.25em;line-height:.8}
+.menuseq i.caret{font-weight:bold;text-align:center;width:.45em}
+b.button::before,b.button::after{position:relative;top:-1px;font-weight:400}
+b.button::before{content:"[";padding:0 3px 0 2px}
+b.button::after{content:"]";padding:0 2px 0 3px}
+p a>code:hover{color:rgba(0,0,0,.9)}
+#header,#content,#footnotes,#footer{width:100%;margin:0 auto;max-width:62.5em;*zoom:1;position:relative;padding-left:.9375em;padding-right:.9375em}
+#header::before,#header::after,#content::before,#content::after,#footnotes::before,#footnotes::after,#footer::before,#footer::after{content:" ";display:table}
+#header::after,#content::after,#footnotes::after,#footer::after{clear:both}
+#content{margin-top:1.25em}
+#content::before{content:none}
+#header>h1:first-child{color:rgba(0,0,0,.85);margin-top:2.25rem;margin-bottom:0}
+#header>h1:first-child+#toc{margin-top:8px;border-top:1px solid #dddddf}
+#header>h1:only-child{border-bottom:1px solid #dddddf;padding-bottom:8px}
+#header .details{border-bottom:1px solid #dddddf;line-height:1.45;padding-top:.25em;padding-bottom:.25em;padding-left:.25em;color:rgba(0,0,0,.6);display:flex;flex-flow:row wrap}
+#header .details span:first-child{margin-left:-.125em}
+#header .details span.email a{color:rgba(0,0,0,.85)}
+#header .details br{display:none}
+#header .details br+span::before{content:"\00a0\2013\00a0"}
+#header .details br+span.author::before{content:"\00a0\22c5\00a0";color:rgba(0,0,0,.85)}
+#header .details br+span#revremark::before{content:"\00a0|\00a0"}
+#header #revnumber{text-transform:capitalize}
+#header #revnumber::after{content:"\00a0"}
+#content>h1:first-child:not([class]){color:rgba(0,0,0,.85);border-bottom:1px solid #dddddf;padding-bottom:8px;margin-top:0;padding-top:1rem;margin-bottom:1.25rem}
+#toc{border-bottom:1px solid #e7e7e9;padding-bottom:.5em}
+#toc>ul{margin-left:.125em}
+#toc ul.sectlevel0>li>a{font-style:italic}
+#toc ul.sectlevel0 ul.sectlevel1{margin:.5em 0}
+#toc ul{font-family:"Open Sans","DejaVu Sans",sans-serif;list-style-type:none}
+#toc li{line-height:1.3334;margin-top:.3334em}
+#toc a{text-decoration:none}
+#toc a:active{text-decoration:underline}
+#toctitle{color:#7a2518;font-size:1.2em}
+@media screen and (min-width:768px){#toctitle{font-size:1.375em}
+body.toc2{padding-left:15em;padding-right:0}
+body.toc2 #header>h1:nth-last-child(2){border-bottom:1px solid #dddddf;padding-bottom:8px}
+#toc.toc2{margin-top:0!important;background:#f8f8f7;position:fixed;width:15em;left:0;top:0;border-right:1px solid #e7e7e9;border-top-width:0!important;border-bottom-width:0!important;z-index:1000;padding:1.25em 1em;height:100%;overflow:auto}
+#toc.toc2 #toctitle{margin-top:0;margin-bottom:.8rem;font-size:1.2em}
+#toc.toc2>ul{font-size:.9em;margin-bottom:0}
+#toc.toc2 ul ul{margin-left:0;padding-left:1em}
+#toc.toc2 ul.sectlevel0 ul.sectlevel1{padding-left:0;margin-top:.5em;margin-bottom:.5em}
+body.toc2.toc-right{padding-left:0;padding-right:15em}
+body.toc2.toc-right #toc.toc2{border-right-width:0;border-left:1px solid #e7e7e9;left:auto;right:0}}
+@media screen and (min-width:1280px){body.toc2{padding-left:20em;padding-right:0}
+#toc.toc2{width:20em}
+#toc.toc2 #toctitle{font-size:1.375em}
+#toc.toc2>ul{font-size:.95em}
+#toc.toc2 ul ul{padding-left:1.25em}
+body.toc2.toc-right{padding-left:0;padding-right:20em}}
+#content #toc{border:1px solid #e0e0dc;margin-bottom:1.25em;padding:1.25em;background:#f8f8f7;border-radius:4px}
+#content #toc>:first-child{margin-top:0}
+#content #toc>:last-child{margin-bottom:0}
+#footer{max-width:none;background:rgba(0,0,0,.8);padding:1.25em}
+#footer-text{color:hsla(0,0%,100%,.8);line-height:1.44}
+#content{margin-bottom:.625em}
+.sect1{padding-bottom:.625em}
+@media screen and (min-width:768px){#content{margin-bottom:1.25em}
+.sect1{padding-bottom:1.25em}}
+.sect1:last-child{padding-bottom:0}
+.sect1+.sect1{border-top:1px solid #e7e7e9}
+#content h1>a.anchor,h2>a.anchor,h3>a.anchor,#toctitle>a.anchor,.sidebarblock>.content>.title>a.anchor,h4>a.anchor,h5>a.anchor,h6>a.anchor{position:absolute;z-index:1001;width:1.5ex;margin-left:-1.5ex;display:block;text-decoration:none!important;visibility:hidden;text-align:center;font-weight:400}
+#content h1>a.anchor::before,h2>a.anchor::before,h3>a.anchor::before,#toctitle>a.anchor::before,.sidebarblock>.content>.title>a.anchor::before,h4>a.anchor::before,h5>a.anchor::before,h6>a.anchor::before{content:"\00A7";font-size:.85em;display:block;padding-top:.1em}
+#content h1:hover>a.anchor,#content h1>a.anchor:hover,h2:hover>a.anchor,h2>a.anchor:hover,h3:hover>a.anchor,#toctitle:hover>a.anchor,.sidebarblock>.content>.title:hover>a.anchor,h3>a.anchor:hover,#toctitle>a.anchor:hover,.sidebarblock>.content>.title>a.anchor:hover,h4:hover>a.anchor,h4>a.anchor:hover,h5:hover>a.anchor,h5>a.anchor:hover,h6:hover>a.anchor,h6>a.anchor:hover{visibility:visible}
+#content h1>a.link,h2>a.link,h3>a.link,#toctitle>a.link,.sidebarblock>.content>.title>a.link,h4>a.link,h5>a.link,h6>a.link{color:#ba3925;text-decoration:none}
+#content h1>a.link:hover,h2>a.link:hover,h3>a.link:hover,#toctitle>a.link:hover,.sidebarblock>.content>.title>a.link:hover,h4>a.link:hover,h5>a.link:hover,h6>a.link:hover{color:#a53221}
+details,.audioblock,.imageblock,.literalblock,.listingblock,.stemblock,.videoblock{margin-bottom:1.25em}
+details{margin-left:1.25rem}
+details>summary{cursor:pointer;display:block;position:relative;line-height:1.6;margin-bottom:.625rem;outline:none;-webkit-tap-highlight-color:transparent}
+details>summary::-webkit-details-marker{display:none}
+details>summary::before{content:"";border:solid transparent;border-left:solid;border-width:.3em 0 .3em .5em;position:absolute;top:.5em;left:-1.25rem;transform:translateX(15%)}
+details[open]>summary::before{border:solid transparent;border-top:solid;border-width:.5em .3em 0;transform:translateY(15%)}
+details>summary::after{content:"";width:1.25rem;height:1em;position:absolute;top:.3em;left:-1.25rem}
+.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{text-rendering:optimizeLegibility;text-align:left;font-family:"Noto Serif","DejaVu Serif",serif;font-size:1rem;font-style:italic}
+table.tableblock.fit-content>caption.title{white-space:nowrap;width:0}
+.paragraph.lead>p,#preamble>.sectionbody>[class=paragraph]:first-of-type p{font-size:1.21875em;line-height:1.6;color:rgba(0,0,0,.85)}
+.admonitionblock>table{border-collapse:separate;border:0;background:none;width:100%}
+.admonitionblock>table td.icon{text-align:center;width:80px}
+.admonitionblock>table td.icon img{max-width:none}
+.admonitionblock>table td.icon .title{font-weight:bold;font-family:"Open Sans","DejaVu Sans",sans-serif;text-transform:uppercase}
+.admonitionblock>table td.content{padding-left:1.125em;padding-right:1.25em;border-left:1px solid #dddddf;color:rgba(0,0,0,.6);word-wrap:anywhere}
+.admonitionblock>table td.content>:last-child>:last-child{margin-bottom:0}
+.exampleblock>.content{border:1px solid #e6e6e6;margin-bottom:1.25em;padding:1.25em;background:#fff;border-radius:4px}
+.sidebarblock{border:1px solid #dbdbd6;margin-bottom:1.25em;padding:1.25em;background:#f3f3f2;border-radius:4px}
+.sidebarblock>.content>.title{color:#7a2518;margin-top:0;text-align:center}
+.exampleblock>.content>:first-child,.sidebarblock>.content>:first-child{margin-top:0}
+.exampleblock>.content>:last-child,.exampleblock>.content>:last-child>:last-child,.exampleblock>.content .olist>ol>li:last-child>:last-child,.exampleblock>.content .ulist>ul>li:last-child>:last-child,.exampleblock>.content .qlist>ol>li:last-child>:last-child,.sidebarblock>.content>:last-child,.sidebarblock>.content>:last-child>:last-child,.sidebarblock>.content .olist>ol>li:last-child>:last-child,.sidebarblock>.content .ulist>ul>li:last-child>:last-child,.sidebarblock>.content .qlist>ol>li:last-child>:last-child{margin-bottom:0}
+.literalblock pre,.listingblock>.content>pre{border-radius:4px;overflow-x:auto;padding:1em;font-size:.8125em}
+@media screen and (min-width:768px){.literalblock pre,.listingblock>.content>pre{font-size:.90625em}}
+@media screen and (min-width:1280px){.literalblock pre,.listingblock>.content>pre{font-size:1em}}
+.literalblock pre,.listingblock>.content>pre:not(.highlight),.listingblock>.content>pre[class=highlight],.listingblock>.content>pre[class^="highlight "]{background:#f7f7f8}
+.literalblock.output pre{color:#f7f7f8;background:rgba(0,0,0,.9)}
+.listingblock>.content{position:relative}
+.listingblock pre>code{display:block}
+.listingblock code[data-lang]::before{display:none;content:attr(data-lang);position:absolute;font-size:.75em;top:.425rem;right:.5rem;line-height:1;text-transform:uppercase;color:inherit;opacity:.5}
+.listingblock:hover code[data-lang]::before{display:block}
+.listingblock.terminal pre .command::before{content:attr(data-prompt);padding-right:.5em;color:inherit;opacity:.5}
+.listingblock.terminal pre .command:not([data-prompt])::before{content:"$"}
+.listingblock pre.highlightjs{padding:0}
+.listingblock pre.highlightjs>code{padding:1em;border-radius:4px}
+.listingblock pre.prettyprint{border-width:0}
+.prettyprint{background:#f7f7f8}
+pre.prettyprint .linenums{line-height:1.45;margin-left:2em}
+pre.prettyprint li{background:none;list-style-type:inherit;padding-left:0}
+pre.prettyprint li code[data-lang]::before{opacity:1}
+pre.prettyprint li:not(:first-child) code[data-lang]::before{display:none}
+table.linenotable{border-collapse:separate;border:0;margin-bottom:0;background:none}
+table.linenotable td[class]{color:inherit;vertical-align:top;padding:0;line-height:inherit;white-space:normal}
+table.linenotable td.code{padding-left:.75em}
+table.linenotable td.linenos,pre.pygments .linenos{border-right:1px solid;opacity:.35;padding-right:.5em;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
+pre.pygments span.linenos{display:inline-block;margin-right:.75em}
+.quoteblock{margin:0 1em 1.25em 1.5em;display:table}
+.quoteblock:not(.excerpt)>.title{margin-left:-1.5em;margin-bottom:.75em}
+.quoteblock blockquote,.quoteblock p{color:rgba(0,0,0,.85);font-size:1.15rem;line-height:1.75;word-spacing:.1em;letter-spacing:0;font-style:italic;text-align:justify}
+.quoteblock blockquote{margin:0;padding:0;border:0}
+.quoteblock blockquote::before{content:"\201c";float:left;font-size:2.75em;font-weight:bold;line-height:.6em;margin-left:-.6em;color:#7a2518;text-shadow:0 1px 2px rgba(0,0,0,.1)}
+.quoteblock blockquote>.paragraph:last-child p{margin-bottom:0}
+.quoteblock .attribution{margin-top:.75em;margin-right:.5ex;text-align:right}
+.verseblock{margin:0 1em 1.25em}
+.verseblock pre{font-family:"Open Sans","DejaVu Sans",sans-serif;font-size:1.15rem;color:rgba(0,0,0,.85);font-weight:300;text-rendering:optimizeLegibility}
+.verseblock pre strong{font-weight:400}
+.verseblock .attribution{margin-top:1.25rem;margin-left:.5ex}
+.quoteblock .attribution,.verseblock .attribution{font-size:.9375em;line-height:1.45;font-style:italic}
+.quoteblock .attribution br,.verseblock .attribution br{display:none}
+.quoteblock .attribution cite,.verseblock .attribution cite{display:block;letter-spacing:-.025em;color:rgba(0,0,0,.6)}
+.quoteblock.abstract blockquote::before,.quoteblock.excerpt blockquote::before,.quoteblock .quoteblock blockquote::before{display:none}
+.quoteblock.abstract blockquote,.quoteblock.abstract p,.quoteblock.excerpt blockquote,.quoteblock.excerpt p,.quoteblock .quoteblock blockquote,.quoteblock .quoteblock p{line-height:1.6;word-spacing:0}
+.quoteblock.abstract{margin:0 1em 1.25em;display:block}
+.quoteblock.abstract>.title{margin:0 0 .375em;font-size:1.15em;text-align:center}
+.quoteblock.excerpt>blockquote,.quoteblock .quoteblock{padding:0 0 .25em 1em;border-left:.25em solid #dddddf}
+.quoteblock.excerpt,.quoteblock .quoteblock{margin-left:0}
+.quoteblock.excerpt blockquote,.quoteblock.excerpt p,.quoteblock .quoteblock blockquote,.quoteblock .quoteblock p{color:inherit;font-size:1.0625rem}
+.quoteblock.excerpt .attribution,.quoteblock .quoteblock .attribution{color:inherit;font-size:.85rem;text-align:left;margin-right:0}
+p.tableblock:last-child{margin-bottom:0}
+td.tableblock>.content{margin-bottom:1.25em;word-wrap:anywhere}
+td.tableblock>.content>:last-child{margin-bottom:-1.25em}
+table.tableblock,th.tableblock,td.tableblock{border:0 solid #dedede}
+table.grid-all>*>tr>*{border-width:1px}
+table.grid-cols>*>tr>*{border-width:0 1px}
+table.grid-rows>*>tr>*{border-width:1px 0}
+table.frame-all{border-width:1px}
+table.frame-ends{border-width:1px 0}
+table.frame-sides{border-width:0 1px}
+table.frame-none>colgroup+*>:first-child>*,table.frame-sides>colgroup+*>:first-child>*{border-top-width:0}
+table.frame-none>:last-child>:last-child>*,table.frame-sides>:last-child>:last-child>*{border-bottom-width:0}
+table.frame-none>*>tr>:first-child,table.frame-ends>*>tr>:first-child{border-left-width:0}
+table.frame-none>*>tr>:last-child,table.frame-ends>*>tr>:last-child{border-right-width:0}
+table.stripes-all>*>tr,table.stripes-odd>*>tr:nth-of-type(odd),table.stripes-even>*>tr:nth-of-type(even),table.stripes-hover>*>tr:hover{background:#f8f8f7}
+th.halign-left,td.halign-left{text-align:left}
+th.halign-right,td.halign-right{text-align:right}
+th.halign-center,td.halign-center{text-align:center}
+th.valign-top,td.valign-top{vertical-align:top}
+th.valign-bottom,td.valign-bottom{vertical-align:bottom}
+th.valign-middle,td.valign-middle{vertical-align:middle}
+table thead th,table tfoot th{font-weight:bold}
+tbody tr th{background:#f7f8f7}
+tbody tr th,tbody tr th p,tfoot tr th,tfoot tr th p{color:rgba(0,0,0,.8);font-weight:bold}
+p.tableblock>code:only-child{background:none;padding:0}
+p.tableblock{font-size:1em}
+ol{margin-left:1.75em}
+ul li ol{margin-left:1.5em}
+dl dd{margin-left:1.125em}
+dl dd:last-child,dl dd:last-child>:last-child{margin-bottom:0}
+li p,ul dd,ol dd,.olist .olist,.ulist .ulist,.ulist .olist,.olist .ulist{margin-bottom:.625em}
+ul.checklist,ul.none,ol.none,ul.no-bullet,ol.no-bullet,ol.unnumbered,ul.unstyled,ol.unstyled{list-style-type:none}
+ul.no-bullet,ol.no-bullet,ol.unnumbered{margin-left:.625em}
+ul.unstyled,ol.unstyled{margin-left:0}
+li>p:empty:only-child::before{content:"";display:inline-block}
+ul.checklist>li>p:first-child{margin-left:-1em}
+ul.checklist>li>p:first-child>.fa-square-o:first-child,ul.checklist>li>p:first-child>.fa-check-square-o:first-child{width:1.25em;font-size:.8em;position:relative;bottom:.125em}
+ul.checklist>li>p:first-child>input[type=checkbox]:first-child{margin-right:.25em}
+ul.inline{display:flex;flex-flow:row wrap;list-style:none;margin:0 0 .625em -1.25em}
+ul.inline>li{margin-left:1.25em}
+.unstyled dl dt{font-weight:400;font-style:normal}
+ol.arabic{list-style-type:decimal}
+ol.decimal{list-style-type:decimal-leading-zero}
+ol.loweralpha{list-style-type:lower-alpha}
+ol.upperalpha{list-style-type:upper-alpha}
+ol.lowerroman{list-style-type:lower-roman}
+ol.upperroman{list-style-type:upper-roman}
+ol.lowergreek{list-style-type:lower-greek}
+.hdlist>table,.colist>table{border:0;background:none}
+.hdlist>table>tbody>tr,.colist>table>tbody>tr{background:none}
+td.hdlist1,td.hdlist2{vertical-align:top;padding:0 .625em}
+td.hdlist1{font-weight:bold;padding-bottom:1.25em}
+td.hdlist2{word-wrap:anywhere}
+.literalblock+.colist,.listingblock+.colist{margin-top:-.5em}
+.colist td:not([class]):first-child{padding:.4em .75em 0;line-height:1;vertical-align:top}
+.colist td:not([class]):first-child img{max-width:none}
+.colist td:not([class]):last-child{padding:.25em 0}
+.thumb,.th{line-height:0;display:inline-block;border:4px solid #fff;box-shadow:0 0 0 1px #ddd}
+.imageblock.left{margin:.25em .625em 1.25em 0}
+.imageblock.right{margin:.25em 0 1.25em .625em}
+.imageblock>.title{margin-bottom:0}
+.imageblock.thumb,.imageblock.th{border-width:6px}
+.imageblock.thumb>.title,.imageblock.th>.title{padding:0 .125em}
+.image.left,.image.right{margin-top:.25em;margin-bottom:.25em;display:inline-block;line-height:0}
+.image.left{margin-right:.625em}
+.image.right{margin-left:.625em}
+a.image{text-decoration:none;display:inline-block}
+a.image object{pointer-events:none}
+sup.footnote,sup.footnoteref{font-size:.875em;position:static;vertical-align:super}
+sup.footnote a,sup.footnoteref a{text-decoration:none}
+sup.footnote a:active,sup.footnoteref a:active,#footnotes .footnote a:first-of-type:active{text-decoration:underline}
+#footnotes{padding-top:.75em;padding-bottom:.75em;margin-bottom:.625em}
+#footnotes hr{width:20%;min-width:6.25em;margin:-.25em 0 .75em;border-width:1px 0 0}
+#footnotes .footnote{padding:0 .375em 0 .225em;line-height:1.3334;font-size:.875em;margin-left:1.2em;margin-bottom:.2em}
+#footnotes .footnote a:first-of-type{font-weight:bold;text-decoration:none;margin-left:-1.05em}
+#footnotes .footnote:last-of-type{margin-bottom:0}
+#content #footnotes{margin-top:-.625em;margin-bottom:0;padding:.75em 0}
+div.unbreakable{page-break-inside:avoid}
+.big{font-size:larger}
+.small{font-size:smaller}
+.underline{text-decoration:underline}
+.overline{text-decoration:overline}
+.line-through{text-decoration:line-through}
+.aqua{color:#00bfbf}
+.aqua-background{background:#00fafa}
+.black{color:#000}
+.black-background{background:#000}
+.blue{color:#0000bf}
+.blue-background{background:#0000fa}
+.fuchsia{color:#bf00bf}
+.fuchsia-background{background:#fa00fa}
+.gray{color:#606060}
+.gray-background{background:#7d7d7d}
+.green{color:#006000}
+.green-background{background:#007d00}
+.lime{color:#00bf00}
+.lime-background{background:#00fa00}
+.maroon{color:#600000}
+.maroon-background{background:#7d0000}
+.navy{color:#000060}
+.navy-background{background:#00007d}
+.olive{color:#606000}
+.olive-background{background:#7d7d00}
+.purple{color:#600060}
+.purple-background{background:#7d007d}
+.red{color:#bf0000}
+.red-background{background:#fa0000}
+.silver{color:#909090}
+.silver-background{background:#bcbcbc}
+.teal{color:#006060}
+.teal-background{background:#007d7d}
+.white{color:#bfbfbf}
+.white-background{background:#fafafa}
+.yellow{color:#bfbf00}
+.yellow-background{background:#fafa00}
+span.icon>.fa{cursor:default}
+a span.icon>.fa{cursor:inherit}
+.admonitionblock td.icon [class^="fa icon-"]{font-size:2.5em;text-shadow:1px 1px 2px rgba(0,0,0,.5);cursor:default}
+.admonitionblock td.icon .icon-note::before{content:"\f05a";color:#19407c}
+.admonitionblock td.icon .icon-tip::before{content:"\f0eb";text-shadow:1px 1px 2px rgba(155,155,0,.8);color:#111}
+.admonitionblock td.icon .icon-warning::before{content:"\f071";color:#bf6900}
+.admonitionblock td.icon .icon-caution::before{content:"\f06d";color:#bf3400}
+.admonitionblock td.icon .icon-important::before{content:"\f06a";color:#bf0000}
+.conum[data-value]{display:inline-block;color:#fff!important;background:rgba(0,0,0,.8);border-radius:50%;text-align:center;font-size:.75em;width:1.67em;height:1.67em;line-height:1.67em;font-family:"Open Sans","DejaVu Sans",sans-serif;font-style:normal;font-weight:bold}
+.conum[data-value] *{color:#fff!important}
+.conum[data-value]+b{display:none}
+.conum[data-value]::after{content:attr(data-value)}
+pre .conum[data-value]{position:relative;top:-.125em}
+b.conum *{color:inherit!important}
+.conum:not([data-value]):empty{display:none}
+dt,th.tableblock,td.content,div.footnote{text-rendering:optimizeLegibility}
+h1,h2,p,td.content,span.alt,summary{letter-spacing:-.01em}
+p strong,td.content strong,div.footnote strong{letter-spacing:-.005em}
+p,blockquote,dt,td.content,td.hdlist1,span.alt,summary{font-size:1.0625rem}
+p{margin-bottom:1.25rem}
+.sidebarblock p,.sidebarblock dt,.sidebarblock td.content,p.tableblock{font-size:1em}
+.exampleblock>.content{background:#fffef7;border-color:#e0e0dc;box-shadow:0 1px 4px #e0e0dc}
+.print-only{display:none!important}
+@page{margin:1.25cm .75cm}
+@media print{*{box-shadow:none!important;text-shadow:none!important}
+html{font-size:80%}
+a{color:inherit!important;text-decoration:underline!important}
+a.bare,a[href^="#"],a[href^="mailto:"]{text-decoration:none!important}
+a[href^="http:"]:not(.bare)::after,a[href^="https:"]:not(.bare)::after{content:"(" attr(href) ")";display:inline-block;font-size:.875em;padding-left:.25em}
+abbr[title]{border-bottom:1px dotted}
+abbr[title]::after{content:" (" attr(title) ")"}
+pre,blockquote,tr,img,object,svg{page-break-inside:avoid}
+thead{display:table-header-group}
+svg{max-width:100%}
+p,blockquote,dt,td.content{font-size:1em;orphans:3;widows:3}
+h2,h3,#toctitle,.sidebarblock>.content>.title{page-break-after:avoid}
+#header,#content,#footnotes,#footer{max-width:none}
+#toc,.sidebarblock,.exampleblock>.content{background:none!important}
+#toc{border-bottom:1px solid #dddddf!important;padding-bottom:0!important}
+body.book #header{text-align:center}
+body.book #header>h1:first-child{border:0!important;margin:2.5em 0 1em}
+body.book #header .details{border:0!important;display:block;padding:0!important}
+body.book #header .details span:first-child{margin-left:0!important}
+body.book #header .details br{display:block}
+body.book #header .details br+span::before{content:none!important}
+body.book #toc{border:0!important;text-align:left!important;padding:0!important;margin:0!important}
+body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-break-before:always}
+.listingblock code[data-lang]::before{display:block}
+#footer{padding:0 .9375em}
+.hide-on-print{display:none!important}
+.print-only{display:block!important}
+.hide-for-print{display:none!important}
+.show-for-print{display:inherit!important}}
+@media amzn-kf8,print{#header>h1:first-child{margin-top:1.25rem}
+.sect1{padding:0!important}
+.sect1+.sect1{border:0}
+#footer{background:none}
+#footer-text{color:rgba(0,0,0,.6);font-size:.9em}}
+@media amzn-kf8{#header,#content,#footnotes,#footer{padding:0}}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-light.min.css">
+</head>
+<body class="book">
+<div id="header">
+<h1>Curso Completo de LangChain - Desde Principiante hasta Producción</h1>
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_introducción_al_curso">1. Introducción al Curso</a></li>
+<li><a href="#_módulo_1_introducción_a_langchain">2. Módulo 1: Introducción a LangChain</a>
+<ul class="sectlevel2">
+<li><a href="#_1_1_qué_es_langchain">2.1. 1.1 ¿Qué es LangChain?</a>
+<ul class="sectlevel3">
+<li><a href="#_concepto_fundamental">2.1.1. Concepto Fundamental</a></li>
+<li><a href="#_definición_formal">2.1.2. Definición Formal</a></li>
+<li><a href="#_por_qué_langchain_y_no_llamar_directamente_a_la_api">2.1.3. ¿Por Qué LangChain y No Llamar Directamente a la API?</a></li>
+<li><a href="#_diferencias_con_autogen_y_crewai">2.1.4. Diferencias con AutoGen y CrewAI</a></li>
+<li><a href="#_casos_de_uso_reales">2.1.5. Casos de Uso Reales</a>
+<ul class="sectlevel4">
+<li><a href="#_1_chatbot_de_servicio_al_cliente">1. Chatbot de Servicio al Cliente</a></li>
+<li><a href="#_2_análisis_de_documentos">2. Análisis de Documentos</a></li>
+<li><a href="#_3_agente_autonomo">3. Agente Autonomo</a></li>
+</ul>
+</li>
+<li><a href="#_ventajas_clave">2.1.6. Ventajas Clave</a></li>
+<li><a href="#_limitaciones_a_considerar">2.1.7. Limitaciones a Considerar</a></li>
+</ul>
+</li>
+<li><a href="#_1_2_instalación_y_configuración">2.2. 1.2 Instalación y Configuración</a>
+<ul class="sectlevel3">
+<li><a href="#_requisitos_del_sistema">2.2.1. Requisitos del Sistema</a></li>
+<li><a href="#_paso_1_crear_un_entorno_virtual">2.2.2. Paso 1: Crear un Entorno Virtual</a></li>
+<li><a href="#_paso_2_instalar_langchain_y_dependencias">2.2.3. Paso 2: Instalar LangChain y Dependencias</a></li>
+<li><a href="#_paso_3_configurar_ollama">2.2.4. Paso 3: Configurar Ollama</a></li>
+<li><a href="#_paso_4_crear_archivo_env">2.2.5. Paso 4: Crear Archivo .env</a></li>
+<li><a href="#_paso_5_verificación_de_instalación">2.2.6. Paso 5: Verificación de Instalación</a></li>
+<li><a href="#_estructura_de_proyecto_recomendada">2.2.7. Estructura de Proyecto Recomendada</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_módulo_2_conceptos_fundamentales">3. Módulo 2: Conceptos Fundamentales</a>
+<ul class="sectlevel2">
+<li><a href="#_2_1_language_models_llms_el_corazón_de_todo">3.1. 2.1 Language Models (LLMs) - El Corazón de Todo</a>
+<ul class="sectlevel3">
+<li><a href="#_entender_los_llms">3.1.1. Entender los LLMs</a></li>
+<li><a href="#_interfaz_llm_vs_chatmodel">3.1.2. Interfaz LLM vs ChatModel</a>
+<ul class="sectlevel4">
+<li><a href="#_llm_interfaz_clásica">LLM (Interfaz Clásica)</a></li>
+<li><a href="#_chatmodel_recomendado">ChatModel (Recomendado)</a></li>
+</ul>
+</li>
+<li><a href="#_parámetros_clave_de_llms">3.1.3. Parámetros Clave de LLMs</a></li>
+<li><a href="#_selección_de_modelos">3.1.4. Selección de Modelos</a></li>
+</ul>
+</li>
+<li><a href="#_2_2_prompts_el_arte_de_hablar_con_llms">3.2. 2.2 Prompts - El Arte de Hablar con LLMs</a>
+<ul class="sectlevel3">
+<li><a href="#_qué_es_un_prompt">3.2.1. ¿Qué es un Prompt?</a></li>
+<li><a href="#_prompttemplate_parametrizar_prompts">3.2.2. PromptTemplate - Parametrizar Prompts</a></li>
+<li><a href="#_chatprompttemplate_prompts_para_conversaciones">3.2.3. ChatPromptTemplate - Prompts para Conversaciones</a></li>
+<li><a href="#_few_shot_prompting_enseñar_con_ejemplos">3.2.4. Few-Shot Prompting - Enseñar con Ejemplos</a></li>
+<li><a href="#_partial_variables_fijar_variables">3.2.5. Partial Variables - Fijar Variables</a></li>
+<li><a href="#_técnicas_avanzadas_de_prompting">3.2.6. Técnicas Avanzadas de Prompting</a>
+<ul class="sectlevel4">
+<li><a href="#_chain_of_thought_cot">Chain of Thought (CoT)</a></li>
+<li><a href="#_role_playing">Role Playing</a></li>
+<li><a href="#_structured_output">Structured Output</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_2_3_output_parsers_convertir_texto_en_datos">3.3. 2.3 Output Parsers - Convertir Texto en Datos</a>
+<ul class="sectlevel3">
+<li><a href="#_problema">3.3.1. Problema</a></li>
+<li><a href="#_stroutputparser_el_más_simple">3.3.2. StrOutputParser - El Más Simple</a></li>
+<li><a href="#_pydanticoutputparser_validación_estructurada">3.3.3. PydanticOutputParser - Validación Estructurada</a></li>
+<li><a href="#_jsonoutputparser_json_flexible">3.3.4. JsonOutputParser - JSON Flexible</a></li>
+<li><a href="#_parsers_personalizados">3.3.5. Parsers Personalizados</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_módulo_3_cadenas_chains_combinando_componentes">4. Módulo 3: Cadenas (Chains) - Combinando Componentes</a>
+<ul class="sectlevel2">
+<li><a href="#_3_1_concepto_de_cadena">4.1. 3.1 Concepto de Cadena</a>
+<ul class="sectlevel3">
+<li><a href="#_qué_es_una_cadena">4.1.1. ¿Qué es una Cadena?</a></li>
+<li><a href="#_forma_clásica_vs_lcel">4.1.2. Forma Clásica vs LCEL</a>
+<ul class="sectlevel4">
+<li><a href="#_forma_clásica_antigua">Forma Clásica (Antigua)</a></li>
+<li><a href="#_forma_moderna_con_lcel_recomendada">Forma Moderna con LCEL (Recomendada)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_3_2_lcel_langchain_expression_language">4.2. 3.2 LCEL (LangChain Expression Language)</a>
+<ul class="sectlevel3">
+<li><a href="#_operador_pipe">4.2.1. Operador Pipe |</a></li>
+<li><a href="#_runnablelambda_funciones_personalizadas">4.2.2. RunnableLambda - Funciones Personalizadas</a></li>
+<li><a href="#_runnableparallel_ejecutar_múltiples_cadenas">4.2.3. RunnableParallel - Ejecutar Múltiples Cadenas</a></li>
+<li><a href="#_runnablebranch_lógica_condicional">4.2.4. RunnableBranch - Lógica Condicional</a></li>
+<li><a href="#_métodos_de_invocación">4.2.5. Métodos de Invocación</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_módulo_4_memoria_memory_conversaciones_con_contexto">5. Módulo 4: Memoria (Memory) - Conversaciones con Contexto</a>
+<ul class="sectlevel2">
+<li><a href="#_4_1_problema_que_resuelve">5.1. 4.1 Problema que Resuelve</a>
+<ul class="sectlevel3">
+<li><a href="#_sin_memoria">5.1.1. Sin Memoria</a></li>
+<li><a href="#_con_memoria">5.1.2. Con Memoria</a></li>
+</ul>
+</li>
+<li><a href="#_4_2_conversationbuffermemory">5.2. 4.2 ConversationBufferMemory</a>
+<ul class="sectlevel3">
+<li><a href="#_limitación_los_tokens">5.2.1. Limitación: Los Tokens</a></li>
+</ul>
+</li>
+<li><a href="#_4_3_conversationwindowmemory">5.3. 4.3 ConversationWindowMemory</a>
+<ul class="sectlevel3">
+<li><a href="#_conversationsummarymemory">5.3.1. ConversationSummaryMemory</a></li>
+<li><a href="#_conversationtokenbuffermemory">5.3.2. ConversationTokenBufferMemory</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_módulo_5_agentes_agents_sistemas_inteligentes_y_autónomos">6. Módulo 5: Agentes (Agents) - Sistemas Inteligentes y Autónomos</a>
+<ul class="sectlevel2">
+<li><a href="#_5_1_qué_es_un_agente">6.1. 5.1 ¿Qué es un Agente?</a>
+<ul class="sectlevel3">
+<li><a href="#_comparación_cadena_vs_agente">6.1.1. Comparación: Cadena vs Agente</a></li>
+<li><a href="#_ejemplo_real">6.1.2. Ejemplo Real</a></li>
+</ul>
+</li>
+<li><a href="#_5_2_componentes_de_un_agente">6.2. 5.2 Componentes de un Agente</a>
+<ul class="sectlevel3">
+<li><a href="#_creando_herramientas_con_tool">6.2.1. Creando Herramientas con @tool</a></li>
+<li><a href="#_creando_agentes_con_create_react_agent">6.2.2. Creando Agentes con create_react_agent</a></li>
+<li><a href="#_agentexecutor_configuración_avanzada">6.2.3. AgentExecutor - Configuración Avanzada</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_módulo_6_herramientas_tools_extendiendo_capacidades">7. Módulo 6: Herramientas (Tools) - Extendiendo Capacidades</a>
+<ul class="sectlevel2">
+<li><a href="#_6_1_por_qué_herramientas">7.1. 6.1 ¿Por Qué Herramientas?</a>
+<ul class="sectlevel3">
+<li><a href="#_herramienta_simple">7.1.1. Herramienta Simple</a></li>
+<li><a href="#_herramienta_con_validación">7.1.2. Herramienta con Validación</a></li>
+<li><a href="#_herramienta_asincrónica">7.1.3. Herramienta Asincrónica</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_módulo_7_recuperación_de_documentos_retrieval">8. Módulo 7: Recuperación de Documentos (Retrieval)</a>
+<ul class="sectlevel2">
+<li><a href="#_7_1_problema_llms_no_saben_sobre_tus_datos">8.1. 7.1 Problema: LLMs no saben sobre tus datos</a></li>
+<li><a href="#_7_2_embeddings_convertir_texto_a_vectores">8.2. 7.2 Embeddings - Convertir Texto a Vectores</a></li>
+<li><a href="#_7_3_vector_stores_guardar_documentos_para_búsqueda">8.3. 7.3 Vector Stores - Guardar Documentos para Búsqueda</a>
+<ul class="sectlevel3">
+<li><a href="#_faiss_local_rápido">8.3.1. FAISS (Local, Rápido)</a></li>
+<li><a href="#_búsqueda_con_scores">8.3.2. Búsqueda con Scores</a></li>
+<li><a href="#_mmr_resultados_diversos">8.3.3. MMR - Resultados Diversos</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_módulo_8_rag_retrieval_augmented_generation">9. Módulo 8: RAG (Retrieval Augmented Generation)</a>
+<ul class="sectlevel2">
+<li><a href="#_8_1_qué_es_rag">9.1. 8.1 ¿Qué es RAG?</a></li>
+<li><a href="#_8_2_rag_simple">9.2. 8.2 RAG Simple</a></li>
+<li><a href="#_8_3_tipos_de_cadenas_rag">9.3. 8.3 Tipos de Cadenas RAG</a></li>
+</ul>
+</li>
+<li><a href="#_módulo_9_evaluación_debugging_y_testing">10. Módulo 9: Evaluación, Debugging y Testing</a>
+<ul class="sectlevel2">
+<li><a href="#_9_1_debugging_con_verbose_mode">10.1. 9.1 Debugging con Verbose Mode</a></li>
+<li><a href="#_9_2_logging_estructurado">10.2. 9.2 Logging Estructurado</a></li>
+<li><a href="#_9_3_testing">10.3. 9.3 Testing</a></li>
+</ul>
+</li>
+<li><a href="#_módulo_10_patrones_y_arquitectura">11. Módulo 10: Patrones y Arquitectura</a>
+<ul class="sectlevel2">
+<li><a href="#_10_1_patrón_sequential_secuencial">11.1. 10.1 Patrón Sequential (Secuencial)</a></li>
+<li><a href="#_10_2_patrón_branching_bifurcación">11.2. 10.2 Patrón Branching (Bifurcación)</a></li>
+<li><a href="#_10_3_patrón_fallback_respaldo">11.3. 10.3 Patrón Fallback (Respaldo)</a></li>
+</ul>
+</li>
+<li><a href="#_módulo_11_casos_de_uso_prácticos">12. Módulo 11: Casos de Uso Prácticos</a>
+<ul class="sectlevel2">
+<li><a href="#_11_1_chatbot_conversacional">12.1. 11.1 Chatbot Conversacional</a></li>
+<li><a href="#_11_2_sistema_rag">12.2. 11.2 Sistema RAG</a></li>
+<li><a href="#_11_3_agente_autónomo">12.3. 11.3 Agente Autónomo</a></li>
+</ul>
+</li>
+<li><a href="#_módulo_12_producción_y_optimización">13. Módulo 12: Producción y Optimización</a>
+<ul class="sectlevel2">
+<li><a href="#_12_1_error_handling">13.1. 12.1 Error Handling</a></li>
+<li><a href="#_12_2_caching">13.2. 12.2 Caching</a></li>
+<li><a href="#_12_3_batch_processing">13.3. 12.3 Batch Processing</a></li>
+<li><a href="#_12_4_asyncawait_para_concurrencia">13.4. 12.4 Async/Await para Concurrencia</a></li>
+</ul>
+</li>
+<li><a href="#_módulo_13_proyecto_final_integrado">14. Módulo 13: Proyecto Final Integrado</a>
+<ul class="sectlevel2">
+<li><a href="#_13_1_arquitectura_de_sistema_completo">14.1. 13.1 Arquitectura de Sistema Completo</a></li>
+<li><a href="#_13_2_implementación_del_proyecto_final">14.2. 13.2 Implementación del Proyecto Final</a></li>
+</ul>
+</li>
+<li><a href="#_conclusión_y_próximos_pasos">15. Conclusión y Próximos Pasos</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_introducción_al_curso">1. Introducción al Curso</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Bienvenido a este curso completo de LangChain. En esta guía aprenderás cómo construir aplicaciones inteligentes potenciadas por modelos de lenguaje (LLMs), desde conceptos básicos hasta patrones avanzados listos para producción.</p>
+</div>
+<div class="paragraph">
+<p><strong>Objetivos del Curso:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Entender qué son los LLMs y cómo usarlos efectivamente</p>
+</li>
+<li>
+<p>Construir cadenas complejas que combinen múltiples componentes</p>
+</li>
+<li>
+<p>Implementar agentes autónomos que pueden tomar decisiones</p>
+</li>
+<li>
+<p>Crear sistemas de búsqueda y recuperación de documentos (RAG)</p>
+</li>
+<li>
+<p>Aplicar patrones de producción con error handling y logging</p>
+</li>
+<li>
+<p>Integrar todo en una aplicación real con API REST</p>
+</li>
+</ul>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_módulo_1_introducción_a_langchain">2. Módulo 1: Introducción a LangChain</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_1_1_qué_es_langchain">2.1. 1.1 ¿Qué es LangChain?</h3>
+<div class="sect3">
+<h4 id="_concepto_fundamental">2.1.1. Concepto Fundamental</h4>
+<div class="paragraph">
+<p>Imagina que tienes un modelo de lenguaje potente (como GPT o similar) y quieres usarlo para hacer cosas útiles. Los LLMs por sí solos solo generan texto basado en prompts. Pero ¿qué si quieres que:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Mantenga una conversación con memoria (recordar lo que dijiste antes)</p>
+</li>
+<li>
+<p>Busque información en una base de datos antes de responder</p>
+</li>
+<li>
+<p>Use calculadoras, APIs, o herramientas externas</p>
+</li>
+<li>
+<p>Tome decisiones y ejecute acciones complejas</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>LangChain es el framework que hace todo esto posible.</strong> Es como un "orquestador" que coordina el LLM con otros componentes.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_definición_formal">2.1.2. Definición Formal</h4>
+<div class="paragraph">
+<p>LangChain es un framework de código abierto que simplifica la construcción de aplicaciones basadas en LLMs proporcionando:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Interfaces unificadas</strong>: Una forma consistente de trabajar con diferentes modelos (OpenAI, Anthropic, Ollama, etc.)</p>
+</li>
+<li>
+<p><strong>Composición elegante</strong>: Combinar componentes como bloques de Lego</p>
+</li>
+<li>
+<p><strong>Gestión de estado</strong>: Memoria para conversaciones continuadas</p>
+</li>
+<li>
+<p><strong>Integración de herramientas</strong>: Conexión con APIs y sistemas externos</p>
+</li>
+<li>
+<p><strong>RAG (Recuperación Aumentada)</strong>: Hacer preguntas sobre documentos propios</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_por_qué_langchain_y_no_llamar_directamente_a_la_api">2.1.3. ¿Por Qué LangChain y No Llamar Directamente a la API?</h4>
+<div class="paragraph">
+<p>Si llamaras a una API de LLM directamente:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python"># Forma primitiva (sin LangChain)
+import requests
+
+response = requests.post(
+    "https://api.openai.com/v1/chat/completions",
+    headers={"Authorization": f"Bearer {api_key}"},
+    json={
+        "model": "gpt-4",
+        "messages": [{"role": "user", "content": "¿Hola?"}]
+    }
+)
+resultado = response.json()["choices"][0]["message"]["content"]
+print(resultado)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Ves el problema: mucho boilerplate, manejo manual de errores, sin gestión de memoria, sin herramientas.</p>
+</div>
+<div class="paragraph">
+<p><strong>Con LangChain:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from langchain_community.llms import Ollama
+
+llm = Ollama(model="mistral")
+respuesta = llm.invoke("¿Hola?")
+print(respuesta)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Mucho más limpio. LangChain encapsula toda la complejidad.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_diferencias_con_autogen_y_crewai">2.1.4. Diferencias con AutoGen y CrewAI</h4>
+<div class="paragraph">
+<p>LangChain, AutoGen y CrewAI son frameworks para trabajar con LLMs, pero tienen enfoques distintos:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Aspecto</th>
+<th class="tableblock halign-left valign-top">LangChain</th>
+<th class="tableblock halign-left valign-top">AutoGen</th>
+<th class="tableblock halign-left valign-top">CrewAI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Enfoque</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Framework general para LLMs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Agentes conversacionales</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Equipos de agentes coordinados</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Complejidad</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Baja-Media</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Media</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Alta</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Curva Aprendizaje</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Gradual</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rápida</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Empinada</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Mejor para</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Cadenas, RAG, Chatbots</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2-3 agentes conversando</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Múltiples agentes especializados</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Memoria</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">6 tipos diferentes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Integrada automáticamente</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Integrada y coordinada</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Herramientas</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Extensas integraciones</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Básicas</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Avanzadas y especializadas</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Comunidad</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Muy grande (30K+ stars)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Grande (10K+ stars)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Creciente (5K+ stars)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Madurez</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Muy madura</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Madura</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">En evolución</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Recomendación</strong>: Elige <strong>LangChain</strong> para:
+- Tu primer proyecto con LLMs
+- Sistemas RAG (búsqueda en documentos)
+- Chatbots simples a complejos
+- Prototipado rápido</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_casos_de_uso_reales">2.1.5. Casos de Uso Reales</h4>
+<div class="sect4">
+<h5 id="_1_chatbot_de_servicio_al_cliente">1. Chatbot de Servicio al Cliente</h5>
+<div class="paragraph">
+<p>Imagina una empresa que quiere automatizar soporte:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">Usuario: "¿Por qué no funciona mi producto?"
+Bot (con RAG): [Busca en base de conocimiento]
+    → Encuentra artículos sobre solución de problemas
+Bot (con cadena): Genera respuesta útil
+Usuario: "¿Qué es una garantía?"
+Bot (con memoria): Sabe que estamos hablando de su producto</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_2_análisis_de_documentos">2. Análisis de Documentos</h5>
+<div class="paragraph">
+<p>Una empresa legal quiere revisar 100 contratos:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">LLM + DocumentLoader → Lee PDFs automáticamente
+LLM + OutputParser → Extrae cláusulas importantes en JSON
+LLM + RAG → Busca precedentes similares</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_3_agente_autonomo">3. Agente Autonomo</h5>
+<div class="paragraph">
+<p>Un agente que puede hacer múltiples cosas:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">Usuario: "Dame un resumen de ventas de enero"
+Agente (Reasoning): "Necesito datos de enero, debo usar SQL"
+Agente (Action): Ejecuta query en BD
+Agente (Observation): Ve resultados
+Agente (Thought): "Ahora debo resumir esto"
+Agent (Final Answer): Devuelve resumen</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_ventajas_clave">2.1.6. Ventajas Clave</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>✅ <strong>Abstracción sobre proveedores</strong>: Cambia de OpenAI a Ollama sin cambiar código</p>
+</li>
+<li>
+<p>✅ <strong>LCEL (LangChain Expression Language)</strong>: Sintaxis elegante con operador <code>|</code></p>
+</li>
+<li>
+<p>✅ <strong>Ecosistema rico</strong>: 200+ integraciones (APIs, BBDDs, servicios)</p>
+</li>
+<li>
+<p>✅ <strong>Comunidad activa</strong>: Soluciones para casi cualquier problema</p>
+</li>
+<li>
+<p>✅ <strong>Documentación excelente</strong>: Ejemplos claros y actualizados</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_limitaciones_a_considerar">2.1.7. Limitaciones a Considerar</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>⚠️ <strong>Complejidad agregada</strong>: Para casos muy simples puede ser overkill</p>
+</li>
+<li>
+<p>⚠️ <strong>Curva de aprendizaje</strong>: Muchos conceptos nuevos (Prompts, Chains, Agents, Memory)</p>
+</li>
+<li>
+<p>⚠️ <strong>Performance</strong>: Varias abstracciones = overhead computacional</p>
+</li>
+<li>
+<p>⚠️ <strong>Dependencias</strong>: Requiere muchos paquetes (langchain, langchain-community, langchain-core)</p>
+</li>
+</ul>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_1_2_instalación_y_configuración">2.2. 1.2 Instalación y Configuración</h3>
+<div class="sect3">
+<h4 id="_requisitos_del_sistema">2.2.1. Requisitos del Sistema</h4>
+<div class="paragraph">
+<p>Antes de comenzar, asegúrate de tener:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Python 3.10+</strong>: Verifica con <code>python --version</code></p>
+</li>
+<li>
+<p><strong>pip</strong>: El gestor de paquetes de Python (viene con Python)</p>
+</li>
+<li>
+<p><strong>Terminal/Consola</strong>: Para ejecutar comandos</p>
+</li>
+<li>
+<p><strong>Ollama instalado</strong>: Descárgalo desde <a href="https://ollama.ai" class="bare">https://ollama.ai</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_paso_1_crear_un_entorno_virtual">2.2.2. Paso 1: Crear un Entorno Virtual</h4>
+<div class="paragraph">
+<p>Un entorno virtual es una carpeta aislada donde viven tus dependencias de Python. Es como tener una "caja arenera" separada para cada proyecto.</p>
+</div>
+<div class="paragraph">
+<p><strong>¿Por qué?</strong> Si instalas todas las librerías globalmente, proyectos diferentes pueden entrar en conflicto. Con entornos virtuales, cada proyecto es independiente.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># Crear entorno virtual
+python3 -m venv venv_langchain
+
+# Activarlo (en Linux/macOS)
+source venv_langchain/bin/activate
+
+# Activarlo (en Windows)
+venv_langchain\Scripts\activate
+
+# Desactivarlo (cuando termines)
+deactivate</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Cuando el entorno está activo, verás <code>(venv_langchain)</code> al principio de tu prompt.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_paso_2_instalar_langchain_y_dependencias">2.2.3. Paso 2: Instalar LangChain y Dependencias</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># Actualizar pip a la versión más reciente
+pip install --upgrade pip
+
+# Instalar LangChain (versión 0.1+)
+pip install langchain langchain-community langchain-core
+
+# Para trabajar con Ollama
+pip install ollama
+
+# Herramientas adicionales útiles
+pip install python-dotenv pydantic requests
+
+# Opcional: para mejor experiencia de desarrollo
+pip install ipython jupyter</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>¿Qué es cada paquete?</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Paquete</th>
+<th class="tableblock halign-left valign-top">Propósito</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>langchain</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Módulo principal (cadenas, agentes, memoria)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>langchain-community</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Integraciones (Ollama, OpenAI, Chroma, FAISS, etc.)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>langchain-core</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Abstracciones base (Runnable, BaseModel, etc.)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>python-dotenv</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Cargar variables de entorno de archivo .env</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pydantic</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Validación de datos estructurados</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_paso_3_configurar_ollama">2.2.4. Paso 3: Configurar Ollama</h4>
+<div class="paragraph">
+<p>Ollama es un servicio que te permite ejecutar modelos LLM localmente, sin APIs externas.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># 1. Descargar un modelo (primera vez tarda 5-10 minutos)
+ollama pull mistral
+
+# 2. Iniciar el servidor Ollama (en otra terminal)
+ollama serve
+
+# 3. Verificar que Ollama está corriendo
+curl http://localhost:11434/api/tags
+
+# 4. Listar modelos disponibles
+ollama list</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Ollama estará disponible en <code><a href="http://localhost:11434" class="bare">http://localhost:11434</a></code> por defecto.</p>
+</div>
+<div class="paragraph">
+<p><strong>Modelos recomendados para este curso:</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Modelo</th>
+<th class="tableblock halign-left valign-top">Tamaño</th>
+<th class="tableblock halign-left valign-top">Velocidad</th>
+<th class="tableblock halign-left valign-top">Calidad</th>
+<th class="tableblock halign-left valign-top">Ideal para</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>mistral</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4.1 GB</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rápido</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Buena</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Desarrollo, testing</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>neural-chat</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3.8 GB</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Muy rápido</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Aceptable</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Prototipos rápidos</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>llama2</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3.8 GB</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rápido</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Muy buena</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Aplicaciones</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>openchat</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3.5 GB</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Muy rápido</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Buena</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Producción ligera</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_paso_4_crear_archivo_env">2.2.5. Paso 4: Crear Archivo .env</h4>
+<div class="paragraph">
+<p>El archivo <code>.env</code> almacena configuración sensible sin cometerla a Git.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># .env
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_MODEL=mistral
+LOG_LEVEL=INFO</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Luego en tu código:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import os
+from dotenv import load_dotenv
+
+load_dotenv()  # Carga variables de .env
+
+BASE_URL = os.getenv("OLLAMA_BASE_URL")
+MODEL = os.getenv("OLLAMA_MODEL")</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_paso_5_verificación_de_instalación">2.2.6. Paso 5: Verificación de Instalación</h4>
+<div class="paragraph">
+<p>Crea un archivo de prueba <code>test_setup.py</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">#!/usr/bin/env python3
+"""Verifica que LangChain está instalado correctamente"""
+
+print("1. Verificando imports...")
+try:
+    from langchain_community.llms import Ollama
+    from langchain_core.prompts import PromptTemplate
+    print("   ✅ Imports correctos")
+except ImportError as e:
+    print(f"   ❌ Error: {e}")
+    exit(1)
+
+print("\n2. Verificando conexión con Ollama...")
+try:
+    llm = Ollama(model="mistral", base_url="http://localhost:11434")
+    respuesta = llm.invoke("¿Hola?")
+    print(f"   ✅ Ollama responde: {respuesta[:50]}...")
+except Exception as e:
+    print(f"   ❌ Error: {e}")
+    print("   Asegúrate de que Ollama está ejecutándose: ollama serve")
+    exit(1)
+
+print("\n3. Probando PromptTemplate...")
+try:
+    template = "Hola {nombre}, ¿cómo estás?"
+    prompt = PromptTemplate.from_template(template)
+    resultado = prompt.format(nombre="Juan")
+    print(f"   ✅ Resultado: {resultado}")
+except Exception as e:
+    print(f"   ❌ Error: {e}")
+    exit(1)
+
+print("\n✅ ¡Configuración correcta! Listo para empezar.")</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Ejecuta:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">python test_setup.py</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_estructura_de_proyecto_recomendada">2.2.7. Estructura de Proyecto Recomendada</h4>
+<div class="paragraph">
+<p>Cuando creczcas, organiza tu proyecto así:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">mi_proyecto_langchain/
+├── .env                          # Variables de entorno (NO COMMITAR)
+├── .gitignore                    # Excluir venv, .env, __pycache__
+├── requirements.txt              # Dependencias del proyecto
+├── src/
+│   ├── __init__.py
+│   ├── config.py                 # Configuración centralizada
+│   ├── models/
+│   │   ├── __init__.py
+│   │   └── llm_factory.py        # Factory para crear instancias de LLM
+│   ├── chains/
+│   │   ├── __init__.py
+│   │   ├── qa_chain.py           # Cadena de Preguntas y Respuestas
+│   │   ├── summarization.py      # Cadena de resumen
+│   │   └── classification.py     # Cadena de clasificación
+│   ├── agents/
+│   │   ├── __init__.py
+│   │   └── my_agent.py           # Definición de agente
+│   ├── tools/
+│   │   ├── __init__.py
+│   │   ├── search.py             # Herramienta de búsqueda
+│   │   ├── calculator.py         # Herramienta de cálculo
+│   │   └── weather.py            # Herramienta de clima
+│   ├── memory/
+│   │   ├── __init__.py
+│   │   └── conversation.py       # Gestión de memoria conversacional
+│   ├── retrieval/
+│   │   ├── __init__.py
+│   │   └── document_store.py     # Vector store para RAG
+│   ├── utils/
+│   │   ├── __init__.py
+│   │   └── logger.py             # Logging configurado
+│   └── api/
+│       ├── __init__.py
+│       └── routes.py             # Rutas FastAPI
+├── data/
+│   ├── documents/                # Documentos para RAG (PDFs, TXT, etc)
+│   └── vectors/                  # Vector stores guardados (persistencia)
+├── tests/
+│   ├── __init__.py
+│   ├── test_chains.py
+│   ├── test_agents.py
+│   └── test_tools.py
+├── examples/
+│   ├── simple_chat.py
+│   ├── rag_example.py
+│   └── agent_example.py
+├── main.py                       # Punto de entrada principal
+└── README.md                     # Documentación del proyecto</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Este patrón sigue el principio DRY (Don&#8217;t Repeat Yourself) y mantiene el código organizado conforme crece.</p>
+</div>
+<hr>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_módulo_2_conceptos_fundamentales">3. Módulo 2: Conceptos Fundamentales</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_2_1_language_models_llms_el_corazón_de_todo">3.1. 2.1 Language Models (LLMs) - El Corazón de Todo</h3>
+<div class="sect3">
+<h4 id="_entender_los_llms">3.1.1. Entender los LLMs</h4>
+<div class="paragraph">
+<p>Un Language Model es una red neuronal entrenada con texto de internet. Aprendió patrones de lenguaje.</p>
+</div>
+<div class="paragraph">
+<p><strong>¿Cómo funciona internamente?</strong></p>
+</div>
+<div class="paragraph">
+<p>Un LLM opera con "tokens" (palabras o fragmentos):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">"Hola mundo" → ["Hol", "a", " ", "mundo"] (tokenizado)
+              → [2532, 5, 102, 3091]        (números)
+              → [vector1, vector2, ...]     (embeddings)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Cada token se convierte a un vector de números. Estos vectores se procesan a través de capas de redes neuronales que predicen el siguiente token. Luego esos 100 tokens predichos se convierten de nuevo a texto.</p>
+</div>
+<div class="paragraph">
+<p><strong>¿Por qué necesito saber esto?</strong></p>
+</div>
+<div class="paragraph">
+<p>Porque:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Los LLMs no "entienden", sino que predicen estadísticamente</p>
+</li>
+<li>
+<p>Las primeras respuestas son más confiables que las últimas</p>
+</li>
+<li>
+<p>No son gratis en APIs comerciales (se paga por token)</p>
+</li>
+<li>
+<p>Tienen limitaciones de contexto (máximo de tokens)</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_interfaz_llm_vs_chatmodel">3.1.2. Interfaz LLM vs ChatModel</h4>
+<div class="paragraph">
+<p>LangChain proporciona dos interfaces principales:</p>
+</div>
+<div class="sect4">
+<h5 id="_llm_interfaz_clásica">LLM (Interfaz Clásica)</h5>
+<div class="paragraph">
+<p>Un LLM toma un string y devuelve un string:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from langchain_community.llms import Ollama
+
+llm = Ollama(model="mistral")
+
+# Input: string
+# Output: string
+respuesta = llm.invoke("¿Cuál es la capital de Francia?")
+print(respuesta)  # Output: "París es la capital de Francia..."</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Características:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>✅ Simple y directo</p>
+</li>
+<li>
+<p>✅ Menos tokens (más barato)</p>
+</li>
+<li>
+<p>❌ No entiende roles (usuario/asistente/sistema)</p>
+</li>
+<li>
+<p>❌ Menos apropiado para conversaciones</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_chatmodel_recomendado">ChatModel (Recomendado)</h5>
+<div class="paragraph">
+<p>Un ChatModel toma una lista de mensajes y devuelve un mensaje:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from langchain_core.prompts import ChatPromptTemplate
+from langchain_community.llms import Ollama
+
+llm = Ollama(model="mistral")
+
+# Crear un prompt estructurado con roles
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "Eres un geógrafo experto"),
+    ("user", "{pregunta}")
+])
+
+# La cadena combina prompt + LLM
+cadena = prompt | llm
+
+# Invocar
+respuesta = cadena.invoke({"pregunta": "¿Cuál es la capital de Francia?"})
+print(respuesta)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Características:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>✅ Soporta múltiples roles (system, user, assistant)</p>
+</li>
+<li>
+<p>✅ Mejor para conversaciones</p>
+</li>
+<li>
+<p>✅ Más flexible y expresivo</p>
+</li>
+<li>
+<p>❌ Usa ligeramente más tokens</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Recomendación: Usa ChatModel en casi todos los casos</strong></p>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_parámetros_clave_de_llms">3.1.3. Parámetros Clave de LLMs</h4>
+<div class="paragraph">
+<p>Al crear un LLM, puedes controlar su comportamiento:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from langchain_community.llms import Ollama
+
+llm = Ollama(
+    model="mistral",
+    base_url="http://localhost:11434",
+
+    # Creatividad (0 = determinístico, 1 = aleatorio)
+    temperature=0.7,
+
+    # Diversidad de tokens (0 = más comunes, 1 = todos)
+    top_p=0.9,
+
+    # Cuántos tokens considera para siguiente (mayor = más diverso)
+    top_k=40,
+
+    # Máximo de tokens a generar
+    num_predict=256,
+
+    # Tiempo máximo de espera
+    request_timeout=120
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Guía práctica:</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parámetro</th>
+<th class="tableblock halign-left valign-top">Usar Bajo</th>
+<th class="tableblock halign-left valign-top">Usar Alto</th>
+<th class="tableblock halign-left valign-top">Para Qué</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>temperature</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0.1-0.3</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0.8-1.0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Exactitud / Creatividad</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>top_p</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0.1-0.5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0.8-1.0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Predictible / Diverso</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>top_k</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1-20</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">50-100</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Determinístico / Exploratorio</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Ejemplos de configuración:</strong></p>
+</div>
+<div class="paragraph">
+<p>Para análisis de datos (necesitas exactitud):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">llm = Ollama(model="mistral", temperature=0.1, top_p=0.3)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Para escritura creativa (necesitas variedad):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">llm = Ollama(model="mistral", temperature=0.9, top_p=0.95)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_selección_de_modelos">3.1.4. Selección de Modelos</h4>
+<div class="paragraph">
+<p>No todos los modelos son iguales. Elige según tus necesidades:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 15%;">
+<col style="width: 15%;">
+<col style="width: 15%;">
+<col style="width: 35%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Modelo</th>
+<th class="tableblock halign-left valign-top">Tamaño</th>
+<th class="tableblock halign-left valign-top">Velocidad</th>
+<th class="tableblock halign-left valign-top">Calidad</th>
+<th class="tableblock halign-left valign-top">Mejor para</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">mistral</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4.1GB</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rápido</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Buena</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Uso general, recomendado</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">neural-chat</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3.8GB</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Muy rápido</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Aceptable</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Prototipado rápido, desarrollo</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">llama2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3.8GB</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rápido</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Muy buena</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Cuando necesitas mejor calidad</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">openchat</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3.5GB</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Muy rápido</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Buena</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Producción con recursos limitados</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">dolphin-mixtral</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">27GB</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Lento</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Excelente</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Máxima calidad (si tienes GPU)</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Prueba de rendimiento rápida:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from langchain_community.llms import Ollama
+import time
+
+modelos = ["mistral", "neural-chat", "llama2"]
+pregunta = "¿Cuál es el propósito de la vida?"
+
+for modelo in modelos:
+    llm = Ollama(model=modelo)
+
+    inicio = time.time()
+    respuesta = llm.invoke(pregunta)
+    tiempo = time.time() - inicio
+
+    print(f"\n{modelo}:")
+    print(f"  Tiempo: {tiempo:.1f}s")
+    print(f"  Respuesta: {respuesta[:100]}...")</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_2_2_prompts_el_arte_de_hablar_con_llms">3.2. 2.2 Prompts - El Arte de Hablar con LLMs</h3>
+<div class="sect3">
+<h4 id="_qué_es_un_prompt">3.2.1. ¿Qué es un Prompt?</h4>
+<div class="paragraph">
+<p>Un prompt es una instrucción que le das al LLM. Es como la pregunta que haces:</p>
+</div>
+<div class="paragraph">
+<p><strong>Prompt simple:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">"¿Cuál es la capital de Francia?"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Prompt complejo:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">Eres un profesor de historia experto. Un estudiante te pregunta sobre la Revolución Francesa.
+Debes responder de forma educativa, con ejemplos, y hacer que sea interesante.
+
+Pregunta: "¿Por qué fue importante la Revolución Francesa?"
+Respuesta:</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>La <strong>calidad del prompt</strong> determina <strong>la calidad de la respuesta</strong>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_prompttemplate_parametrizar_prompts">3.2.2. PromptTemplate - Parametrizar Prompts</h4>
+<div class="paragraph">
+<p>A menudo quieres reutilizar prompts con diferentes variables:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from langchain_core.prompts import PromptTemplate
+
+# Definir un template (nota los {variables})
+template = """Eres un experto en {tema}.
+Un estudiante te pregunta: {pregunta}
+Responde de forma clara y concisa."""
+
+# Crear el prompt
+prompt = PromptTemplate(
+    input_variables=["tema", "pregunta"],
+    template=template
+)
+
+# Usar el prompt con diferentes valores
+resultado1 = prompt.format(
+    tema="Python",
+    pregunta="¿Qué es un decorador?"
+)
+
+resultado2 = prompt.format(
+    tema="JavaScript",
+    pregunta="¿Qué es una closure?"
+)
+
+print(resultado1)
+# Salida:
+# Eres un experto en Python.
+# Un estudiante te pregunta: ¿Qué es un decorador?
+# Responde de forma clara y concisa.</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Ventajas:</strong>
+- ✅ Reutilizable
+- ✅ Fácil de mantener
+- ✅ Menos propenso a errores</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_chatprompttemplate_prompts_para_conversaciones">3.2.3. ChatPromptTemplate - Prompts para Conversaciones</h4>
+<div class="paragraph">
+<p>Para chat, necesitas especificar el rol de cada mensaje:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from langchain_core.prompts import ChatPromptTemplate
+from langchain.schema import HumanMessage, AIMessage, SystemMessage
+
+# Opción 1: Usando tuplas (role, template)
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "Eres un asistente matemático experto."),
+    ("user", "Explica: {concepto}"),
+])
+
+# Opción 2: Usando objetos (más explícito)
+from langchain_core.prompts import SystemMessagePromptTemplate, HumanMessagePromptTemplate
+
+system_prompt = SystemMessagePromptTemplate.from_template(
+    "Eres un asistente matemático experto."
+)
+human_prompt = HumanMessagePromptTemplate.from_template(
+    "Explica: {concepto}"
+)
+
+prompt = ChatPromptTemplate.from_messages([system_prompt, human_prompt])
+
+# Usar
+mensajes = prompt.format_messages(concepto="derivadas")
+print(mensajes)
+# Output:
+# [
+#   SystemMessage(content="Eres un asistente matemático experto."),
+#   HumanMessage(content="Explica: derivadas")
+# ]</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_few_shot_prompting_enseñar_con_ejemplos">3.2.4. Few-Shot Prompting - Enseñar con Ejemplos</h4>
+<div class="paragraph">
+<p>A veces el LLM entiende mejor si le das ejemplos:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from langchain_core.prompts import FewShotPromptTemplate, PromptTemplate
+
+# Definir ejemplos
+ejemplos = [
+    {
+        "entrada": "2 + 2",
+        "salida": "4"
+    },
+    {
+        "entrada": "5 * 3",
+        "salida": "15"
+    },
+    {
+        "entrada": "10 - 7",
+        "salida": "3"
+    }
+]
+
+# Template para cada ejemplo
+ejemplo_prompt = PromptTemplate(
+    input_variables=["entrada", "salida"],
+    template="Entrada: {entrada}\nSalida: {salida}"
+)
+
+# FewShotPromptTemplate
+prompt = FewShotPromptTemplate(
+    examples=ejemplos,
+    example_prompt=ejemplo_prompt,
+    suffix="Ahora, resuelve: {entrada}",
+    input_variables=["entrada"],
+    example_separator="\n---\n"
+)
+
+# Usar
+resultado = prompt.format(entrada="100 / 5")
+print(resultado)
+# Output:
+# Entrada: 2 + 2
+# Salida: 4
+# ---
+# Entrada: 5 * 3
+# Salida: 15
+# ---
+# Entrada: 10 - 7
+# Salida: 3
+# ---
+# Ahora, resuelve: 100 / 5</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>¿Por qué funciona?</strong> El LLM ve el patrón y puede seguirlo.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_partial_variables_fijar_variables">3.2.5. Partial Variables - Fijar Variables</h4>
+<div class="paragraph">
+<p>A veces algunas variables están fijas:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from langchain_core.prompts import PromptTemplate
+
+template = "Eres {rol} especializado en {tema}. {pregunta}"
+
+prompt = PromptTemplate(
+    template=template,
+    input_variables=["pregunta"],  # Solo esta necesita input
+    partial_variables={
+        "rol": "Profesor Experto",
+        "tema": "Matemáticas"
+    }
+)
+
+# Solo necesitas proporcionar pregunta
+resultado = prompt.format(pregunta="¿Qué es una derivada?")
+
+# Output:
+# Eres Profesor Experto especializado en Matemáticas. ¿Qué es una derivada?</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Caso de uso:</strong> Cuando tienes un system prompt fijo pero quieres cambiar el user input.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_técnicas_avanzadas_de_prompting">3.2.6. Técnicas Avanzadas de Prompting</h4>
+<div class="sect4">
+<h5 id="_chain_of_thought_cot">Chain of Thought (CoT)</h5>
+<div class="paragraph">
+<p>Pedirle al LLM que piense paso a paso:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">Pregunta: Si tengo 5 manzanas y doy 2 a un amigo, ¿cuántas tengo?
+Prompt: Pensemos paso a paso:
+  1. Empiezo con 5 manzanas
+  2. Doy 2 a un amigo (resto 2)
+  3. 5 - 2 = 3
+Respuesta: 3 manzanas
+
+vs.
+
+Pregunta: Si tengo 5 manzanas y doy 2 a un amigo, ¿cuántas tengo?
+Respuesta: 3</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>La primera forma es más explícita y el LLM comete menos errores.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_role_playing">Role Playing</h5>
+<div class="paragraph">
+<p>Asignarle un rol específico:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">Sin role:
+"¿Qué es Python?"
+
+Con role:
+"Eres un instructor de programación con 10 años de experiencia.
+Explica qué es Python en términos simples para un principiante."</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Con rol, la respuesta es mejor estructurada y educativa.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_structured_output">Structured Output</h5>
+<div class="paragraph">
+<p>Pedirle que devuelva formato específico:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">Pregunta: Analiza el siguiente producto
+Producto: iPhone 15
+Devuelve en formato JSON con campos: nombre, precio_aproximado, características (lista)
+
+Respuesta esperada:
+{
+  "nombre": "iPhone 15",
+  "precio_aproximado": "999 USD",
+  "características": ["Pantalla OLED", "A17 Bionic", "Cámara mejorada"]
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_2_3_output_parsers_convertir_texto_en_datos">3.3. 2.3 Output Parsers - Convertir Texto en Datos</h3>
+<div class="sect3">
+<h4 id="_problema">3.3.1. Problema</h4>
+<div class="paragraph">
+<p>Los LLMs devuelven strings. A veces necesitas estructurar esos strings:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">respuesta = llm.invoke("Dame una lista de frutas")
+# Output: "Las frutas incluyen manzana, plátano, naranja, uva"
+
+# Quieres:
+frutas = ["manzana", "plátano", "naranja", "uva"]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Los Output Parsers resuelven esto.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_stroutputparser_el_más_simple">3.3.2. StrOutputParser - El Más Simple</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_community.llms import Ollama
+
+llm = Ollama(model="mistral")
+prompt = ChatPromptTemplate.from_messages([
+    ("user", "{pregunta}")
+])
+
+# El parser simplemente deja el string tal cual
+parser = StrOutputParser()
+
+# Combinar
+cadena = prompt | llm | parser
+
+respuesta = cadena.invoke({"pregunta": "¿Hola?"})
+print(type(respuesta))  # &lt;class 'str'&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_pydanticoutputparser_validación_estructurada">3.3.3. PydanticOutputParser - Validación Estructurada</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from langchain_core.output_parsers import PydanticOutputParser
+from pydantic import BaseModel, Field
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_community.llms import Ollama
+
+# Definir la estructura esperada
+class Persona(BaseModel):
+    nombre: str = Field(description="Nombre completo")
+    edad: int = Field(description="Edad en años")
+    ciudad: str = Field(description="Ciudad de residencia")
+
+# Crear parser
+parser = PydanticOutputParser(pydantic_object=Persona)
+
+# El prompt debe incluir instrucciones de formato
+prompt = ChatPromptTemplate.from_messages([
+    ("user", "Extrae información de esta persona: {texto}"),
+    ("user", "{format_instructions}")
+])
+
+llm = Ollama(model="mistral")
+cadena = prompt | llm | parser
+
+resultado = cadena.invoke({
+    "texto": "Juan tiene 30 años y vive en Madrid",
+    "format_instructions": parser.get_format_instructions()
+})
+
+print(resultado.nombre)  # "Juan"
+print(resultado.edad)    # 30
+print(resultado.ciudad)  # "Madrid"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>El parser automáticamente:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>✅ Valida que edad sea un número</p>
+</li>
+<li>
+<p>✅ Verifica que todos los campos estén presentes</p>
+</li>
+<li>
+<p>✅ Lanza error si el formato es inválido</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_jsonoutputparser_json_flexible">3.3.4. JsonOutputParser - JSON Flexible</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from langchain_core.output_parsers import JsonOutputParser
+
+parser = JsonOutputParser()
+
+# Útil cuando el LLM devuelve JSON
+respuesta_texto = '''
+{
+  "nombre": "María",
+  "edad": 25,
+  "habilidades": ["Python", "JavaScript"]
+}
+'''
+
+datos = parser.parse(respuesta_texto)
+print(datos["nombre"])  # "María"</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_parsers_personalizados">3.3.5. Parsers Personalizados</h4>
+<div class="paragraph">
+<p>Para casos especiales:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from langchain_core.output_parsers import BaseOutputParser
+
+class ListaParserPersonalizado(BaseOutputParser):
+    """Parser que divide por líneas"""
+
+    def parse(self, text: str) -&gt; list:
+        lineas = text.strip().split("\n")
+        # Filtrar líneas vacías y limpiar
+        return [l.strip() for l in lineas if l.strip()]
+
+parser = ListaParserPersonalizado()
+
+respuesta = """
+Manzana
+Plátano
+Naranja
+Uva
+"""
+
+frutas = parser.parse(respuesta)
+print(frutas)  # ["Manzana", "Plátano", "Naranja", "Uva"]</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_módulo_3_cadenas_chains_combinando_componentes">4. Módulo 3: Cadenas (Chains) - Combinando Componentes</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_3_1_concepto_de_cadena">4.1. 3.1 Concepto de Cadena</h3>
+<div class="sect3">
+<h4 id="_qué_es_una_cadena">4.1.1. ¿Qué es una Cadena?</h4>
+<div class="paragraph">
+<p>Una cadena es una secuencia de operaciones conectadas:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">[Entrada] → [Prompt] → [LLM] → [Parser] → [Salida]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Ejemplo simple:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">Usuario pregunta: "Explica Python"
+         ↓
+    PromptTemplate: "Eres experto. Explica: {concepto}"
+         ↓
+    LLM: Genera explicación
+         ↓
+    StrOutputParser: Limpia respuesta
+         ↓
+    "Python es un lenguaje de programación..."</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Ejemplo complejo:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">[Entrada] → [Clasificar tipo] → [Rama técnica] → [Respuesta técnica]
+                            ↘ [Rama general] → [Respuesta general]
+
+Según el tipo de pregunta, toma ruta diferente</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_forma_clásica_vs_lcel">4.1.2. Forma Clásica vs LCEL</h4>
+<div class="sect4">
+<h5 id="_forma_clásica_antigua">Forma Clásica (Antigua)</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from langchain.chains import LLMChain
+from langchain_core.prompts import PromptTemplate
+from langchain_community.llms import Ollama
+
+llm = Ollama(model="mistral")
+prompt = PromptTemplate.from_template("Explica: {concepto}")
+
+# Crear cadena clásica
+chain = LLMChain(llm=llm, prompt=prompt)
+
+respuesta = chain.run(concepto="Decoradores en Python")</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_forma_moderna_con_lcel_recomendada">Forma Moderna con LCEL (Recomendada)</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from langchain_core.prompts import PromptTemplate
+from langchain_community.llms import Ollama
+
+llm = Ollama(model="mistral")
+prompt = PromptTemplate.from_template("Explica: {concepto}")
+
+# Usar operador pipe (|) para conectar
+cadena = prompt | llm
+
+respuesta = cadena.invoke({"concepto": "Decoradores en Python"})</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>¿Por qué LCEL es mejor?</strong>
+- ✅ Más legible (línea de operaciones clara)
+- ✅ Más flexible (fácil agregar componentes)
+- ✅ Mejor rendimiento (streaming, paralización)
+- ✅ Es el futuro de LangChain</p>
+</div>
+<div class="paragraph">
+<p><strong>Usaremos LCEL en todo el curso.</strong></p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_3_2_lcel_langchain_expression_language">4.2. 3.2 LCEL (LangChain Expression Language)</h3>
+<div class="sect3">
+<h4 id="_operador_pipe">4.2.1. Operador Pipe |</h4>
+<div class="paragraph">
+<p>El operador <code>|</code> conecta componentes en secuencia:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python"># Encadenamiento básico
+cadena = prompt | llm | output_parser
+
+# Es equivalente a:
+# 1. Aplica prompt
+# 2. Pasa resultado al llm
+# 3. Pasa resultado al parser</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Ejemplo paso a paso:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from langchain_core.prompts import ChatPromptTemplate
+from langchain_community.llms import Ollama
+from langchain_core.output_parsers import StrOutputParser
+
+# Componente 1: Prompt
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "Eres poeta"),
+    ("user", "Escribe un poema sobre {tema}")
+])
+
+# Componente 2: LLM
+llm = Ollama(model="mistral")
+
+# Componente 3: Parser
+parser = StrOutputParser()
+
+# Conectar con | (pipe)
+cadena = prompt | llm | parser
+
+# Invocar
+resultado = cadena.invoke({"tema": "la lluvia"})
+print(resultado)  # El poema</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>¿Qué pasa internamente?</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><code>prompt | llm</code>:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Input: <code>{"tema": "la lluvia"}</code></p>
+</li>
+<li>
+<p>Prompt genera: <code>"Eres poeta.\nEscribe un poema sobre la lluvia"</code></p>
+</li>
+<li>
+<p>LLM responde: <code>"En gotas cae la lluvia&#8230;&#8203;"</code></p>
+</li>
+<li>
+<p>Output: <code>"En gotas cae la lluvia&#8230;&#8203;"</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><code>(prompt | llm) | parser</code>:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Input: <code>"En gotas cae la lluvia&#8230;&#8203;"</code></p>
+</li>
+<li>
+<p>Parser limpia: <code>"En gotas cae la lluvia&#8230;&#8203;"</code></p>
+</li>
+<li>
+<p>Output: <code>"En gotas cae la lluvia&#8230;&#8203;"</code></p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_runnablelambda_funciones_personalizadas">4.2.2. RunnableLambda - Funciones Personalizadas</h4>
+<div class="paragraph">
+<p>A veces necesitas lógica personalizada:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from langchain_core.runnables import RunnableLambda
+
+# Función simple
+def procesar_entrada(x):
+    return x.upper()
+
+# Convertir función a Runnable
+runnable = RunnableLambda(procesar_entrada)
+
+# Usar en cadena
+cadena = runnable | prompt | llm
+
+resultado = cadena.invoke("hola")
+# Resultado: LLM recibe "HOLA"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Caso más complejo:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from langchain_core.runnables import RunnableLambda
+from datetime import datetime
+
+def enriquecer_entrada(texto):
+    """Agregar contexto a la entrada"""
+    return {
+        "texto": texto,
+        "timestamp": datetime.now().isoformat(),
+        "idioma": "es"
+    }
+
+# Esto entra a prompt como diccionario
+prompt = ChatPromptTemplate.from_messages([
+    ("user", "Texto: {texto}, enviado a las {timestamp}")
+])
+
+cadena = (
+    RunnableLambda(enriquecer_entrada)
+    | prompt
+    | llm
+)
+
+resultado = cadena.invoke("Mi mensaje")</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_runnableparallel_ejecutar_múltiples_cadenas">4.2.3. RunnableParallel - Ejecutar Múltiples Cadenas</h4>
+<div class="paragraph">
+<p>A veces quieres ejecutar varias cosas al mismo tiempo:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from langchain_core.runnables import RunnableParallel, RunnablePassthrough
+
+llm = Ollama(model="mistral")
+
+# Definir múltiples cadenas
+cadena_qa = PromptTemplate.from_template("Q: {pregunta}\nA:") | llm
+cadena_resumen = PromptTemplate.from_template("Resume: {pregunta}") | llm
+cadena_traduccion = PromptTemplate.from_template("Traduce al inglés: {pregunta}") | llm
+
+# Paralelizar
+paralelo = RunnableParallel(
+    respuesta=cadena_qa,
+    resumen=cadena_resumen,
+    traduccion=cadena_traduccion
+)
+
+resultado = paralelo.invoke({"pregunta": "¿Qué es Python?"})
+
+print(resultado)
+# Output:
+# {
+#   "respuesta": "Python es un lenguaje...",
+#   "resumen": "Lenguaje de programación...",
+#   "traduccion": "Python is a programming language..."
+# }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Ventaja:</strong> Las tres cadenas se ejecutan en paralelo, no secuencialmente. Mucho más rápido.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_runnablebranch_lógica_condicional">4.2.4. RunnableBranch - Lógica Condicional</h4>
+<div class="paragraph">
+<p>Tomar decisiones en base a la entrada:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from langchain_core.runnables import RunnableBranch
+
+# Definir ramas
+rama_programacion = PromptTemplate.from_template(
+    "Eres experto en programación. {pregunta}"
+) | llm
+
+rama_escritura = PromptTemplate.from_template(
+    "Eres escritor experto. {pregunta}"
+) | llm
+
+rama_default = PromptTemplate.from_template(
+    "Eres asistente general. {pregunta}"
+) | llm
+
+# Crear rama condicional
+rama_inteligente = RunnableBranch(
+    # Si pregunta contiene "código", usar rama_programacion
+    (lambda x: "código" in x["pregunta"].lower(), rama_programacion),
+    # Si pregunta contiene "escribe", usar rama_escritura
+    (lambda x: "escribe" in x["pregunta"].lower(), rama_escritura),
+    # Si ninguna, usar default
+    rama_default
+)
+
+# Usar
+print(rama_inteligente.invoke({"pregunta": "¿Cómo hago un código en Python?"}))
+# Usa rama_programacion
+
+print(rama_inteligente.invoke({"pregunta": "Escribe un poema"}))
+# Usa rama_escritura</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_métodos_de_invocación">4.2.5. Métodos de Invocación</h4>
+<div class="paragraph">
+<p>Una cadena puede ejecutarse de diferentes formas:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">cadena = prompt | llm
+
+# 1. invoke: Una sola entrada, una sola salida
+resultado = cadena.invoke({"pregunta": "¿Hola?"})
+
+# 2. batch: Múltiples entradas, múltiples salidas (más rápido que invoke)
+resultados = cadena.batch([
+    {"pregunta": "¿Hola?"},
+    {"pregunta": "¿Cómo estás?"},
+    {"pregunta": "¿Qué es Python?"}
+])
+
+# 3. stream: Respuesta en tiempo real (para UI)
+print("Respuesta: ", end="", flush=True)
+for chunk in cadena.stream({"pregunta": "Cuéntame un chiste"}):
+    print(chunk, end="", flush=True)
+
+# 4. ainvoke: Asincrónica (para aplicaciones web)
+import asyncio
+resultado = await cadena.ainvoke({"pregunta": "¿Hola?"})</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>¿Cuándo usar cada uno?</strong></p>
+</div>
+<div class="paragraph">
+<p>| Método | Cuándo | Ventaja
+| <code>invoke</code> | Una sola pregunta | Simple
+| <code>batch</code> | 10+ preguntas | Más rápido
+| <code>stream</code> | Mostrar respuesta en vivo | Usuario ve progreso
+| <code>ainvoke</code> | Aplicación web/Telegram | No bloquea</p>
+</div>
+<hr>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_módulo_4_memoria_memory_conversaciones_con_contexto">5. Módulo 4: Memoria (Memory) - Conversaciones con Contexto</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_4_1_problema_que_resuelve">5.1. 4.1 Problema que Resuelve</h3>
+<div class="sect3">
+<h4 id="_sin_memoria">5.1.1. Sin Memoria</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">Usuario: "Mi nombre es Juan"
+Bot: "Hola Juan"
+
+Usuario: "¿Cuál es mi nombre?"
+Bot: "No tengo información sobre tu nombre"  ❌</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Cada mensaje es independiente. El bot no "recuerda".</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_con_memoria">5.1.2. Con Memoria</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">Usuario: "Mi nombre es Juan"
+Bot: "Hola Juan"
+[Se guarda: Usuario dijo "Mi nombre es Juan"]
+
+Usuario: "¿Cuál es mi nombre?"
+Bot: [Recupera historial] "Tu nombre es Juan" ✅</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>La memoria mantiene un historial que las cadenas pueden usar.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_4_2_conversationbuffermemory">5.2. 4.2 ConversationBufferMemory</h3>
+<div class="paragraph">
+<p>La forma más simple: guarda todo.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from langchain.memory import ConversationBufferMemory
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_community.llms import Ollama
+
+# Crear memoria
+memoria = ConversationBufferMemory(
+    memory_key="chat_history",    # Nombre de la variable
+    return_messages=True           # Devolver como lista de mensajes
+)
+
+# Crear cadena
+llm = Ollama(model="mistral")
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "Eres un asistente útil"),
+    ("placeholder", "{chat_history}"),  # Aquí entra el historial
+    ("user", "{input}")
+])
+cadena = prompt | llm
+
+# Simulación de conversación
+turnos = [
+    "Mi nombre es Juan",
+    "¿Cuál es mi nombre?",
+    "Trabajo en tecnología",
+    "¿En qué trabajas?"
+]
+
+for entrada in turnos:
+    print(f"\nUsuario: {entrada}")
+
+    # Obtener historial actual
+    historial = memoria.load_memory_variables({})
+
+    # Invocar cadena
+    respuesta = cadena.invoke({
+        "chat_history": historial["chat_history"],
+        "input": entrada
+    })
+
+    print(f"Bot: {respuesta}")
+
+    # Guardar en memoria
+    memoria.save_context(
+        {"input": entrada},
+        {"output": respuesta}
+    )</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Resultado esperado:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">Usuario: Mi nombre es Juan
+Bot: Hola Juan, es un placer conocerte.
+Memoria: [HumanMessage("Mi nombre es Juan"), AIMessage("Hola...")]
+
+Usuario: ¿Cuál es mi nombre?
+Bot: Tu nombre es Juan, como mencionaste anteriormente.
+Memoria: [HumanMessage("Mi nombre es Juan"), ..., HumanMessage("¿Cuál..."), AIMessage("Tu nombre es Juan...")]</code></pre>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_limitación_los_tokens">5.2.1. Limitación: Los Tokens</h4>
+<div class="paragraph">
+<p>ConversationBufferMemory guarda TODO. Para conversaciones largas, esto es un problema:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">Conversación de 100 turnos = 5000 tokens
+Al LLM le quedan solo 500 tokens para generar respuesta
+El contexto disponible es limitado</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_4_3_conversationwindowmemory">5.3. 4.3 ConversationWindowMemory</h3>
+<div class="paragraph">
+<p>Guarda solo los últimos N turnos:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from langchain.memory import ConversationBufferWindowMemory
+
+# Mantener solo los últimos 2 turnos
+memoria = ConversationBufferWindowMemory(
+    k=2,                           # Número de turnos
+    memory_key="chat_history",
+    return_messages=True
+)
+
+# El resto del código es igual
+cadena = prompt | llm
+
+for entrada in turnos:
+    historial = memoria.load_memory_variables({})
+    respuesta = cadena.invoke({
+        "chat_history": historial["chat_history"],
+        "input": entrada
+    })
+    memoria.save_context({"input": entrada}, {"output": respuesta})</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Comportamiento:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">Turno 1: "Mi nombre es Juan" → Se guarda
+Turno 2: "¿Cuál es mi nombre?" → Se guarda (total: 2)
+Turno 3: "¿Qué día es hoy?" → Se guarda, turno 1 se olvida
+        Memory now: [Turno 2, Turno 3]
+Turno 4: "¿Cuál es mi nombre?" → Bot no lo sabe (perdió turno 1)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Ventajas:</strong>
+- ✅ Menos tokens
+- ✅ Conversaciones más rápidas
+- ❌ Olvida información antigua</p>
+</div>
+<div class="sect3">
+<h4 id="_conversationsummarymemory">5.3.1. ConversationSummaryMemory</h4>
+<div class="paragraph">
+<p>Resume la conversación automáticamente:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from langchain.memory import ConversationSummaryMemory
+from langchain_community.llms import Ollama
+
+llm = Ollama(model="mistral")
+
+memoria = ConversationSummaryMemory(
+    llm=llm,
+    buffer="",
+    memory_key="chat_history"
+)
+
+# El resto funciona igual
+cadena = prompt | llm
+
+# A medida que agregas mensajes, se resumen automáticamente
+memoria.save_context(
+    {"input": "Soy ingeniero, trabajo en Madrid, me llamo Juan"},
+    {"output": "Entendido, eres ingeniero en Madrid"}
+)
+
+# Memoria en lugar de todo el texto:
+historial = memoria.load_memory_variables({})
+print(historial)
+# Output: "Usuario es ingeniero, trabaja en Madrid, se llama Juan"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Ventajas:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>✅ Usa pocos tokens</p>
+</li>
+<li>
+<p>✅ Mantiene información importante</p>
+</li>
+<li>
+<p>❌ Requiere un LLM (más lento)</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_conversationtokenbuffermemory">5.3.2. ConversationTokenBufferMemory</h4>
+<div class="paragraph">
+<p>Limita por tokens, no por turnos:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from langchain.memory import ConversationTokenBufferMemory
+
+memoria = ConversationTokenBufferMemory(
+    llm=llm,
+    max_token_limit=100,  # Máximo 100 tokens
+    memory_key="chat_history",
+    return_messages=True
+)
+
+# La memoria guarda lo máximo que cabe en 100 tokens</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Matriz de selección:</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Tipo</th>
+<th class="tableblock halign-left valign-top">Tokens</th>
+<th class="tableblock halign-left valign-top">Info Completa</th>
+<th class="tableblock halign-left valign-top">Mejor Para</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BufferMemory</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Alto</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sí</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Conversaciones cortas</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">WindowMemory</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bajo</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Últimos N turnos</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Conversaciones largas rápidas</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SummaryMemory</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bajo</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Resumen</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Cuando necesitas contexto completo sin tokens</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TokenBufferMemory</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Exacto</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Máximo posible</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Límite de tokens estricto</p></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_módulo_5_agentes_agents_sistemas_inteligentes_y_autónomos">6. Módulo 5: Agentes (Agents) - Sistemas Inteligentes y Autónomos</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_5_1_qué_es_un_agente">6.1. 5.1 ¿Qué es un Agente?</h3>
+<div class="sect3">
+<h4 id="_comparación_cadena_vs_agente">6.1.1. Comparación: Cadena vs Agente</h4>
+<div class="paragraph">
+<p><strong>Cadena:</strong> Flujo predeterminado</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">[Prompt] → [LLM] → [Output] → [Usuario]
+
+Siempre la misma ruta</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Agente:</strong> Toma decisiones</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">        ┌─ ¿Necesito usar herramientas?
+[Pensar] ─ Sí → [Seleccionar herramienta] → [Ejecutar]
+        └─ No → [Responder directamente]
+
+La ruta depende de la pregunta</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_ejemplo_real">6.1.2. Ejemplo Real</h4>
+<div class="paragraph">
+<p><strong>Usuario:</strong> "¿Cuánto es 15 * 27 y dime la respuesta en texto?"</p>
+</div>
+<div class="paragraph">
+<p><strong>Cadena (no puede):</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">LLM: "15 * 27 = 405" (intenta calcular, puede fallar)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Agente (sí puede):</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">Pensamiento: "Necesito calcular 15 * 27"
+Acción: Uso herramienta "Multiplicar"
+Observación: 405
+Pensamiento: "Ahora debo convertir a texto"
+Acción: Generar respuesta
+Respuesta Final: "El resultado es cuatrocientos cinco"</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_5_2_componentes_de_un_agente">6.2. 5.2 Componentes de un Agente</h3>
+<div class="paragraph">
+<p>Un agente necesita:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>LLM</strong>: Para pensar y decidir</p>
+</li>
+<li>
+<p><strong>Herramientas (Tools)</strong>: Para actuar</p>
+</li>
+<li>
+<p><strong>Memoria</strong>: Para recordar contexto (opcional)</p>
+</li>
+<li>
+<p><strong>Prompt</strong>: Instrucciones sobre cómo actuar</p>
+</li>
+</ol>
+</div>
+<div class="sect3">
+<h4 id="_creando_herramientas_con_tool">6.2.1. Creando Herramientas con @tool</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from langchain_core.tools import tool
+
+# Forma simple: decorador @tool
+@tool
+def multiplicar(a: int, b: int) -&gt; int:
+    """Multiplica dos números.
+
+    Args:
+        a: Primer número
+        b: Segundo número
+    """
+    return a * b
+
+# El decorador automáticamente convierte la función a una Tool
+print(multiplicar.name)           # "multiplicar"
+print(multiplicar.description)   # "Multiplica dos números..."</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Ejemplo más complejo:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">@tool
+def buscar_informacion(tema: str) -&gt; str:
+    """Busca información sobre un tema.
+
+    Realiza una búsqueda en Wikipedia sobre el tema proporcionado.
+    """
+    # En un caso real, usarías una API
+    resultados = {
+        "Python": "Lenguaje de programación creado por Guido van Rossum",
+        "JavaScript": "Lenguaje para desarrollo web",
+        "Rust": "Lenguaje seguro y rápido"
+    }
+    return resultados.get(tema, "No encontrado")
+
+# Usar la herramienta
+resultado = buscar_informacion.invoke({"tema": "Python"})
+print(resultado)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_creando_agentes_con_create_react_agent">6.2.2. Creando Agentes con create_react_agent</h4>
+<div class="paragraph">
+<p>ReAct = Reasoning + Acting (Pensar + Actuar)</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from langchain.agents import create_react_agent, AgentExecutor
+from langchain_core.prompts import PromptTemplate
+from langchain_community.llms import Ollama
+from langchain_core.tools import tool
+
+# Paso 1: Definir herramientas
+@tool
+def sumar(a: int, b: int) -&gt; int:
+    """Suma dos números"""
+    return a + b
+
+@tool
+def multiplicar(a: int, b: int) -&gt; int:
+    """Multiplica dos números"""
+    return a * b
+
+herramientas = [sumar, multiplicar]
+
+# Paso 2: Crear el agente
+llm = Ollama(model="mistral")
+
+prompt_template = """Eres un asistente que puede usar herramientas matemáticas.
+Tienes acceso a las siguientes herramientas:
+
+{tools}
+
+Usa el siguiente formato exactamente:
+
+Question: la pregunta que debes responder
+Thought: piensa en qué hacer
+Action: la acción a tomar, debe ser una de [{tool_names}]
+Action Input: el input para la acción (como JSON)
+Observation: el resultado de la acción
+... (repite Thought/Action/Observation si es necesario)
+Thought: ya sé la respuesta final
+Final Answer: la respuesta final
+
+Comienza!
+
+Question: {{input}}"""
+
+prompt = PromptTemplate.from_template(prompt_template)
+
+agente = create_react_agent(llm, herramientas, prompt)
+
+# Paso 3: Crear executor
+executor = AgentExecutor(
+    agent=agente,
+    tools=herramientas,
+    verbose=True,           # Ver pasos intermedios
+    max_iterations=5        # Máximo de pasos antes de parar
+)
+
+# Paso 4: Usar el agente
+resultado = executor.invoke({
+    "input": "¿Cuánto es (5 + 3) * 2?"
+})
+
+print(resultado)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Salida esperada (con verbose=True):</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">&gt; Entering new AgentExecutor chain...
+Thought: Primero necesito sumar 5 + 3
+Action: sumar
+Action Input: {"a": 5, "b": 3}
+Observation: 8
+Thought: Ahora necesito multiplicar 8 * 2
+Action: multiplicar
+Action Input: {"a": 8, "b": 2}
+Observation: 16
+Thought: Ya tengo la respuesta final
+Final Answer: (5 + 3) * 2 = 16
+
+&gt; Finished AgentExecutor chain.</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_agentexecutor_configuración_avanzada">6.2.3. AgentExecutor - Configuración Avanzada</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">executor = AgentExecutor(
+    agent=agente,
+    tools=herramientas,
+
+    # Control de ejecución
+    verbose=True,                       # Ver pasos
+    max_iterations=10,                  # Máximo de iteraciones
+    early_stopping_method="force",      # Detener si supera max
+
+    # Manejo de errores
+    handle_parsing_errors=True,        # No fallar si LLM da formato raro
+
+    # Memoria
+    memory=memoria,                     # Conversación con contexto
+
+    # Logging
+    return_all_intermiate_steps=True   # Devolver todos los pasos
+)</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_módulo_6_herramientas_tools_extendiendo_capacidades">7. Módulo 6: Herramientas (Tools) - Extendiendo Capacidades</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_6_1_por_qué_herramientas">7.1. 6.1 ¿Por Qué Herramientas?</h3>
+<div class="paragraph">
+<p>Los LLMs solo generan texto. Las herramientas les permiten:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Usar calculadoras (sin errores aritméticos)</p>
+</li>
+<li>
+<p>Consultar APIs (información actualizada)</p>
+</li>
+<li>
+<p>Acceder a BBDDs (datos reales)</p>
+</li>
+<li>
+<p>Ejecutar código (acciones complejas)</p>
+</li>
+</ul>
+</div>
+<div class="sect3">
+<h4 id="_herramienta_simple">7.1.1. Herramienta Simple</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from langchain_core.tools import tool
+
+@tool
+def obtener_clima(ciudad: str) -&gt; str:
+    """Obtiene el clima actual de una ciudad.
+
+    Args:
+        ciudad: El nombre de la ciudad
+
+    Returns:
+        Descripción del clima
+    """
+    # En la realidad, consultarías una API
+    climas = {
+        "Madrid": "Soleado, 25°C",
+        "Barcelona": "Nublado, 22°C",
+        "Valencia": "Lluvioso, 18°C"
+    }
+    return climas.get(ciudad, "Ciudad no encontrada")
+
+# Usar directamente
+clima = obtener_clima("Madrid")
+print(clima)  # "Soleado, 25°C"</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_herramienta_con_validación">7.1.2. Herramienta con Validación</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from pydantic import BaseModel, Field, validator
+from langchain_core.tools import tool
+
+class ParametrosCalculadora(BaseModel):
+    a: float = Field(description="Primer número", ge=-1000, le=1000)
+    b: float = Field(description="Segundo número", ge=-1000, le=1000)
+
+    @validator('a', 'b')
+    def validar_rango(cls, v):
+        if not (-1000 &lt;= v &lt;= 1000):
+            raise ValueError("Los números deben estar entre -1000 y 1000")
+        return v
+
+@tool(args_schema=ParametrosCalculadora)
+def sumar(a: float, b: float) -&gt; float:
+    """Suma dos números validados"""
+    return a + b
+
+# El agente no puede pasar valores inválidos</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_herramienta_asincrónica">7.1.3. Herramienta Asincrónica</h4>
+<div class="paragraph">
+<p>Para operaciones que tardan (APIs, BBDDs):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import asyncio
+from langchain_core.tools import tool
+
+@tool
+async def buscar_en_internet(query: str) -&gt; str:
+    """Busca un tema en la web"""
+    # Simular búsqueda asincrónica
+    await asyncio.sleep(1)  # Simula latencia de red
+    return f"Resultados para '{query}': ..."
+
+# En un agente async
+async def ejecutar_agente_async():
+    resultado = await executor.ainvoke({
+        "input": "Busca información sobre Python"
+    })
+    return resultado</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_módulo_7_recuperación_de_documentos_retrieval">8. Módulo 7: Recuperación de Documentos (Retrieval)</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_7_1_problema_llms_no_saben_sobre_tus_datos">8.1. 7.1 Problema: LLMs no saben sobre tus datos</h3>
+<div class="paragraph">
+<p>El LLM fue entrenado con datos públicos de internet. No sabe de:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Tu documentación privada</p>
+</li>
+<li>
+<p>Tu base de conocimiento interna</p>
+</li>
+<li>
+<p>Archivos PDF/Word específicos</p>
+</li>
+<li>
+<p>Datos de tu empresa</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Solución: RAG (Retrieval Augmented Generation)</strong></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_7_2_embeddings_convertir_texto_a_vectores">8.2. 7.2 Embeddings - Convertir Texto a Vectores</h3>
+<div class="paragraph">
+<p>Un embedding es una representación numérica del significado del texto.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">Texto: "Python es un lenguaje de programación"
+Embedding: [0.234, -0.123, 0.567, 0.890, ..., 0.345]  (1536 números)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>¿Para qué?</strong> Para medir similitud entre textos usando matemática vectorial:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">Preguntas: "¿Qué es Python?"
+Embedding pregunta: [0.240, -0.125, 0.560, 0.895, ..., 0.340]
+
+Documento: "Python es un lenguaje..."
+Embedding documento: [0.234, -0.123, 0.567, 0.890, ..., 0.345]
+
+Similitud = 99.5%  ← Están relacionados!</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from langchain_community.embeddings import OllamaEmbeddings
+
+# Crear embeddings
+embeddings = OllamaEmbeddings(
+    model="mistral",
+    base_url="http://localhost:11434"
+)
+
+# Convertir texto a vector
+vector1 = embeddings.embed_query("Python es un lenguaje")
+vector2 = embeddings.embed_query("JavaScript es un lenguaje")
+
+# Comparar
+from sklearn.metrics.pairwise import cosine_similarity
+import numpy as np
+
+similaridad = cosine_similarity(
+    [vector1],
+    [vector2]
+)[0][0]
+
+print(f"Similaridad: {similaridad:.2%}")  # Alto porcentaje</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_7_3_vector_stores_guardar_documentos_para_búsqueda">8.3. 7.3 Vector Stores - Guardar Documentos para Búsqueda</h3>
+<div class="sect3">
+<h4 id="_faiss_local_rápido">8.3.1. FAISS (Local, Rápido)</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from langchain_community.vectorstores import FAISS
+from langchain.schema import Document
+from langchain_community.embeddings import OllamaEmbeddings
+from langchain_text_splitters import CharacterTextSplitter
+
+# Paso 1: Preparar documentos
+textos = [
+    "Python es un lenguaje de programación interpretado",
+    "JavaScript se usa para desarrollo web",
+    "Rust es un lenguaje seguro y rápido",
+    "Java se usa en aplicaciones empresariales"
+]
+
+documentos = [Document(page_content=texto) for texto in textos]
+
+# Paso 2: Crear embeddings
+embeddings = OllamaEmbeddings(model="mistral")
+
+# Paso 3: Crear vector store
+vector_store = FAISS.from_documents(documentos, embeddings)
+
+# Paso 4: Buscar documentos similares
+query = "¿Qué es Python?"
+resultados = vector_store.similarity_search(query, k=2)
+
+for resultado in resultados:
+    print(f"- {resultado.page_content}")</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Salida:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">- Python es un lenguaje de programación interpretado
+- JavaScript se usa para desarrollo web</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_búsqueda_con_scores">8.3.2. Búsqueda con Scores</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python"># Ver puntuación de similaridad
+resultados = vector_store.similarity_search_with_relevance_scores(
+    "¿Qué es Python?",
+    k=3
+)
+
+for documento, score in resultados:
+    print(f"({score:.2%}) {documento.page_content}")</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Salida:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">(98.5%) Python es un lenguaje de programación interpretado
+(42.1%) JavaScript se usa para desarrollo web
+(38.9%) Rust es un lenguaje seguro y rápido</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_mmr_resultados_diversos">8.3.3. MMR - Resultados Diversos</h4>
+<div class="paragraph">
+<p>A veces quieres variedad, no solo lo más similar:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python"># Sin MMR: los 3 resultados serían muy similares
+resultados = vector_store.similarity_search("lenguaje", k=3)
+
+# Con MMR: resultados similares pero diversos
+resultados = vector_store.max_marginal_relevance_search(
+    "lenguaje",
+    k=3,
+    fetch_k=10  # Busca 10, devuelve 3 más diversos
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Diferencia:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">Sin MMR:  [99% similar, 98% similar, 97% similar]
+Con MMR:  [99% similar, 65% similar, 50% similar]
+          (Más variedad)</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_módulo_8_rag_retrieval_augmented_generation">9. Módulo 8: RAG (Retrieval Augmented Generation)</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_8_1_qué_es_rag">9.1. 8.1 ¿Qué es RAG?</h3>
+<div class="paragraph">
+<p>RAG es un patrón que combina:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>R (Retrieve)</strong>: Buscar documentos relevantes</p>
+</li>
+<li>
+<p><strong>A (Augment)</strong>: Incluirlos en el prompt</p>
+</li>
+<li>
+<p><strong>G (Generate)</strong>: El LLM genera respuesta basada en documentos</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">Pregunta: "¿Qué dice el documento X sobre Y?"
+
+[Retrieve]
+Vector store → Busca documentos similares a "Y"
+→ Devuelve: [Doc1, Doc2, Doc3]
+
+[Augment]
+Prompt:
+"Based on these documents:
+{Doc1}
+{Doc2}
+{Doc3}
+
+Answer: {pregunta}"
+
+[Generate]
+LLM → Genera respuesta</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_8_2_rag_simple">9.2. 8.2 RAG Simple</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from langchain.chains import RetrievalQA
+from langchain_community.llms import Ollama
+from langchain_community.vectorstores import FAISS
+from langchain_community.embeddings import OllamaEmbeddings
+from langchain.schema import Document
+
+# Preparar documentos
+textos = [
+    "La Revolución Francesa fue un movimiento político y social (1789-1799)",
+    "Causó cambios fundamentales en la estructura de la sociedad europea",
+    "Tuvo líderes como Robespierre, Danton y Marat",
+    "Resultó en la Declaration of Rights of Man and Citizen"
+]
+
+documentos = [Document(page_content=texto) for texto in textos]
+
+# Crear vector store
+embeddings = OllamaEmbeddings(model="mistral")
+vector_store = FAISS.from_documents(documentos, embeddings)
+
+# Crear cadena RAG
+llm = Ollama(model="mistral")
+
+rag_chain = RetrievalQA.from_chain_type(
+    llm=llm,
+    chain_type="stuff",  # Tipo de cadena (explicado abajo)
+    retriever=vector_store.as_retriever(search_kwargs={"k": 2})
+)
+
+# Usar
+pregunta = "¿Quién fue Robespierre?"
+respuesta = rag_chain.invoke({"query": pregunta})
+
+print(respuesta["result"])</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>¿Qué pasa internamente?</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Pregunta: "¿Quién fue Robespierre?"</p>
+</li>
+<li>
+<p>Vector store busca documentos similares → Devuelve Docs 1 y 3</p>
+</li>
+<li>
+<p>Prompt se crea:</p>
+<div class="listingblock">
+<div class="content">
+<pre>Basado en estos documentos:
+1. La Revolución Francesa fue...
+3. Tuvo líderes como Robespierre...
+
+Pregunta: ¿Quién fue Robespierre?
+Respuesta:</pre>
+</div>
+</div>
+</li>
+<li>
+<p>LLM genera respuesta completa</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_8_3_tipos_de_cadenas_rag">9.3. 8.3 Tipos de Cadenas RAG</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python"># stuff: Incluir todos los docs en un prompt
+# Pros: Simple, rápido
+# Contras: Falla si docs son muy largos
+rag_stuff = RetrievalQA.from_chain_type(
+    llm=llm,
+    chain_type="stuff",
+    retriever=vector_store.as_retriever()
+)
+
+# map_reduce: Procesar cada doc por separado, luego resumir
+# Pros: Maneja documentos largos
+# Contras: Más lento
+rag_map_reduce = RetrievalQA.from_chain_type(
+    llm=llm,
+    chain_type="map_reduce",
+    retriever=vector_store.as_retriever()
+)
+
+# refine: Mejorar respuesta iterativamente
+# Pros: Respuesta muy completa
+# Contras: Muy lento
+rag_refine = RetrievalQA.from_chain_type(
+    llm=llm,
+    chain_type="refine",
+    retriever=vector_store.as_retriever()
+)</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_módulo_9_evaluación_debugging_y_testing">10. Módulo 9: Evaluación, Debugging y Testing</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_9_1_debugging_con_verbose_mode">10.1. 9.1 Debugging con Verbose Mode</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from langchain.agents import AgentExecutor
+
+executor = AgentExecutor(
+    agent=agente,
+    tools=herramientas,
+    verbose=True  # Activa debugging
+)
+
+resultado = executor.invoke({"input": "¿Cuánto es 5 * 3?"})
+
+# Output muestra cada paso:
+# &gt; Entering AgentExecutor chain...
+# Thought: Necesito multiplicar 5 * 3
+# Action: multiplicar
+# ...</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_9_2_logging_estructurado">10.2. 9.2 Logging Estructurado</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import logging
+import json
+from datetime import datetime
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+
+logger = logging.getLogger("langchain_app")
+
+def log_invoke(entrada, salida, tiempo):
+    log_data = {
+        "tipo": "invoke",
+        "timestamp": datetime.now().isoformat(),
+        "input": entrada,
+        "output_length": len(salida),
+        "tiempo_ms": tiempo
+    }
+    logger.info(json.dumps(log_data))
+
+# Usar
+import time
+
+inicio = time.time()
+resultado = cadena.invoke({"pregunta": "¿Hola?"})
+tiempo = (time.time() - inicio) * 1000
+
+log_invoke("¿Hola?", resultado, tiempo)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_9_3_testing">10.3. 9.3 Testing</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">def test_llm_basico():
+    """Test que el LLM responde"""
+    llm = Ollama(model="mistral")
+    respuesta = llm.invoke("¿Cuánto es 2+2?")
+
+    assert respuesta is not None
+    assert len(respuesta) &gt; 0
+    assert "4" in respuesta  # Esperamos ver "4" en la respuesta
+
+def test_cadena():
+    """Test que la cadena funciona"""
+    llm = Ollama(model="mistral")
+    prompt = PromptTemplate.from_template("Saluda a {nombre}")
+    cadena = prompt | llm
+
+    resultado = cadena.invoke({"nombre": "Juan"})
+    assert "Juan" in resultado
+    assert "Hola" in resultado or "hola" in resultado
+
+def test_memoria():
+    """Test que memoria retiene información"""
+    memoria = ConversationBufferMemory()
+
+    memoria.save_context(
+        {"input": "Me llamo Juan"},
+        {"output": "Hola Juan"}
+    )
+
+    historial = memoria.load_memory_variables({})
+    assert len(historial['chat_history']) &gt; 0
+    assert "Juan" in historial['chat_history'][0].content
+
+# Ejecutar tests
+if __name__ == "__main__":
+    test_llm_basico()
+    print("✓ test_llm_basico pasó")
+
+    test_cadena()
+    print("✓ test_cadena pasó")
+
+    test_memoria()
+    print("✓ test_memoria pasó")
+
+    print("\n✅ Todos los tests pasaron")</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_módulo_10_patrones_y_arquitectura">11. Módulo 10: Patrones y Arquitectura</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_10_1_patrón_sequential_secuencial">11.1. 10.1 Patrón Sequential (Secuencial)</h3>
+<div class="paragraph">
+<p>Ejecutar cadenas una tras otra, cada una refinando el resultado:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python"># Paso 1: Clasificar el tipo de pregunta
+clasificador = PromptTemplate.from_template(
+    "¿Es esta pregunta técnica o general? Pregunta: {pregunta}"
+) | llm
+
+# Paso 2: Responder según clasificación
+respondedor_tecnico = PromptTemplate.from_template(
+    "Como experto técnico, responde: {pregunta}"
+) | llm
+
+respondedor_general = PromptTemplate.from_template(
+    "Como asistente general, responde: {pregunta}"
+) | llm
+
+def pipeline(pregunta):
+    # Paso 1: Clasificar
+    clasificacion = clasificador.invoke({"pregunta": pregunta})
+
+    # Paso 2: Responder según clasificación
+    if "técnica" in clasificacion.lower():
+        respuesta = respondedor_tecnico.invoke({"pregunta": pregunta})
+    else:
+        respuesta = respondedor_general.invoke({"pregunta": pregunta})
+
+    return respuesta
+
+resultado = pipeline("¿Cómo implemento decoradores en Python?")</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_10_2_patrón_branching_bifurcación">11.2. 10.2 Patrón Branching (Bifurcación)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from langchain_core.runnables import RunnableBranch
+
+rama_programacion = PromptTemplate.from_template(
+    "Eres experto en programación. {pregunta}"
+) | llm
+
+rama_general = PromptTemplate.from_template(
+    "Eres asistente general. {pregunta}"
+) | llm
+
+rama_branch = RunnableBranch(
+    (lambda x: "código" in x["pregunta"].lower() or "programa" in x["pregunta"].lower(),
+     rama_programacion),
+    rama_general
+)
+
+resultado = rama_branch.invoke({
+    "pregunta": "¿Cómo escribo un código en Python?"
+})</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_10_3_patrón_fallback_respaldo">11.3. 10.3 Patrón Fallback (Respaldo)</h3>
+<div class="paragraph">
+<p>Si una cadena falla, usa una respaldo:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">cadena_principal = PromptTemplate.from_template(
+    "Eres un experto. {pregunta}"
+) | llm
+
+cadena_respaldo = PromptTemplate.from_template(
+    "Responde simplemente: {pregunta}"
+) | llm
+
+cadena_segura = cadena_principal.with_fallbacks([cadena_respaldo])
+
+# Si principal falla, usa respaldo
+resultado = cadena_segura.invoke({"pregunta": "..."})</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_módulo_11_casos_de_uso_prácticos">12. Módulo 11: Casos de Uso Prácticos</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_11_1_chatbot_conversacional">12.1. 11.1 Chatbot Conversacional</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from langchain.memory import ConversationBufferMemory
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_community.llms import Ollama
+
+class ChatAssistant:
+    def __init__(self):
+        self.llm = Ollama(model="mistral")
+        self.memoria = ConversationBufferMemory(return_messages=True)
+        self.prompt = ChatPromptTemplate.from_messages([
+            ("system", "Eres un asistente amable y útil"),
+            ("placeholder", "{chat_history}"),
+            ("user", "{input}")
+        ])
+        self.cadena = self.prompt | self.llm
+
+    def chat(self, user_input):
+        historial = self.memoria.load_memory_variables({})
+        respuesta = self.cadena.invoke({
+            "chat_history": historial['chat_history'],
+            "input": user_input
+        })
+        self.memoria.save_context(
+            {"input": user_input},
+            {"output": respuesta}
+        )
+        return respuesta
+
+    def run(self):
+        print("Chat iniciado (escribe 'salir' para terminar)")
+        while True:
+            usuario_input = input("\nTú: ").strip()
+            if usuario_input.lower() in ["salir", "exit"]:
+                break
+            respuesta = self.chat(usuario_input)
+            print(f"Bot: {respuesta}")
+
+# Usar
+if __name__ == "__main__":
+    asistente = ChatAssistant()
+    asistente.run()</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_11_2_sistema_rag">12.2. 11.2 Sistema RAG</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python"># Este es el ejemplo de RAG que vimos en Módulo 8
+# Se implementa completo en ejemplos/langchain/06_rag_system.py</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_11_3_agente_autónomo">12.3. 11.3 Agente Autónomo</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python"># Implementado en ejemplos/langchain/04_agents.py
+# El agente puede:
+# - Tomar decisiones
+# - Usar múltiples herramientas
+# - Razonar sobre problemas complejos</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_módulo_12_producción_y_optimización">13. Módulo 12: Producción y Optimización</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_12_1_error_handling">13.1. 12.1 Error Handling</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import logging
+from typing import Optional
+
+logger = logging.getLogger(__name__)
+
+def invocar_seguro(cadena, inputs: dict) -&gt; Optional[str]:
+    """Invocar cadena con manejo completo de errores"""
+
+    try:
+        resultado = cadena.invoke(inputs)
+        logger.info(f"✓ Éxito: {len(resultado)} caracteres")
+        return resultado
+
+    except TimeoutError:
+        logger.error("⏱️  Timeout: La cadena tardó más de 30 segundos")
+        return "Disculpa, el sistema tardó demasiado. Por favor intenta de nuevo."
+
+    except ValueError as e:
+        logger.error(f"❌ Error de validación: {e}")
+        return f"Error: Input inválido. {str(e)}"
+
+    except ConnectionError as e:
+        logger.error(f"🔌 Error de conexión: {e}")
+        return "No se pudo conectar al servidor. Por favor intenta más tarde."
+
+    except Exception as e:
+        logger.critical(f"💥 Error inesperado: {e}", exc_info=True)
+        return "Error inesperado. El equipo ha sido notificado."
+
+# Usar
+resultado = invocar_seguro(cadena, {"pregunta": "..."})
+print(resultado)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_12_2_caching">13.2. 12.2 Caching</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from langchain.cache import InMemoryCache
+import langchain
+
+# Activar caching global
+langchain.llm_cache = InMemoryCache()
+
+llm = Ollama(model="mistral")
+
+# Primera llamada: realiza cálculo
+import time
+
+inicio = time.time()
+respuesta1 = llm.invoke("¿Cuál es la capital de Francia?")
+tiempo1 = time.time() - inicio
+
+# Segunda llamada: devuelve del caché (instantáneo)
+inicio = time.time()
+respuesta2 = llm.invoke("¿Cuál es la capital de Francia?")
+tiempo2 = time.time() - inicio
+
+print(f"Primera: {tiempo1:.2f}s")
+print(f"Segunda (caché): {tiempo2:.4f}s")
+print(f"Mejora: {tiempo1/tiempo2:.0f}x más rápido")</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_12_3_batch_processing">13.3. 12.3 Batch Processing</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python"># Procesar múltiples items es más rápido que uno a uno
+preguntas = [
+    {"pregunta": "¿Qué es Python?"},
+    {"pregunta": "¿Qué es JavaScript?"},
+    {"pregunta": "¿Qué es Rust?"},
+    {"pregunta": "¿Qué es Go?"},
+]
+
+# Forma lenta (invoke 4 veces)
+# respuestas = [cadena.invoke(p) for p in preguntas]
+
+# Forma rápida (batch)
+respuestas = cadena.batch(preguntas)
+
+for pregunta, respuesta in zip(preguntas, respuestas):
+    print(f"{pregunta['pregunta']}: {respuesta[:50]}...")</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_12_4_asyncawait_para_concurrencia">13.4. 12.4 Async/Await para Concurrencia</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import asyncio
+
+async def procesar_asincrono():
+    """Procesar múltiples requests concurrentemente"""
+
+    # Crear tareas concurrentes
+    tareas = [
+        cadena.ainvoke({"pregunta": "¿Qué es Python?"}),
+        cadena.ainvoke({"pregunta": "¿Qué es JavaScript?"}),
+        cadena.ainvoke({"pregunta": "¿Qué es Rust?"}),
+    ]
+
+    # Esperar a que todas terminen
+    resultados = await asyncio.gather(*tareas)
+    return resultados
+
+# Ejecutar
+resultados = asyncio.run(procesar_asincrono())
+for resultado in resultados:
+    print(resultado[:100] + "...")</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_módulo_13_proyecto_final_integrado">14. Módulo 13: Proyecto Final Integrado</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_13_1_arquitectura_de_sistema_completo">14.1. 13.1 Arquitectura de Sistema Completo</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">┌────────────────┐
+│   Usuario      │
+│   (CLI/API)    │
+└────────┬───────┘
+         │
+┌────────▼──────────────┐
+│    FastAPI Server     │
+│ /chat, /ask, /health  │
+└────────┬──────────────┘
+         │
+    ┌────┴────────────────┐
+    │                     │
+┌───▼────┐  ┌──────┐  ┌──▼───┐
+│  Chat  │  │Agent │  │ RAG  │
+│ Memoria│  │Tools │  │Search│
+└───┬────┘  └──┬───┘  └──┬───┘
+    │         │        │
+    └─────────┼────────┘
+              │
+     ┌────────▼─────────┐
+     │  Ollama LLM      │
+     │ (mistral/etc)    │
+     └──────────────────┘</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_13_2_implementación_del_proyecto_final">14.2. 13.2 Implementación del Proyecto Final</h3>
+<div class="paragraph">
+<p>El proyecto final está completamente implementado en:
+<strong>ejemplos/langchain/16_project_final.py</strong></p>
+</div>
+<div class="paragraph">
+<p>Características:
+- SmartAssistant class que integra Chat + RAG + Agent
+- ConfigManager para configuración centralizada
+- Proper error handling y logging
+- Demo funcional lista para ejecutar</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># Para ejecutar
+cd ejemplos/langchain
+python 16_project_final.py</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_conclusión_y_próximos_pasos">15. Conclusión y Próximos Pasos</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Has aprendido:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>✅ Conceptos fundamentales (LLMs, Prompts, Output Parsers)</p>
+</li>
+<li>
+<p>✅ Composición de cadenas con LCEL</p>
+</li>
+<li>
+<p>✅ Memoria para conversaciones contextuales</p>
+</li>
+<li>
+<p>✅ Agentes autónomos con herramientas</p>
+</li>
+<li>
+<p>✅ RAG para búsqueda en documentos</p>
+</li>
+<li>
+<p>✅ Patrones de producción (error handling, logging)</p>
+</li>
+<li>
+<p>✅ Arquitectura de sistemas complejos</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Próximas acciones:</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Ejecuta todos los ejemplos: <code>python 01_basic_llm.py</code> a <code>16_project_final.py</code></p>
+</li>
+<li>
+<p>Modifica los ejemplos para tus casos de uso</p>
+</li>
+<li>
+<p>Construye tu primer proyecto</p>
+</li>
+<li>
+<p>Contribuye con mejoras a LangChain</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Recursos:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Documentación oficial: <a href="https://docs.langchain.com" class="bare">https://docs.langchain.com</a></p>
+</li>
+<li>
+<p>GitHub: <a href="https://github.com/langchain-ai/langchain" class="bare">https://github.com/langchain-ai/langchain</a></p>
+</li>
+<li>
+<p>Discord: <a href="https://discord.gg/langchain" class="bare">https://discord.gg/langchain</a></p>
+</li>
+<li>
+<p>Stack Overflow: tag <code>langchain</code></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2025-11-15 17:30:57 +0100
+</div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>
+if (!hljs.initHighlighting.called) {
+  hljs.initHighlighting.called = true
+  ;[].slice.call(document.querySelectorAll('pre.highlight > code[data-lang]')).forEach(function (el) { hljs.highlightBlock(el) })
+}
+</script>
+</body>
+</html>

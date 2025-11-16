@@ -1,0 +1,63 @@
+{
+  "name": "M7.1 - Webhook Básico",
+  "description": "Crear un webhook que reciba datos POST",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "webhook-recibidor",
+        "method": "POST",
+        "options": {}
+      },
+      "id": "webhook",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [100, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Procesar datos recibidos del webhook\nconst data = $input.first().json;\nreturn {\n  json: {\n    mensaje: 'Datos recibidos correctamente',\n    datos_originales: data,\n    timestamp: new Date().toISOString(),\n    campos_recibidos: Object.keys(data),\n    procesado: true\n  }\n};"
+      },
+      "id": "code",
+      "name": "Code - Procesar",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [300, 300]
+    },
+    {
+      "parameters": {
+        "responseCode": "200",
+        "responseData": "{{ JSON.stringify($input.first().json) }}"
+      },
+      "id": "response",
+      "name": "HTTP Response",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [500, 300]
+    }
+  ],
+  "connections": {
+    "webhook": {
+      "main": [
+        [
+          {
+            "node": "code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "code": {
+      "main": [
+        [
+          {
+            "node": "response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

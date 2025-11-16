@@ -1,0 +1,26 @@
+
+    # Guía de RAG (Retrieval-Augmented Generation)
+
+    ## ¿Qué es RAG?
+
+    RAG es una técnica que combina búsqueda de información con generación de texto.
+    Permite que los modelos de lenguaje accedan a información externa relevante
+    antes de generar una respuesta.
+
+    ## Ventajas de RAG
+
+    1. Precisión mejorada: Las respuestas se basan en datos reales
+    2. Información actualizada: Acceso a datos recientes
+    3. Datos privados: Información corporativa no se expone
+    4. Trazabilidad: Se pueden citar las fuentes
+
+    ## Arquitectura
+
+    El flujo típico es:
+    1. Cargar documento
+    2. Dividir en chunks
+    3. Crear embeddings
+    4. Almacenar en vector DB
+    5. Recuperar documentos relevantes
+    6. Generar respuesta con contexto
+    

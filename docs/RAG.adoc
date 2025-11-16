@@ -1,0 +1,1248 @@
+= Curso de RAG (Retrieval-Augmented Generation)
+:doctype: book
+:toc:
+:toclevels: 4
+:sectnums:
+:icons: font
+:source-highlighter: highlight.js
+:highlightjsdir: https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0
+:highlightjs-theme: atom-one-light
+:data-uri:
+
+== Introducción
+
+Este curso cubre la implementación completa de sistemas RAG (Retrieval-Augmented Generation) usando LangChain con modelos locales en Ollama. Aprenderás a construir aplicaciones que combinan búsqueda de información con generación de texto inteligente.
+
+== Módulo 1: Fundamentos de RAG
+
+=== 1.1 ¿Qué es RAG?
+
+**Concepto Básico:** RAG es una arquitectura que combina dos componentes:
+
+1. **Retrieval** (Recuperación): Búsqueda de documentos relevantes en una base de datos
+2. **Augmented Generation** (Generación Aumentada): Uso de esos documentos para generar respuestas contextualizadas
+
+**Problema que resuelve:**
+
+- Los LLMs tienen conocimiento limitado al momento de entrenamiento
+- No tienen acceso a información privada o reciente
+- Pueden "alucinar" o generar respuestas incorrectas
+
+**Solución:**
+
+- Proporcionarle al LLM documentos relevantes antes de generar la respuesta
+- El LLM usa esos documentos como contexto para responder con mayor precisión
+
+=== 1.2 Ventajas de RAG
+
+* **Precisión mejorada**: Respuestas basadas en datos reales
+* **Conocimiento actualizado**: Acceso a información reciente
+* **Datos privados**: Información corporativa sin exponerla al LLM público
+* **Trazabilidad**: Puedes citar las fuentes de información
+* **Menor costo**: Modelos más pequeños funcionan mejor con contexto
+* **Funcionamiento local**: No necesitas APIs externas
+
+=== 1.3 Casos de Uso
+
+* Chatbots de soporte técnico
+* Sistemas de QA sobre documentos
+* Búsqueda semántica en repositorios
+* Análisis de reportes y documentación
+* Asistentes especializados por dominio
+* Extracción de información de PDFs
+
+=== 1.4 Arquitectura General de RAG
+
+```
+[Documento] → [Chunking] → [Embeddings] → [Vector DB]
+                                              ↓
+[Pregunta del Usuario] → [Búsqueda Vectorial]
+                              ↓
+                    [Documentos Relevantes]
+                              ↓
+                    [LLM + Prompt + Contexto]
+                              ↓
+                         [Respuesta]
+```
+
+== Módulo 2: Configuración del Entorno
+
+=== 2.1 Requisitos Previos
+
+* Python 3.8 o superior
+* Ollama instalado y ejecutándose
+* 8GB RAM mínimo (16GB recomendado)
+* Almacenamiento: 10GB para modelos locales
+
+=== 2.2 Instalación de Ollama
+
+**Linux/macOS:**
+
+[source, bash]
+----
+curl https://ollama.ai/install.sh | sh
+ollama serve
+----
+
+**Windows:**
+Descargar desde https://ollama.ai/download
+
+=== 2.3 Instalación de Dependencias Python
+
+[source, bash]
+----
+# Crear entorno virtual
+python -m venv venv
+source venv/bin/activate  # Linux/macOS
+# venv\Scripts\activate  # Windows
+
+# Instalar dependencias
+pip install langchain
+pip install langchain-ollama
+pip install langchain-community
+pip install ollama
+pip install chromadb  # Vector store local
+pip install pypdf  # Para PDFs
+pip install python-docx  # Para Word
+pip install unstructured[pdf]
+----
+
+=== 2.4 Descargar Modelos Ollama
+
+[source, bash]
+----
+# Modelos recomendados para RAG
+ollama pull mistral          # 7B - Excelente relación calidad/velocidad
+ollama pull neural-chat      # 7B - Bueno para conversación
+ollama pull llama2           # 7B - Sólido y confiable
+ollama pull tinyllama        # 1.1B - Rápido, para pruebas
+
+# Verificar modelos
+ollama list
+----
+
+=== 2.5 Verificar la Instalación
+
+[source, python]
+----
+from langchain_ollama import OllamaLLM
+
+llm = OllamaLLM(model="mistral")
+result = llm.invoke("¿Hola, cómo estás?")
+print(result)
+----
+
+== Módulo 3: Documentos y Chunking
+
+En este módulo aprenderás cómo cargar y procesar documentos para sistemas RAG. Es el primer paso crítico que determina la calidad de tus resultados.
+
+=== 3.1 Cargar Documentos
+
+**¿Por qué es importante?** El primer paso de RAG es acceder a tus documentos. LangChain proporciona loaders para múltiples formatos, automatizando la lectura y normalización.
+
+==== Documentos de Texto
+
+Los archivos de texto son los más simples de cargar:
+
+[source, python]
+----
+from langchain_community.document_loaders import TextLoader
+
+loader = TextLoader("archivo.txt")
+documents = loader.load()  # Retorna lista de Document objects
+
+# Cada Document tiene:
+# - page_content: El texto
+# - metadata: Información adicional (fuente, página, etc)
+----
+
+**Ejemplo Práctico:** Ver `ejemplos/rag/modulo3/01_cargar_documentos.py`
+
+[source, python]
+----
+# El script crea archivos de ejemplo y muestra:
+# 1. Cómo cargar TXT
+# 2. Procesar múltiples formatos
+# 3. Extraer metadatos
+# 4. Estadísticas de documentos
+----
+
+==== Documentos PDF
+
+Los PDFs requieren un procesador especial:
+
+[source, python]
+----
+from langchain_community.document_loaders import PyPDFLoader
+
+loader = PyPDFLoader("documento.pdf")
+documents = loader.load()
+
+# Ver contenido
+for doc in documents:
+    print(f"Página: {doc.metadata['page']}")
+    print(f"Contenido: {doc.page_content[:100]}...")
+----
+
+**Ventajas de PDFs:**
+
+- Preservan estructura y formato
+- Incluyen metadatos de página
+- Separación clara de contenido
+
+**Desventajas:**
+
+- Más lento de procesar
+- Puede requerir OCR para imágenes
+- Necesita dependencia adicional: `pip install pypdf`
+
+==== Documentos Word
+
+Para documentos Microsoft Word:
+
+[source, python]
+----
+from langchain_community.document_loaders import Docx2txtLoader
+
+loader = Docx2txtLoader("documento.docx")
+documents = loader.load()
+----
+
+**Instalación:** `pip install python-docx`
+
+==== JSON y Datos Estructurados
+
+Para datos en formato JSON:
+
+[source, python]
+----
+import json
+from langchain.schema import Document
+
+with open("datos.json") as f:
+    datos = json.load(f)
+
+documents = [
+    Document(
+        page_content=item["contenido"],
+        metadata={"titulo": item.get("titulo"), "id": item.get("id")}
+    )
+    for item in datos
+]
+----
+
+==== Directorios Completos
+
+Cargar múltiples archivos de una carpeta:
+
+[source, python]
+----
+from langchain_community.document_loaders import DirectoryLoader, TextLoader
+
+loader = DirectoryLoader(
+    "mi_carpeta",
+    glob="**/*.txt",
+    loader_cls=TextLoader
+)
+documents = loader.load()
+----
+
+**Opciones comunes:**
+
+- `glob="**/*.txt"`: Todos los TXT recursivamente
+- `glob="**/*.pdf"`: Todos los PDFs
+- `glob="*.md"`: Solo markdown en raíz
+- `show_progress=True`: Mostrar progreso
+
+==== Manejo de Errores
+
+[source, python]
+----
+from langchain_community.document_loaders import DirectoryLoader
+
+try:
+    loader = DirectoryLoader("documentos/", glob="**/*.txt")
+    documents = loader.load()
+    print(f"Cargados {len(documents)} documentos")
+except FileNotFoundError:
+    print("Carpeta no encontrada")
+except Exception as e:
+    print(f"Error: {e}")
+----
+
+=== 3.2 Chunking: Dividir Documentos
+
+**¿Por qué?**
+
+- Los LLMs tienen límite de tokens (contexto)
+- Documentos grandes se pierden
+- Búsqueda más eficiente en chunks pequeños
+
+**Tamaño recomendado:**
+
+- 512 tokens (≈2000 caracteres) típico
+- 256 tokens para búsquedas muy precisas
+- 1024 tokens para contexto amplio
+
+==== Chunking Básico
+
+[source, python]
+----
+from langchain.text_splitter import CharacterTextSplitter
+
+splitter = CharacterTextSplitter(
+    chunk_size=512,
+    chunk_overlap=50  # Solapamiento para mantener contexto
+)
+
+chunks = splitter.split_documents(documents)
+print(f"Total chunks: {len(chunks)}")
+----
+
+==== Chunking Recursivo
+
+[source, python]
+----
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+
+splitter = RecursiveCharacterTextSplitter(
+    chunk_size=512,
+    chunk_overlap=50,
+    separators=["\n\n", "\n", ".", " "]
+)
+
+chunks = splitter.split_documents(documents)
+----
+
+==== Chunking Semántico
+
+[source, python]
+----
+# Mejora: Mantener párrafos juntos
+chunks = splitter.split_text(
+    text,
+    separators=[
+        "\n\n",      # Párrafos
+        "\n",        # Saltos de línea
+        "(?<=[.!?]) +",  # Después de puntuación
+        " ",         # Espacios
+        ""           # Caracteres individuales
+    ]
+)
+----
+
+=== 3.3 Limpiar Texto
+
+[source, python]
+----
+def limpiar_texto(texto):
+    # Remover espacios en blanco excesivos
+    texto = " ".join(texto.split())
+    # Remover caracteres especiales
+    texto = texto.replace("\\x00", "")
+    return texto
+
+# Aplicar a chunks
+for chunk in chunks:
+    chunk.page_content = limpiar_texto(chunk.page_content)
+----
+
+== Módulo 4: Embeddings
+
+=== 4.1 ¿Qué son Embeddings?
+
+**Concepto:**
+
+- Representación numérica de texto
+- Vectores de números (típicamente 384-1536 dimensiones)
+- Textos similares tienen vectores cercanos
+
+**Similitud Coseno:**
+
+- Mide qué tan parecidos son dos vectores
+- Rango: -1 a 1 (1 = idénticos)
+
+=== 4.2 Embeddings Locales con Ollama
+
+[source, python]
+----
+from langchain_ollama import OllamaEmbeddings
+
+embeddings = OllamaEmbeddings(
+    model="nomic-embed-text"  # Modelo específico para embeddings
+)
+
+# Generar embedding
+vector = embeddings.embed_query("¿Qué es RAG?")
+print(f"Dimensiones: {len(vector)}")
+print(f"Primeros 5 valores: {vector[:5]}")
+----
+
+=== 4.3 Modelos de Embeddings Disponibles
+
+[source, bash]
+----
+ollama pull nomic-embed-text    # 274M - Excelente para RAG local
+ollama pull all-minilm          # 22M - Muy rápido
+ollama pull mxbai-embed-large   # 335M - Muy bueno
+----
+
+=== 4.4 Embeddings sin Ollama (Alternativas)
+
+[source, python]
+----
+# Sentence Transformers (CPU, local)
+from sentence_transformers import SentenceTransformer
+
+model = SentenceTransformer("all-MiniLM-L6-v2")
+embedding = model.encode("Texto de prueba")
+
+# HuggingFace (local)
+from langchain_community.embeddings import HuggingFaceEmbeddings
+
+embeddings = HuggingFaceEmbeddings(
+    model_name="sentence-transformers/all-MiniLM-L6-v2"
+)
+----
+
+== Módulo 5: Vector Stores
+
+=== 5.1 ChromaDB (Recomendado para Local)
+
+**Ventajas:**
+
+- Totalmente local
+- Rápido
+- Fácil de usar
+- Persiste datos
+
+==== Crear Vector Store
+
+[source, python]
+----
+from langchain_chroma import Chroma
+from langchain_ollama import OllamaEmbeddings
+
+embeddings = OllamaEmbeddings(model="nomic-embed-text")
+
+vector_store = Chroma.from_documents(
+    documents=chunks,
+    embedding=embeddings,
+    persist_directory="./chroma_db"
+)
+----
+
+==== Realizar Búsquedas
+
+[source, python]
+----
+# Búsqueda simple
+results = vector_store.similarity_search("¿Qué es RAG?", k=3)
+
+for result in results:
+    print(f"Score: {result.metadata.get('score', 'N/A')}")
+    print(f"Contenido: {result.page_content[:100]}...")
+    print("---")
+
+# Búsqueda con score
+results_with_scores = vector_store.similarity_search_with_score(
+    "¿Qué es RAG?",
+    k=3
+)
+
+for doc, score in results_with_scores:
+    print(f"Score: {score:.4f}")
+    print(f"Contenido: {doc.page_content[:100]}...")
+----
+
+==== Cargar Vector Store Existente
+
+[source, python]
+----
+vector_store = Chroma(
+    persist_directory="./chroma_db",
+    embedding_function=embeddings
+)
+
+# Agregar más documentos
+vector_store.add_documents(nuevos_chunks)
+----
+
+=== 5.2 Búsqueda Avanzada
+
+==== Maximum Marginal Relevance (MMR)
+
+Evita documentos redundantes:
+
+[source, python]
+----
+results = vector_store.max_marginal_relevance_search(
+    "¿Qué es RAG?",
+    k=3,
+    fetch_k=10  # Buscar entre más candidatos
+)
+----
+
+==== Filtrado por Metadata
+
+[source, python]
+----
+# Almacenar metadata
+for chunk in chunks:
+    chunk.metadata["source"] = "archivo.pdf"
+    chunk.metadata["page"] = 1
+
+vector_store = Chroma.from_documents(
+    documents=chunks,
+    embedding=embeddings,
+    persist_directory="./chroma_db"
+)
+
+# Buscar con filtro
+results = vector_store.similarity_search(
+    "¿Qué es RAG?",
+    k=3,
+    where={"source": "archivo.pdf"}
+)
+----
+
+== Módulo 6: RAG Básico con LangChain
+
+=== 6.1 RAG Simple
+
+[source, python]
+----
+from langchain_ollama import OllamaLLM
+from langchain.prompts import PromptTemplate
+from langchain.chains import RetrievalQA
+from langchain_chroma import Chroma
+from langchain_ollama import OllamaEmbeddings
+
+# 1. Configurar LLM
+llm = OllamaLLM(model="mistral")
+
+# 2. Cargar vector store
+embeddings = OllamaEmbeddings(model="nomic-embed-text")
+vector_store = Chroma(
+    persist_directory="./chroma_db",
+    embedding_function=embeddings
+)
+
+# 3. Crear RAG chain
+rag_chain = RetrievalQA.from_chain_type(
+    llm=llm,
+    chain_type="stuff",
+    retriever=vector_store.as_retriever(search_kwargs={"k": 3})
+)
+
+# 4. Usar
+resultado = rag_chain.invoke({"query": "¿Qué es RAG?"})
+print(resultado["result"])
+----
+
+=== 6.2 RAG con Prompt Personalizado
+
+[source, python]
+----
+from langchain.prompts import PromptTemplate
+
+template = """
+Usa los siguientes documentos para responder la pregunta.
+Si no sabes la respuesta, di "No tengo información".
+No inventes información.
+
+Contexto:
+{context}
+
+Pregunta: {question}
+
+Respuesta útil en español:
+"""
+
+prompt = PromptTemplate(
+    template=template,
+    input_variables=["context", "question"]
+)
+
+from langchain.chains.retrieval_qa.base import BaseRetrievalQA
+from langchain.chains import RetrievalQA
+
+rag_chain = RetrievalQA.from_chain_type(
+    llm=llm,
+    chain_type="stuff",
+    retriever=vector_store.as_retriever(),
+    chain_type_kwargs={"prompt": prompt}
+)
+
+resultado = rag_chain.invoke({"query": "¿Qué es RAG?"})
+print(resultado["result"])
+----
+
+=== 6.3 RAG con Citas
+
+[source, python]
+----
+def rag_con_citas(pregunta):
+    # Recuperar documentos
+    docs = vector_store.similarity_search(pregunta, k=3)
+    
+    # Preparar contexto
+    contexto = "\n\n".join([
+        f"[Doc {i+1}]\n{doc.page_content}"
+        for i, doc in enumerate(docs)
+    ])
+    
+    # Generar respuesta
+    prompt = f"""
+Responde la pregunta basándote en estos documentos.
+Al final, cita qué documentos usaste.
+
+Documentos:
+{contexto}
+
+Pregunta: {pregunta}
+
+Respuesta:
+"""
+    
+    respuesta = llm.invoke(prompt)
+    
+    # Agregar citas
+    citas = [f"- Documento {i+1}: {doc.metadata.get('source', 'desconocido')}" 
+             for i, doc in enumerate(docs)]
+    
+    return f"{respuesta}\n\nCitas:\n" + "\n".join(citas)
+
+print(rag_con_citas("¿Qué es RAG?"))
+----
+
+== Módulo 7: RAG Avanzado
+
+=== 7.1 Multi-Query RAG
+
+Genera múltiples variaciones de la pregunta:
+
+[source, python]
+----
+from langchain.chains import MultiQueryRetriever
+
+retriever_multi = MultiQueryRetriever.from_llm(
+    retriever=vector_store.as_retriever(),
+    llm=llm
+)
+
+# Busca con múltiples perspectivas
+docs = retriever_multi.get_relevant_documents("¿Qué es RAG?")
+print(f"Documentos únicos encontrados: {len(docs)}")
+----
+
+=== 7.2 Contextual Compression
+
+Contextual compression se refiere a la técnica de comprimir documentos recuperados para que sean más relevantes al contexto de la pregunta antes de pasarlos al LLM. Esto ayuda a reducir el ruido y mejorar la calidad de las respuestas generadas.
+
+Documento original:
+"RAG es una arquitectura... [100 líneas de historia]... 
+que combina búsqueda con generación... [50 líneas más]"
+
+Pregunta: "¿Qué combina RAG?"
+
+Documento comprimido:
+"RAG combina búsqueda con generación"
+
+[source, python]
+----
+from langchain.retrievers import ContextualCompressionRetriever
+from langchain.retrievers.document_compressors import LLMCompressor
+
+compressor = LLMCompressor.from_llm(
+    llm=llm,
+    base_compressor=None
+)
+
+compression_retriever = ContextualCompressionRetriever(
+    base_compressor=compressor,
+    base_retriever=vector_store.as_retriever()
+)
+
+docs = compression_retriever.get_relevant_documents("¿Qué es RAG?")
+----
+
+=== 7.3 Hybrid Search (Vector + Keyword)
+
+Hybrid Search combina búsqueda vectorial con búsqueda por palabras clave para mejorar la relevancia de los resultados. Primero realiza una búsqueda vectorial para encontrar documentos semánticamente similares, y luego filtra o complementa esos resultados con una búsqueda basada en palabras clave.
+
+[source, python]
+----
+def hybrid_search(query, k=3):
+    # Búsqueda vectorial
+    vector_results = vector_store.similarity_search(query, k=k)
+    
+    # Búsqueda por palabras clave (simple)
+    keyword_results = [
+        doc for doc in chunks
+        if any(word.lower() in doc.page_content.lower() 
+               for word in query.split())
+    ]
+    
+    # Combinar y deduplicar
+    combined = []
+    seen = set()
+    
+    for doc in vector_results + keyword_results:
+        doc_hash = hash(doc.page_content)
+        if doc_hash not in seen:
+            combined.append(doc)
+            seen.add(doc_hash)
+    
+    return combined[:k]
+
+results = hybrid_search("RAG")
+----
+
+=== 7.4 Re-ranking
+
+Reordenar resultados con el LLM:
+
+[source, python]
+----
+def rerank_results(query, documents):
+    # Usar LLM para evaluar relevancia
+    scores = []
+    
+    for doc in documents:
+        prompt = f"""
+En una escala de 1-10, ¿qué tan relevante es este documento para la pregunta?
+Solo responde con el número.
+
+Pregunta: {query}
+Documento: {doc.page_content[:200]}
+"""
+        score_text = llm.invoke(prompt).strip()
+        try:
+            score = int(score_text.split()[0])
+        except:
+            score = 5
+        scores.append((doc, score))
+    
+    # Ordenar por score
+    return sorted(scores, key=lambda x: x[1], reverse=True)
+
+ranked = rerank_results("¿Qué es RAG?", vector_results)
+for doc, score in ranked:
+    print(f"Score: {score} - {doc.page_content[:50]}...")
+----
+
+== Módulo 8: Chat con Memoria
+
+=== 8.1 Conversación Stateful
+
+[source, python]
+----
+from langchain.memory import ConversationBufferMemory
+from langchain.chains import ConversationalRetrievalChain
+
+memory = ConversationBufferMemory(
+    memory_key="chat_history",
+    return_messages=True
+)
+
+conversational_chain = ConversationalRetrievalChain.from_llm(
+    llm=llm,
+    retriever=vector_store.as_retriever(),
+    memory=memory
+)
+
+# Primera pregunta
+resultado1 = conversational_chain.invoke({
+    "question": "¿Qué es RAG?"
+})
+print(resultado1["answer"])
+
+# Segunda pregunta (recuerda contexto anterior)
+resultado2 = conversational_chain.invoke({
+    "question": "¿Para qué se usa?"
+})
+print(resultado2["answer"])
+----
+
+=== 8.2 Memoria Limitada
+
+[source, python]
+----
+from langchain.memory import ConversationBufferWindowMemory
+
+memory = ConversationBufferWindowMemory(
+    memory_key="chat_history",
+    return_messages=True,
+    k=5  # Recordar últimas 5 interacciones
+)
+----
+
+=== 8.3 Memoria Resumida
+
+[source, python]
+----
+from langchain.memory import ConversationSummaryMemory
+
+memory = ConversationSummaryMemory(
+    llm=llm,
+    memory_key="chat_history",
+    return_messages=True
+)
+----
+
+== Módulo 9: Evaluación de RAG
+
+=== 9.1 Métricas Básicas
+
+[source, python]
+----
+def evaluar_rag(pregunta, respuesta_esperada):
+    # Recuperar documentos
+    docs = vector_store.similarity_search(pregunta, k=3)
+    
+    # 1. Relevancia de documentos (simple)
+    relevancia = 0
+    palabras_clave = pregunta.split()
+    
+    for doc in docs:
+        coincidencias = sum(1 for palabra in palabras_clave 
+                          if palabra.lower() in doc.page_content.lower())
+        relevancia += coincidencias / len(palabras_clave)
+    
+    relevancia_promedio = relevancia / len(docs) if docs else 0
+    
+    # 2. Similitud semántica de respuesta
+    respuesta_actual = rag_chain.invoke({"query": pregunta})["result"]
+    
+    # Usar embeddings para comparar
+    embedding_esperada = embeddings.embed_query(respuesta_esperada)
+    embedding_actual = embeddings.embed_query(respuesta_actual)
+    
+    # Similitud coseno
+    import numpy as np
+    similitud = np.dot(embedding_esperada, embedding_actual) / (
+        np.linalg.norm(embedding_esperada) * np.linalg.norm(embedding_actual)
+    )
+    
+    return {
+        "relevancia_documentos": relevancia_promedio,
+        "similitud_respuesta": similitud,
+        "documentos_encontrados": len(docs)
+    }
+
+resultados = evaluar_rag(
+    "¿Qué es RAG?",
+    "RAG es una técnica que combina búsqueda de información con generación"
+)
+print(resultados)
+----
+
+=== 9.2 Pruebas Manuales
+
+[source, python]
+----
+test_cases = [
+    {
+        "pregunta": "¿Qué es RAG?",
+        "respuesta_minima": "combinación de búsqueda y generación"
+    },
+    {
+        "pregunta": "¿Cuál es la diferencia entre RAG y fine-tuning?",
+        "respuesta_minima": "RAG busca documentos"
+    }
+]
+
+for test in test_cases:
+    resultado = rag_chain.invoke({"query": test["pregunta"]})
+    respuesta = resultado["result"].lower()
+    
+    if test["respuesta_minima"].lower() in respuesta:
+        print(f"✓ PASO: {test['pregunta']}")
+    else:
+        print(f"✗ FALLO: {test['pregunta']}")
+        print(f"  Respuesta: {resultado['result'][:100]}...")
+----
+
+== Módulo 10: Casos de Uso Prácticos
+
+=== 10.1 Chatbot de Soporte Técnico
+
+[source, python]
+----
+class ChatbotSoporte:
+    def __init__(self, docs_directorio):
+        self.llm = OllamaLLM(model="mistral")
+        self.embeddings = OllamaEmbeddings(model="nomic-embed-text")
+        
+        # Cargar documentos
+        loader = DirectoryLoader(docs_directorio, glob="**/*.txt")
+        documents = loader.load()
+        
+        # Crear chunks
+        splitter = RecursiveCharacterTextSplitter(
+            chunk_size=512,
+            chunk_overlap=50
+        )
+        chunks = splitter.split_documents(documents)
+        
+        # Vector store
+        self.vector_store = Chroma.from_documents(
+            documents=chunks,
+            embedding=self.embeddings,
+            persist_directory="./soporte_db"
+        )
+        
+        # RAG chain
+        self.chain = RetrievalQA.from_chain_type(
+            llm=self.llm,
+            chain_type="stuff",
+            retriever=self.vector_store.as_retriever()
+        )
+    
+    def responder(self, pregunta):
+        return self.chain.invoke({"query": pregunta})["result"]
+
+# Usar
+chatbot = ChatbotSoporte("./documentos_soporte")
+print(chatbot.responder("¿Cómo reseteo mi contraseña?"))
+----
+
+=== 10.2 Análisis de Reportes
+
+[source, python]
+----
+class AnalizadorReportes:
+    def __init__(self):
+        self.llm = OllamaLLM(model="mistral")
+        self.embeddings = OllamaEmbeddings(model="nomic-embed-text")
+    
+    def analizar_pdf(self, ruta_pdf):
+        # Cargar PDF
+        loader = PyPDFLoader(ruta_pdf)
+        documents = loader.load()
+        
+        # Chunks
+        splitter = RecursiveCharacterTextSplitter(chunk_size=512)
+        chunks = splitter.split_documents(documents)
+        
+        # Vector store
+        vector_store = Chroma.from_documents(
+            documents=chunks,
+            embedding=self.embeddings
+        )
+        
+        # Preguntas comunes
+        preguntas = [
+            "¿Cuál es el resumen ejecutivo?",
+            "¿Cuáles son los principales riesgos?",
+            "¿Cuáles son las recomendaciones?"
+        ]
+        
+        chain = RetrievalQA.from_chain_type(
+            llm=self.llm,
+            chain_type="stuff",
+            retriever=vector_store.as_retriever()
+        )
+        
+        resultados = {}
+        for pregunta in preguntas:
+            resultados[pregunta] = chain.invoke({"query": pregunta})["result"]
+        
+        return resultados
+
+analizador = AnalizadorReportes()
+analisis = analizador.analizar_pdf("reporte.pdf")
+for pregunta, respuesta in analisis.items():
+    print(f"\n{pregunta}\n{respuesta}")
+----
+
+=== 10.3 Asistente Experto Multidominio
+
+[source, python]
+----
+class AsistenteExperto:
+    def __init__(self):
+        self.llm = OllamaLLM(model="mistral")
+        self.embeddings = OllamaEmbeddings(model="nomic-embed-text")
+        self.vectores_por_dominio = {}
+    
+    def agregar_dominio(self, nombre, documentos):
+        chunks = self._procesar_documentos(documentos)
+        
+        self.vectores_por_dominio[nombre] = Chroma.from_documents(
+            documents=chunks,
+            embedding=self.embeddings,
+            persist_directory=f"./db_{nombre}"
+        )
+    
+    def _procesar_documentos(self, docs):
+        splitter = RecursiveCharacterTextSplitter(chunk_size=512)
+        return splitter.split_documents(docs)
+    
+    def responder(self, pregunta, dominio=None):
+        if dominio and dominio in self.vectores_por_dominio:
+            retriever = self.vectores_por_dominio[dominio].as_retriever()
+        else:
+            # Buscar en todos
+            retriever = self.vectores_por_dominio[
+                list(self.vectores_por_dominio.keys())[0]
+            ].as_retriever()
+        
+        chain = RetrievalQA.from_chain_type(
+            llm=self.llm,
+            chain_type="stuff",
+            retriever=retriever
+        )
+        
+        return chain.invoke({"query": pregunta})["result"]
+
+asistente = AsistenteExperto()
+# Agregar dominios...
+# Responder preguntas
+print(asistente.responder("¿Qué es RAG?", "ai"))
+----
+
+== Módulo 11: Optimización y Producción
+
+=== 11.1 Performance
+
+[source, python]
+----
+import time
+
+def medir_velocidad(pregunta, num_intentos=3):
+    tiempos = []
+    
+    for _ in range(num_intentos):
+        start = time.time()
+        resultado = rag_chain.invoke({"query": pregunta})
+        tiempos.append(time.time() - start)
+    
+    promedio = sum(tiempos) / len(tiempos)
+    print(f"Tiempo promedio: {promedio:.2f}s")
+    print(f"Min: {min(tiempos):.2f}s, Max: {max(tiempos):.2f}s")
+
+medir_velocidad("¿Qué es RAG?")
+----
+
+=== 11.2 Escalabilidad
+
+[source, python]
+----
+# Usar modelo más pequeño para mejor velocidad
+llm_rapido = OllamaLLM(model="tinyllama")
+
+# Reducir cantidad de documentos recuperados
+retriever = vector_store.as_retriever(search_kwargs={"k": 2})
+
+# Cache de resultados
+from functools import lru_cache
+
+@lru_cache(maxsize=100)
+def obtener_respuesta_cached(pregunta):
+    return rag_chain.invoke({"query": pregunta})["result"]
+----
+
+=== 11.3 Logging y Monitoreo
+
+[source, python]
+----
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+def rag_con_logging(pregunta):
+    logger.info(f"Pregunta recibida: {pregunta}")
+    
+    # Recuperar docs
+    docs = vector_store.similarity_search(pregunta, k=3)
+    logger.info(f"Documentos encontrados: {len(docs)}")
+    
+    # Generar respuesta
+    respuesta = rag_chain.invoke({"query": pregunta})["result"]
+    logger.info(f"Respuesta generada, longitud: {len(respuesta)}")
+    
+    return respuesta
+----
+
+== Módulo 12: Proyecto Final Integrado
+
+=== 12.1 Especificación del Proyecto
+
+Construir un **Sistema RAG Completo** para un dominio específico:
+
+1. **Ingesta de Documentos**: PDFs, TXTs, URLs
+2. **Procesamiento**: Chunking inteligente
+3. **Embeddings**: Lokales con Ollama
+4. **Almacenamiento**: ChromaDB
+5. **Interfaz**: Chat con historial
+6. **Evaluación**: Métricas de calidad
+7. **Producción**: Servir como API
+
+=== 12.2 Estructura del Proyecto
+
+```
+proyecto-rag/
+├── data/
+│   ├── documentos/
+│   └── uploads/
+├── src/
+│   ├── config.py
+│   ├── document_loader.py
+│   ├── embeddings.py
+│   ├── vector_store.py
+│   ├── rag_chain.py
+│   └── main.py
+├── tests/
+│   ├── test_loader.py
+│   ├── test_rag.py
+│   └── test_evaluation.py
+├── requirements.txt
+└── README.md
+```
+
+=== 12.3 Implementación Mínima
+
+[source, python]
+----
+# main.py
+from langchain_ollama import OllamaLLM, OllamaEmbeddings
+from langchain_community.document_loaders import DirectoryLoader, TextLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_chroma import Chroma
+from langchain.chains import RetrievalQA
+
+class SistemaRAG:
+    def __init__(self, docs_dir, db_dir="./rag_db"):
+        self.llm = OllamaLLM(model="mistral")
+        self.embeddings = OllamaEmbeddings(model="nomic-embed-text")
+        self.db_dir = db_dir
+        self.vector_store = None
+        self.chain = None
+        
+        self._inicializar(docs_dir)
+    
+    def _inicializar(self, docs_dir):
+        # Cargar documentos
+        loader = DirectoryLoader(docs_dir, glob="**/*.txt")
+        documents = loader.load()
+        print(f"Documentos cargados: {len(documents)}")
+        
+        # Chunking
+        splitter = RecursiveCharacterTextSplitter(
+            chunk_size=512,
+            chunk_overlap=50
+        )
+        chunks = splitter.split_documents(documents)
+        print(f"Chunks creados: {len(chunks)}")
+        
+        # Vector store
+        self.vector_store = Chroma.from_documents(
+            documents=chunks,
+            embedding=self.embeddings,
+            persist_directory=self.db_dir
+        )
+        
+        # RAG chain
+        self.chain = RetrievalQA.from_chain_type(
+            llm=self.llm,
+            chain_type="stuff",
+            retriever=self.vector_store.as_retriever(search_kwargs={"k": 3})
+        )
+    
+    def responder(self, pregunta):
+        resultado = self.chain.invoke({"query": pregunta})
+        return resultado["result"]
+    
+    def chat_interactivo(self):
+        print("Sistema RAG iniciado. Escribe 'salir' para terminar.")
+        while True:
+            pregunta = input("\n> ").strip()
+            if pregunta.lower() == "salir":
+                break
+            respuesta = self.responder(pregunta)
+            print(f"\nRespuesta: {respuesta}")
+
+if __name__ == "__main__":
+    rag = SistemaRAG("./documentos")
+    rag.chat_interactivo()
+----
+
+=== 12.4 Entregables
+
+1. **Código fuente** completamente funcional
+2. **Documentación** del sistema
+3. **Pruebas unitarias** e integración
+4. **Ejemplos de uso**
+5. **Medidas de performance**
+6. **Instrucciones de deployment**
+
+=== 12.5 Criterios de Éxito
+
+* ✓ Sistema carga documentos correctamente
+* ✓ Búsqueda semántica funciona
+* ✓ Respuestas son relevantes al contexto
+* ✓ Chat interactivo es intuitivo
+* ✓ Velocidad de respuesta < 5 segundos
+* ✓ Código es mantenible y documentado
+
+== Anexo A: Troubleshooting
+
+=== Problemas Comunes
+
+**Ollama no responde**
+[source, bash]
+----
+ollama serve
+# En otra terminal, verificar
+curl http://localhost:11434/api/tags
+----
+
+**ChromaDB en disco lleno**
+[source, bash]
+----
+# Limpiar base de datos
+rm -rf ./chroma_db
+----
+
+**Embeddings lentos**
+[source, python]
+----
+# Usar modelo más rápido
+embeddings = OllamaEmbeddings(model="all-minilm")
+----
+
+**Memoria insuficiente**
+[source, python]
+----
+# Reducir chunk size
+splitter = RecursiveCharacterTextSplitter(chunk_size=256)
+
+# Usar modelo más pequeño
+llm = OllamaLLM(model="tinyllama")
+----
+
+== Anexo B: Recursos Adicionales
+
+=== Documentación
+
+- LangChain: https://python.langchain.com/
+- Ollama: https://ollama.ai/
+- ChromaDB: https://docs.trychroma.com/
+- HuggingFace Models: https://huggingface.co/models
+
+=== Modelos Recomendados
+
+* **mistral** (7B): Excelente balance
+* **neural-chat** (7B): Bueno para conversación
+* **llama2** (7B): Sólido y confiable
+* **nomic-embed-text** (274M): Embeddings locales
+
+=== Conceptos Relacionados
+
+* Fine-tuning: Adaptar modelos a dominio específico
+* Agentic RAG: RAG con capacidad de decisión
+* GraphRAG: RAG con grafos de conocimiento
+* MultiModal RAG: RAG con imágenes y texto

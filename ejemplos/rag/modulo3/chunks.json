@@ -1,0 +1,12 @@
+{
+  "estrategia": "párrafos",
+  "total_chunks": 1,
+  "chunks": [
+    {
+      "id": 1,
+      "contenido": "La Inteligencia Artificial (IA) es el campo de estudio que se ocupa de crear máquinas inteligentes.\n    Estas máquinas pueden realizar tareas que normalmente requieren inteligencia humana.\n\nExisten varios tipos de IA:\n\n1. IA Débil (Narrow AI): Diseñada para tareas específicas.\n    2. IA Fuerte (General AI): Tendría inteligencia general como los humanos.\n    3. IA Super: Hipotética IA que superaría la inteligencia humana.\n\nEl aprendizaje automático es un subcampo de la IA. Los modelos de ML aprenden\n    patrones de los datos sin ser explícitamente programados.\n\nEl aprendizaje profundo utiliza redes neuronales con múltiples capas.\n    Ha revolucionado campos como la visión por computadora y el procesamiento del lenguaje natural.\n\nRAG combina recuperación de documentos con generación de texto. Es especialmente útil\n    para sistemas que necesitan acceder a información actualizada o específica del dominio.",
+      "longitud_caracteres": 915,
+      "numero_palabras": 130
+    }
+  ]
+}

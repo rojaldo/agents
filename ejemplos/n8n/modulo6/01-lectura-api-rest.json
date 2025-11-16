@@ -1,0 +1,93 @@
+{
+  "name": "M6.1 - Lectura de Datos desde API REST",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "start",
+      "name": "Start",
+      "type": "n8n-nodes-base.start",
+      "typeVersion": 1,
+      "position": [100, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://jsonplaceholder.typicode.com/users/1",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        }
+      },
+      "id": "http-request",
+      "name": "HTTP Request - Obtener Usuario",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [300, 300]
+    },
+    {
+      "parameters": {
+        "mode": "jsonPath",
+        "jsonPathResult": "$.name",
+        "method": "GET",
+        "url": "https://jsonplaceholder.typicode.com/users/1/posts",
+        "authentication": "none"
+      },
+      "id": "http-request2",
+      "name": "HTTP Request - Obtener Posts",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Transformar los datos obtenidos\nreturn $input.all().map(item => ({\n  id: item.json.id,\n  name: item.json.name,\n  email: item.json.email,\n  phone: item.json.phone,\n  website: item.json.website,\n  timestamp: new Date().toISOString()\n}));"
+      },
+      "id": "code-node",
+      "name": "Code - Transformar Datos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [700, 300]
+    }
+  ],
+  "connections": {
+    "start": {
+      "main": [
+        [
+          {
+            "node": "http-request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "http-request": {
+      "main": [
+        [
+          {
+            "node": "http-request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "http-request2": {
+      "main": [
+        [
+          {
+            "node": "code-node",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

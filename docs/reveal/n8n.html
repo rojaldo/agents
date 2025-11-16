@@ -1,0 +1,1810 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>n8n: Automatización de Workflows</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/theme/white.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-light.min.css">
+    <style>
+        .reveal { text-align: left; color: #555555; }
+        .reveal section { text-align: left; padding: 40px; display: flex; flex-direction: column; justify-content: flex-start; }
+        .reveal h1, .reveal h2, .reveal h3 { text-transform: none; text-align: left; color: #555555; }
+
+        /* Encabezados */
+        .reveal h1 { font-size: 1.05em; margin-bottom: 0.5em; }
+        .reveal h2 { font-size: 1em; margin-bottom: 0.5em; }
+        .reveal h3 { font-size: 0.75em; margin-bottom: 0.3em; }
+
+        /* Párrafos y énfasis */
+        .reveal p { font-size: 0.6em; margin: 0.3em 0; color: #555555; }
+        .reveal strong { font-size: 1em; font-weight: bold; }
+
+        /* Código */
+        .reveal pre { background: #f8f8f8; border: 1px solid #ddd; width: 100%; padding: 0.5em; margin: 0.5em 0; }
+        .reveal pre code { font-size: 0.7em; color: #555555; }
+
+        /* Listas y elementos */
+        .reveal ul { font-size: 0.55em; text-align: left; margin-left: 0.5em; color: #555555; }
+        .reveal li { margin: 0.3em 0; color: #555555; }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- SLIDES DE INTRODUCCIÓN -->
+            <section>
+                <h1>n8n</h1>
+                <h2>Automatización de Workflows</h2>
+                <p>Plataforma de código abierto para automatizar procesos</p>
+            </section>
+
+            <section>
+                <h2>¿Qué es n8n?</h2>
+                <ul>
+                    <li>Plataforma de automatización de workflows</li>
+                    <li>Código abierto y fair-license</li>
+                    <li>Interfaz visual drag-and-drop</li>
+                    <li>Integración con 400+ aplicaciones</li>
+                    <li>Auto-hospedable en servidores propios</li>
+                    <li>Sin restricciones de uso comercial</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>n8n vs Competencia</h2>
+                <ul>
+                    <li><strong>vs Zapier:</strong> Menos restricciones, auto-hospedable, más económico</li>
+                    <li><strong>vs Make (Integromat):</strong> Interfaz más intuitiva, mejor documentación</li>
+                    <li><strong>vs Power Automate:</strong> Independencia de Microsoft, código abierto</li>
+                    <li><strong>vs Custom Code:</strong> Más rápido, menos mantenimiento, no requiere devs</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Arquitectura y Componentes</h2>
+                <ul>
+                    <li><strong>Backend:</strong> Node.js con Express</li>
+                    <li><strong>Frontend:</strong> Vue.js + UI moderna</li>
+                    <li><strong>Base de datos:</strong> SQLite (default) o PostgreSQL</li>
+                    <li><strong>Ejecución:</strong> Queue-based para workflows</li>
+                    <li><strong>Webhooks:</strong> HTTP listeners para triggers externos</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Casos de Uso Comunes</h2>
+                <ul>
+                    <li>Automatización de email marketing</li>
+                    <li>Sincronización de datos entre sistemas</li>
+                    <li>Procesamiento de formularios web</li>
+                    <li>Gestión de redes sociales</li>
+                    <li>Automatización de e-commerce</li>
+                    <li>Pipelines de datos (ETL)</li>
+                    <li>Integración de sistemas legacy</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Roadmap de Aprendizaje</h2>
+                <ul>
+                    <li>Fundamentos y UI (2-3 días)</li>
+                    <li>Primeros workflows prácticos (3-4 días)</li>
+                    <li>Nodos y conectores avanzados (1-2 semanas)</li>
+                    <li>Expresiones y transformación de datos (1 semana)</li>
+                    <li>Control de flujo y manejo de errores (4-5 días)</li>
+                    <li>Integración con APIs externas (1 semana)</li>
+                    <li>Deployment y escalabilidad (1 semana)</li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 1: FUNDAMENTOS -->
+            <section>
+                <h2>MÓDULO 1: Fundamentos de n8n</h2>
+            </section>
+
+            <section>
+                <h3>Instalación: Docker (Recomendado)</h3>
+                <pre><code>version: '3.8'
+services:
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=changeme
+      - GENERIC_TIMEZONE=Europe/Madrid
+    volumes:
+      - n8n_data:/home/node/.n8n</code></pre>
+            </section>
+
+            <section>
+                <h3>Instalación: Docker + PostgreSQL (Producción)</h3>
+                <pre><code>services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=n8n
+      - POSTGRES_PASSWORD=n8n_secure
+      - POSTGRES_DB=n8n
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  n8n:
+    environment:
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_DATABASE=n8n
+      - EXECUTIONS_DATA_PRUNE=true</code></pre>
+            </section>
+
+            <section>
+                <h3>Instalación: Local (Node.js)</h3>
+                <ul>
+                    <li><strong>Requisitos:</strong> Node.js 18+ y npm</li>
+                    <li><strong>Instalación:</strong> <code>npm install -g n8n</code></li>
+                    <li><strong>Iniciar:</strong> <code>n8n</code> en terminal</li>
+                    <li><strong>Acceso:</strong> http://localhost:5678</li>
+                    <li><strong>Ventaja:</strong> Fácil para desarrollo local</li>
+                    <li><strong>Desventaja:</strong> No persistente, requiere Node.js instalado</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Instalación: Cloud</h3>
+                <ul>
+                    <li><strong>AWS EC2:</strong> Instancia Linux + Docker</li>
+                    <li><strong>DigitalOcean:</strong> Droplet con Docker pre-instalado</li>
+                    <li><strong>Heroku:</strong> Deployment con un click (legacy)</li>
+                    <li><strong>n8n Cloud:</strong> Solución oficial alojada</li>
+                    <li><strong>Railway.app:</strong> Deployment simplificado</li>
+                    <li><strong>Render.com:</strong> Alternativa moderna a Heroku</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Interfaz de Usuario</h2>
+            </section>
+
+            <section>
+                <h3>Dashboard Principal</h3>
+                <ul>
+                    <li><strong>Inicio:</strong> Resumen de workflows recientes</li>
+                    <li><strong>Workflows:</strong> Lista y gestión de todos los workflows</li>
+                    <li><strong>Executions:</strong> Historial completo de ejecuciones</li>
+                    <li><strong>Templates:</strong> Plantillas compartidas por comunidad</li>
+                    <li><strong>Settings:</strong> Configuración global y credenciales</li>
+                    <li><strong>Admin:</strong> Gestión de usuarios (versión enterprise)</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Canvas (Área de Trabajo)</h3>
+                <ul>
+                    <li><strong>Zona central:</strong> Espacio para diseñar workflows</li>
+                    <li><strong>Zoom:</strong> Ctrl + Scroll para ampliar/reducir</li>
+                    <li><strong>Pan:</strong> Click derecho + arrastrar para mover vista</li>
+                    <li><strong>Grid:</strong> Líneas de referencia para alineación</li>
+                    <li><strong>Conexiones:</strong> Arrastrar desde puerto de salida a entrada</li>
+                    <li><strong>Selección múltiple:</strong> Ctrl + click en nodos</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Panel de Nodos</h3>
+                <ul>
+                    <li><strong>Búsqueda:</strong> Filtrar nodos por nombre o categoría</li>
+                    <li><strong>Categorías:</strong> Triggers, Actions, Flow, Tools, Data</li>
+                    <li><strong>Favoritos:</strong> Marcar nodos más usados</li>
+                    <li><strong>Integrations:</strong> Conectores a aplicaciones externas</li>
+                    <li><strong>Community:</strong> Nodos creados por la comunidad</li>
+                    <li><strong>Arrastrar:</strong> Drag-and-drop al canvas</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Inspector de Propiedades</h3>
+                <ul>
+                    <li><strong>Configuración:</strong> Parámetros específicos del nodo seleccionado</li>
+                    <li><strong>Input/Output:</strong> Mapeo de datos</li>
+                    <li><strong>Recursos:</strong> Credenciales y conexiones</li>
+                    <li><strong>Opciones avanzadas:</strong> Continue on Error, retries, etc.</li>
+                    <li><strong>Documentación:</strong> Ayuda integrada del nodo</li>
+                    <li><strong>Expresiones:</strong> Editor de expresiones con autocompletado</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Panel de Ejecución</h3>
+                <ul>
+                    <li><strong>Play/Pause:</strong> Ejecutar o pausar workflow</li>
+                    <li><strong>Inputs:</strong> Proporcionar datos de entrada para testing</li>
+                    <li><strong>Outputs:</strong> Ver resultados de cada nodo</li>
+                    <li><strong>Detalles:</strong> Logs detallados de ejecución</li>
+                    <li><strong>Debug:</strong> Inspector de datos en tiempo real</li>
+                    <li><strong>Timeline:</strong> Visualizar duración de ejecución</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Historial de Ejecuciones</h3>
+                <ul>
+                    <li><strong>Lista:</strong> Todas las ejecuciones del workflow</li>
+                    <li><strong>Filtros:</strong> Por estado, fecha, duración</li>
+                    <li><strong>Detalles:</strong> Ver entrada, salida y logs completos</li>
+                    <li><strong>Reproducción:</strong> Re-ejecutar con datos anteriores</li>
+                    <li><strong>Limpieza:</strong> Eliminar ejecuciones antiguas</li>
+                    <li><strong>Exportación:</strong> Descargar resultados en JSON</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Conceptos Fundamentales</h2>
+            </section>
+
+            <section>
+                <h3>Workflows</h3>
+                <ul>
+                    <li><strong>Definición:</strong> Secuencia de acciones automatizadas</li>
+                    <li><strong>Componentes:</strong> Nodos conectados entre sí</li>
+                    <li><strong>Triggers:</strong> Punto de inicio (manual, webhook, schedule)</li>
+                    <li><strong>Acciones:</strong> Tareas a realizar (enviar email, guardar datos)</li>
+                    <li><strong>Flujo:</strong> Orden y ramificación de ejecución</li>
+                    <li><strong>Estado:</strong> Activo (activado) o inactivo (pausado)</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Nodos y Conexiones</h3>
+                <ul>
+                    <li><strong>Nodo:</strong> Unidad básica que realiza una tarea específica</li>
+                    <li><strong>Puertos de entrada:</strong> Reciben datos de nodos anteriores</li>
+                    <li><strong>Puertos de salida:</strong> Envían resultados a nodos siguientes</li>
+                    <li><strong>Conexión:</strong> Línea entre puertos que transporta datos</li>
+                    <li><strong>Data flow:</strong> Los datos se propagan de entrada a salida</li>
+                    <li><strong>Múltiples conexiones:</strong> Un nodo puede conectarse a varios</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Triggers (Disparadores)</h3>
+                <ul>
+                    <li><strong>Función:</strong> Inician la ejecución del workflow</li>
+                    <li><strong>Manual Trigger:</strong> Ejecutar manualmente desde UI</li>
+                    <li><strong>Webhook:</strong> HTTP request externo activa workflow</li>
+                    <li><strong>Schedule/Cron:</strong> Ejecución programada (cada hora, diaria, etc)</li>
+                    <li><strong>Email:</strong> Recibir email activa workflow</li>
+                    <li><strong>Otros:</strong> Cambios en Google Sheets, nuevas filas en DB, etc</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Acciones y Datos</h3>
+                <ul>
+                    <li><strong>Acción:</strong> Nodo que realiza una tarea específica</li>
+                    <li><strong>Ejemplos:</strong> Enviar email, guardar en DB, llamar API</li>
+                    <li><strong>Datos:</strong> Información que fluye entre nodos (JSON)</li>
+                    <li><strong>Estructura:</strong> Objetos y arrays con campos específicos</li>
+                    <li><strong>Transformación:</strong> Cambiar formato o valores de datos</li>
+                    <li><strong>Validación:</strong> Asegurar que datos cumplen formato esperado</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Expresiones y Variables</h3>
+                <ul>
+                    <li><strong>Sintaxis:</strong> <code>{{$node.nodeName.data.field}}</code></li>
+                    <li><strong>Acceso a datos:</strong> <code>$json, $input, $node, $binary</code></li>
+                    <li><strong>Variables de entorno:</strong> <code>{{$env.VARIABLE_NAME}}</code></li>
+                    <li><strong>Sistema:</strong> <code>$now, $workflow.id, $execution.id</code></li>
+                    <li><strong>Funciones:</strong> <code>.toUpperCase(), .trim(), .split()</code></li>
+                    <li><strong>Lógica:</strong> Operadores: &&, ||, ?, ternario, etc</li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 2: PRIMEROS PASOS -->
+            <section>
+                <h2>MÓDULO 2: Primeros Pasos</h2>
+            </section>
+
+            <section>
+                <h3>Crear tu Primer Workflow</h3>
+                <ul>
+                    <li><strong>Paso 1:</strong> Dashboard → New Workflow</li>
+                    <li><strong>Paso 2:</strong> Nombre y descripción opcional</li>
+                    <li><strong>Paso 3:</strong> Agregar trigger (ej: Manual Trigger)</li>
+                    <li><strong>Paso 4:</strong> Agregar acciones (ej: Set, HTTP Request)</li>
+                    <li><strong>Paso 5:</strong> Conectar nodos entre sí</li>
+                    <li><strong>Paso 6:</strong> Guardar (Ctrl+S o Save button)</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Guardar y Versioning</h3>
+                <ul>
+                    <li><strong>Guardar:</strong> Ctrl+S o botón Save</li>
+                    <li><strong>Auto-save:</strong> Cada cambio se guarda automáticamente</li>
+                    <li><strong>Versiones:</strong> Historial de cambios automático</li>
+                    <li><strong>Revertir:</strong> Volver a versión anterior si es necesario</li>
+                    <li><strong>Duplicar:</strong> Copiar workflow existente como base</li>
+                    <li><strong>Renombrar:</strong> Cambiar nombre desde settings del workflow</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Importar y Exportar Workflows</h3>
+                <ul>
+                    <li><strong>Exportar:</strong> Menú workflow → Download → JSON</li>
+                    <li><strong>Importar:</strong> Dashboard → Import → Seleccionar JSON</li>
+                    <li><strong>Compartir:</strong> Copiar JSON y compartir por email/chat</li>
+                    <li><strong>Backup:</strong> Exportar regularmente para recuperación</li>
+                    <li><strong>Templates:</strong> Guardar como plantilla reutilizable</li>
+                    <li><strong>Comunidad:</strong> Publicar en marketplace de n8n</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Nodos Básicos: Estructura</h3>
+                <ul>
+                    <li><strong>Manual Trigger:</strong> Ejecutar manualmente desde botón</li>
+                    <li><strong>Set Node:</strong> Crear/transformar objeto de datos</li>
+                    <li><strong>Function Node:</strong> Código JavaScript personalizado</li>
+                    <li><strong>HTTP Request:</strong> Llamar APIs externas</li>
+                    <li><strong>Email Node:</strong> Enviar emails</li>
+                    <li><strong>Slack Node:</strong> Enviar mensajes a Slack</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Trigger: Manual Trigger</h3>
+                <ul>
+                    <li><strong>Uso:</strong> Ejecutar workflow con click en botón</li>
+                    <li><strong>Configuración:</strong> Sin parámetros especiales</li>
+                    <li><strong>Ideal para:</strong> Testing y workflows bajo demanda</li>
+                    <li><strong>Inputs:</strong> Proporcionar datos JSON de prueba</li>
+                    <li><strong>Ejecución:</strong> Click en Play/Execute button</li>
+                    <li><strong>Salida:</strong> Datos que proporciones como input</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Trigger: Schedule (Cron)</h3>
+                <ul>
+                    <li><strong>Uso:</strong> Ejecutar en horarios específicos</li>
+                    <li><strong>Cron Expressions:</strong>
+                        <ul>
+                            <li><code>0 9 * * *</code> - Todos los días a las 9 AM</li>
+                            <li><code>*/15 * * * *</code> - Cada 15 minutos</li>
+                            <li><code>0 0 1 * *</code> - Primer día de cada mes</li>
+                        </ul>
+                    </li>
+                    <li><strong>Timezone:</strong> Configurar zona horaria</li>
+                    <li><strong>No requiere webhook:</strong> Se ejecuta internamente</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Trigger: Webhook</h3>
+                <ul>
+                    <li><strong>Uso:</strong> HTTP request externo activa workflow</li>
+                    <li><strong>URL:</strong> <code>https://[tu-n8n]/webhook/[nombre]</code></li>
+                    <li><strong>Método:</strong> GET, POST, PUT, DELETE, etc</li>
+                    <li><strong>Autenticación:</strong> Opcional (API key, token)</li>
+                    <li><strong>Datos:</strong> Los datos enviados se capturan automáticamente</li>
+                    <li><strong>Testing:</strong> curl para probar desde terminal</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Proyecto Práctico: Notificación por Slack</h3>
+                <ul>
+                    <li><strong>Paso 1:</strong> Manual Trigger como entrada</li>
+                    <li><strong>Paso 2:</strong> Nodo Set para crear mensaje formateado</li>
+                    <li><strong>Paso 3:</strong> Slack Node para enviar mensaje a canal</li>
+                    <li><strong>Paso 4:</strong> Conectar todos los nodos secuencialmente</li>
+                    <li><strong>Paso 5:</strong> Activar y ejecutar para probar</li>
+                    <li><strong>Extensión:</strong> Agregar condicional IF para validar datos</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Buenas Prácticas en Workflows</h3>
+                <ul>
+                    <li><strong>Nombrado:</strong> Nombres descriptivos para nodos y workflows</li>
+                    <li><strong>Comentarios:</strong> Notas en nodos complejos</li>
+                    <li><strong>Modularidad:</strong> Workflows pequeños y reutilizables</li>
+                    <li><strong>Testing:</strong> Probar con datos reales antes de activar</li>
+                    <li><strong>Manejo de errores:</strong> Continue on Error en puntos críticos</li>
+                    <li><strong>Organización:</strong> Agrupar nodos relacionados visualmente</li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 3: NODOS Y CONECTORES -->
+            <section>
+                <h2>MÓDULO 3: Nodos y Conectores</h2>
+            </section>
+
+            <section>
+                <h3>Tipos de Nodos</h3>
+                <ul>
+                    <li><strong>Triggers:</strong> Manual, Webhook, Schedule, Email, Interval</li>
+                    <li><strong>Actions:</strong> Realizar tareas (enviar, guardar, actualizar)</li>
+                    <li><strong>Flow Control:</strong> IF, Switch, Loop, Merge</li>
+                    <li><strong>Transform:</strong> Set, Function, Code, Script</li>
+                    <li><strong>Output:</strong> Respuestas HTTP, guardar archivos</li>
+                    <li><strong>Custom:</strong> Nodos personalizados del usuario</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Nodos de Comunicación</h3>
+                <ul>
+                    <li><strong>Email Node:</strong>
+                        <ul>
+                            <li>Enviar emails con SMTP personalizado</li>
+                            <li>Adjuntos desde URLs o binarios</li>
+                            <li>Plantillas HTML complejas</li>
+                        </ul>
+                    </li>
+                    <li><strong>Slack Node:</strong>
+                        <ul>
+                            <li>Mensajes simples o rich formatting</li>
+                            <li>Threads, reacciones, botones</li>
+                            <li>Canales públicos y DMs</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Más Nodos de Comunicación</h3>
+                <ul>
+                    <li><strong>Discord Node:</strong> Mensajes, embeds, webhooks</li>
+                    <li><strong>Telegram Node:</strong> Enviar mensajes y archivos</li>
+                    <li><strong>Teams Node:</strong> Notificaciones a Microsoft Teams</li>
+                    <li><strong>Webhook Node:</strong> Escuchar HTTP requests</li>
+                    <li><strong>Twilio Node:</strong> SMS y llamadas telefónicas</li>
+                    <li><strong>Sendgrid Node:</strong> Email marketing avanzado</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Nodos de Datos</h3>
+                <ul>
+                    <li><strong>HTTP Request Node:</strong>
+                        <ul>
+                            <li>Llamar cualquier API REST</li>
+                            <li>Métodos: GET, POST, PUT, DELETE, PATCH</li>
+                            <li>Headers, Query params, Body</li>
+                            <li>Autenticación múltiple</li>
+                        </ul>
+                    </li>
+                    <li><strong>Database Nodes:</strong> PostgreSQL, MySQL, SQLite</li>
+                    <li><strong>Google Sheets Node:</strong> Leer/escribir datos en Sheets</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Nodos de Lógica</h3>
+                <ul>
+                    <li><strong>IF Node:</strong>
+                        <ul>
+                            <li>Condicionales simples</li>
+                            <li>Operadores: equals, contains, >>, <<, empty, etc</li>
+                            <li>Ramificación True/False</li>
+                        </ul>
+                    </li>
+                    <li><strong>Switch Node:</strong>
+                        <ul>
+                            <li>Múltiples condiciones</li>
+                            <li>Rutas diferentes según valor</li>
+                            <li>Caso por defecto</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Más Nodos de Lógica</h3>
+                <ul>
+                    <li><strong>Loop Node:</strong>
+                        <ul>
+                            <li>Iterar sobre arrays</li>
+                            <li>Procesar cada elemento</li>
+                            <li>Acumulación de resultados</li>
+                        </ul>
+                    </li>
+                    <li><strong>Merge Node:</strong>
+                        <ul>
+                            <li>Combinar datos de múltiples fuentes</li>
+                            <li>Concatenar, unir, mezclar</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Integraciones Populares</h3>
+                <ul>
+                    <li><strong>Google Suite:</strong> Gmail, Drive, Sheets, Calendar</li>
+                    <li><strong>Microsoft:</strong> Outlook, Teams, OneDrive</li>
+                    <li><strong>Salesforce:</strong> CRM completo integrado</li>
+                    <li><strong>HubSpot:</strong> CRM y marketing automation</li>
+                    <li><strong>Stripe:</strong> Pagos y suscripciones</li>
+                    <li><strong>Shopify:</strong> E-commerce integration</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Autenticación en n8n</h3>
+                <ul>
+                    <li><strong>API Key:</strong> Token simple en headers o params</li>
+                    <li><strong>Basic Auth:</strong> Usuario y contraseña codificados</li>
+                    <li><strong>OAuth 2.0:</strong> Flujo seguro sin guardar passwords</li>
+                    <li><strong>Custom:</strong> Headers y parámetros personalizados</li>
+                    <li><strong>Almacenamiento:</strong> Credentials guardados cifrados en DB</li>
+                    <li><strong>Reutilización:</strong> Una credential para múltiples nodos</li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 4: EXPRESIONES Y VARIABLES -->
+            <section>
+                <h2>MÓDULO 4: Expresiones y Variables</h2>
+            </section>
+
+            <section>
+                <h3>Sintaxis de Expresiones</h3>
+                <ul>
+                    <li><strong>Formato:</strong> <code>{{expresión}}</code></li>
+                    <li><strong>Acceso simple:</strong> <code>{{$node.nombreNodo.data.campo}}</code></li>
+                    <li><strong>Anidado:</strong> <code>{{$node.HTTP.data.user.profile.name}}</code></li>
+                    <li><strong>Arrays:</strong> <code>{{$node.HTTP.data.items[0].id}}</code></li>
+                    <li><strong>Funciones:</strong> <code>{{$node.data.email.toUpperCase()}}</code></li>
+                    <li><strong>Lógica:</strong> <code>{{$json.status === 'active' ? 'Sí' : 'No'}}</code></li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Variables Especiales</h3>
+                <ul>
+                    <li><strong>$node:</strong> Acceder datos de otro nodo</li>
+                    <li><strong>$json:</strong> Datos del nodo actual</li>
+                    <li><strong>$input:</strong> Entrada directa del nodo</li>
+                    <li><strong>$binary:</strong> Datos binarios (archivos)</li>
+                    <li><strong>$env:</strong> Variables de entorno del sistema</li>
+                    <li><strong>$now:</strong> Timestamp actual</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Más Variables del Sistema</h3>
+                <ul>
+                    <li><strong>$workflow.id:</strong> ID del workflow actual</li>
+                    <li><strong>$workflow.name:</strong> Nombre del workflow</li>
+                    <li><strong>$execution.id:</strong> ID de esta ejecución</li>
+                    <li><strong>$execution.resumeUrl:</strong> URL para reanudar ejecución</li>
+                    <li><strong>$executionId:</strong> Shortcut para execution ID</li>
+                    <li><strong>Safe navigation:</strong> <code>$node.data?.user?.name</code></li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Funciones de String</h3>
+                <ul>
+                    <li><strong>.toUpperCase():</strong> Convertir a mayúsculas</li>
+                    <li><strong>.toLowerCase():</strong> Convertir a minúsculas</li>
+                    <li><strong>.trim():</strong> Eliminar espacios</li>
+                    <li><strong>.split(',')</strong>: Dividir en array</li>
+                    <li><strong>.replace(old, new):</strong> Reemplazar texto</li>
+                    <li><strong>.substring(0, 5):</strong> Extraer parte de string</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Funciones de Array</h3>
+                <ul>
+                    <li><strong>.filter():</strong> Filtrar elementos que cumplan condición</li>
+                    <li><strong>.map():</strong> Transformar cada elemento</li>
+                    <li><strong>.reduce():</strong> Acumular valores</li>
+                    <li><strong>.find():</strong> Encontrar primer elemento</li>
+                    <li><strong>.join():</strong> Unir elementos en string</li>
+                    <li><strong>.includes():</strong> Verificar si contiene elemento</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Funciones de Fecha</h3>
+                <ul>
+                    <li><strong>new Date():</strong> Fecha actual</li>
+                    <li><strong>.toISOString():</strong> Formato ISO 8601</li>
+                    <li><strong>.getTime():</strong> Timestamp en milisegundos</li>
+                    <li><strong>.toLocaleDateString():</strong> Fecha formateada local</li>
+                    <li><strong>Parsing:</strong> <code>new Date(string).toISOString()</code></li>
+                    <li><strong>Comparación:</strong> Diferencia entre fechas</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Operadores y Lógica</h3>
+                <ul>
+                    <li><strong>Comparación:</strong> ===, !==, >, <, >=, <=</li>
+                    <li><strong>Lógica:</strong> &&, ||, !</li>
+                    <li><strong>Ternario:</strong> <code>condición ? true : false</code></li>
+                    <li><strong>Nullish:</strong> <code>valor ?? default</code></li>
+                    <li><strong>Spread:</strong> <code>[...array1, ...array2]</code></li>
+                    <li><strong>Desestructuración:</strong> <code>{name, email} = object</code></li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Casos de Uso Comunes</h3>
+                <ul>
+                    <li><strong>Validar email:</strong> <code>$json.email.includes('@')</code></li>
+                    <li><strong>Convertir tipo:</strong> <code>parseInt($json.count)</code></li>
+                    <li><strong>Valor por defecto:</strong> <code>$json.name || "Sin nombre"</code></li>
+                    <li><strong>Concatenar:</strong> <code>`Hola ${$json.name}`</code></li>
+                    <li><strong>Condicional complejo:</strong> Combinar múltiples operadores</li>
+                    <li><strong>Formato dinámico:</strong> Construir URLs y templates</li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 5: CONTROL DE FLUJO -->
+            <section>
+                <h2>MÓDULO 5: Control de Flujo</h2>
+            </section>
+
+            <section>
+                <h3>Condicionales: IF Node</h3>
+                <ul>
+                    <li><strong>Uso:</strong> Bifurcar workflow según condición</li>
+                    <li><strong>Sintaxis:</strong>
+                        <ul>
+                            <li>Campo: <code>$json.status</code></li>
+                            <li>Operador: equals, contains, >, <, empty, etc</li>
+                            <li>Valor: texto o número</li>
+                        </ul>
+                    </li>
+                    <li><strong>Salidas:</strong> True branch y False branch</li>
+                    <li><strong>Múltiples condiciones:</strong> AND y OR</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Switch y Múltiples Rutas</h3>
+                <ul>
+                    <li><strong>Uso:</strong> Más de 2 opciones (vs IF que es solo sí/no)</li>
+                    <li><strong>Estructura:</strong>
+                        <ul>
+                            <li>Expression: Campo a evaluar</li>
+                            <li>Cases: Valor esperado → ruta</li>
+                            <li>Default: Ruta si no coincide ninguno</li>
+                        </ul>
+                    </li>
+                    <li><strong>Ejemplo:</strong> Status puede ser pending, approved, rejected</li>
+                    <li><strong>Ventaja:</strong> Más limpio que múltiples IF anidados</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Loops e Iteración</h3>
+                <ul>
+                    <li><strong>Loop Node:</strong>
+                        <ul>
+                            <li>Procesar array elemento a elemento</li>
+                            <li>Acumular resultados</li>
+                            <li>Ejecutar nodos internos para cada item</li>
+                        </ul>
+                    </li>
+                    <li><strong>Casos de uso:</strong>
+                        <ul>
+                            <li>Enviar email a múltiples destinatarios</li>
+                            <li>Crear registro en DB para cada fila CSV</li>
+                            <li>Procesar items en paralelo</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Merge y Combinación de Datos</h3>
+                <ul>
+                    <li><strong>Merge Node:</strong>
+                        <ul>
+                            <li>Combinar arrays de múltiples fuentes</li>
+                            <li>Modos: Append, Combine, Merge objects</li>
+                        </ul>
+                    </li>
+                    <li><strong>Casos:</strong>
+                        <ul>
+                            <li>Unir resultados de 2 APIs diferentes</li>
+                            <li>Agregar datos de múltiples formatos</li>
+                            <li>Crear dataset consolidado</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Manejo de Errores: Continue on Fail</h3>
+                <ul>
+                    <li><strong>Opción:</strong> "Continue on Fail" en nodo</li>
+                    <li><strong>Comportamiento:</strong> Si falla, continuar con siguiente nodo</li>
+                    <li><strong>Salida en error:</strong> Contains error message</li>
+                    <li><strong>Casos de uso:</strong>
+                        <ul>
+                            <li>API puede no responder</li>
+                            <li>Datos opcionales pueden no existir</li>
+                            <li>No detener workflow por error no crítico</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Reintentos Automáticos</h3>
+                <ul>
+                    <li><strong>Configuración:</strong> Retry en cada nodo</li>
+                    <li><strong>Parámetros:</strong>
+                        <ul>
+                            <li>Max Retries: Número de intentos</li>
+                            <li>Wait Between Retries: Milisegundos entre intentos</li>
+                            <li>Multiplier: Incremento exponencial</li>
+                        </ul>
+                    </li>
+                    <li><strong>Mejores prácticas:</strong>
+                        <ul>
+                            <li>APIs externas pueden tener timeouts</li>
+                            <li>Conexiones de red pueden ser inestables</li>
+                            <li>Usar para errores transitorios</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Notificaciones de Error</h3>
+                <ul>
+                    <li><strong>Error Workflow Node:</strong>
+                        <ul>
+                            <li>Capturar y procesar errores</li>
+                            <li>Enviar notificaciones (email, Slack)</li>
+                            <li>Logging personalizado</li>
+                        </ul>
+                    </li>
+                    <li><strong>Casos:</strong>
+                        <ul>
+                            <li>Notificar a admin si falla crítico</li>
+                            <li>Guardar error en DB para auditoría</li>
+                            <li>Intentar fallback automático</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 6: GESTIÓN DE DATOS -->
+            <section>
+                <h2>MÓDULO 6: Gestión de Datos</h2>
+            </section>
+
+            <section>
+                <h3>Lectura de Datos</h3>
+                <ul>
+                    <li><strong>HTTP Request:</strong> Llamar APIs GET para obtener datos</li>
+                    <li><strong>Database:</strong> SELECT queries a PostgreSQL, MySQL, SQLite</li>
+                    <li><strong>Google Sheets:</strong> Leer filas y columnas específicas</li>
+                    <li><strong>CSV/Excel:</strong> Importar y parsear archivos</li>
+                    <li><strong>Webhooks:</strong> Recibir datos en payload</li>
+                    <li><strong>Emails:</strong> Extraer contenido de attachments</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Escritura de Datos</h3>
+                <ul>
+                    <li><strong>INSERT en DB:</strong> Agregar nuevos registros</li>
+                    <li><strong>HTTP POST:</strong> Enviar datos a APIs</li>
+                    <li><strong>Google Sheets APPEND:</strong> Agregar filas nuevas</li>
+                    <li><strong>Archivos:</strong> Guardar CSV, JSON, texto</li>
+                    <li><strong>Webhooks:</strong> Enviar respuesta HTTP</li>
+                    <li><strong>Transacciones:</strong> Garantizar integridad de datos</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>UPDATE y DELETE</h3>
+                <ul>
+                    <li><strong>UPDATE en DB:</strong>
+                        <ul>
+                            <li>Modificar registros existentes</li>
+                            <li>WHERE clause para filtrar qué actualizar</li>
+                            <li>Validar que UPDATE afectó registros esperados</li>
+                        </ul>
+                    </li>
+                    <li><strong>DELETE en DB:</strong>
+                        <ul>
+                            <li>Eliminar registros</li>
+                            <li>CUIDADO: Validar condición antes de delete</li>
+                            <li>Mejor: Soft delete (marcar como eliminado)</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Trabajar con Bases de Datos</h3>
+                <ul>
+                    <li><strong>PostgreSQL:</strong> Production-grade, recomendado</li>
+                    <li><strong>MySQL:</strong> Alternativa popular</li>
+                    <li><strong>SQLite:</strong> Default, ligero, local</li>
+                    <li><strong>Connection Pool:</strong> Optimizar múltiples conexiones</li>
+                    <li><strong>Credenciales:</strong> Guardar en Credentials de n8n</li>
+                    <li><strong>Queries:</strong> SQL directo o queries parametrizadas</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>CSV y Excel</h3>
+                <ul>
+                    <li><strong>Lectura:</strong> Parse CSV/Excel a JSON array</li>
+                    <li><strong>Estructura:</strong> Primera fila como headers</li>
+                    <li><strong>Mapping:</strong> Mapear columnas a campos JSON</li>
+                    <li><strong>Escritura:</strong> Convertir JSON a CSV/Excel</li>
+                    <li><strong>Batch:</strong> Procesar miles de filas eficientemente</li>
+                    <li><strong>Descarga:</strong> Generar archivo para descargar</li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 7: WEBHOOKS Y APIs -->
+            <section>
+                <h2>MÓDULO 7: Webhooks y APIs</h2>
+            </section>
+
+            <section>
+                <h3>Crear Webhooks en n8n</h3>
+                <ul>
+                    <li><strong>Trigger Webhook:</strong> HTTP Webhook node en n8n</li>
+                    <li><strong>URL generada:</strong> <code>https://[tu-n8n]/webhook/[nombre]</code></li>
+                    <li><strong>Método:</strong> GET, POST, PUT, DELETE</li>
+                    <li><strong>Respuesta:</strong> Datos del workflow o mensaje custom</li>
+                    <li><strong>Autenticación:</strong> Opcional con API Key o token</li>
+                    <li><strong>Testing:</strong> curl desde terminal o Postman</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Consumir APIs Externas</h3>
+                <ul>
+                    <li><strong>HTTP Request Node:</strong> El nodo universal para APIs</li>
+                    <li><strong>Configuración:</strong>
+                        <ul>
+                            <li>Método HTTP (GET, POST, etc)</li>
+                            <li>URL del endpoint</li>
+                            <li>Headers (Content-Type, Authorization)</li>
+                            <li>Query Parameters o Body</li>
+                        </ul>
+                    </li>
+                    <li><strong>Respuesta:</strong> JSON automáticamente parseado</li>
+                    <li><strong>Errores:</strong> Capturar HTTP errors</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Autenticación en APIs</h3>
+                <ul>
+                    <li><strong>API Key:</strong> Token simple en header o parameter</li>
+                    <li><strong>Basic Auth:</strong> Base64 encoded user:password</li>
+                    <li><strong>Bearer Token:</strong> JWT o OAuth token</li>
+                    <li><strong>OAuth 2.0:</strong> Flow seguro (ya integrado en n8n)</li>
+                    <li><strong>Custom Headers:</strong> Parámetros específicos de API</li>
+                    <li><strong>Almacenamiento:</strong> Credentials cifrados en n8n</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>APIs Públicas Populares</h3>
+                <ul>
+                    <li><strong>OpenWeatherMap:</strong> Datos meteorológicos</li>
+                    <li><strong>Stripe:</strong> Procesar pagos</li>
+                    <li><strong>GitHub:</strong> Gestión de repositorios</li>
+                    <li><strong>Google Maps:</strong> Geolocalización y mapas</li>
+                    <li><strong>NewsAPI:</strong> Agregador de noticias</li>
+                    <li><strong>Twilio:</strong> SMS y llamadas</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Rate Limiting y Throttling</h3>
+                <ul>
+                    <li><strong>Rate Limit:</strong> Límite de requests por minuto/hora</li>
+                    <li><strong>Throttling:</strong> Espaciar requests automáticamente</li>
+                    <li><strong>Implementación:</strong>
+                        <ul>
+                            <li>Detectar headers: X-RateLimit-Remaining</li>
+                            <li>Esperar antes de siguiente request</li>
+                            <li>Exponential backoff en errores 429</li>
+                        </ul>
+                    </li>
+                    <li><strong>Mejores prácticas:</strong>
+                        <ul>
+                            <li>Documentación API especifica límites</li>
+                            <li>Monitorear uso de quota</li>
+                            <li>Alertar si se acerca al límite</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 8: CASOS DE USO PRÁCTICOS -->
+            <section>
+                <h2>MÓDULO 8: Casos de Uso Prácticos</h2>
+            </section>
+
+            <section>
+                <h3>Automatización de Email</h3>
+                <ul>
+                    <li><strong>Email Marketing:</strong>
+                        <ul>
+                            <li>Trigger: Nuevo lead en Salesforce</li>
+                            <li>Acción: Enviar email bienvenida personalizado</li>
+                            <li>Plantillas dinámicas con datos del usuario</li>
+                        </ul>
+                    </li>
+                    <li><strong>Notificaciones Transaccionales:</strong>
+                        <ul>
+                            <li>Confirmación de compra, cambio de estado</li>
+                            <li>Alertas automáticas a admin</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Sincronización de Datos</h3>
+                <ul>
+                    <li><strong>Multi-system Sync:</strong>
+                        <ul>
+                            <li>Cambio en Salesforce → Actualizar HubSpot</li>
+                            <li>Nuevo contacto → Copiar a Google Contacts</li>
+                            <li>Validar integridad bidireccional</li>
+                        </ul>
+                    </li>
+                    <li><strong>Scheduled Sync:</strong>
+                        <ul>
+                            <li>Trigger: Schedule diario a las 2 AM</li>
+                            <li>Comparar datos y actualizar diferencias</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Procesamiento de Formularios</h3>
+                <ul>
+                    <li><strong>Workflow:</strong>
+                        <ul>
+                            <li>Trigger: Formulario web enviado (webhook)</li>
+                            <li>Validar datos (email, campos requeridos)</li>
+                            <li>Guardar en DB o Google Sheets</li>
+                            <li>Enviar confirmación al usuario</li>
+                            <li>Notificar a equipo en Slack</li>
+                        </ul>
+                    </li>
+                    <li><strong>Escalado:</strong> Miles de formularios por día</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Gestión de Redes Sociales</h3>
+                <ul>
+                    <li><strong>Publicación Automática:</strong>
+                        <ul>
+                            <li>Schedule: Publicar en Twitter/LinkedIn cada mañana</li>
+                            <li>Datos de fuente: RSS, CMS, Google Sheets</li>
+                            <li>Formatos diferentes por red social</li>
+                        </ul>
+                    </li>
+                    <li><strong>Monitoreo:</strong>
+                        <ul>
+                            <li>Alertar si menciones negativas</li>
+                            <li>Responder automáticamente a preguntas comunes</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>E-commerce Automation</h3>
+                <ul>
+                    <li><strong>Órdenes:</strong>
+                        <ul>
+                            <li>Nueva orden en Shopify → Crear en warehouse</li>
+                            <li>Actualizar inventory en tiempo real</li>
+                            <li>Notificar shipping status a cliente</li>
+                        </ul>
+                    </li>
+                    <li><strong>Productos:</strong>
+                        <ul>
+                            <li>Sync catálogo a múltiples marketplaces</li>
+                            <li>Actualizar precios automáticamente</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>CRM y Ventas</h3>
+                <ul>
+                    <li><strong>Lead Management:</strong>
+                        <ul>
+                            <li>Nuevo lead → Crear contacto en Salesforce/HubSpot</li>
+                            <li>Enriquecer con datos de LinkedIn/Hunter</li>
+                            <li>Asignar automáticamente a sales rep</li>
+                        </ul>
+                    </li>
+                    <li><strong>Pipeline:</strong>
+                        <ul>
+                            <li>Mover deals automáticamente según condiciones</li>
+                            <li>Alertar oportunidades próximas a cerrar</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Reportes y Análisis</h3>
+                <ul>
+                    <li><strong>Generación Automática:</strong>
+                        <ul>
+                            <li>Schedule: Daily/Weekly/Monthly reports</li>
+                            <li>Datos: Google Analytics, Stripe, HubSpot</li>
+                            <li>Formato: PDF, Excel, Google Sheets</li>
+                        </ul>
+                    </li>
+                    <li><strong>Distribución:</strong>
+                        <ul>
+                            <li>Email a stakeholders</li>
+                            <li>Compartir en Slack o Teams</li>
+                            <li>Guardar en Google Drive</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Backup y Archivado</h3>
+                <ul>
+                    <li><strong>Backup Automático:</strong>
+                        <ul>
+                            <li>Schedule: Cada noche a las 2 AM</li>
+                            <li>Exportar datos críticos de DB</li>
+                            <li>Comprimir y encriptar</li>
+                            <li>Subir a S3 o Google Cloud Storage</li>
+                        </ul>
+                    </li>
+                    <li><strong>Archivado:</strong>
+                        <ul>
+                            <li>Mover datos antiguos a storage fría</li>
+                            <li>Mantener GDPR compliance</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 9: NODOS AVANZADOS -->
+            <section>
+                <h2>MÓDULO 9: Nodos Avanzados</h2>
+            </section>
+
+            <section>
+                <h3>Code Node (JavaScript)</h3>
+                <ul>
+                    <li><strong>Uso:</strong> Ejecutar JavaScript personalizado</li>
+                    <li><strong>Acceso:</strong>
+                        <ul>
+                            <li><code>items</code>: Array de datos de entrada</li>
+                            <li><code>$env</code>: Variables de entorno</li>
+                            <li><code>$node</code>: Datos de otros nodos</li>
+                        </ul>
+                    </li>
+                    <li><strong>Casos:</strong>
+                        <ul>
+                            <li>Transformación compleja de datos</li>
+                            <li>Cálculos matemáticos</li>
+                            <li>Lógica de negocio personalizada</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Function Node</h3>
+                <ul>
+                    <li><strong>vs Code Node:</strong> Alternativa más simple</li>
+                    <li><strong>Lenguaje:</strong> JavaScript o TypeScript</li>
+                    <li><strong>Retorno:</strong> return items; para pasar al siguiente nodo</li>
+                    <li><strong>Debugging:</strong> console.log() available</li>
+                    <li><strong>Casos:</strong>
+                        <ul>
+                            <li>Mapeo de campos</li>
+                            <li>Filtrado de datos</li>
+                            <li>Formato de salida</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Python Node (Docker)</h3>
+                <ul>
+                    <li><strong>Requisito:</strong> Docker instalado y ejecutándose</li>
+                    <li><strong>Caso:</strong> Ejecutar scripts Python complejos</li>
+                    <li><strong>Limitaciones:</strong>
+                        <ul>
+                            <li>Más lento que JavaScript</li>
+                            <li>Requiere Docker overhead</li>
+                        </ul>
+                    </li>
+                    <li><strong>Ventajas:</strong>
+                        <ul>
+                            <li>Librerías Python (pandas, numpy, etc)</li>
+                            <li>Científico/análisis avanzado</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>SQLite Node</h3>
+                <ul>
+                    <li><strong>Uso:</strong> Ejecutar queries SQL en SQLite local</li>
+                    <li><strong>Ventajas:</strong>
+                        <ul>
+                            <li>No requiere servidor DB externo</li>
+                            <li>Persistencia automática en n8n</li>
+                            <li>Rápido para datos pequeños/medianos</li>
+                        </ul>
+                    </li>
+                    <li><strong>Casos:</strong>
+                        <ul>
+                            <li>Cache de datos</li>
+                            <li>Tablas de referencia</li>
+                            <li>Estado del workflow</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Nodos de Programación</h3>
+                <ul>
+                    <li><strong>Script Trigger:</strong> Ejecutar al iniciar workflow</li>
+                    <li><strong>Script Node:</strong> En medio del workflow</li>
+                    <li><strong>Shell Node:</strong> Ejecutar comandos del sistema</li>
+                    <li><strong>Ejecutar:</strong> Scripts bash, Python, node</li>
+                    <li><strong>Caution:</strong> Security implications, sandboxing</li>
+                    <li><strong>Casos:</strong> File operations, system commands</li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 10: MONITOREO Y DEBUGGING -->
+            <section>
+                <h2>MÓDULO 10: Monitoreo y Debugging</h2>
+            </section>
+
+            <section>
+                <h3>Testing Workflows</h3>
+                <ul>
+                    <li><strong>Test Manual:</strong> Play button en UI</li>
+                    <li><strong>Test Data:</strong> Proporcionar inputs de prueba</li>
+                    <li><strong>Ver resultados:</strong> Panel execution muestra outputs</li>
+                    <li><strong>Errores:</strong> Detalles en red de ejecución</li>
+                    <li><strong>Logs:</strong> Console logs visibles</li>
+                    <li><strong>Iteración:</strong> Ajustar y probar rápidamente</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Ejecución y Logs</h3>
+                <ul>
+                    <li><strong>Logs Panel:</strong> Detalles de cada paso</li>
+                    <li><strong>Timestamps:</strong> Cuándo se ejecutó cada acción</li>
+                    <li><strong>Duración:</strong> Cuánto tardó cada nodo</li>
+                    <li><strong>Datos:</strong> Input y output de cada paso</li>
+                    <li><strong>Errores:</strong> Stack traces completos</li>
+                    <li><strong>Exportar:</strong> Descargar logs para análisis</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Debugging Avanzado</h3>
+                <ul>
+                    <li><strong>Inspect Data:</strong> Examinar variables en ejecución</li>
+                    <li><strong>Breakpoints:</strong> Pausar en puntos específicos</li>
+                    <li><strong>Step Through:</strong> Ejecutar línea por línea</li>
+                    <li><strong>Watch Variables:</strong> Monitorear cambios de datos</li>
+                    <li><strong>Network Tab:</strong> Ver requests/responses HTTP</li>
+                    <li><strong>Performance:</strong> Identificar cuellos de botella</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Monitoreo de Workflows</h3>
+                <ul>
+                    <li><strong>Executions Tab:</strong> Historial completo</li>
+                    <li><strong>Filtros:</strong> Por estado, fecha, tipo de error</li>
+                    <li><strong>Estadísticas:</strong> Tasa de éxito, duración promedio</li>
+                    <li><strong>Alertas:</strong> Notificar si falla (Email, Slack)</li>
+                    <li><strong>Tendencias:</strong> Monitorear uso a lo largo del tiempo</li>
+                    <li><strong>Health Check:</strong> Dashboard de salud de workflows</li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 11: SEGURIDAD Y MEJORES PRÁCTICAS -->
+            <section>
+                <h2>MÓDULO 11: Seguridad y Mejores Prácticas</h2>
+            </section>
+
+            <section>
+                <h3>Seguridad en n8n</h3>
+                <ul>
+                    <li><strong>Credentials:</strong> Almacenados cifrados en DB</li>
+                    <li><strong>Variables Secretas:</strong> $env para API keys, passwords</li>
+                    <li><strong>Acceso:</strong> Control de usuarios en enterprise</li>
+                    <li><strong>HTTPS:</strong> Siempre usar SSL/TLS en producción</li>
+                    <li><strong>Webhooks:</strong> Validar origen y autenticación</li>
+                    <li><strong>Audit:</strong> Logs de todos los cambios en workflows</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Mejores Prácticas de Desarrollo</h3>
+                <ul>
+                    <li><strong>Nomenclatura:</strong> Nombres descriptivos y consistentes</li>
+                    <li><strong>Modularidad:</strong> Workflows reutilizables y pequeños</li>
+                    <li><strong>Documentación:</strong> Comentarios y notas en nodos</li>
+                    <li><strong>Versionamiento:</strong> Usar git para control de cambios</li>
+                    <li><strong>Testing:</strong> Probar casos normales y excepciones</li>
+                    <li><strong>Revisión:</strong> Code review antes de producción</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Rendimiento y Optimización</h3>
+                <ul>
+                    <li><strong>Batch Processing:</strong> Procesar múltiples items eficientemente</li>
+                    <li><strong>Caching:</strong> Reutilizar datos en lugar de refetch</li>
+                    <li><strong>Async:</strong> Operaciones no-bloqueantes cuando sea posible</li>
+                    <li><strong>Índices DB:</strong> Optimizar queries con índices</li>
+                    <li><strong>Limpieza:</strong> Eliminar datos innecesarios</li>
+                    <li><strong>Monitoreo:</strong> Alertar si duración es anormalmente larga</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Manejo de Errores Avanzado</h3>
+                <ul>
+                    <li><strong>Try-Catch Equivalente:</strong> Usar Error Workflow node</li>
+                    <li><strong>Recuperación:</strong> Reintentos con exponential backoff</li>
+                    <li><strong>Fallback:</strong> Ruta alternativa si falla principal</li>
+                    <li><strong>Logging:</strong> Guardar errores en DB para análisis</li>
+                    <li><strong>Notificaciones:</strong> Alertar a equipo en Slack/Email</li>
+                    <li><strong>Context:</strong> Incluir info útil para debugging</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Organización de Workflows</h3>
+                <ul>
+                    <li><strong>Carpetas:</strong> Agrupar por tipo (CRM, Email, etc)</li>
+                    <li><strong>Naming Convention:</strong> [Type] - [Description] - [Version]</li>
+                    <li><strong>Tags:</strong> Categorizar para búsqueda</li>
+                    <li><strong>Descripción:</strong> Documentar propósito en cada workflow</li>
+                    <li><strong>Owner:</strong> Quién es responsable del workflow</li>
+                    <li><strong>SLA:</strong> Tiempo de respuesta esperado</li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 12: INTEGRACIÓN AVANZADA -->
+            <section>
+                <h2>MÓDULO 12: Integración Avanzada</h2>
+            </section>
+
+            <section>
+                <h3>Webhooks Bidireccionales</h3>
+                <ul>
+                    <li><strong>Concepto:</strong> Dos sistemas se notifican mutuamente</li>
+                    <li><strong>Caso 1:</strong> n8n recibe datos → envía a API externa</li>
+                    <li><strong>Caso 2:</strong> API externa llama n8n → n8n responde</li>
+                    <li><strong>Sincronización:</strong> En tiempo real, no polling</li>
+                    <li><strong>Desafíos:</strong> Manejo de duplicados, orden de eventos</li>
+                    <li><strong>Solución:</strong> Timestamp, idempotency keys, deduplication</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>APIs GraphQL</h3>
+                <ul>
+                    <li><strong>vs REST:</strong> Más flexible, pedir solo datos necesarios</li>
+                    <li><strong>HTTP Request Node:</strong> Soporta GraphQL con POST</li>
+                    <li><strong>Query:</strong> Especificar qué campos necesitas</li>
+                    <li><strong>Variables:</strong> Pasar datos dinámicos en query</li>
+                    <li><strong>Casos:</strong> GitHub API, Shopify, etc</li>
+                    <li><strong>Ejemplo:</strong> GraphQL query en body de HTTP Request</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Integraciones Complejas</h3>
+                <ul>
+                    <li><strong>Multi-step:</strong> Workflows con 50+ nodos</li>
+                    <li><strong>Dependencias:</strong> Un paso depende de resultados anteriores</li>
+                    <li><strong>Loops anidados:</strong> Iteración dentro de iteración</li>
+                    <li><strong>Condicionales complejos:</strong> Lógica de negocio intrincada</li>
+                    <li><strong>Performance:</strong> Puede ser lento, optimizar es crítico</li>
+                    <li><strong>Mantenibilidad:</strong> Documentar bien, refactorizar regularmente</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Webhook Templates y Patterns</h3>
+                <ul>
+                    <li><strong>Template:</strong> Patrón reutilizable para webhooks</li>
+                    <li><strong>Validación:</strong> Verificar origen, signature, token</li>
+                    <li><strong>Parsing:</strong> Extraer datos relevantes del payload</li>
+                    <li><strong>Deduplicación:</strong> Evitar procesar mismo evento 2 veces</li>
+                    <li><strong>Retry Logic:</strong> Si falla, reintentar automáticamente</li>
+                    <li><strong>Response:</strong> 200 OK rápidamente, procesar asincrónico</li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 13: DEPLOYMENT -->
+            <section>
+                <h2>MÓDULO 13: Instalación y Deployment</h2>
+            </section>
+
+            <section>
+                <h3>Instalación Local</h3>
+                <ul>
+                    <li><strong>Node.js 18+:</strong> Requisito previo</li>
+                    <li><strong>Instalación:</strong> <code>npm install -g n8n</code></li>
+                    <li><strong>Ejecución:</strong> <code>n8n</code> en terminal</li>
+                    <li><strong>Acceso:</strong> http://localhost:5678</li>
+                    <li><strong>Ventajas:</strong> Rápido, fácil para desarrollo</li>
+                    <li><strong>Desventajas:</strong> No persistente, datos se pierden</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Docker Deployment</h3>
+                <ul>
+                    <li><strong>Simplest:</strong> <code>docker run -p 5678:5678 n8nio/n8n</code></li>
+                    <li><strong>Persistent:</strong> Usar volumes para guardar datos</li>
+                    <li><strong>Production:</strong> Docker Compose con PostgreSQL</li>
+                    <li><strong>Ventajas:</strong> Portable, replicable, fácil escalar</li>
+                    <li><strong>Variables de entorno:</strong> Configuración desde container</li>
+                    <li><strong>Networking:</strong> Conectar con otras containers</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Deployment en Nube</h3>
+                <ul>
+                    <li><strong>AWS EC2:</strong> Instancia Linux + Docker</li>
+                    <li><strong>DigitalOcean:</strong> Simple y económico</li>
+                    <li><strong>Railway.app:</strong> Deploy con git push</li>
+                    <li><strong>Render.com:</strong> Alternativa a Heroku</li>
+                    <li><strong>n8n Cloud:</strong> Solución oficial managed</li>
+                    <li><strong>Kubernetes:</strong> Para escalabilidad masiva</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Configuración de Base de Datos</h3>
+                <ul>
+                    <li><strong>SQLite (Default):</strong> Archivo local, no requiere servidor</li>
+                    <li><strong>PostgreSQL (Recommended):</strong> Production-grade</li>
+                    <li><strong>Environment Variable:</strong> <code>DB_TYPE=postgresdb</code></li>
+                    <li><strong>Connection String:</strong> <code>postgres://user:pass@host:5432/db</code></li>
+                    <li><strong>Migration:</strong> Herramientas para migrar de SQLite a Postgres</li>
+                    <li><strong>Backup:</strong> Incluir DB en backup strategy</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Configuración de Persistencia</h3>
+                <ul>
+                    <li><strong>Volumes en Docker:</strong> <code>- n8n_data:/home/node/.n8n</code></li>
+                    <li><strong>Datos guardados:</strong> Workflows, credenciales, executions</li>
+                    <li><strong>Restore:</strong> Copiar volume de backup</li>
+                    <li><strong>Encryption:</strong> Credenciales cifradas automáticamente</li>
+                    <li><strong>Archive:</strong> Limpiar executions antiguas por espacio</li>
+                    <li><strong>S3 Backup:</strong> Sincronizar backups a cloud</li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 14: ESCALABILIDAD -->
+            <section>
+                <h2>MÓDULO 14: Escalabilidad y Producción</h2>
+            </section>
+
+            <section>
+                <h3>Escalabilidad Horizontal</h3>
+                <ul>
+                    <li><strong>Concepto:</strong> Múltiples instancias de n8n</li>
+                    <li><strong>Load Balancer:</strong> Distribuidr peticiones</li>
+                    <li><strong>Shared DB:</strong> PostgreSQL central para todos</li>
+                    <li><strong>Message Queue:</strong> Redis para distribución de tareas</li>
+                    <li><strong>Kubernetes:</strong> Orquestación automática</li>
+                    <li><strong>Ventaja:</strong> Maneja miles de workflows simultáneamente</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Performance Optimization</h3>
+                <ul>
+                    <li><strong>Batch Processing:</strong> Procesar 1000s items eficientemente</li>
+                    <li><strong>Caching:</strong> Redis para datos que se repiten</li>
+                    <li><strong>Connection Pooling:</strong> Reutilizar conexiones DB</li>
+                    <li><strong>Indexing:</strong> Índices en DB para queries rápidas</li>
+                    <li><strong>Lazy Loading:</strong> Cargar datos solo cuando necesario</li>
+                    <li><strong>Compression:</strong> Reducir tamaño de payloads</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Monitoring en Producción</h3>
+                <ul>
+                    <li><strong>Prometheus:</strong> Métricas de sistema</li>
+                    <li><strong>Grafana:</strong> Dashboards visualization</li>
+                    <li><strong>ELK Stack:</strong> Logs centralizados (Elasticsearch)</li>
+                    <li><strong>Sentry:</strong> Error tracking integrado</li>
+                    <li><strong>Alertas:</strong> Notificar si CPU/Memory/Errors altos</li>
+                    <li><strong>SLA Monitoring:</strong> Ejecutar a tiempo esperado</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Backup y Disaster Recovery</h3>
+                <ul>
+                    <li><strong>Daily Backups:</strong> Automated a las 2 AM</li>
+                    <li><strong>Database:</strong> pg_dump para PostgreSQL</li>
+                    <li><strong>Workflows:</strong> Exportar JSON de todos los workflows</li>
+                    <li><strong>Credentials:</strong> Backup encriptados</li>
+                    <li><strong>Storage:</strong> S3, Google Cloud, Backblaze</li>
+                    <li><strong>Recovery Time:</strong> Objetivo: Restaurar en < 1 hora</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Upgrades y Mantenimiento</h3>
+                <ul>
+                    <li><strong>Version Updates:</strong> Revisar changelog antes de upgrade</li>
+                    <li><strong>Testing:</strong> Probar en staging antes de production</li>
+                    <li><strong>Downtime:</strong> Planificar ventana de mantenimiento</li>
+                    <li><strong>Rollback:</strong> Plan B si upgrade falla</li>
+                    <li><strong>Notificación:</strong> Avisar usuarios de mantenimiento</li>
+                    <li><strong>Documentation:</strong> Registrar cambios y configuración</li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 15: EXTENSIBILIDAD -->
+            <section>
+                <h2>MÓDULO 15: Extensibilidad</h2>
+            </section>
+
+            <section>
+                <h3>Custom Nodes</h3>
+                <ul>
+                    <li><strong>Crear nodo:</strong> Extend nodeBase class</li>
+                    <li><strong>Registro:</strong> Agregar a n8n como plugin</li>
+                    <li><strong>Uso:</strong> Disponible en UI para todos los workflows</li>
+                    <li><strong>Casos:</strong>
+                        <ul>
+                            <li>Integración con sistema propietario</li>
+                            <li>Lógica de negocio reutilizable</li>
+                            <li>Abstracción de complejidad</li>
+                        </ul>
+                    </li>
+                    <li><strong>Publicar:</strong> Compartir en npm comunidad</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Community Nodes</h3>
+                <ul>
+                    <li><strong>Marketplace:</strong> Cientos de nodos comunitarios</li>
+                    <li><strong>Instalar:</strong> 1 click desde UI de n8n</li>
+                    <li><strong>Ejemplos:</strong> Nodos para servicios no-oficiales</li>
+                    <li><strong>Quality:</strong> Variadable, revisar stars y reviews</li>
+                    <li><strong>Support:</strong> Community, no garantía oficial</li>
+                    <li><strong>Mantener:</strong> Nodos desactualizados pueden romparse</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Contribuir a n8n</h3>
+                <ul>
+                    <li><strong>GitHub:</strong> Repositorio open source</li>
+                    <li><strong>Issues:</strong> Reportar bugs o sugerir features</li>
+                    <li><strong>Pull Requests:</strong> Contribuir código nuevo</li>
+                    <li><strong>Community Forum:</strong> Ayudar a otros usuarios</li>
+                    <li><strong>Documentation:</strong> Mejorar docs oficial</li>
+                    <li><strong>Recognition:</strong> Ser contribuyente reconocido</li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 16: CASOS DE ESTUDIO -->
+            <section>
+                <h2>MÓDULO 16: Casos de Estudio</h2>
+            </section>
+
+            <section>
+                <h3>Automatización RR.HH.</h3>
+                <ul>
+                    <li><strong>Problema:</strong> Procesos manuales toman 20 horas/semana</li>
+                    <li><strong>Solución n8n:</strong>
+                        <ul>
+                            <li>Integración: HRIS → Slack → Email</li>
+                            <li>Triggers: Nueva candidato, Contratación aprobada</li>
+                            <li>Acciones: Crear cuenta, Enviar bienvenida, Provision recursos</li>
+                        </ul>
+                    </li>
+                    <li><strong>Resultado:</strong> 15 horas/semana ahorradas, 0 errores</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>E-commerce Avanzado</h3>
+                <ul>
+                    <li><strong>Problema:</strong> Inventario desincronizado entre canales</li>
+                    <li><strong>Solución:</strong>
+                        <ul>
+                            <li>Monitoreo: Cambios en Shopify, Amazon, WooCommerce</li>
+                            <li>Proceso: Consolidar stock actual</li>
+                            <li>Salida: Actualizar todos los canales simultáneamente</li>
+                        </ul>
+                    </li>
+                    <li><strong>Beneficio:</strong> Evitar overselling, mejorar customer experience</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Marketing Automation</h3>
+                <ul>
+                    <li><strong>Workflows:</strong>
+                        <ul>
+                            <li>Lead magnet → Enviar email automático</li>
+                            <li>Seguimiento: Emails secuenciados por comportamiento</li>
+                            <li>Scoring: Calificar leads automáticamente</li>
+                        </ul>
+                    </li>
+                    <li><strong>Integraciones:</strong> Mailchimp, HubSpot, Segment, Salesforce</li>
+                    <li><strong>Resultado:</strong> Conversión +35%, Costo por lead -40%</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Data Pipeline (ETL)</h3>
+                <ul>
+                    <li><strong>Fuentes:</strong> APIs, Archivos, Databases</li>
+                    <li><strong>Transformación:</strong> Validar, limpiar, enriquecer datos</li>
+                    <li><strong>Destino:</strong> Data Warehouse, BI tool (Tableau, Power BI)</li>
+                    <li><strong>Schedule:</strong> Nightly a las 2 AM</li>
+                    <li><strong>Ventaja:</strong> Sin código, actualización automática</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Integraciones Complejas</h3>
+                <ul>
+                    <li><strong>Sistema Legacy + Cloud:</strong>
+                        <ul>
+                            <li>Puente: n8n entre mainframe (FTP) y SaaS</li>
+                            <li>Sin reescribir sistema antiguo</li>
+                            <li>Bidireccional en tiempo real</li>
+                        </ul>
+                    </li>
+                    <li><strong>Multi-tenancy:</strong>
+                        <ul>
+                            <li>Un workflow para múltiples clientes</li>
+                            <li>Parámetros dinámicos por cliente</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 17: HERRAMIENTAS COMPLEMENTARIAS -->
+            <section>
+                <h2>MÓDULO 17: Herramientas Complementarias</h2>
+            </section>
+
+            <section>
+                <h3>Otras Plataformas de Automatización</h3>
+                <ul>
+                    <li><strong>Zapier:</strong> Cloud-only, caro en escala</li>
+                    <li><strong>Make (Integromat):</strong> Competidor directo</li>
+                    <li><strong>Power Automate:</strong> Integrado con Microsoft</li>
+                    <li><strong>Parabola:</strong> Visual builder pro-grade</li>
+                    <li><strong>Ventaja n8n:</strong> Open source, self-hosted, sin límites</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Stack Tecnológico</h3>
+                <ul>
+                    <li><strong>Database:</strong> PostgreSQL (production) o SQLite (dev)</li>
+                    <li><strong>Mensaje Queue:</strong> Redis para escalabilidad</li>
+                    <li><strong>Reverse Proxy:</strong> Nginx para routing y SSL</li>
+                    <li><strong>Container:</strong> Docker para deployment</li>
+                    <li><strong>Orquestación:</strong> Kubernetes para cloud</li>
+                    <li><strong>Monitoreo:</strong> Prometheus + Grafana stack</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Monitoreo Externo</h3>
+                <ul>
+                    <li><strong>Uptime Monitoring:</strong> UptimeRobot, Pingdom</li>
+                    <li><strong>Alertas:</strong> Si n8n cae o responde lento</li>
+                    <li><strong>Health Check Endpoint:</strong> Integración con n8n</li>
+                    <li><strong>Logs Agregados:</strong> Datadog, New Relic, Splunk</li>
+                    <li><strong>Error Tracking:</strong> Sentry para excepciones</li>
+                    <li><strong>Performance:</strong> APM monitoring</li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 18: PROYECTOS FINALES -->
+            <section>
+                <h2>MÓDULO 18: Proyectos Finales</h2>
+            </section>
+
+            <section>
+                <h3>Proyecto 1: Sistema de Notificaciones</h3>
+                <ul>
+                    <li><strong>Descripción:</strong> Multi-channel notification hub</li>
+                    <li><strong>Triggers:</strong> Webhook HTTP o Schedule</li>
+                    <li><strong>Procesamiento:</strong> Validar, enriquecer datos</li>
+                    <li><strong>Canales:</strong> Email, Slack, SMS, Push notification</li>
+                    <li><strong>Requisitos:</strong>
+                        <ul>
+                            <li>Soporte template dinámico</li>
+                            <li>Rate limiting por usuario</li>
+                            <li>Retry logic automático</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Proyecto 2: ETL Pipeline</h3>
+                <ul>
+                    <li><strong>Descripción:</strong> Extract-Transform-Load de múltiples fuentes</li>
+                    <li><strong>Extraer:</strong>
+                        <ul>
+                            <li>APIs (Stripe, Shopify, Google Analytics)</li>
+                            <li>Archivos (CSV, Excel, JSON)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Transformar:</strong> Validar, normalizar, enriquecer</li>
+                    <li><strong>Cargar:</strong> Data Warehouse (PostgreSQL, BigQuery)</li>
+                    <li><strong>Desafío:</strong> Manejo de millones de registros</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Proyecto 3: CRM Integration Hub</h3>
+                <ul>
+                    <li><strong>Descripción:</strong> Central de integración para CRM</li>
+                    <li><strong>Funcionalidad:</strong>
+                        <ul>
+                            <li>Sincronizar contactos (Google, HubSpot, Salesforce)</li>
+                            <li>Deduplicación inteligente</li>
+                            <li>Enriquecer con datos de múltiples fuentes</li>
+                        </ul>
+                    </li>
+                    <li><strong>Desafío:</strong> Manejar conflictos de actualización</li>
+                    <li><strong>Beneficio:</strong> Single source of truth para contactos</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Proyecto 4: Automatización E-commerce</h3>
+                <ul>
+                    <li><strong>Descripción:</strong> Sistema completo de órdenes y fulfillment</li>
+                    <li><strong>Flujo:</strong>
+                        <ul>
+                            <li>Nueva orden en Shopify → Validar stock</li>
+                            <li>Crear picking list en warehouse system</li>
+                            <li>Enviar tracking a cliente</li>
+                            <li>Actualizar inventory en todos los canales</li>
+                        </ul>
+                    </li>
+                    <li><strong>Desafío:</strong> Manejo de backorders y cancellations</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Proyecto 5: Platform as a Service (PaaS)</h3>
+                <ul>
+                    <li><strong>Descripción:</strong> Plataforma multi-usuario de automatización</li>
+                    <li><strong>Características:</strong>
+                        <ul>
+                            <li>Cada cliente: Workflows propios, aislados</li>
+                            <li>Dashboard: Monitoreo de ejecuciones</li>
+                            <li>Billing: Cobrar por executions</li>
+                            <li>API: Crear workflows programáticamente</li>
+                        </ul>
+                    </li>
+                    <li><strong>Desafío:</strong> Escalabilidad, seguridad multi-tenant</li>
+                </ul>
+            </section>
+
+            <!-- CIERRE -->
+            <section>
+                <h2>Recursos Adicionales</h2>
+            </section>
+
+            <section>
+                <h3>Documentación y Comunidad</h3>
+                <ul>
+                    <li><strong>Official Docs:</strong> https://docs.n8n.io</li>
+                    <li><strong>Community Forum:</strong> https://community.n8n.io</li>
+                    <li><strong>GitHub:</strong> https://github.com/n8n-io/n8n</li>
+                    <li><strong>YouTube:</strong> Canal oficial con tutoriales</li>
+                    <li><strong>Slack Community:</strong> Soporte de usuarios</li>
+                    <li><strong>Marketplace:</strong> Templates y custom nodes</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Conclusión</h2>
+            </section>
+
+            <section>
+                <h3>Resumen del Viaje</h3>
+                <ul>
+                    <li><strong>Fundamentos:</strong> Instalación, UI, conceptos básicos</li>
+                    <li><strong>Práctica:</strong> Primeros workflows, nodos, triggers</li>
+                    <li><strong>Avanzado:</strong> Expresiones, control de flujo, datos</li>
+                    <li><strong>Integración:</strong> APIs, webhooks, sincronización</li>
+                    <li><strong>Producción:</strong> Deployment, escalabilidad, monitoreo</li>
+                    <li><strong>Extensión:</strong> Custom nodes, comunidad, contribución</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Próximos Pasos</h3>
+                <ul>
+                    <li><strong>Inmediato:</strong> Instalar n8n local o cloud</li>
+                    <li><strong>Primer mes:</strong> Completar 3-5 workflows prácticos</li>
+                    <li><strong>Segundo mes:</strong> Integración con sistemas existentes</li>
+                    <li><strong>Tercero+:</strong> Deployment a producción y escaling</li>
+                    <li><strong>Comunidad:</strong> Unirse a slack/forum para apoyo</li>
+                    <li><strong>Contribución:</strong> Compartir workflows y custom nodes</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>¡Gracias!</h2>
+                <p>¡Listo para automatizar tu mundo con n8n!</p>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: true,
+            transition: 'slide',
+            backgroundTransition: 'fade'
+        });
+    </script>
+</body>
+</html>

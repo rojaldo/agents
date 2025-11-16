@@ -1,0 +1,1585 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Context Protocol (MCP)</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/theme/white.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-light.min.css">
+    <style>
+        .reveal { text-align: left; color: #555555; }
+        .reveal section { text-align: left; padding: 40px; display: flex; flex-direction: column; justify-content: flex-start; }
+        .reveal h1, .reveal h2, .reveal h3 { text-transform: none; text-align: left; color: #555555; }
+
+        /* Encabezados */
+        .reveal h1 { font-size: 1.05em; margin-bottom: 0.5em; }
+        .reveal h2 { font-size: 1em; margin-bottom: 0.5em; }
+        .reveal h3 { font-size: 0.75em; margin-bottom: 0.3em; }
+
+        /* Párrafos y énfasis */
+        .reveal p { font-size: 0.6em; margin: 0.3em 0; color: #555555; }
+        .reveal strong { font-size: 1em; font-weight: bold; }
+
+        /* Código */
+        .reveal pre { background: #f8f8f8; border: 1px solid #ddd; width: 100%; padding: 0.5em; margin: 0.5em 0; }
+        .reveal pre code { font-size: 0.7em; color: #555555; }
+
+        /* Listas y elementos */
+        .reveal ul { font-size: 0.55em; text-align: left; margin-left: 0.5em; color: #555555; }
+        .reveal li { margin: 0.3em 0; color: #555555; }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Slide 1: Portada -->
+            <section>
+                <h1>Model Context Protocol (MCP)</h1>
+                <p><strong>Curso Completo de Desarrollo de Agentes AI</strong></p>
+                <p>2025</p>
+            </section>
+
+            <!-- Slide 2: Tabla de Contenidos -->
+            <section>
+                <h2>Tabla de Contenidos</h2>
+                <ul>
+                    <li>Introducción a MCP</li>
+                    <li>Arquitectura y Componentes</li>
+                    <li>Instalación y Configuración</li>
+                    <li>Tools, Resources y Prompts</li>
+                    <li>Características Avanzadas</li>
+                    <li>Transportes (STDIO, HTTP/SSE)</li>
+                    <li>Seguridad y Autenticación</li>
+                    <li>Implementación de Servidores y Clientes</li>
+                    <li>Integración con Claude</li>
+                    <li>Casos de Uso y Mejores Prácticas</li>
+                </ul>
+            </section>
+
+            <!-- Sección 3: Introducción a MCP (7 slides) -->
+            <section>
+                <h2>Introducción a MCP</h2>
+                <h3>¿Qué es el Model Context Protocol?</h3>
+                <p><strong>MCP</strong> es un protocolo estándar abierto desarrollado por Anthropic que permite a las aplicaciones AI acceder a datos y herramientas de manera uniforme.</p>
+                <ul>
+                    <li>Protocolo de comunicación cliente-servidor</li>
+                    <li>Estandariza la conexión entre LLMs y fuentes de datos</li>
+                    <li>Basado en JSON-RPC 2.0</li>
+                    <li>Open source y extensible</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Introducción a MCP</h2>
+                <h3>Historia y Desarrollo por Anthropic</h3>
+                <p>El MCP fue desarrollado por Anthropic en 2024 como respuesta a la fragmentación en las integraciones de IA.</p>
+                <ul>
+                    <li>Anunciado en noviembre de 2024</li>
+                    <li>Primera versión estable: 2024-11-05</li>
+                    <li>Actualizaciones continuas (última: 2025-03-26)</li>
+                    <li>Especificación abierta y documentación completa</li>
+                    <li>Adopción rápida por la industria</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Introducción a MCP</h2>
+                <h3>El Problema N×M en Integraciones AI</h3>
+                <p>Antes de MCP, cada aplicación AI necesitaba integraciones personalizadas con cada fuente de datos.</p>
+                <ul>
+                    <li><strong>N aplicaciones AI</strong> × <strong>M fuentes de datos</strong> = N×M integraciones</li>
+                    <li>Duplicación de esfuerzo y código</li>
+                    <li>Mantenimiento complejo y costoso</li>
+                    <li>Falta de estándares comunes</li>
+                    <li>Dificultad para escalar</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Introducción a MCP</h2>
+                <h3>MCP como el "Puerto USB-C para AI"</h3>
+                <p>MCP resuelve el problema N×M proporcionando un estándar común.</p>
+                <ul>
+                    <li><strong>1 protocolo estándar</strong> conecta todas las aplicaciones con todas las fuentes</li>
+                    <li>Las aplicaciones implementan el cliente MCP una vez</li>
+                    <li>Las fuentes de datos implementan el servidor MCP una vez</li>
+                    <li>N + M integraciones en lugar de N×M</li>
+                    <li>Reducción dramática en complejidad y esfuerzo</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Introducción a MCP</h2>
+                <h3>Comparación con Soluciones Previas</h3>
+                <p><strong>Function Calling (OpenAI)</strong></p>
+                <ul>
+                    <li>Específico de cada proveedor de LLM</li>
+                    <li>Requiere definición de funciones en cada llamada</li>
+                    <li>No estandarizado entre plataformas</li>
+                </ul>
+                <p><strong>LangChain</strong></p>
+                <ul>
+                    <li>Framework de alto nivel, no protocolo</li>
+                    <li>Abstracciones propietarias</li>
+                    <li>Más complejo para casos simples</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Introducción a MCP</h2>
+                <h3>Comparación (continuación)</h3>
+                <p><strong>ChatGPT Plugins</strong></p>
+                <ul>
+                    <li>Limitado al ecosistema OpenAI</li>
+                    <li>Arquitectura propietaria</li>
+                    <li>No portable entre plataformas</li>
+                </ul>
+                <p><strong>Ventajas de MCP</strong></p>
+                <ul>
+                    <li>Estándar abierto e independiente de proveedores</li>
+                    <li>Protocolo simple y bien definido</li>
+                    <li>Interoperable entre múltiples hosts</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Introducción a MCP</h2>
+                <h3>Adopción por la Industria</h3>
+                <p>MCP ha sido adoptado rápidamente por grandes empresas tecnológicas:</p>
+                <ul>
+                    <li><strong>Anthropic</strong>: Claude Desktop, Claude.ai</li>
+                    <li><strong>Block</strong>: Integraciones empresariales</li>
+                    <li><strong>Apollo</strong>: GraphQL y datos API</li>
+                    <li><strong>Zed, Cursor, Windsurf</strong>: IDEs modernos</li>
+                    <li><strong>Sourcegraph, Cody</strong>: Code intelligence</li>
+                    <li>Cientos de servidores MCP de la comunidad</li>
+                </ul>
+            </section>
+
+            <!-- Sección 4: Arquitectura y Componentes (8 slides) -->
+            <section>
+                <h2>Arquitectura y Componentes</h2>
+                <h3>Visión General de la Arquitectura</h3>
+                <p>MCP define tres componentes principales que trabajan juntos:</p>
+                <ul>
+                    <li><strong>MCP Hosts</strong>: Aplicaciones que usuarios usan (Claude Desktop, IDEs)</li>
+                    <li><strong>MCP Clients</strong>: Conectores dentro de los hosts</li>
+                    <li><strong>MCP Servers</strong>: Servicios que exponen capacidades</li>
+                </ul>
+                <p>La comunicación se realiza mediante JSON-RPC 2.0 sobre diferentes transportes.</p>
+            </section>
+
+            <section>
+                <h2>Arquitectura y Componentes</h2>
+                <h3>MCP Hosts</h3>
+                <p>Los <strong>hosts</strong> son las aplicaciones de usuario final que instancian clientes MCP.</p>
+                <ul>
+                    <li><strong>Claude Desktop</strong>: Aplicación oficial de Anthropic</li>
+                    <li><strong>Cursor</strong>: IDE potenciado por IA</li>
+                    <li><strong>Windsurf</strong>: Editor colaborativo</li>
+                    <li><strong>VS Code con extensiones</strong>: Cody, Continue</li>
+                    <li><strong>Zed</strong>: Editor moderno</li>
+                    <li>Otros hosts personalizados</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Arquitectura y Componentes</h2>
+                <h3>MCP Clients</h3>
+                <p>Los <strong>clientes</strong> son componentes dentro de los hosts que manejan la comunicación con servidores.</p>
+                <ul>
+                    <li>Inician conexiones con servidores MCP</li>
+                    <li>Descubren capacidades disponibles (tools, resources, prompts)</li>
+                    <li>Envían solicitudes de ejecución</li>
+                    <li>Reciben y procesan respuestas</li>
+                    <li>Manejan múltiples servidores simultáneamente</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Arquitectura y Componentes</h2>
+                <h3>MCP Servers</h3>
+                <p>Los <strong>servidores</strong> exponen capacidades a través del protocolo MCP.</p>
+                <ul>
+                    <li>Implementan el protocolo MCP completo</li>
+                    <li>Exponen tools (funciones ejecutables)</li>
+                    <li>Proporcionan resources (datos y contenido)</li>
+                    <li>Ofrecen prompts (templates reutilizables)</li>
+                    <li>Pueden ser locales (STDIO) o remotos (HTTP/SSE)</li>
+                    <li>Ejemplos: filesystem, GitHub, bases de datos, APIs</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Arquitectura y Componentes</h2>
+                <h3>Flujo de Comunicación Cliente-Servidor</h3>
+                <p><strong>1. Inicialización</strong></p>
+                <ul>
+                    <li>Cliente se conecta al servidor vía transporte</li>
+                    <li>Intercambio de capacidades y versión del protocolo</li>
+                </ul>
+                <p><strong>2. Discovery</strong></p>
+                <ul>
+                    <li>Cliente solicita lista de tools, resources y prompts</li>
+                    <li>Servidor responde con esquemas y metadatos</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Arquitectura y Componentes</h2>
+                <h3>Flujo de Comunicación (continuación)</h3>
+                <p><strong>3. Ejecución</strong></p>
+                <ul>
+                    <li>Cliente envía requests (tool calls, resource reads)</li>
+                    <li>Servidor procesa y responde con resultados</li>
+                </ul>
+                <p><strong>4. Notificaciones</strong></p>
+                <ul>
+                    <li>Servidor puede enviar logs y actualizaciones de progreso</li>
+                    <li>Notificaciones asíncronas no bloquean el flujo principal</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Arquitectura y Componentes</h2>
+                <h3>Protocolo JSON-RPC 2.0</h3>
+                <p>MCP utiliza JSON-RPC 2.0 como capa de transporte de mensajes.</p>
+                <pre><code class="json">{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_weather",
+    "arguments": {
+      "city": "Madrid"
+    }
+  }
+}</code></pre>
+                <ul>
+                    <li>Requests, responses y notifications</li>
+                    <li>IDs para correlacionar requests/responses</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Arquitectura y Componentes</h2>
+                <h3>Modelo de Interacción y Ciclo de Vida</h3>
+                <ul>
+                    <li><strong>Stateful connection</strong>: La conexión persiste durante la sesión</li>
+                    <li><strong>Lifecycle hooks</strong>: initialize, shutdown</li>
+                    <li><strong>Capability negotiation</strong>: Cliente y servidor acuerdan features</li>
+                    <li><strong>Progressive disclosure</strong>: Capacidades pueden cambiar dinámicamente</li>
+                    <li><strong>Error handling</strong>: Códigos de error estandarizados</li>
+                    <li><strong>Graceful degradation</strong>: Fallback cuando features no están disponibles</li>
+                </ul>
+            </section>
+
+            <!-- Sección 5: Instalación y Configuración (7 slides) -->
+            <section>
+                <h2>Instalación y Configuración</h2>
+                <h3>Requisitos del Sistema</h3>
+                <p><strong>Para desarrollo de servidores:</strong></p>
+                <ul>
+                    <li>Python 3.10+ o Node.js 18+ (según SDK)</li>
+                    <li>Sistema operativo: Windows, macOS, Linux</li>
+                    <li>Git para clonar repositorios</li>
+                </ul>
+                <p><strong>Para usar como cliente:</strong></p>
+                <ul>
+                    <li>Claude Desktop, Cursor, u otro host compatible</li>
+                    <li>Configuración de servidores en formato JSON</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Instalación y Configuración</h2>
+                <h3>Instalación de SDKs Oficiales</h3>
+                <p><strong>Python SDK</strong></p>
+                <pre><code class="bash">pip install mcp</code></pre>
+                <p><strong>FastMCP 2.0 (Python simplificado)</strong></p>
+                <pre><code class="bash">pip install fastmcp</code></pre>
+                <p><strong>TypeScript/JavaScript SDK</strong></p>
+                <pre><code class="bash">npm install @modelcontextprotocol/sdk</code></pre>
+            </section>
+
+            <section>
+                <h2>Instalación y Configuración</h2>
+                <h3>Configuración de Claude Desktop</h3>
+                <p>Los servidores MCP se configuran en el archivo de configuración de Claude Desktop.</p>
+                <p><strong>Ubicación del archivo:</strong></p>
+                <ul>
+                    <li>macOS: <code>~/Library/Application Support/Claude/claude_desktop_config.json</code></li>
+                    <li>Windows: <code>%APPDATA%\Claude\claude_desktop_config.json</code></li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Instalación y Configuración</h2>
+                <h3>Ejemplo de Configuración</h3>
+                <pre><code class="json">{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/Users/username/Documents"
+      ]
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_TOKEN": "ghp_..."
+      }
+    }
+  }
+}</code></pre>
+            </section>
+
+            <section>
+                <h2>Instalación y Configuración</h2>
+                <h3>Configuración de Otros Hosts</h3>
+                <p><strong>Cursor</strong></p>
+                <ul>
+                    <li>Settings → MCP Servers</li>
+                    <li>Formato JSON similar a Claude Desktop</li>
+                </ul>
+                <p><strong>VS Code con Cody</strong></p>
+                <ul>
+                    <li>Extensión Cody Settings</li>
+                    <li>Configuración de servidores MCP</li>
+                </ul>
+                <p><strong>Otros IDEs</strong></p>
+                <ul>
+                    <li>Seguir documentación específica del host</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Instalación y Configuración</h2>
+                <h3>Herramientas de Desarrollo y Debugging</h3>
+                <ul>
+                    <li><strong>Logs de Claude Desktop</strong>: Ver actividad de servidores</li>
+                    <li><strong>Console output</strong>: stderr para debugging</li>
+                    <li><strong>Test clients</strong>: Scripts de prueba personalizados</li>
+                    <li><strong>Network inspection</strong>: Para servidores HTTP/SSE</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Instalación y Configuración</h2>
+                <h3>MCP Inspector</h3>
+                <p>Herramienta oficial para testing y debugging de servidores MCP.</p>
+                <pre><code class="bash">npx @modelcontextprotocol/inspector &lt;command&gt;</code></pre>
+                <ul>
+                    <li>Interfaz web interactiva</li>
+                    <li>Testing de tools, resources y prompts</li>
+                    <li>Inspección de requests/responses</li>
+                    <li>Visualización de esquemas JSON</li>
+                    <li>Esencial para desarrollo de servidores</li>
+                </ul>
+            </section>
+
+            <!-- Sección 6: Tools - Herramientas (10 slides) -->
+            <section>
+                <h2>Tools - Herramientas</h2>
+                <h3>Concepto y Propósito de Tools</h3>
+                <p>Los <strong>tools</strong> son funciones ejecutables que el servidor expone al cliente.</p>
+                <ul>
+                    <li>Permiten a los LLMs realizar acciones en el mundo real</li>
+                    <li>Son el primitivo fundamental de MCP</li>
+                    <li>Definidos con esquemas JSON Schema</li>
+                    <li>Ejemplos: buscar archivos, consultar APIs, ejecutar comandos</li>
+                    <li>El LLM decide cuándo y cómo invocarlos</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Tools - Herramientas</h2>
+                <h3>Anatomía de una Herramienta MCP</h3>
+                <p>Cada tool tiene los siguientes componentes:</p>
+                <ul>
+                    <li><strong>name</strong>: Identificador único del tool</li>
+                    <li><strong>description</strong>: Explicación clara de lo que hace</li>
+                    <li><strong>inputSchema</strong>: Esquema JSON de parámetros de entrada</li>
+                    <li><strong>annotations</strong>: Hints opcionales (readOnly, destructive, etc.)</li>
+                </ul>
+                <p>La respuesta incluye:</p>
+                <ul>
+                    <li><strong>content</strong>: Resultado de la ejecución</li>
+                    <li><strong>isError</strong>: Indica si hubo error</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Tools - Herramientas</h2>
+                <h3>Definición de Esquemas con JSON Schema</h3>
+                <pre><code class="json">{
+  "name": "calculate_sum",
+  "description": "Calcula la suma de dos números",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "a": {
+        "type": "number",
+        "description": "Primer número"
+      },
+      "b": {
+        "type": "number",
+        "description": "Segundo número"
+      }
+    },
+    "required": ["a", "b"]
+  }
+}</code></pre>
+            </section>
+
+            <section>
+                <h2>Tools - Herramientas</h2>
+                <h3>Input y Output Schemas</h3>
+                <p><strong>Input Schema</strong></p>
+                <ul>
+                    <li>Define parámetros requeridos y opcionales</li>
+                    <li>Tipos de datos: string, number, boolean, object, array</li>
+                    <li>Validaciones: pattern, minimum, maximum, enum</li>
+                    <li>Descripciones para ayudar al LLM a entender uso</li>
+                </ul>
+                <p><strong>Output</strong></p>
+                <ul>
+                    <li>Array de objetos Content (text, image, resource)</li>
+                    <li>No hay schema formal de output en la especificación</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Tools - Herramientas</h2>
+                <h3>Annotations y Hints</h3>
+                <p>Anotaciones opcionales que guían al LLM y al usuario:</p>
+                <ul>
+                    <li><strong>readOnlyHint</strong>: El tool solo lee datos, no modifica</li>
+                    <li><strong>destructiveHint</strong>: El tool puede modificar o eliminar datos</li>
+                    <li><strong>idempotentHint</strong>: Múltiples llamadas producen mismo resultado</li>
+                </ul>
+                <p>Estas hints ayudan al sistema a:</p>
+                <ul>
+                    <li>Solicitar confirmación para acciones destructivas</li>
+                    <li>Optimizar llamadas repetidas (cache para idempotentes)</li>
+                    <li>Proporcionar mejor UX y seguridad</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Tools - Herramientas</h2>
+                <h3>Manejo de Errores en Tools</h3>
+                <p>Los errores se reportan de dos maneras:</p>
+                <p><strong>1. Error en el protocolo JSON-RPC</strong></p>
+                <pre><code class="json">{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "error": {
+    "code": -32602,
+    "message": "Invalid params"
+  }
+}</code></pre>
+            </section>
+
+            <section>
+                <h2>Tools - Herramientas</h2>
+                <h3>Manejo de Errores (continuación)</h3>
+                <p><strong>2. Error en el resultado del tool</strong></p>
+                <pre><code class="json">{
+  "content": [{
+    "type": "text",
+    "text": "Error: File not found"
+  }],
+  "isError": true
+}</code></pre>
+                <ul>
+                    <li>Siempre incluir mensajes claros y útiles</li>
+                    <li>Proporcionar contexto sobre el error</li>
+                    <li>Sugerir soluciones cuando sea posible</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Tools - Herramientas</h2>
+                <h3>Tool Discovery y Execution</h3>
+                <p><strong>Discovery</strong></p>
+                <pre><code class="json">// Request
+{ "method": "tools/list" }
+
+// Response
+{
+  "tools": [
+    { "name": "search", "description": "...", "inputSchema": {...} },
+    { "name": "create", "description": "...", "inputSchema": {...} }
+  ]
+}</code></pre>
+            </section>
+
+            <section>
+                <h2>Tools - Herramientas</h2>
+                <h3>Tool Execution</h3>
+                <pre><code class="json">// Request
+{
+  "method": "tools/call",
+  "params": {
+    "name": "search",
+    "arguments": {
+      "query": "MCP documentation"
+    }
+  }
+}
+
+// Response
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "Found 5 results..."
+    }
+  ]
+}</code></pre>
+            </section>
+
+            <section>
+                <h2>Tools - Herramientas</h2>
+                <h3>Best Practices para Diseño de Tools</h3>
+                <ul>
+                    <li><strong>Nombres descriptivos</strong>: Usar verbos claros (get_, create_, update_, delete_)</li>
+                    <li><strong>Descripciones detalladas</strong>: Explicar qué hace, cuándo usarlo, efectos secundarios</li>
+                    <li><strong>Parámetros bien documentados</strong>: Describir cada campo claramente</li>
+                    <li><strong>Granularidad apropiada</strong>: Ni muy genéricos ni muy específicos</li>
+                    <li><strong>Idempotencia cuando posible</strong>: Facilita retry logic</li>
+                    <li><strong>Validación robusta</strong>: Validar inputs antes de ejecutar</li>
+                    <li><strong>Mensajes de error útiles</strong>: Ayudar al usuario a resolver problemas</li>
+                </ul>
+            </section>
+
+            <!-- Sección 7: Resources - Recursos (8 slides) -->
+            <section>
+                <h2>Resources - Recursos</h2>
+                <h3>Diferencia entre Tools y Resources</h3>
+                <p><strong>Tools</strong></p>
+                <ul>
+                    <li>Funciones ejecutables que realizan acciones</li>
+                    <li>Model-initiated: El LLM decide cuándo llamarlos</li>
+                    <li>Pueden tener efectos secundarios</li>
+                </ul>
+                <p><strong>Resources</strong></p>
+                <ul>
+                    <li>Datos o contenido que se puede leer</li>
+                    <li>Application-controlled: El host/usuario decide qué incluir en contexto</li>
+                    <li>Generalmente read-only</li>
+                    <li>Identificados por URIs</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Resources - Recursos</h2>
+                <h3>Resources Estáticos vs Dinámicos</h3>
+                <p><strong>Resources Estáticos</strong></p>
+                <ul>
+                    <li>URIs fijos conocidos de antemano</li>
+                    <li>Ejemplo: <code>config://app/settings</code></li>
+                    <li>Listados completos en resources/list</li>
+                </ul>
+                <p><strong>Resources Dinámicos (Templates)</strong></p>
+                <ul>
+                    <li>URIs generados usando variables</li>
+                    <li>Ejemplo: <code>file:///{path}</code></li>
+                    <li>Soportan discovery dinámico</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Resources - Recursos</h2>
+                <h3>URI Schemes y Templates (RFC 6570)</h3>
+                <p>Los resources usan URIs para identificación única.</p>
+                <pre><code class="json">{
+  "uri": "file:///home/user/document.txt",
+  "name": "Document",
+  "mimeType": "text/plain"
+}</code></pre>
+                <p><strong>URI Templates</strong></p>
+                <pre><code class="json">{
+  "uriTemplate": "db://tables/{table}/rows/{id}",
+  "name": "Database Row",
+  "mimeType": "application/json"
+}</code></pre>
+            </section>
+
+            <section>
+                <h2>Resources - Recursos</h2>
+                <h3>Text Resources vs Binary Resources</h3>
+                <p><strong>Text Resources</strong></p>
+                <pre><code class="json">{
+  "uri": "note://daily/2025-01-15",
+  "mimeType": "text/plain",
+  "text": "Contenido de la nota..."
+}</code></pre>
+                <p><strong>Binary Resources (Base64)</strong></p>
+                <pre><code class="json">{
+  "uri": "image://screenshot.png",
+  "mimeType": "image/png",
+  "blob": "iVBORw0KGgo..."
+}</code></pre>
+            </section>
+
+            <section>
+                <h2>Resources - Recursos</h2>
+                <h3>Resource Metadata</h3>
+                <p>Cada resource puede incluir metadata adicional:</p>
+                <ul>
+                    <li><strong>name</strong>: Nombre legible para humanos</li>
+                    <li><strong>description</strong>: Descripción del contenido</li>
+                    <li><strong>mimeType</strong>: Tipo MIME del contenido</li>
+                    <li><strong>annotations</strong>: Metadata adicional opcional</li>
+                </ul>
+                <p>Esta metadata ayuda al LLM a entender y utilizar el resource apropiadamente.</p>
+            </section>
+
+            <section>
+                <h2>Resources - Recursos</h2>
+                <h3>Application-Controlled Access Pattern</h3>
+                <p>Los resources siguen un patrón controlado por la aplicación:</p>
+                <ul>
+                    <li><strong>El usuario/host decide</strong> qué resources incluir en el contexto</li>
+                    <li><strong>No discovery automático</strong>: El LLM no busca resources por sí mismo</li>
+                    <li><strong>Explicit inclusion</strong>: El host añade resources al contexto según necesidad</li>
+                    <li>Esto proporciona control sobre qué datos ve el modelo</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Resources - Recursos</h2>
+                <h3>Implementación de Resource Templates</h3>
+                <pre><code class="python"># FastMCP
+@mcp.resource("file:///{path}")
+def read_file(path: str) -> str:
+    with open(path, 'r') as f:
+        return f.read()
+</code></pre>
+                <pre><code class="typescript">// TypeScript
+server.setRequestHandler(
+  ReadResourceRequestSchema,
+  async (request) => {
+    const uri = request.params.uri;
+    // Parse URI y retornar contenido
+  }
+);</code></pre>
+            </section>
+
+            <section>
+                <h2>Resources - Recursos</h2>
+                <h3>Casos de Uso y Ejemplos Prácticos</h3>
+                <ul>
+                    <li><strong>Sistema de archivos</strong>: Acceder a documentos locales</li>
+                    <li><strong>Bases de datos</strong>: Leer registros y tablas</li>
+                    <li><strong>APIs externas</strong>: Obtener datos de servicios web</li>
+                    <li><strong>Configuraciones</strong>: Cargar settings de aplicación</li>
+                    <li><strong>Documentación</strong>: Proporcionar contexto sobre código/proyectos</li>
+                    <li><strong>Logs y métricas</strong>: Acceder a datos de monitoreo</li>
+                    <li><strong>Contenido web</strong>: Scraping y extracción de información</li>
+                </ul>
+            </section>
+
+            <!-- Sección 8: Prompts - Templates (6 slides) -->
+            <section>
+                <h2>Prompts - Templates</h2>
+                <h3>Prompts como Templates Reutilizables</h3>
+                <p>Los <strong>prompts</strong> son templates predefinidos que los usuarios pueden invocar.</p>
+                <ul>
+                    <li>Workflows reutilizables y estandarizados</li>
+                    <li>Reducen fricción en tareas comunes</li>
+                    <li>Actualizables centralmente</li>
+                    <li>Pueden incluir variables dinámicas</li>
+                    <li>User-initiated: El usuario decide cuándo usarlos</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Prompts - Templates</h2>
+                <h3>Definición de Prompt Templates</h3>
+                <pre><code class="json">{
+  "name": "code_review",
+  "description": "Revisar código para mejores prácticas",
+  "arguments": [
+    {
+      "name": "language",
+      "description": "Lenguaje de programación",
+      "required": true
+    }
+  ]
+}</code></pre>
+                <p>El prompt retorna un array de mensajes para el LLM.</p>
+            </section>
+
+            <section>
+                <h2>Prompts - Templates</h2>
+                <h3>Variables y Argumentos en Prompts</h3>
+                <pre><code class="python">@mcp.prompt()
+def code_review(language: str, file_path: str) -> list:
+    return [
+        {
+            "role": "user",
+            "content": {
+                "type": "text",
+                "text": f"Por favor revisa este código {language} "
+                        f"del archivo {file_path} para mejores prácticas."
+            }
+        }
+    ]
+</code></pre>
+            </section>
+
+            <section>
+                <h2>Prompts - Templates</h2>
+                <h3>Prompts con Autocompletado</h3>
+                <p>Los argumentos de prompts pueden tener autocompletado:</p>
+                <pre><code class="json">{
+  "name": "file_path",
+  "description": "Ruta del archivo",
+  "required": true,
+  "completions": {
+    "ref": "resource://files"
+  }
+}</code></pre>
+                <ul>
+                    <li>Mejora UX con sugerencias</li>
+                    <li>Reduce errores de tipeo</li>
+                    <li>Integración con discovery de resources</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Prompts - Templates</h2>
+                <h3>User-Initiated Workflows</h3>
+                <p>Los prompts permiten workflows iniciados por el usuario:</p>
+                <ul>
+                    <li><strong>Slash commands</strong>: /review-code, /generate-tests</li>
+                    <li><strong>Context menus</strong>: Click derecho en archivo</li>
+                    <li><strong>Command palette</strong>: Búsqueda de prompts disponibles</li>
+                    <li><strong>Shortcuts</strong>: Atajos de teclado personalizados</li>
+                </ul>
+                <p>Esto hace que tareas complejas sean accesibles con un solo comando.</p>
+            </section>
+
+            <section>
+                <h2>Prompts - Templates</h2>
+                <h3>Versionado y Actualización Centralizada</h3>
+                <p>Ventajas del versionado centralizado de prompts:</p>
+                <ul>
+                    <li><strong>Actualizaciones sin cambio de código</strong>: Mejora prompts en el servidor</li>
+                    <li><strong>A/B testing</strong>: Probar diferentes versiones de prompts</li>
+                    <li><strong>Rollback fácil</strong>: Volver a versiones anteriores si hay problemas</li>
+                    <li><strong>Consistency</strong>: Todos los usuarios usan la misma versión</li>
+                    <li><strong>Analytics</strong>: Medir efectividad de diferentes prompts</li>
+                </ul>
+            </section>
+
+            <!-- Sección 9: Características Avanzadas (6 slides) -->
+            <section>
+                <h2>Características Avanzadas</h2>
+                <h3>Sampling: LLM Completions desde el Servidor</h3>
+                <p><strong>Sampling</strong> permite que los servidores soliciten completions del LLM.</p>
+                <ul>
+                    <li>El servidor puede pedir al LLM que genere texto</li>
+                    <li>Útil para agentes autónomos y workflows complejos</li>
+                    <li>El servidor construye el contexto y prompt</li>
+                    <li>El host ejecuta la completion y retorna resultado</li>
+                    <li>Permite "agentic" behavior en servidores</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Características Avanzadas</h2>
+                <h3>Ejemplo de Sampling</h3>
+                <pre><code class="json">{
+  "method": "sampling/createMessage",
+  "params": {
+    "messages": [
+      {
+        "role": "user",
+        "content": {
+          "type": "text",
+          "text": "Analiza este error y sugiere solución"
+        }
+      }
+    ],
+    "maxTokens": 1000
+  }
+}</code></pre>
+            </section>
+
+            <section>
+                <h2>Características Avanzadas</h2>
+                <h3>Notifications: Logs y Progress</h3>
+                <p>Los servidores pueden enviar notificaciones asíncronas:</p>
+                <p><strong>Log Notifications</strong></p>
+                <pre><code class="json">{
+  "method": "notifications/message",
+  "params": {
+    "level": "info",
+    "logger": "database",
+    "data": "Connected to database successfully"
+  }
+}</code></pre>
+            </section>
+
+            <section>
+                <h2>Características Avanzadas</h2>
+                <h3>Progress Notifications</h3>
+                <pre><code class="json">{
+  "method": "notifications/progress",
+  "params": {
+    "progressToken": "task-123",
+    "progress": 50,
+    "total": 100
+  }
+}</code></pre>
+                <ul>
+                    <li>Mejora UX en operaciones largas</li>
+                    <li>Permite debugging en tiempo real</li>
+                    <li>No bloquean el flujo principal</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Características Avanzadas</h2>
+                <h3>Roots: Control de Acceso al Sistema de Archivos</h3>
+                <p><strong>Roots</strong> define directorios base a los que el servidor tiene acceso.</p>
+                <pre><code class="json">{
+  "method": "roots/list",
+  "result": {
+    "roots": [
+      {
+        "uri": "file:///home/user/projects",
+        "name": "Projects Directory"
+      }
+    ]
+  }
+}</code></pre>
+                <ul>
+                    <li>Mejora seguridad limitando acceso</li>
+                    <li>Permite sandboxing de servidores</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Características Avanzadas</h2>
+                <h3>State Management y Persistencia</h3>
+                <p>Estrategias para manejar estado en servidores MCP:</p>
+                <ul>
+                    <li><strong>In-memory state</strong>: Para sesiones temporales</li>
+                    <li><strong>Database persistence</strong>: Para estado permanente</li>
+                    <li><strong>Context objects</strong>: Estado por sesión/cliente</li>
+                    <li><strong>Caching</strong>: Optimización de operaciones costosas</li>
+                    <li><strong>Session tokens</strong>: Identificar y mantener sesiones</li>
+                </ul>
+            </section>
+
+            <!-- Sección 10: STDIO Transport (7 slides) -->
+            <section>
+                <h2>STDIO Transport</h2>
+                <h3>Comunicación vía Standard Input/Output</h3>
+                <p><strong>STDIO</strong> es el transporte más simple para procesos locales.</p>
+                <ul>
+                    <li>El servidor lee de stdin y escribe a stdout</li>
+                    <li>stderr se usa para logs (no mensajes del protocolo)</li>
+                    <li>Ideal para herramientas de línea de comandos</li>
+                    <li>Sin overhead de red</li>
+                    <li>Fácil de implementar y depurar</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>STDIO Transport</h2>
+                <h3>Configuración y Setup para Procesos Locales</h3>
+                <p>Configuración en Claude Desktop:</p>
+                <pre><code class="json">{
+  "mcpServers": {
+    "my-server": {
+      "command": "python",
+      "args": ["/path/to/server.py"],
+      "env": {
+        "API_KEY": "secret"
+      }
+    }
+  }
+}</code></pre>
+                <p>El host ejecuta el comando y comunica vía STDIO.</p>
+            </section>
+
+            <section>
+                <h2>STDIO Transport</h2>
+                <h3>Ventajas de STDIO</h3>
+                <ul>
+                    <li><strong>Simplicidad</strong>: Sin configuración de red</li>
+                    <li><strong>Rendimiento</strong>: Sin latencia de red</li>
+                    <li><strong>Seguridad</strong>: No expuesto a internet</li>
+                    <li><strong>Portabilidad</strong>: Funciona en cualquier sistema</li>
+                    <li><strong>Debugging</strong>: Fácil de probar manualmente</li>
+                    <li><strong>Aislamiento</strong>: Cada cliente tiene su propia instancia</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>STDIO Transport</h2>
+                <h3>Limitaciones de STDIO</h3>
+                <ul>
+                    <li><strong>Solo local</strong>: No funciona para servidores remotos</li>
+                    <li><strong>Una conexión por proceso</strong>: No multi-cliente</li>
+                    <li><strong>Lifecycle</strong>: Proceso se inicia y termina con cada sesión</li>
+                    <li><strong>Resource overhead</strong>: Múltiples clientes = múltiples procesos</li>
+                    <li><strong>No persistencia</strong>: Estado se pierde al cerrar</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>STDIO Transport</h2>
+                <h3>Implementación en Python/FastMCP</h3>
+                <pre><code class="python">from fastmcp import FastMCP
+
+mcp = FastMCP("My Server")
+
+@mcp.tool()
+def greet(name: str) -> str:
+    return f"Hello, {name}!"
+
+if __name__ == "__main__":
+    mcp.run()
+</code></pre>
+                <p>FastMCP maneja automáticamente la comunicación STDIO.</p>
+            </section>
+
+            <section>
+                <h2>STDIO Transport</h2>
+                <h3>Implementación en TypeScript</h3>
+                <pre><code class="typescript">import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+
+const server = new Server({
+  name: "my-server",
+  version: "1.0.0"
+}, {
+  capabilities: { tools: {} }
+});
+
+const transport = new StdioServerTransport();
+await server.connect(transport);
+</code></pre>
+            </section>
+
+            <section>
+                <h2>STDIO Transport</h2>
+                <h3>Casos de Uso Ideales para STDIO</h3>
+                <ul>
+                    <li><strong>Herramientas de desarrollo</strong>: Linters, formatters, builders</li>
+                    <li><strong>Acceso a filesystem local</strong>: Lectura/escritura de archivos</li>
+                    <li><strong>Comandos del sistema</strong>: Ejecutar scripts, herramientas CLI</li>
+                    <li><strong>Bases de datos locales</strong>: SQLite, etc.</li>
+                    <li><strong>Prototipos y testing</strong>: Desarrollo rápido</li>
+                    <li><strong>Integraciones de escritorio</strong>: Claude Desktop, IDEs</li>
+                </ul>
+            </section>
+
+            <!-- Sección 11: HTTP y SSE (8 slides) -->
+            <section>
+                <h2>HTTP con Server-Sent Events (SSE)</h2>
+                <h3>Arquitectura SSE para Comunicación Remota</h3>
+                <p><strong>SSE (Server-Sent Events)</strong> permite comunicación en tiempo real sobre HTTP.</p>
+                <ul>
+                    <li>Cliente se conecta vía HTTP y mantiene conexión abierta</li>
+                    <li>Servidor puede enviar mensajes al cliente en cualquier momento</li>
+                    <li>Requests del cliente vía HTTP POST</li>
+                    <li>Ideal para servidores remotos y cloud</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>HTTP con Server-Sent Events (SSE)</h2>
+                <h3>Endpoints y Flujo de Mensajes</h3>
+                <p><strong>POST /message</strong></p>
+                <ul>
+                    <li>Cliente envía requests JSON-RPC</li>
+                    <li>Servidor responde con resultado inmediato o referencia</li>
+                </ul>
+                <p><strong>GET /sse</strong></p>
+                <ul>
+                    <li>Conexión SSE para mensajes del servidor</li>
+                    <li>Notificaciones, responses asíncronos</li>
+                    <li>Content-Type: text/event-stream</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>HTTP con Server-Sent Events (SSE)</h2>
+                <h3>Configuración de Servidores HTTP</h3>
+                <p>Configuración en Claude Desktop para servidor remoto:</p>
+                <pre><code class="json">{
+  "mcpServers": {
+    "remote-server": {
+      "url": "https://api.example.com/mcp",
+      "headers": {
+        "Authorization": "Bearer token123"
+      }
+    }
+  }
+}</code></pre>
+            </section>
+
+            <section>
+                <h2>HTTP con Server-Sent Events (SSE)</h2>
+                <h3>CORS y Consideraciones de Seguridad</h3>
+                <p><strong>CORS (Cross-Origin Resource Sharing)</strong></p>
+                <ul>
+                    <li>Necesario para acceso desde navegadores</li>
+                    <li>Configurar headers apropiados</li>
+                </ul>
+                <pre><code class="http">Access-Control-Allow-Origin: *
+Access-Control-Allow-Methods: POST, GET, OPTIONS
+Access-Control-Allow-Headers: Content-Type, Authorization</code></pre>
+                <p><strong>Seguridad</strong></p>
+                <ul>
+                    <li>HTTPS obligatorio para producción</li>
+                    <li>Autenticación con tokens/API keys</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>HTTP con Server-Sent Events (SSE)</h2>
+                <h3>Migración de STDIO a SSE</h3>
+                <p>Pasos para migrar un servidor STDIO a SSE:</p>
+                <ul>
+                    <li><strong>1. Extraer lógica de negocio</strong>: Separar de transporte</li>
+                    <li><strong>2. Crear servidor HTTP</strong>: Express, FastAPI, etc.</li>
+                    <li><strong>3. Implementar endpoints</strong>: /message y /sse</li>
+                    <li><strong>4. Manejar múltiples clientes</strong>: Session management</li>
+                    <li><strong>5. Desplegar</strong>: Cloud platform</li>
+                    <li><strong>6. Actualizar configuración</strong>: En hosts</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>HTTP con Server-Sent Events (SSE)</h2>
+                <h3>Implementación con FastAPI (Python)</h3>
+                <pre><code class="python">from fastapi import FastAPI
+from sse_starlette.sse import EventSourceResponse
+
+app = FastAPI()
+
+@app.post("/message")
+async def handle_message(request: dict):
+    # Procesar JSON-RPC request
+    return {"result": "..."}
+
+@app.get("/sse")
+async def sse_endpoint():
+    async def event_generator():
+        while True:
+            yield {"data": json.dumps(message)}
+    return EventSourceResponse(event_generator())
+</code></pre>
+            </section>
+
+            <section>
+                <h2>HTTP con Server-Sent Events (SSE)</h2>
+                <h3>Implementación con Express (TypeScript)</h3>
+                <pre><code class="typescript">import express from 'express';
+
+const app = express();
+
+app.post('/message', (req, res) => {
+  const result = handleJsonRpc(req.body);
+  res.json(result);
+});
+
+app.get('/sse', (req, res) => {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+
+  const send = (data) => {
+    res.write(`data: ${JSON.stringify(data)}\n\n`);
+  };
+
+  // Enviar mensajes...
+});
+</code></pre>
+            </section>
+
+            <section>
+                <h2>HTTP con Server-Sent Events (SSE)</h2>
+                <h3>Ventajas de HTTP/SSE</h3>
+                <ul>
+                    <li><strong>Acceso remoto</strong>: Servidores pueden estar en cloud</li>
+                    <li><strong>Multi-cliente</strong>: Un servidor para muchos clientes</li>
+                    <li><strong>Persistencia</strong>: Estado compartido entre sesiones</li>
+                    <li><strong>Escalabilidad</strong>: Balanceo de carga, clustering</li>
+                    <li><strong>Integración web</strong>: Accesible desde navegadores</li>
+                    <li><strong>Monitoreo</strong>: Métricas y logging centralizados</li>
+                </ul>
+            </section>
+
+            <!-- Sección 12: Seguridad (5 slides) -->
+            <section>
+                <h2>Seguridad en MCP</h2>
+                <h3>Consideraciones de Seguridad</h3>
+                <p>La seguridad es crítica en sistemas MCP:</p>
+                <ul>
+                    <li><strong>Modelo de amenazas</strong>: Identificar vectores de ataque</li>
+                    <li><strong>Principio de menor privilegio</strong>: Mínimos permisos necesarios</li>
+                    <li><strong>Validación de inputs</strong>: Siempre validar parámetros</li>
+                    <li><strong>Sanitización de outputs</strong>: Prevenir injection attacks</li>
+                    <li><strong>Auditoría</strong>: Logging de todas las acciones</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Seguridad en MCP</h2>
+                <h3>Autenticación</h3>
+                <p><strong>API Keys</strong></p>
+                <pre><code class="json">{
+  "env": {
+    "API_KEY": "secret123"
+  }
+}</code></pre>
+                <p><strong>OAuth 2.1</strong></p>
+                <ul>
+                    <li>Authorization Code Flow con PKCE</li>
+                    <li>Tokens de corta duración</li>
+                    <li>Refresh tokens para renovación</li>
+                    <li>Especificación MCP OAuth 2.1 (Marzo 2025)</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Seguridad en MCP</h2>
+                <h3>Autorización</h3>
+                <p><strong>Role-Based Access Control (RBAC)</strong></p>
+                <ul>
+                    <li>Definir roles: admin, user, readonly</li>
+                    <li>Asignar permisos por rol</li>
+                    <li>Validar permisos antes de ejecutar tools</li>
+                </ul>
+                <p><strong>Scopes</strong></p>
+                <ul>
+                    <li>Limitar acceso a tools específicos</li>
+                    <li>Granularidad por recurso</li>
+                    <li>Ejemplo: <code>read:files</code>, <code>write:database</code></li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Seguridad en MCP</h2>
+                <h3>Validación y Sandboxing</h3>
+                <p><strong>Validación de Inputs</strong></p>
+                <ul>
+                    <li>JSON Schema para validación automática</li>
+                    <li>Validaciones adicionales en código</li>
+                    <li>Sanitización de strings, paths, comandos</li>
+                </ul>
+                <p><strong>Sandboxing</strong></p>
+                <ul>
+                    <li>Contenedores Docker para aislamiento</li>
+                    <li>Roots para limitar acceso a filesystem</li>
+                    <li>Network policies para restringir conexiones</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Seguridad en MCP</h2>
+                <h3>Best Practices de Seguridad</h3>
+                <ul>
+                    <li><strong>Human-in-the-loop</strong>: Confirmación para acciones destructivas</li>
+                    <li><strong>Rate limiting</strong>: Prevenir abuso</li>
+                    <li><strong>Secrets management</strong>: Nunca hardcodear credenciales</li>
+                    <li><strong>HTTPS obligatorio</strong>: Para servidores remotos</li>
+                    <li><strong>Auditoría completa</strong>: Logging de todas las operaciones</li>
+                    <li><strong>Actualizaciones</strong>: Mantener dependencias actualizadas</li>
+                    <li><strong>Penetration testing</strong>: Pruebas de seguridad regulares</li>
+                </ul>
+            </section>
+
+            <!-- Sección 13: Implementación de Servidores (6 slides) -->
+            <section>
+                <h2>Implementación de Servidores MCP</h2>
+                <h3>Planificación: Crear un Servidor MCP</h3>
+                <p>Pasos para desarrollar un servidor MCP:</p>
+                <ul>
+                    <li><strong>1. Identificar capacidades</strong>: ¿Qué datos/acciones exponer?</li>
+                    <li><strong>2. Diseñar API</strong>: Tools, resources, prompts necesarios</li>
+                    <li><strong>3. Elegir SDK</strong>: Python/FastMCP, TypeScript, etc.</li>
+                    <li><strong>4. Definir esquemas</strong>: JSON Schema para parámetros</li>
+                    <li><strong>5. Implementar lógica</strong>: Handlers de tools/resources</li>
+                    <li><strong>6. Testing</strong>: MCP Inspector, tests unitarios</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Implementación de Servidores MCP</h2>
+                <h3>Registrar Tools</h3>
+                <pre><code class="python">from fastmcp import FastMCP
+
+mcp = FastMCP("Calculator")
+
+@mcp.tool()
+def add(a: float, b: float) -> float:
+    """Suma dos números"""
+    return a + b
+
+@mcp.tool()
+def multiply(a: float, b: float) -> float:
+    """Multiplica dos números"""
+    return a * b
+</code></pre>
+                <p>Los decoradores manejan automáticamente el registro y esquemas.</p>
+            </section>
+
+            <section>
+                <h2>Implementación de Servidores MCP</h2>
+                <h3>Manejar Requests</h3>
+                <p>El SDK maneja automáticamente el protocolo JSON-RPC:</p>
+                <ul>
+                    <li><strong>Parsing</strong>: Convertir JSON a objetos Python/TS</li>
+                    <li><strong>Validación</strong>: Verificar esquemas de parámetros</li>
+                    <li><strong>Dispatch</strong>: Llamar al handler apropiado</li>
+                    <li><strong>Serialización</strong>: Convertir resultado a JSON</li>
+                    <li><strong>Error handling</strong>: Capturar y reportar errores</li>
+                </ul>
+                <p>El desarrollador solo implementa la lógica de negocio.</p>
+            </section>
+
+            <section>
+                <h2>Implementación de Servidores MCP</h2>
+                <h3>Manejo de Errores</h3>
+                <pre><code class="python">@mcp.tool()
+def divide(a: float, b: float) -> float:
+    """Divide dos números"""
+    if b == 0:
+        raise ValueError("No se puede dividir por cero")
+    return a / b
+</code></pre>
+                <p>Los errores de Python se convierten automáticamente en respuestas de error MCP.</p>
+                <ul>
+                    <li>Siempre lanzar excepciones descriptivas</li>
+                    <li>Proporcionar contexto útil al usuario</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Implementación de Servidores MCP</h2>
+                <h3>Testing con MCP Inspector</h3>
+                <pre><code class="bash">npx @modelcontextprotocol/inspector python server.py</code></pre>
+                <ul>
+                    <li>Interfaz web interactiva en http://localhost:5173</li>
+                    <li>Listar tools, resources, prompts disponibles</li>
+                    <li>Ejecutar tools con diferentes parámetros</li>
+                    <li>Ver requests/responses JSON-RPC</li>
+                    <li>Debugging en tiempo real</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Implementación de Servidores MCP</h2>
+                <h3>Deployment</h3>
+                <p><strong>Local (STDIO)</strong></p>
+                <ul>
+                    <li>Agregar a configuración de Claude Desktop</li>
+                    <li>Proporcionar script de instalación</li>
+                </ul>
+                <p><strong>Remoto (HTTP/SSE)</strong></p>
+                <ul>
+                    <li>Desplegar en Vercel, Railway, AWS Lambda</li>
+                    <li>Configurar CORS y autenticación</li>
+                    <li>Proporcionar URL y documentación</li>
+                    <li>Considerar FastMCP Cloud para deployment automático</li>
+                </ul>
+            </section>
+
+            <!-- Sección 14: Integración Claude (5 slides) -->
+            <section>
+                <h2>Integración con Claude</h2>
+                <h3>Configuración de Servidores MCP</h3>
+                <p>Para usar servidores MCP en Claude Desktop:</p>
+                <ul>
+                    <li><strong>1. Localizar archivo de configuración</strong></li>
+                    <li>macOS: <code>~/Library/Application Support/Claude/claude_desktop_config.json</code></li>
+                    <li>Windows: <code>%APPDATA%\Claude\claude_desktop_config.json</code></li>
+                    <li><strong>2. Editar JSON</strong>: Agregar servidores a mcpServers</li>
+                    <li><strong>3. Reiniciar Claude Desktop</strong>: Para cargar configuración</li>
+                    <li><strong>4. Verificar</strong>: Ver servidores conectados en la UI</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Integración con Claude</h2>
+                <h3>Usar MCP en Claude Desktop</h3>
+                <p>Una vez configurados, los servidores aparecen en la interfaz:</p>
+                <ul>
+                    <li><strong>Icono de herramientas</strong>: Ver tools disponibles</li>
+                    <li><strong>Discovery automático</strong>: Claude conoce las capacidades</li>
+                    <li><strong>Tool calling</strong>: Claude usa tools cuando es apropiado</li>
+                    <li><strong>Confirmaciones</strong>: Para acciones destructivas</li>
+                    <li><strong>Historial</strong>: Ver tools ejecutados en la conversación</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Integración con Claude</h2>
+                <h3>Ejemplo de Conversación con MCP</h3>
+                <p><strong>Usuario:</strong> "Busca archivos Python en mi proyecto"</p>
+                <p><strong>Claude:</strong> Usa el tool <code>search_files</code> del servidor filesystem:</p>
+                <pre><code class="json">{
+  "tool": "search_files",
+  "arguments": {
+    "pattern": "*.py",
+    "directory": "/home/user/project"
+  }
+}</code></pre>
+                <p><strong>Claude:</strong> "Encontré 15 archivos Python en tu proyecto..."</p>
+            </section>
+
+            <section>
+                <h2>Integración con Claude</h2>
+                <h3>Debugging y Troubleshooting</h3>
+                <p><strong>Logs de Claude Desktop</strong></p>
+                <ul>
+                    <li>View → Developer → Logs</li>
+                    <li>Ver mensajes de servidores MCP</li>
+                    <li>Errores de conexión y ejecución</li>
+                </ul>
+                <p><strong>Problemas Comunes</strong></p>
+                <ul>
+                    <li>Servidor no aparece: Verificar sintaxis JSON</li>
+                    <li>Errores de ejecución: Revisar logs del servidor</li>
+                    <li>Permisos: Verificar paths y environment variables</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Integración con Claude</h2>
+                <h3>Mejores Prácticas de Integración</h3>
+                <ul>
+                    <li><strong>Nombres descriptivos</strong>: Para servidores y tools</li>
+                    <li><strong>Documentación clara</strong>: En descriptions de tools</li>
+                    <li><strong>Errores útiles</strong>: Mensajes que ayuden al usuario</li>
+                    <li><strong>Confirmaciones</strong>: Para acciones peligrosas (destructiveHint)</li>
+                    <li><strong>Testing</strong>: Probar con MCP Inspector antes de usar en Claude</li>
+                    <li><strong>Logging</strong>: stderr para debugging, no stdout</li>
+                </ul>
+            </section>
+
+            <!-- Sección 15: Casos de Uso (5 slides) -->
+            <section>
+                <h2>Casos de Uso</h2>
+                <h3>File Systems</h3>
+                <p>Acceso a archivos locales y remotos:</p>
+                <ul>
+                    <li><strong>Lectura</strong>: Leer contenido de archivos</li>
+                    <li><strong>Búsqueda</strong>: Encontrar archivos por patrón</li>
+                    <li><strong>Escritura</strong>: Crear y modificar archivos</li>
+                    <li><strong>Organización</strong>: Mover, renombrar, eliminar</li>
+                    <li><strong>Metadata</strong>: Tamaño, fechas, permisos</li>
+                </ul>
+                <p><strong>Servidor oficial</strong>: <code>@modelcontextprotocol/server-filesystem</code></p>
+            </section>
+
+            <section>
+                <h2>Casos de Uso</h2>
+                <h3>Integración con APIs</h3>
+                <p>Acceso a servicios web externos:</p>
+                <ul>
+                    <li><strong>GitHub</strong>: Repositorios, issues, PRs</li>
+                    <li><strong>Slack</strong>: Enviar mensajes, leer canales</li>
+                    <li><strong>Google Drive</strong>: Documentos, hojas de cálculo</li>
+                    <li><strong>Jira</strong>: Tickets, proyectos, workflows</li>
+                    <li><strong>Salesforce</strong>: CRM, leads, oportunidades</li>
+                </ul>
+                <p>Ejemplo: <code>@modelcontextprotocol/server-github</code></p>
+            </section>
+
+            <section>
+                <h2>Casos de Uso</h2>
+                <h3>Bases de Datos</h3>
+                <p>Consulta y manipulación de datos:</p>
+                <ul>
+                    <li><strong>PostgreSQL</strong>: Queries SQL, schemas, tablas</li>
+                    <li><strong>MySQL</strong>: Lectura/escritura de datos</li>
+                    <li><strong>MongoDB</strong>: Documentos NoSQL</li>
+                    <li><strong>SQLite</strong>: Bases de datos locales</li>
+                    <li><strong>Redis</strong>: Cache y key-value store</li>
+                </ul>
+                <p>Ejemplo: <code>@modelcontextprotocol/server-postgres</code></p>
+            </section>
+
+            <section>
+                <h2>Casos de Uso</h2>
+                <h3>Web Scraping y Búsqueda</h3>
+                <p>Extracción de información de la web:</p>
+                <ul>
+                    <li><strong>Brave Search</strong>: Búsqueda web con privacidad</li>
+                    <li><strong>Puppeteer</strong>: Scraping con navegador headless</li>
+                    <li><strong>Fetch</strong>: Descarga de páginas web</li>
+                    <li><strong>RSS/Atom</strong>: Feeds de noticias</li>
+                    <li><strong>Web archives</strong>: Wayback Machine</li>
+                </ul>
+                <p>Ejemplo: <code>@modelcontextprotocol/server-brave-search</code></p>
+            </section>
+
+            <section>
+                <h2>Casos de Uso</h2>
+                <h3>Sistemas Locales y Herramientas</h3>
+                <p>Integración con el sistema operativo:</p>
+                <ul>
+                    <li><strong>Ejecución de comandos</strong>: Shell, scripts</li>
+                    <li><strong>Gestión de procesos</strong>: Iniciar, detener, monitorear</li>
+                    <li><strong>Clipboard</strong>: Copiar/pegar</li>
+                    <li><strong>Screenshots</strong>: Captura de pantalla</li>
+                    <li><strong>Notificaciones</strong>: Alertas del sistema</li>
+                    <li><strong>System info</strong>: CPU, memoria, disco</li>
+                </ul>
+            </section>
+
+            <!-- Sección 16: Mejores Prácticas (5 slides) -->
+            <section>
+                <h2>Mejores Prácticas</h2>
+                <h3>Diseño de Tools</h3>
+                <ul>
+                    <li><strong>Granularidad apropiada</strong>: Ni muy genéricos ni muy específicos</li>
+                    <li><strong>Un propósito por tool</strong>: Single responsibility principle</li>
+                    <li><strong>Nombres descriptivos</strong>: Verbos claros (get, create, update, delete)</li>
+                    <li><strong>Parámetros intuitivos</strong>: Nombres que explican su propósito</li>
+                    <li><strong>Valores por defecto</strong>: Para parámetros opcionales comunes</li>
+                    <li><strong>Idempotencia</strong>: Cuando sea posible, misma entrada = misma salida</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Mejores Prácticas</h2>
+                <h3>Documentación</h3>
+                <ul>
+                    <li><strong>Descriptions detalladas</strong>: Explicar qué hace cada tool, cuándo usarlo</li>
+                    <li><strong>Ejemplos de uso</strong>: En la documentación del servidor</li>
+                    <li><strong>Efectos secundarios</strong>: Documentar modificaciones de estado</li>
+                    <li><strong>Limitaciones</strong>: Rate limits, restricciones de acceso</li>
+                    <li><strong>Changelog</strong>: Mantener historial de cambios</li>
+                    <li><strong>README completo</strong>: Setup, configuración, troubleshooting</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Mejores Prácticas</h2>
+                <h3>Testing</h3>
+                <ul>
+                    <li><strong>Unit tests</strong>: Para cada tool individualmente</li>
+                    <li><strong>Integration tests</strong>: Flujos completos cliente-servidor</li>
+                    <li><strong>MCP Inspector</strong>: Testing manual interactivo</li>
+                    <li><strong>Test fixtures</strong>: Datos de prueba realistas</li>
+                    <li><strong>Error scenarios</strong>: Probar casos de error</li>
+                    <li><strong>CI/CD</strong>: Automatizar testing en cada commit</li>
+                    <li><strong>Coverage</strong>: Objetivo de 80%+ code coverage</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Mejores Prácticas</h2>
+                <h3>Performance</h3>
+                <ul>
+                    <li><strong>Caching</strong>: Para operaciones costosas repetidas</li>
+                    <li><strong>Pagination</strong>: Para datasets grandes</li>
+                    <li><strong>Lazy loading</strong>: Cargar datos bajo demanda</li>
+                    <li><strong>Timeouts</strong>: Prevenir operaciones infinitas</li>
+                    <li><strong>Rate limiting</strong>: Proteger contra abuso</li>
+                    <li><strong>Async operations</strong>: Para tareas largas</li>
+                    <li><strong>Resource cleanup</strong>: Cerrar conexiones, liberar memoria</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Mejores Prácticas</h2>
+                <h3>Mantenibilidad</h3>
+                <ul>
+                    <li><strong>Código limpio</strong>: Seguir estándares del lenguaje</li>
+                    <li><strong>Separación de concerns</strong>: Lógica de negocio vs protocolo</li>
+                    <li><strong>Configuración externa</strong>: Variables de entorno, archivos config</li>
+                    <li><strong>Logging estructurado</strong>: Para debugging y monitoring</li>
+                    <li><strong>Versionado semántico</strong>: MAJOR.MINOR.PATCH</li>
+                    <li><strong>Deprecation strategy</strong>: Advertencias antes de eliminar features</li>
+                    <li><strong>Documentación de código</strong>: Comentarios útiles</li>
+                </ul>
+            </section>
+
+            <!-- Sección 17: Conclusión (3 slides) -->
+            <section>
+                <h2>Conclusión</h2>
+                <h3>Resumen del Curso</h3>
+                <p>Hemos cubierto todos los aspectos fundamentales de MCP:</p>
+                <ul>
+                    <li><strong>Fundamentos</strong>: Protocolo, arquitectura, componentes</li>
+                    <li><strong>Primitivos</strong>: Tools, Resources, Prompts</li>
+                    <li><strong>Transportes</strong>: STDIO, HTTP/SSE</li>
+                    <li><strong>Seguridad</strong>: Autenticación, autorización, validación</li>
+                    <li><strong>Implementación</strong>: Servidores y clientes</li>
+                    <li><strong>Integración</strong>: Claude Desktop y otros hosts</li>
+                    <li><strong>Mejores prácticas</strong>: Diseño, testing, performance</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Conclusión</h2>
+                <h3>Ecosistema MCP</h3>
+                <p>MCP tiene un ecosistema vibrante y en crecimiento:</p>
+                <ul>
+                    <li><strong>2000+ servidores</strong> disponibles en registries</li>
+                    <li><strong>Múltiples SDKs</strong>: Python, TypeScript, Go, Java, C#</li>
+                    <li><strong>Frameworks especializados</strong>: FastMCP, EasyMCP, etc.</li>
+                    <li><strong>Integración con LLMs</strong>: Claude, otros modelos vía hosts</li>
+                    <li><strong>Comunidad activa</strong>: GitHub, Discord, foros</li>
+                    <li><strong>Evolución continua</strong>: Nuevas features y especificaciones</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Conclusión</h2>
+                <h3>Próximos Pasos</h3>
+                <p><strong>Para continuar aprendiendo:</strong></p>
+                <ul>
+                    <li><strong>Proyecto final</strong>: Implementar un servidor MCP completo</li>
+                    <li><strong>Explorar registries</strong>: Smithery, Glama, PulseMCP</li>
+                    <li><strong>Contribuir</strong>: Open source, comunidad MCP</li>
+                    <li><strong>Experimentar</strong>: Nuevos casos de uso, integraciones</li>
+                    <li><strong>Seguir actualizaciones</strong>: Especificación, SDKs, hosts</li>
+                </ul>
+                <p><strong>Recursos:</strong></p>
+                <ul>
+                    <li>https://modelcontextprotocol.io</li>
+                    <li>https://github.com/modelcontextprotocol</li>
+                    <li>https://smithery.ai</li>
+                </ul>
+            </section>
+
+            <!-- Slide final -->
+            <section>
+                <h1>¡Gracias!</h1>
+                <p><strong>Model Context Protocol (MCP)</strong></p>
+                <p>Curso Completo de Desarrollo de Agentes AI</p>
+                <p>2025</p>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/plugin/highlight/highlight.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: true,
+            transition: 'slide',
+            plugins: [ RevealHighlight ]
+        });
+    </script>
+</body>
+</html>

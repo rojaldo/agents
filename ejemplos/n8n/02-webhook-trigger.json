@@ -1,0 +1,152 @@
+{
+  "name": "Webhook Trigger - Recibir Datos",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "mi-webhook",
+        "options": {
+          "responseMode": "lastNode",
+          "responseData": "allEntries"
+        }
+      },
+      "id": "3f1h9d41-6f4h-7e7e-2e6d-9g8h1i5d4e7f",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [
+        250,
+        300
+      ],
+      "webhookId": "mi-webhook-id"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.body.action }}",
+              "operation": "equals",
+              "value2": "create"
+            }
+          ]
+        }
+      },
+      "id": "4g2i0e52-7g5i-8f8f-3f7e-0h9i2j6e5f8g",
+      "name": "IF - Verificar Acción",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        450,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "status",
+              "value": "success"
+            },
+            {
+              "name": "message",
+              "value": "={{ 'Registro creado: ' + $json.body.name }}"
+            },
+            {
+              "name": "timestamp",
+              "value": "={{ $now.toISO() }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5h3j1f63-8h6j-9g9g-4g8f-1i0j3k7f6g9h",
+      "name": "Respuesta Éxito",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [
+        650,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "status",
+              "value": "error"
+            },
+            {
+              "name": "message",
+              "value": "Acción no válida"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6i4k2g74-9i7k-0h0h-5h9g-2j1k4l8g7h0i",
+      "name": "Respuesta Error",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [
+        650,
+        400
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "IF - Verificar Acción",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF - Verificar Acción": {
+      "main": [
+        [
+          {
+            "node": "Respuesta Éxito",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respuesta Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1",
+  "meta": {
+    "instanceId": "ejemplo"
+  },
+  "tags": [
+    {
+      "createdAt": "2025-01-15T10:00:00.000Z",
+      "updatedAt": "2025-01-15T10:00:00.000Z",
+      "id": "2",
+      "name": "Webhook"
+    },
+    {
+      "createdAt": "2025-01-15T10:00:00.000Z",
+      "updatedAt": "2025-01-15T10:00:00.000Z",
+      "id": "1",
+      "name": "Tutorial"
+    }
+  ]
+}

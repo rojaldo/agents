@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curso RAG - Retrieval-Augmented Generation</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/theme/white.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-light.min.css">
+    <style>
+        .reveal { text-align: left; color: #555555; }
+        .reveal section { text-align: left; padding: 40px; display: flex; flex-direction: column; justify-content: flex-start; }
+        .reveal h1, .reveal h2, .reveal h3 { text-transform: none; text-align: left; color: #555555; }
+
+        /* Encabezados */
+        .reveal h1 { font-size: 1.05em; margin-bottom: 0.5em; }
+        .reveal h2 { font-size: 1em; margin-bottom: 0.5em; }
+        .reveal h3 { font-size: 0.75em; margin-bottom: 0.3em; }
+
+        /* Párrafos y énfasis */
+        .reveal p { font-size: 0.6em; margin: 0.3em 0; color: #555555; }
+        .reveal strong { font-size: 1em; font-weight: bold; }
+
+        /* Código */
+        .reveal pre { background: #f8f8f8; border: 1px solid #ddd; width: 100%; padding: 0.5em; margin: 0.5em 0; }
+        .reveal pre code { font-size: 0.7em; color: #555555; }
+
+        /* Listas y elementos */
+        .reveal ul { font-size: 0.55em; text-align: left; margin-left: 0.5em; color: #555555; }
+        .reveal li { margin: 0.3em 0; color: #555555; }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Slide 1: Portada -->
+            <section>
+                <h1>Curso de RAG</h1>
+                <h2>Retrieval-Augmented Generation</h2>
+                <p><strong>Implementación completa con LangChain y Ollama</strong></p>
+                <p>Curso de Agentes IA</p>
+                <p>2024-11-14</p>
+            </section>
+
+            <!-- Slide 2: Tabla de Contenidos -->
+            <section>
+                <h2>Tabla de Contenidos</h2>
+                <ul>
+                    <li>Problema que Resuelve RAG</li>
+                    <li>¿Qué es RAG?</li>
+                    <li>Embeddings y Vectorización</li>
+                    <li>Chunking de Documentos</li>
+                    <li>Vector Stores</li>
+                    <li>Búsqueda Vectorial</li>
+                    <li>Arquitectura RAG</li>
+                    <li>Implementación Básica</li>
+                    <li>Cadenas RAG</li>
+                    <li>Optimización de Retrieval</li>
+                    <li>Gestión de Contexto</li>
+                    <li>RAG Avanzado</li>
+                    <li>Evaluación</li>
+                    <li>Casos de Uso</li>
+                    <li>Mejores Prácticas</li>
+                    <li>Troubleshooting</li>
+                </ul>
+            </section>
+
+            <!-- Sección: Problema RAG (5 slides) -->
+            <section>
+                <h2>El Problema que Resuelve RAG</h2>
+                <p><strong>Limitaciones de los LLMs tradicionales</strong></p>
+            </section>
+
+            <section>
+                <h2>Limitación 1: Conocimiento Estático</h2>
+                <ul>
+                    <li>Los LLMs se entrenan con datos hasta una fecha específica</li>
+                    <li>No tienen acceso a información reciente o actualizada</li>
+                    <li>No pueden acceder a eventos después de su entrenamiento</li>
+                    <li>El conocimiento queda "congelado" en el tiempo</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Limitación 2: Datos Privados</h2>
+                <ul>
+                    <li>No tienen acceso a información corporativa o privada</li>
+                    <li>No pueden consultar documentos internos de una organización</li>
+                    <li>No conocen políticas específicas de empresa</li>
+                    <li>Requieren exponer datos sensibles para aprender</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Limitación 3: Alucinaciones</h2>
+                <ul>
+                    <li>Pueden generar información incorrecta con confianza</li>
+                    <li>Inventan hechos cuando no conocen la respuesta</li>
+                    <li>Difícil distinguir entre respuestas correctas e incorrectas</li>
+                    <li>No citan fuentes de información</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>La Solución: RAG</h2>
+                <ul>
+                    <li><strong>Proporcionar contexto relevante</strong> antes de generar respuestas</li>
+                    <li><strong>Buscar documentos</strong> relacionados con la pregunta</li>
+                    <li><strong>Generar respuestas</strong> basadas en información real</li>
+                    <li><strong>Trazabilidad</strong> - citar fuentes de información</li>
+                    <li><strong>Actualización continua</strong> - agregar nuevos documentos sin reentrenar</li>
+                </ul>
+            </section>
+
+            <!-- Sección: ¿Qué es RAG? (6 slides) -->
+            <section>
+                <h2>¿Qué es RAG?</h2>
+                <p><strong>Retrieval-Augmented Generation</strong></p>
+            </section>
+
+            <section>
+                <h2>Concepto Básico de RAG</h2>
+                <p><strong>RAG combina dos componentes principales:</strong></p>
+                <ul>
+                    <li><strong>Retrieval (Recuperación):</strong> Búsqueda de documentos relevantes en una base de datos</li>
+                    <li><strong>Augmented Generation (Generación Aumentada):</strong> Uso de documentos recuperados para generar respuestas contextualizadas</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Componente 1: Retrieval</h2>
+                <ul>
+                    <li>Búsqueda semántica de documentos relevantes</li>
+                    <li>Utiliza embeddings y vectorización</li>
+                    <li>Encuentra información relacionada con la consulta</li>
+                    <li>Recupera los top-K documentos más similares</li>
+                    <li>Base de datos vectoriales para búsqueda eficiente</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Componente 2: Augmented Generation</h2>
+                <ul>
+                    <li>El LLM recibe documentos recuperados como contexto</li>
+                    <li>Genera respuestas basadas en información real</li>
+                    <li>Reduce alucinaciones al tener fuentes concretas</li>
+                    <li>Puede citar las fuentes utilizadas</li>
+                    <li>Mejora la precisión y relevancia de las respuestas</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Ventajas de RAG</h2>
+                <ul>
+                    <li><strong>Precisión mejorada:</strong> Respuestas basadas en datos reales</li>
+                    <li><strong>Conocimiento actualizado:</strong> Acceso a información reciente</li>
+                    <li><strong>Datos privados:</strong> Información corporativa sin exponerla al modelo público</li>
+                    <li><strong>Trazabilidad:</strong> Capacidad de citar fuentes</li>
+                    <li><strong>Menor costo:</strong> Modelos más pequeños funcionan mejor con contexto</li>
+                    <li><strong>Funcionamiento local:</strong> No necesitas APIs externas</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Casos de Uso de RAG</h2>
+                <ul>
+                    <li>Chatbots de soporte técnico</li>
+                    <li>Sistemas de QA sobre documentos corporativos</li>
+                    <li>Búsqueda semántica en repositorios</li>
+                    <li>Análisis de reportes y documentación</li>
+                    <li>Asistentes especializados por dominio</li>
+                    <li>Extracción de información de PDFs</li>
+                    <li>FAQs inteligentes</li>
+                </ul>
+            </section>
+
+            <!-- Sección: Embeddings (8 slides) -->
+            <section>
+                <h2>Embeddings</h2>
+                <p><strong>Representación numérica del texto</strong></p>
+            </section>
+
+            <section>
+                <h2>¿Qué son los Embeddings?</h2>
+                <ul>
+                    <li><strong>Vectores de números</strong> que representan texto</li>
+                    <li>Típicamente 384-1536 dimensiones</li>
+                    <li>Textos similares tienen vectores cercanos en el espacio</li>
+                    <li>Capturan el significado semántico del texto</li>
+                    <li>Permiten realizar búsquedas por similitud</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Espacios Vectoriales</h2>
+                <ul>
+                    <li>Los embeddings viven en un espacio multidimensional</li>
+                    <li>La distancia entre vectores indica similitud semántica</li>
+                    <li>"perro" y "gato" estarán más cerca que "perro" y "coche"</li>
+                    <li>Permite agrupar conceptos relacionados</li>
+                    <li>Búsqueda eficiente mediante algoritmos especializados</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Similitud Coseno</h2>
+                <ul>
+                    <li>Mide qué tan parecidos son dos vectores</li>
+                    <li>Rango: -1 a 1 (1 = idénticos, 0 = sin relación)</li>
+                    <li>No depende de la magnitud de los vectores</li>
+                    <li>Compara la dirección, no el tamaño</li>
+                    <li>Método más común para comparar embeddings</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Modelos de Embeddings</h2>
+                <ul>
+                    <li><strong>nomic-embed-text:</strong> 274M parámetros, excelente para RAG local</li>
+                    <li><strong>all-minilm:</strong> 22M parámetros, muy rápido</li>
+                    <li><strong>mxbai-embed-large:</strong> 335M parámetros, muy buena calidad</li>
+                    <li><strong>Sentence Transformers:</strong> Familia de modelos optimizados</li>
+                    <li><strong>HuggingFace:</strong> Amplio catálogo de modelos disponibles</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Embeddings con Ollama</h2>
+                <pre><code class="python">from langchain_ollama import OllamaEmbeddings
+
+embeddings = OllamaEmbeddings(
+    model="nomic-embed-text"
+)
+
+# Generar embedding
+vector = embeddings.embed_query("¿Qué es RAG?")
+print(f"Dimensiones: {len(vector)}")
+print(f"Primeros valores: {vector[:5]}")</code></pre>
+            </section>
+
+            <section>
+                <h2>Instalar Modelos de Embeddings</h2>
+                <pre><code class="bash"># Descargar modelos con Ollama
+ollama pull nomic-embed-text  # 274M - Recomendado
+ollama pull all-minilm        # 22M - Muy rápido
+ollama pull mxbai-embed-large # 335M - Alta calidad
+
+# Verificar modelos instalados
+ollama list</code></pre>
+            </section>
+
+            <section>
+                <h2>Embeddings Alternativos</h2>
+                <pre><code class="python"># Sentence Transformers (local, CPU)
+from sentence_transformers import SentenceTransformer
+
+model = SentenceTransformer("all-MiniLM-L6-v2")
+embedding = model.encode("Texto de prueba")
+
+# HuggingFace Embeddings
+from langchain_community.embeddings import HuggingFaceEmbeddings
+
+embeddings = HuggingFaceEmbeddings(
+    model_name="sentence-transformers/all-MiniLM-L6-v2"
+)</code></pre>
+            </section>
+
+            <!-- Sección: Chunking (7 slides) -->
+            <section>
+                <h2>Chunking</h2>
+                <p><strong>Dividir documentos en fragmentos manejables</strong></p>
+            </section>
+
+            <section>
+                <h2>¿Por qué Chunking?</h2>
+                <ul>
+                    <li>Los LLMs tienen <strong>límite de tokens</strong> en el contexto</li>
+                    <li>Documentos largos no caben completos en el prompt</li>
+                    <li>Búsqueda más <strong>eficiente y precisa</strong> en chunks pequeños</li>
+                    <li>Mejor relevancia semántica en fragmentos específicos</li>
+                    <li>Permite procesar documentos de cualquier tamaño</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Tamaño Recomendado de Chunks</h2>
+                <ul>
+                    <li><strong>512 tokens</strong> (≈2000 caracteres): Tamaño típico balanceado</li>
+                    <li><strong>256 tokens:</strong> Para búsquedas muy precisas</li>
+                    <li><strong>1024 tokens:</strong> Para contexto más amplio</li>
+                    <li><strong>Overlap 50-100 tokens:</strong> Mantiene contexto entre chunks</li>
+                    <li>Ajustar según el tipo de documento y dominio</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Chunking Básico: CharacterTextSplitter</h2>
+                <pre><code class="python">from langchain.text_splitter import CharacterTextSplitter
+
+splitter = CharacterTextSplitter(
+    chunk_size=512,
+    chunk_overlap=50  # Solapamiento para mantener contexto
+)
+
+chunks = splitter.split_documents(documents)
+print(f"Total chunks: {len(chunks)}")</code></pre>
+            </section>
+
+            <section>
+                <h2>Chunking Recursivo</h2>
+                <pre><code class="python">from langchain.text_splitter import RecursiveCharacterTextSplitter
+
+splitter = RecursiveCharacterTextSplitter(
+    chunk_size=512,
+    chunk_overlap=50,
+    separators=["\n\n", "\n", ".", " "]
+)
+
+chunks = splitter.split_documents(documents)</code></pre>
+                <p><strong>Ventaja:</strong> Respeta mejor la estructura del texto (párrafos, líneas, oraciones)</p>
+            </section>
+
+            <section>
+                <h2>Estrategias de Separación</h2>
+                <ul>
+                    <li><strong>Por párrafos:</strong> "\n\n" - Mantiene ideas completas</li>
+                    <li><strong>Por líneas:</strong> "\n" - Estructura clara</li>
+                    <li><strong>Por oraciones:</strong> "(?&lt;=[.!?]) +" - Unidades semánticas</li>
+                    <li><strong>Por palabras:</strong> " " - Último recurso</li>
+                    <li><strong>Por caracteres:</strong> "" - Extremo último recurso</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Limpieza de Texto</h2>
+                <pre><code class="python">def limpiar_texto(texto):
+    # Remover espacios en blanco excesivos
+    texto = " ".join(texto.split())
+    # Remover caracteres especiales
+    texto = texto.replace("\\x00", "")
+    return texto
+
+# Aplicar a chunks
+for chunk in chunks:
+    chunk.page_content = limpiar_texto(chunk.page_content)</code></pre>
+            </section>
+
+            <!-- Sección: Vector Stores (10 slides) -->
+            <section>
+                <h2>Vector Stores</h2>
+                <p><strong>Bases de datos especializadas para vectores</strong></p>
+            </section>
+
+            <section>
+                <h2>¿Qué es un Vector Store?</h2>
+                <ul>
+                    <li>Base de datos optimizada para almacenar embeddings</li>
+                    <li>Búsqueda eficiente por similitud vectorial</li>
+                    <li>Indexación especializada (HNSW, IVF, etc.)</li>
+                    <li>Escalable a millones de vectores</li>
+                    <li>Metadatos asociados a cada vector</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>ChromaDB - Vector Store Local</h2>
+                <ul>
+                    <li><strong>Totalmente local</strong> - No requiere servicios externos</li>
+                    <li><strong>Rápido</strong> - Optimizado para búsquedas</li>
+                    <li><strong>Fácil de usar</strong> - API simple e intuitiva</li>
+                    <li><strong>Persistencia</strong> - Guarda datos en disco</li>
+                    <li><strong>Integración perfecta</strong> con LangChain</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Crear Vector Store con ChromaDB</h2>
+                <pre><code class="python">from langchain_chroma import Chroma
+from langchain_ollama import OllamaEmbeddings
+
+embeddings = OllamaEmbeddings(model="nomic-embed-text")
+
+vector_store = Chroma.from_documents(
+    documents=chunks,
+    embedding=embeddings,
+    persist_directory="./chroma_db"
+)</code></pre>
+            </section>
+
+            <section>
+                <h2>FAISS - Facebook AI Similarity Search</h2>
+                <ul>
+                    <li>Desarrollado por Facebook Research</li>
+                    <li>Extremadamente rápido para búsquedas</li>
+                    <li>Ideal para millones de vectores</li>
+                    <li>Múltiples algoritmos de indexación</li>
+                    <li>Requiere más configuración que ChromaDB</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Qdrant - Vector Database</h2>
+                <ul>
+                    <li>Base de datos vectorial completa</li>
+                    <li>Soporta filtrado avanzado por metadatos</li>
+                    <li>API REST y gRPC</li>
+                    <li>Escalable horizontalmente</li>
+                    <li>Disponible como servicio cloud o self-hosted</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Pinecone - Cloud Vector Database</h2>
+                <ul>
+                    <li>Servicio cloud totalmente gestionado</li>
+                    <li>Alta disponibilidad y escalabilidad</li>
+                    <li>Sin necesidad de gestionar infraestructura</li>
+                    <li>Plan gratuito limitado</li>
+                    <li>Integración con múltiples frameworks</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Comparación de Vector Stores</h2>
+                <ul>
+                    <li><strong>ChromaDB:</strong> Local, fácil, ideal para desarrollo</li>
+                    <li><strong>FAISS:</strong> Más rápido, más complejo, producción local</li>
+                    <li><strong>Qdrant:</strong> Completo, filtrado avanzado, self-hosted</li>
+                    <li><strong>Pinecone:</strong> Cloud, sin gestión, costo mensual</li>
+                    <li><strong>Weaviate:</strong> Open source, GraphQL, semántica avanzada</li>
+                    <li><strong>Milvus:</strong> Distribuido, alta escala, empresarial</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Cargar Vector Store Existente</h2>
+                <pre><code class="python"># Cargar vector store previamente persistido
+vector_store = Chroma(
+    persist_directory="./chroma_db",
+    embedding_function=embeddings
+)
+
+# Agregar más documentos
+vector_store.add_documents(nuevos_chunks)</code></pre>
+            </section>
+
+            <section>
+                <h2>Metadatos en Vector Stores</h2>
+                <pre><code class="python"># Agregar metadatos a chunks
+for chunk in chunks:
+    chunk.metadata["source"] = "archivo.pdf"
+    chunk.metadata["page"] = 1
+    chunk.metadata["author"] = "Juan Pérez"
+
+vector_store = Chroma.from_documents(
+    documents=chunks,
+    embedding=embeddings,
+    persist_directory="./chroma_db"
+)</code></pre>
+            </section>
+
+            <!-- Sección: Búsqueda Vectorial (8 slides) -->
+            <section>
+                <h2>Búsqueda Vectorial</h2>
+                <p><strong>Encontrar documentos relevantes</strong></p>
+            </section>
+
+            <section>
+                <h2>Búsqueda por Similitud</h2>
+                <pre><code class="python"># Búsqueda simple
+results = vector_store.similarity_search(
+    "¿Qué es RAG?",
+    k=3  # Top 3 resultados
+)
+
+for result in results:
+    print(f"Contenido: {result.page_content[:100]}...")
+    print("---")</code></pre>
+            </section>
+
+            <section>
+                <h2>Búsqueda con Score</h2>
+                <pre><code class="python"># Búsqueda con puntuaciones de similitud
+results_with_scores = vector_store.similarity_search_with_score(
+    "¿Qué es RAG?",
+    k=3
+)
+
+for doc, score in results_with_scores:
+    print(f"Score: {score:.4f}")
+    print(f"Contenido: {doc.page_content[:100]}...")
+    print("---")</code></pre>
+            </section>
+
+            <section>
+                <h2>BM25 - Búsqueda por Palabras Clave</h2>
+                <ul>
+                    <li>Algoritmo de ranking basado en frecuencia de términos</li>
+                    <li>Similar a TF-IDF pero más robusto</li>
+                    <li>No requiere embeddings</li>
+                    <li>Funciona bien con términos específicos</li>
+                    <li>Complementa búsqueda vectorial</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Hybrid Search: Vector + BM25</h2>
+                <pre><code class="python">def hybrid_search(query, k=3):
+    # Búsqueda vectorial
+    vector_results = vector_store.similarity_search(query, k=k)
+
+    # Búsqueda por palabras clave
+    keyword_results = [
+        doc for doc in chunks
+        if any(word.lower() in doc.page_content.lower()
+               for word in query.split())
+    ]
+
+    # Combinar y deduplicar
+    combined = vector_results + keyword_results
+    return combined[:k]</code></pre>
+            </section>
+
+            <section>
+                <h2>Maximum Marginal Relevance (MMR)</h2>
+                <ul>
+                    <li>Evita documentos redundantes en los resultados</li>
+                    <li>Balance entre relevancia y diversidad</li>
+                    <li>Útil cuando hay múltiples documentos similares</li>
+                    <li>Mejora la cobertura de información</li>
+                </ul>
+                <pre><code class="python">results = vector_store.max_marginal_relevance_search(
+    "¿Qué es RAG?",
+    k=3,
+    fetch_k=10  # Candidatos iniciales
+)</code></pre>
+            </section>
+
+            <section>
+                <h2>Filtrado por Metadatos</h2>
+                <pre><code class="python"># Buscar solo en documentos específicos
+results = vector_store.similarity_search(
+    "¿Qué es RAG?",
+    k=3,
+    where={"source": "manual_usuario.pdf"}
+)
+
+# Filtros múltiples
+results = vector_store.similarity_search(
+    "configuración",
+    k=5,
+    where={"$and": [
+        {"author": "Juan Pérez"},
+        {"year": {"$gte": 2023}}
+    ]}
+)</code></pre>
+            </section>
+
+            <section>
+                <h2>Parámetros de Búsqueda</h2>
+                <ul>
+                    <li><strong>k:</strong> Número de resultados a devolver</li>
+                    <li><strong>fetch_k:</strong> Candidatos iniciales (para MMR)</li>
+                    <li><strong>lambda_mult:</strong> Balance relevancia/diversidad (MMR)</li>
+                    <li><strong>where:</strong> Filtros de metadatos</li>
+                    <li><strong>score_threshold:</strong> Puntuación mínima de similitud</li>
+                </ul>
+            </section>
+
+            <!-- Sección: Arquitectura RAG (7 slides) -->
+            <section>
+                <h2>Arquitectura RAG</h2>
+                <p><strong>Flujo completo del sistema</strong></p>
+            </section>
+
+            <section>
+                <h2>Diagrama de Flujo RAG</h2>
+                <pre><code>[Documentos] → [Chunking] → [Embeddings] → [Vector DB]
+                                              ↓
+[Pregunta Usuario] → [Embedding Pregunta] → [Búsqueda]
+                                              ↓
+                                    [Docs Relevantes]
+                                              ↓
+                              [LLM + Prompt + Contexto]
+                                              ↓
+                                         [Respuesta]</code></pre>
+            </section>
+
+            <section>
+                <h2>Componente 1: Ingesta de Documentos</h2>
+                <ul>
+                    <li><strong>Document Loaders:</strong> Cargar archivos (PDF, TXT, DOCX)</li>
+                    <li><strong>Text Splitters:</strong> Dividir en chunks</li>
+                    <li><strong>Embeddings:</strong> Convertir a vectores</li>
+                    <li><strong>Vector Store:</strong> Almacenar y indexar</li>
+                    <li>Proceso offline o batch</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Componente 2: Retrieval</h2>
+                <ul>
+                    <li><strong>Query Embedding:</strong> Vectorizar pregunta del usuario</li>
+                    <li><strong>Similarity Search:</strong> Buscar en vector store</li>
+                    <li><strong>Ranking:</strong> Ordenar por relevancia</li>
+                    <li><strong>Filtering:</strong> Aplicar filtros de metadatos</li>
+                    <li>Tiempo real</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Componente 3: Augmentation</h2>
+                <ul>
+                    <li><strong>Context Building:</strong> Construir contexto con documentos</li>
+                    <li><strong>Prompt Engineering:</strong> Diseñar prompt efectivo</li>
+                    <li><strong>Citation Handling:</strong> Incluir fuentes</li>
+                    <li><strong>Context Window:</strong> Gestionar límites de tokens</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Componente 4: Generation</h2>
+                <ul>
+                    <li><strong>LLM:</strong> Modelo de lenguaje (Mistral, Llama2, etc.)</li>
+                    <li><strong>Prompt + Context:</strong> Combinar pregunta con documentos</li>
+                    <li><strong>Response Generation:</strong> Generar respuesta</li>
+                    <li><strong>Post-processing:</strong> Formatear y limpiar</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Pipeline Completo</h2>
+                <pre><code class="python"># 1. Preparación (offline)
+loader = DirectoryLoader("docs/")
+documents = loader.load()
+chunks = text_splitter.split_documents(documents)
+vector_store = Chroma.from_documents(chunks, embeddings)
+
+# 2. Query (online)
+query = "¿Qué es RAG?"
+docs = vector_store.similarity_search(query, k=3)
+context = "\n".join([d.page_content for d in docs])
+prompt = f"Contexto: {context}\nPregunta: {query}"
+respuesta = llm.invoke(prompt)</code></pre>
+            </section>
+
+            <!-- Sección: Implementación Básica (8 slides) -->
+            <section>
+                <h2>Implementación Básica</h2>
+                <p><strong>Construir un sistema RAG paso a paso</strong></p>
+            </section>
+
+            <section>
+                <h2>Paso 1: Instalación</h2>
+                <pre><code class="bash"># Instalar dependencias
+pip install langchain
+pip install langchain-ollama
+pip install langchain-community
+pip install chromadb
+pip install pypdf
+
+# Instalar Ollama
+curl https://ollama.ai/install.sh | sh
+ollama serve</code></pre>
+            </section>
+
+            <section>
+                <h2>Paso 2: Descargar Modelos</h2>
+                <pre><code class="bash"># Modelo LLM
+ollama pull mistral
+
+# Modelo de embeddings
+ollama pull nomic-embed-text
+
+# Verificar
+ollama list</code></pre>
+            </section>
+
+            <section>
+                <h2>Paso 3: Cargar Documentos</h2>
+                <pre><code class="python">from langchain_community.document_loaders import TextLoader
+
+loader = TextLoader("documento.txt")
+documents = loader.load()
+
+print(f"Documentos cargados: {len(documents)}")
+print(f"Contenido: {documents[0].page_content[:200]}")</code></pre>
+            </section>
+
+            <section>
+                <h2>Paso 4: Crear Chunks</h2>
+                <pre><code class="python">from langchain.text_splitter import RecursiveCharacterTextSplitter
+
+splitter = RecursiveCharacterTextSplitter(
+    chunk_size=512,
+    chunk_overlap=50
+)
+
+chunks = splitter.split_documents(documents)
+print(f"Chunks creados: {len(chunks)}")</code></pre>
+            </section>
+
+            <section>
+                <h2>Paso 5: Crear Vector Store</h2>
+                <pre><code class="python">from langchain_chroma import Chroma
+from langchain_ollama import OllamaEmbeddings
+
+embeddings = OllamaEmbeddings(model="nomic-embed-text")
+
+vector_store = Chroma.from_documents(
+    documents=chunks,
+    embedding=embeddings,
+    persist_directory="./chroma_db"
+)</code></pre>
+            </section>
+
+            <section>
+                <h2>Paso 6: Configurar LLM y RAG Chain</h2>
+                <pre><code class="python">from langchain_ollama import OllamaLLM
+from langchain.chains import RetrievalQA
+
+llm = OllamaLLM(model="mistral")
+
+rag_chain = RetrievalQA.from_chain_type(
+    llm=llm,
+    chain_type="stuff",
+    retriever=vector_store.as_retriever(
+        search_kwargs={"k": 3}
+    )
+)</code></pre>
+            </section>
+
+            <section>
+                <h2>Paso 7: Realizar Consultas</h2>
+                <pre><code class="python"># Hacer preguntas
+resultado = rag_chain.invoke({
+    "query": "¿Qué es RAG?"
+})
+
+print(resultado["result"])</code></pre>
+            </section>
+
+            <!-- Sección: Cadenas RAG (7 slides) -->
+            <section>
+                <h2>Cadenas RAG</h2>
+                <p><strong>Diferentes tipos de chains en LangChain</strong></p>
+            </section>
+
+            <section>
+                <h2>RetrievalQA Chain</h2>
+                <pre><code class="python">from langchain.chains import RetrievalQA
+
+rag_chain = RetrievalQA.from_chain_type(
+    llm=llm,
+    chain_type="stuff",  # Estrategia de combinación
+    retriever=vector_store.as_retriever()
+)
+
+result = rag_chain.invoke({"query": "pregunta"})</code></pre>
+                <p><strong>Uso:</strong> Preguntas y respuestas simples sobre documentos</p>
+            </section>
+
+            <section>
+                <h2>Tipos de Chain: Stuff</h2>
+                <ul>
+                    <li><strong>"stuff":</strong> Coloca todos los documentos en el prompt</li>
+                    <li>Más simple y directo</li>
+                    <li>Limitado por tamaño del contexto del LLM</li>
+                    <li>Ideal para pocos documentos pequeños</li>
+                    <li>Una sola llamada al LLM</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Tipos de Chain: Map-Reduce</h2>
+                <ul>
+                    <li><strong>"map_reduce":</strong> Procesa documentos individualmente</li>
+                    <li>Combina resultados en una respuesta final</li>
+                    <li>Puede manejar muchos documentos</li>
+                    <li>Múltiples llamadas al LLM (más lento)</li>
+                    <li>Útil para resúmenes largos</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Tipos de Chain: Refine</h2>
+                <ul>
+                    <li><strong>"refine":</strong> Refina respuesta iterativamente</li>
+                    <li>Procesa documentos secuencialmente</li>
+                    <li>Cada documento mejora la respuesta anterior</li>
+                    <li>Bueno para respuestas detalladas</li>
+                    <li>Más llamadas al LLM que "stuff"</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Tipos de Chain: Map-Rerank</h2>
+                <ul>
+                    <li><strong>"map_rerank":</strong> Genera respuestas con puntuaciones</li>
+                    <li>Selecciona la mejor respuesta</li>
+                    <li>LLM califica cada respuesta</li>
+                    <li>Útil cuando documentos pueden contradecirse</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Prompt Personalizado en Chains</h2>
+                <pre><code class="python">from langchain.prompts import PromptTemplate
+
+template = """Usa los documentos para responder.
+Si no sabes, di "No tengo información".
+
+Contexto:
+{context}
+
+Pregunta: {question}
+
+Respuesta en español:"""
+
+prompt = PromptTemplate(
+    template=template,
+    input_variables=["context", "question"]
+)
+
+rag_chain = RetrievalQA.from_chain_type(
+    llm=llm,
+    chain_type="stuff",
+    retriever=vector_store.as_retriever(),
+    chain_type_kwargs={"prompt": prompt}
+)</code></pre>
+            </section>
+
+            <!-- Sección: Optimización de Retrieval (8 slides) -->
+            <section>
+                <h2>Optimización de Retrieval</h2>
+                <p><strong>Mejorar la calidad de la recuperación</strong></p>
+            </section>
+
+            <section>
+                <h2>Top-K: Número de Documentos</h2>
+                <ul>
+                    <li><strong>k=3:</strong> Valor típico por defecto</li>
+                    <li><strong>k=1-2:</strong> Respuestas muy específicas</li>
+                    <li><strong>k=5-10:</strong> Más contexto, respuestas completas</li>
+                    <li>Balance entre relevancia y ruido</li>
+                    <li>Considerar límite de tokens del LLM</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>MMR para Diversidad</h2>
+                <pre><code class="python">retriever = vector_store.as_retriever(
+    search_type="mmr",
+    search_kwargs={
+        "k": 3,
+        "fetch_k": 10,  # Candidatos iniciales
+        "lambda_mult": 0.5  # Balance relevancia/diversidad
+    }
+)</code></pre>
+                <ul>
+                    <li><strong>lambda_mult=1.0:</strong> Solo relevancia</li>
+                    <li><strong>lambda_mult=0.0:</strong> Solo diversidad</li>
+                    <li><strong>lambda_mult=0.5:</strong> Balance</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Re-ranking con LLM</h2>
+                <pre><code class="python">def rerank_results(query, documents):
+    scores = []
+
+    for doc in documents:
+        prompt = f"""Score 1-10 la relevancia.
+Solo responde el número.
+
+Pregunta: {query}
+Documento: {doc.page_content[:200]}"""
+
+        score_text = llm.invoke(prompt).strip()
+        score = int(score_text.split()[0])
+        scores.append((doc, score))
+
+    return sorted(scores, key=lambda x: x[1], reverse=True)</code></pre>
+            </section>
+
+            <section>
+                <h2>Multi-Query Retrieval</h2>
+                <ul>
+                    <li>Genera múltiples variaciones de la pregunta</li>
+                    <li>Busca con cada variación</li>
+                    <li>Combina resultados únicos</li>
+                    <li>Mejora recall (cobertura)</li>
+                    <li>Útil para preguntas ambiguas</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Implementar Multi-Query</h2>
+                <pre><code class="python">from langchain.chains import MultiQueryRetriever
+
+retriever_multi = MultiQueryRetriever.from_llm(
+    retriever=vector_store.as_retriever(),
+    llm=llm
+)
+
+docs = retriever_multi.get_relevant_documents(
+    "¿Qué es RAG?"
+)
+print(f"Documentos únicos: {len(docs)}")</code></pre>
+            </section>
+
+            <section>
+                <h2>Score Threshold</h2>
+                <pre><code class="python"># Solo documentos con alta similitud
+retriever = vector_store.as_retriever(
+    search_type="similarity_score_threshold",
+    search_kwargs={
+        "k": 5,
+        "score_threshold": 0.7  # Mínimo 70% similitud
+    }
+)</code></pre>
+            </section>
+
+            <section>
+                <h2>Mejores Prácticas de Retrieval</h2>
+                <ul>
+                    <li>Experimentar con diferentes valores de k</li>
+                    <li>Usar MMR para evitar redundancia</li>
+                    <li>Re-ranking para queries críticas</li>
+                    <li>Considerar hybrid search (vector + keyword)</li>
+                    <li>Monitorear tiempos de respuesta</li>
+                    <li>Evaluar calidad con métricas</li>
+                </ul>
+            </section>
+
+            <!-- Sección: Gestión de Contexto (6 slides) -->
+            <section>
+                <h2>Gestión de Contexto</h2>
+                <p><strong>Manejar límites de tokens del LLM</strong></p>
+            </section>
+
+            <section>
+                <h2>Contextual Compression</h2>
+                <ul>
+                    <li>Comprime documentos recuperados</li>
+                    <li>Extrae solo la información relevante</li>
+                    <li>Reduce tokens enviados al LLM</li>
+                    <li>Mejora precisión de respuestas</li>
+                    <li>Elimina ruido de los documentos</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Implementar Compression</h2>
+                <pre><code class="python">from langchain.retrievers import ContextualCompressionRetriever
+from langchain.retrievers.document_compressors import LLMCompressor
+
+compressor = LLMCompressor.from_llm(llm=llm)
+
+compression_retriever = ContextualCompressionRetriever(
+    base_compressor=compressor,
+    base_retriever=vector_store.as_retriever()
+)
+
+docs = compression_retriever.get_relevant_documents(
+    "¿Qué es RAG?"
+)</code></pre>
+            </section>
+
+            <section>
+                <h2>Context Window Management</h2>
+                <ul>
+                    <li>Monitore el tamaño del contexto total</li>
+                    <li>Limite documentos según capacidad del LLM</li>
+                    <li>Mistral: ~8K tokens de contexto</li>
+                    <li>Llama2: ~4K tokens de contexto</li>
+                    <li>Deje espacio para la pregunta y respuesta</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Summarization para Contexto</h2>
+                <pre><code class="python">def resumir_documentos(documentos):
+    resumenes = []
+
+    for doc in documentos:
+        prompt = f"""Resume en 2-3 oraciones:
+
+{doc.page_content}
+
+Resumen:"""
+        resumen = llm.invoke(prompt)
+        resumenes.append(resumen)
+
+    return "\n\n".join(resumenes)</code></pre>
+            </section>
+
+            <section>
+                <h2>Estrategias de Gestión</h2>
+                <ul>
+                    <li><strong>Truncate:</strong> Cortar documentos largos</li>
+                    <li><strong>Summarize:</strong> Resumir documentos</li>
+                    <li><strong>Compress:</strong> Extraer solo relevante</li>
+                    <li><strong>Window:</strong> Usar ventanas deslizantes</li>
+                    <li><strong>Hierarchical:</strong> Resúmenes de múltiples niveles</li>
+                </ul>
+            </section>
+
+            <!-- Sección: RAG Avanzado (8 slides) -->
+            <section>
+                <h2>RAG Avanzado</h2>
+                <p><strong>Técnicas avanzadas de RAG</strong></p>
+            </section>
+
+            <section>
+                <h2>Multi-Index RAG</h2>
+                <ul>
+                    <li>Múltiples vector stores para diferentes dominios</li>
+                    <li>Búsqueda en el índice apropiado</li>
+                    <li>Mejor organización y rendimiento</li>
+                    <li>Filtrado por tipo de documento</li>
+                </ul>
+                <pre><code class="python">indices = {
+    "manuales": vector_store_manuales,
+    "faqs": vector_store_faqs,
+    "politicas": vector_store_politicas
+}</code></pre>
+            </section>
+
+            <section>
+                <h2>Hybrid RAG</h2>
+                <ul>
+                    <li>Combina búsqueda vectorial + keyword (BM25)</li>
+                    <li>Mejor cobertura y precisión</li>
+                    <li>Captura similitud semántica y literal</li>
+                    <li>Ranking combinado de resultados</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Implementar Hybrid Search</h2>
+                <pre><code class="python">def hybrid_search(query, k=3):
+    # Vector search
+    vector_docs = vector_store.similarity_search(query, k=k)
+
+    # Keyword search
+    keyword_docs = [
+        doc for doc in all_chunks
+        if any(word in doc.page_content.lower()
+               for word in query.lower().split())
+    ]
+
+    # Combinar y deduplicar
+    combined = list(set(vector_docs + keyword_docs))
+    return combined[:k]</code></pre>
+            </section>
+
+            <section>
+                <h2>Agent RAG</h2>
+                <ul>
+                    <li>LLM decide cuándo y cómo buscar</li>
+                    <li>Puede usar múltiples herramientas</li>
+                    <li>Búsquedas iterativas y refinadas</li>
+                    <li>Razonamiento sobre qué información necesita</li>
+                    <li>Más autónomo y flexible</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Self-Query RAG</h2>
+                <ul>
+                    <li>LLM genera filtros de metadatos automáticamente</li>
+                    <li>Extrae criterios de búsqueda de la pregunta</li>
+                    <li>Ejemplo: "documentos de 2023" → {"year": 2023}</li>
+                    <li>Búsquedas más precisas sin programar filtros</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Conversational RAG</h2>
+                <pre><code class="python">from langchain.memory import ConversationBufferMemory
+from langchain.chains import ConversationalRetrievalChain
+
+memory = ConversationBufferMemory(
+    memory_key="chat_history",
+    return_messages=True
+)
+
+conv_chain = ConversationalRetrievalChain.from_llm(
+    llm=llm,
+    retriever=vector_store.as_retriever(),
+    memory=memory
+)</code></pre>
+            </section>
+
+            <section>
+                <h2>Parent Document Retriever</h2>
+                <ul>
+                    <li>Busca en chunks pequeños (precisión)</li>
+                    <li>Devuelve documentos padres completos (contexto)</li>
+                    <li>Mejor balance entre precisión y contexto</li>
+                    <li>Evita perder información cercana</li>
+                    <li>Dos niveles de indexación</li>
+                </ul>
+            </section>
+
+            <!-- Sección: Evaluación RAG (6 slides) -->
+            <section>
+                <h2>Evaluación RAG</h2>
+                <p><strong>Medir la calidad del sistema</strong></p>
+            </section>
+
+            <section>
+                <h2>Métricas de Retrieval</h2>
+                <ul>
+                    <li><strong>Precision:</strong> % documentos relevantes recuperados</li>
+                    <li><strong>Recall:</strong> % documentos relevantes encontrados</li>
+                    <li><strong>MRR (Mean Reciprocal Rank):</strong> Posición del primer relevante</li>
+                    <li><strong>NDCG:</strong> Calidad del ranking</li>
+                    <li><strong>Hit Rate:</strong> % queries con al menos 1 relevante</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Métricas de Generación</h2>
+                <ul>
+                    <li><strong>Faithfulness:</strong> Respuesta basada en documentos</li>
+                    <li><strong>Answer Relevance:</strong> Respuesta relacionada con pregunta</li>
+                    <li><strong>Context Precision:</strong> Documentos útiles en contexto</li>
+                    <li><strong>Context Recall:</strong> Contexto cubre información necesaria</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Evaluación con Embeddings</h2>
+                <pre><code class="python">import numpy as np
+
+def similitud_respuestas(esperada, actual):
+    # Generar embeddings
+    emb_esperada = embeddings.embed_query(esperada)
+    emb_actual = embeddings.embed_query(actual)
+
+    # Similitud coseno
+    similitud = np.dot(emb_esperada, emb_actual) / (
+        np.linalg.norm(emb_esperada) *
+        np.linalg.norm(emb_actual)
+    )
+
+    return similitud</code></pre>
+            </section>
+
+            <section>
+                <h2>Test Cases Manuales</h2>
+                <pre><code class="python">test_cases = [
+    {
+        "pregunta": "¿Qué es RAG?",
+        "respuesta_esperada": "combinación búsqueda generación"
+    },
+    {
+        "pregunta": "¿Ventajas de RAG?",
+        "respuesta_esperada": "precisión, actualización, datos privados"
+    }
+]
+
+for test in test_cases:
+    resultado = rag_chain.invoke({"query": test["pregunta"]})
+    if test["respuesta_esperada"] in resultado["result"].lower():
+        print(f"✓ PASO: {test['pregunta']}")
+    else:
+        print(f"✗ FALLO: {test['pregunta']}")</code></pre>
+            </section>
+
+            <section>
+                <h2>Monitoreo en Producción</h2>
+                <ul>
+                    <li>Tiempo de respuesta promedio</li>
+                    <li>Tasa de respuestas "No sé"</li>
+                    <li>Feedback de usuarios (thumbs up/down)</li>
+                    <li>Documentos recuperados por query</li>
+                    <li>Distribución de scores de similitud</li>
+                    <li>Queries sin resultados relevantes</li>
+                </ul>
+            </section>
+
+            <!-- Sección: Casos de Uso (6 slides) -->
+            <section>
+                <h2>Casos de Uso Prácticos</h2>
+                <p><strong>Aplicaciones reales de RAG</strong></p>
+            </section>
+
+            <section>
+                <h2>Chatbot de Soporte Técnico</h2>
+                <ul>
+                    <li>Documentación de productos indexada</li>
+                    <li>Responde preguntas comunes automáticamente</li>
+                    <li>Cita artículos de ayuda específicos</li>
+                    <li>Reduce carga del equipo de soporte</li>
+                    <li>Disponible 24/7</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Sistema de QA sobre Documentos</h2>
+                <ul>
+                    <li>Cargar manuales, contratos, políticas</li>
+                    <li>Preguntas específicas sobre contenido</li>
+                    <li>Extracción de cláusulas y condiciones</li>
+                    <li>Comparación entre documentos</li>
+                    <li>Ahorra tiempo de lectura manual</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>FAQ Inteligente</h2>
+                <pre><code class="python">class SistemaFAQ:
+    def __init__(self, faq_file):
+        # Cargar FAQs
+        loader = TextLoader(faq_file)
+        docs = loader.load()
+
+        # Indexar
+        chunks = splitter.split_documents(docs)
+        self.vector_store = Chroma.from_documents(
+            chunks, embeddings
+        )
+
+        # RAG chain
+        self.chain = RetrievalQA.from_chain_type(
+            llm=llm,
+            retriever=self.vector_store.as_retriever()
+        )</code></pre>
+            </section>
+
+            <section>
+                <h2>Búsqueda Semántica en Código</h2>
+                <ul>
+                    <li>Indexar repositorios de código</li>
+                    <li>Buscar funciones por descripción</li>
+                    <li>"¿Dónde se valida email?" → encontrar función</li>
+                    <li>Documentación automática de código</li>
+                    <li>Onboarding de desarrolladores</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Análisis de Reportes</h2>
+                <ul>
+                    <li>Cargar reportes financieros, médicos, etc.</li>
+                    <li>Extraer insights clave automáticamente</li>
+                    <li>Comparar métricas entre periodos</li>
+                    <li>Generar resúmenes ejecutivos</li>
+                    <li>Identificar tendencias y anomalías</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Asistente Especializado por Dominio</h2>
+                <ul>
+                    <li>Legal: consultas sobre leyes y casos</li>
+                    <li>Médico: información de tratamientos</li>
+                    <li>Educativo: material de estudio personalizado</li>
+                    <li>Investigación: búsqueda en papers académicos</li>
+                    <li>Cada dominio con su propio vector store</li>
+                </ul>
+            </section>
+
+            <!-- Sección: Mejores Prácticas (8 slides) -->
+            <section>
+                <h2>Mejores Prácticas</h2>
+                <p><strong>Diseño y optimización de sistemas RAG</strong></p>
+            </section>
+
+            <section>
+                <h2>Diseño de Chunks</h2>
+                <ul>
+                    <li>Tamaño consistente (512 tokens típico)</li>
+                    <li>Overlap 10-20% para mantener contexto</li>
+                    <li>Respetar límites semánticos (párrafos, secciones)</li>
+                    <li>Incluir metadatos útiles (fuente, fecha, autor)</li>
+                    <li>Experimentar con diferentes estrategias</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Selección de Modelos</h2>
+                <ul>
+                    <li><strong>Embeddings:</strong> nomic-embed-text para local</li>
+                    <li><strong>LLM:</strong> Mistral para balance calidad/velocidad</li>
+                    <li><strong>LLM rápido:</strong> TinyLlama para prototipos</li>
+                    <li>Evaluar trade-off entre calidad y velocidad</li>
+                    <li>Considerar recursos disponibles (RAM, GPU)</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Optimización de Performance</h2>
+                <ul>
+                    <li>Cache de resultados frecuentes</li>
+                    <li>Limitar k (top-K) según necesidad</li>
+                    <li>Usar modelos más pequeños cuando sea posible</li>
+                    <li>Batch processing para ingesta</li>
+                    <li>Índices optimizados en vector store</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Prompt Engineering</h2>
+                <pre><code class="python">template = """Eres un asistente experto. Usa SOLO la información
+de los documentos proporcionados.
+
+REGLAS:
+- Si no sabes, di "No tengo información suficiente"
+- Cita las fuentes cuando sea posible
+- Sé conciso pero completo
+- Responde en español
+
+Documentos:
+{context}
+
+Pregunta: {question}
+
+Respuesta:"""</code></pre>
+            </section>
+
+            <section>
+                <h2>Gestión de Errores</h2>
+                <pre><code class="python">try:
+    resultado = rag_chain.invoke({"query": pregunta})
+    return resultado["result"]
+except Exception as e:
+    logger.error(f"Error en RAG: {e}")
+    return "Lo siento, hubo un error procesando tu consulta."</code></pre>
+            </section>
+
+            <section>
+                <h2>Logging y Observabilidad</h2>
+                <pre><code class="python">import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+def rag_con_logging(pregunta):
+    logger.info(f"Query: {pregunta}")
+
+    docs = vector_store.similarity_search(pregunta, k=3)
+    logger.info(f"Docs encontrados: {len(docs)}")
+
+    respuesta = rag_chain.invoke({"query": pregunta})
+    logger.info(f"Respuesta generada: {len(respuesta['result'])} chars")
+
+    return respuesta["result"]</code></pre>
+            </section>
+
+            <section>
+                <h2>Seguridad y Privacidad</h2>
+                <ul>
+                    <li>Validar y sanitizar inputs del usuario</li>
+                    <li>No exponer información sensible en logs</li>
+                    <li>Control de acceso por usuario/rol</li>
+                    <li>Encriptar datos en reposo</li>
+                    <li>Auditoría de consultas</li>
+                    <li>Límites de rate para prevenir abuso</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Versionado y Actualización</h2>
+                <ul>
+                    <li>Versionar índices de vector store</li>
+                    <li>Estrategia de actualización incremental</li>
+                    <li>Rollback en caso de problemas</li>
+                    <li>Testing antes de deployment</li>
+                    <li>Documentar cambios en modelos y configuración</li>
+                </ul>
+            </section>
+
+            <!-- Sección: Troubleshooting (5 slides) -->
+            <section>
+                <h2>Troubleshooting</h2>
+                <p><strong>Problemas comunes y soluciones</strong></p>
+            </section>
+
+            <section>
+                <h2>Problema: Ollama No Responde</h2>
+                <pre><code class="bash"># Verificar que Ollama está corriendo
+ollama serve
+
+# En otra terminal, verificar
+curl http://localhost:11434/api/tags
+
+# Reiniciar si es necesario
+pkill ollama
+ollama serve</code></pre>
+            </section>
+
+            <section>
+                <h2>Problema: Respuestas Irrelevantes</h2>
+                <ul>
+                    <li><strong>Causa:</strong> Chunks muy grandes o mal divididos</li>
+                    <li><strong>Solución:</strong> Ajustar chunk_size y estrategia</li>
+                    <li><strong>Causa:</strong> k demasiado bajo o alto</li>
+                    <li><strong>Solución:</strong> Experimentar con diferentes valores de k</li>
+                    <li><strong>Causa:</strong> Modelo de embeddings inadecuado</li>
+                    <li><strong>Solución:</strong> Probar nomic-embed-text o mxbai-embed-large</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Problema: Sistema Lento</h2>
+                <ul>
+                    <li>Usar modelo LLM más pequeño (tinyllama)</li>
+                    <li>Reducir k (número de documentos recuperados)</li>
+                    <li>Implementar cache de resultados</li>
+                    <li>Optimizar tamaño de chunks</li>
+                    <li>Verificar recursos del sistema (RAM, CPU)</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Problema: Memoria Insuficiente</h2>
+                <pre><code class="python"># Reducir chunk size
+splitter = RecursiveCharacterTextSplitter(
+    chunk_size=256,  # Más pequeño
+    chunk_overlap=25
+)
+
+# Usar modelo más pequeño
+llm = OllamaLLM(model="tinyllama")
+
+# Limitar documentos en memoria
+retriever = vector_store.as_retriever(
+    search_kwargs={"k": 2}
+)</code></pre>
+            </section>
+
+            <section>
+                <h2>Problema: ChromaDB Corrupto</h2>
+                <pre><code class="bash"># Limpiar y recrear base de datos
+rm -rf ./chroma_db
+
+# Recrear índice
+python recrear_vectorstore.py
+
+# Verificar integridad
+python verificar_db.py</code></pre>
+            </section>
+
+            <!-- Sección: Conclusión (3 slides) -->
+            <section>
+                <h2>Conclusión</h2>
+                <p><strong>Resumen del curso RAG</strong></p>
+            </section>
+
+            <section>
+                <h2>Conceptos Clave Aprendidos</h2>
+                <ul>
+                    <li><strong>RAG:</strong> Combina retrieval y generation para respuestas precisas</li>
+                    <li><strong>Embeddings:</strong> Representación vectorial para búsqueda semántica</li>
+                    <li><strong>Chunking:</strong> Dividir documentos en fragmentos manejables</li>
+                    <li><strong>Vector Stores:</strong> ChromaDB, FAISS, Qdrant para indexar</li>
+                    <li><strong>LangChain:</strong> Framework para construir aplicaciones RAG</li>
+                    <li><strong>Ollama:</strong> Modelos locales sin APIs externas</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Próximos Pasos</h2>
+                <ul>
+                    <li>Implementar tu propio sistema RAG</li>
+                    <li>Experimentar con diferentes modelos y parámetros</li>
+                    <li>Explorar RAG avanzado (Multi-Query, Agent RAG)</li>
+                    <li>Evaluar y optimizar tu sistema</li>
+                    <li>Desplegar en producción</li>
+                    <li>Explorar GraphRAG y MultiModal RAG</li>
+                </ul>
+            </section>
+
+            <!-- Slide final -->
+            <section>
+                <h1>¡Gracias!</h1>
+                <h2>Preguntas y Respuestas</h2>
+                <p>Curso de RAG - Retrieval-Augmented Generation</p>
+                <p>Curso de Agentes IA - 2024</p>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/plugin/highlight/highlight.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: true,
+            transition: 'slide',
+            plugins: [ RevealHighlight ]
+        });
+    </script>
+</body>
+</html>

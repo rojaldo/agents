@@ -1,0 +1,2211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memoria y Contexto - Agentes de IA</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/theme/white.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-light.min.css">
+    <style>
+        .reveal { text-align: left; color: #555555; }
+        .reveal section { text-align: left; padding: 40px; display: flex; flex-direction: column; justify-content: flex-start; }
+        .reveal h1, .reveal h2, .reveal h3 { text-transform: none; text-align: left; color: #555555; }
+
+        /* Encabezados */
+        .reveal h1 { font-size: 1.05em; margin-bottom: 0.5em; }
+        .reveal h2 { font-size: 1em; margin-bottom: 0.5em; }
+        .reveal h3 { font-size: 0.75em; margin-bottom: 0.3em; }
+
+        /* Párrafos y énfasis */
+        .reveal p { font-size: 0.6em; margin: 0.3em 0; color: #555555; }
+        .reveal strong { font-size: 1em; font-weight: bold; }
+
+        /* Código */
+        .reveal pre { background: #f8f8f8; border: 1px solid #ddd; width: 100%; padding: 0.5em; margin: 0.5em 0; }
+        .reveal pre code { font-size: 0.7em; color: #555555; }
+
+        /* Listas y elementos */
+        .reveal ul { font-size: 0.55em; text-align: left; margin-left: 0.5em; color: #555555; }
+        .reveal li { margin: 0.3em 0; color: #555555; }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+<!-- Slide 1: Portada -->
+<section>
+    <h1>Curso de Agentes de IA</h1>
+    <h2>Memoria y Contexto</h2>
+    <p>Sistemas inteligentes de gestión de información y aprendizaje</p>
+</section>
+
+<!-- Slide 2: Tabla de Contenidos -->
+<section>
+    <h2>Tabla de Contenidos</h2>
+    <ul>
+        <li>Introducción a la Memoria en Agentes</li>
+        <li>Fundamentos Cognitivos y Arquitectura</li>
+        <li>Tipos de Memoria: Sensorial, Trabajo, Episódica, Semántica, Procedural</li>
+        <li>Representación y Gestión de Contexto</li>
+        <li>Implementaciones: Buffer, Sliding Window, Summary, Token Buffer</li>
+        <li>Memoria Conversacional y Entity Tracking</li>
+        <li>Persistencia y Optimización</li>
+        <li>Casos de Uso y Mejores Prácticas</li>
+    </ul>
+</section>
+
+<!-- Introducción Memoria (4 slides) -->
+<section>
+    <h2>Introducción: Memoria en Agentes</h2>
+    <p>La memoria es fundamental para que un agente inteligente pueda:</p>
+    <ul>
+        <li><strong>Aprender</strong> de experiencias previas</li>
+        <li><strong>Mantener coherencia</strong> en sus acciones</li>
+        <li><strong>Proporcionar respuestas contextualizadas</strong></li>
+        <li><strong>Crear comportamientos adaptativos</strong></li>
+    </ul>
+    <p>Este módulo explora cómo los agentes modernos mantienen, recuperan y utilizan información para crear conversaciones naturales.</p>
+</section>
+
+<section>
+    <h2>¿Por qué es importante la memoria?</h2>
+    <ul>
+        <li><strong>Continuidad conversacional:</strong> Recordar interacciones previas</li>
+        <li><strong>Personalización:</strong> Adaptar respuestas al contexto del usuario</li>
+        <li><strong>Eficiencia:</strong> Evitar repetir cálculos o búsquedas</li>
+        <li><strong>Coherencia:</strong> Mantener un modelo mental consistente del mundo</li>
+        <li><strong>Aprendizaje:</strong> Mejorar con la experiencia</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Desafíos de la Memoria en Agentes</h2>
+    <ul>
+        <li><strong>Límites de capacidad:</strong> Modelos tienen ventana de contexto finita</li>
+        <li><strong>Relevancia:</strong> Determinar qué información es importante</li>
+        <li><strong>Actualización:</strong> Información cambia con el tiempo</li>
+        <li><strong>Privacidad:</strong> Proteger datos sensibles del usuario</li>
+        <li><strong>Performance:</strong> Búsqueda rápida en grandes volúmenes</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Objetivos de Aprendizaje</h2>
+    <ul>
+        <li>Entender la taxonomía de tipos de memoria</li>
+        <li>Distinguir entre memoria explícita e implícita</li>
+        <li>Modelar sistemas de memoria en agentes</li>
+        <li>Diseñar arquitecturas de memoria apropiadas</li>
+        <li>Implementar diferentes tipos de memoria en código</li>
+        <li>Optimizar rendimiento y costos</li>
+    </ul>
+</section>
+
+<!-- Fundamentos Cognitivos (6 slides) -->
+<section>
+    <h2>Fundamentos Cognitivos</h2>
+    <h3>Inspiración Neurobiológica</h3>
+    <p>La memoria humana tiene una estructura jerárquica bien estudiada. Los agentes de IA pueden aprender de esta organización.</p>
+</section>
+
+<section>
+    <h2>Sistema de Memoria Humana</h2>
+    <pre><code>ENTRADA SENSORIAL
+       │
+       ▼
+┌──────────────────┐
+│ Memoria Sensorial│  (milisegundos)
+│  (buffer visual) │  "veo algo rojo"
+└────────┬─────────┘
+         │
+         ▼
+┌──────────────────────┐
+│ Memoria de Trabajo   │  (segundos-minutos)
+│  (7±2 items, 60s)    │  "estoy analizando esto"
+└────────┬─────────────┘
+         │
+    ┌────┴────┐
+    │         │
+    ▼         ▼
+┌────────┐ ┌──────────┐ ┌─────────────┐
+│Episódica│ │Semántica │ │ Procedural  │
+│Eventos  │ │Hechos    │ │ Habilidades │
+│+Tiempo  │ │sin tiempo│ │ automáticas │
+└────────┘ └──────────┘ └─────────────┘</code></pre>
+</section>
+
+<section>
+    <h2>Modelos de Arquitectura Cognitiva</h2>
+    <ul>
+        <li><strong>ACT-R:</strong> Adaptive Control of Thought-Rational</li>
+        <li><strong>SOAR:</strong> State, Operator And Result</li>
+        <li><strong>CLARION:</strong> Cognitive architecture con dual-process</li>
+        <li><strong>Global Workspace Theory:</strong> Conciencia como broadcast</li>
+    </ul>
+    <p>Todos estos modelos distinguen entre memoria de trabajo (limitada) y memoria a largo plazo (extensa).</p>
+</section>
+
+<section>
+    <h2>Memoria Explícita vs Implícita</h2>
+    <p><strong>Memoria Explícita (declarativa):</strong></p>
+    <ul>
+        <li>Episódica: eventos específicos con contexto temporal</li>
+        <li>Semántica: conocimiento factual sin contexto temporal</li>
+    </ul>
+    <p><strong>Memoria Implícita (no declarativa):</strong></p>
+    <ul>
+        <li>Procedural: habilidades y automatización</li>
+        <li>Priming: facilitación por exposición previa</li>
+        <li>Condicionamiento: asociaciones estímulo-respuesta</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Niveles de Abstracción</h2>
+    <ul>
+        <li><strong>Nivel 1 - Detalles:</strong> Eventos específicos y datos brutos</li>
+        <li><strong>Nivel 2 - Patrones:</strong> Generalizaciones de múltiples experiencias</li>
+        <li><strong>Nivel 3 - Reglas:</strong> Abstracciones de alto nivel y principios</li>
+    </ul>
+    <p>Los sistemas de memoria efectivos organizan información en estos niveles para optimizar acceso y compresión.</p>
+</section>
+
+<section>
+    <h2>Arquitectura de Memoria en Agentes</h2>
+    <p>Componentes clave:</p>
+    <ul>
+        <li><strong>Input Buffer:</strong> Captura sensorial inmediata</li>
+        <li><strong>Working Memory:</strong> Contexto activo de procesamiento</li>
+        <li><strong>Long-term Storage:</strong> Base de conocimiento persistente</li>
+        <li><strong>Retrieval Mechanisms:</strong> Búsqueda y recuperación</li>
+        <li><strong>Consolidation Process:</strong> Transferencia corto → largo plazo</li>
+    </ul>
+</section>
+
+<!-- Memoria Sensorial (5 slides) -->
+<section>
+    <h2>Memoria Sensorial</h2>
+    <h3>Registro Sensorial Inmediato</h3>
+    <p>La memoria sensorial es el primer paso: capturar toda la información del entorno en milisegundos.</p>
+    <ul>
+        <li><strong>Duración:</strong> milisegundos a segundos</li>
+        <li><strong>Capacidad:</strong> muy grande (buffer completo)</li>
+        <li><strong>Contenido:</strong> datos brutos sin procesamiento</li>
+        <li><strong>Proceso:</strong> automático (inconsciente)</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Implementación: Sensory Memory</h2>
+    <pre><code class="python">from collections import deque
+import time
+
+class SensoryMemory:
+    """Buffer sensorial con TTL"""
+
+    def __init__(self, capacity=1000, ttl=0.5):
+        self.buffer = deque(maxlen=capacity)
+        self.ttl = ttl  # Time to live
+
+    def store(self, percept):
+        """Guardar una percepción"""
+        item = {
+            'data': percept,
+            'timestamp': time.time()
+        }
+        self.buffer.append(item)
+
+    def get_recent(self):
+        """Obtener percepciones recientes (no expiradas)"""
+        now = time.time()
+        return [item['data'] for item in self.buffer
+                if now - item['timestamp'] < self.ttl]</code></pre>
+</section>
+
+<section>
+    <h2>Características del Buffer Sensorial</h2>
+    <ul>
+        <li><strong>Alta capacidad:</strong> Almacena todo lo percibido</li>
+        <li><strong>Corta duración:</strong> Información expira rápidamente</li>
+        <li><strong>Sin filtrado:</strong> Todo es capturado inicialmente</li>
+        <li><strong>Pre-atencional:</strong> Antes de procesamiento consciente</li>
+    </ul>
+    <p>Útil para agentes que necesitan capturar snapshots temporales del entorno.</p>
+</section>
+
+<section>
+    <h2>Casos de Uso: Memoria Sensorial</h2>
+    <ul>
+        <li><strong>Sistemas de visión:</strong> Buffer de frames antes de procesamiento</li>
+        <li><strong>Audio streaming:</strong> Captura continua con análisis diferido</li>
+        <li><strong>Sensores IoT:</strong> Registro de lecturas temporales</li>
+        <li><strong>Event capture:</strong> Log de eventos antes de filtrado</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Expiración y Limpieza</h2>
+    <p>Estrategias para gestionar el buffer sensorial:</p>
+    <ul>
+        <li><strong>TTL (Time To Live):</strong> Eliminar items después de tiempo específico</li>
+        <li><strong>Tamaño máximo:</strong> FIFO cuando se alcanza capacidad</li>
+        <li><strong>Prioridad:</strong> Mantener percepciones importantes más tiempo</li>
+        <li><strong>Compresión:</strong> Reducir resolución de datos antiguos</li>
+    </ul>
+</section>
+
+<!-- Memoria de Trabajo (8 slides) -->
+<section>
+    <h2>Memoria de Trabajo</h2>
+    <h3>Información Activa de Procesamiento</h3>
+    <p>La memoria de trabajo mantiene información actualmente procesada con capacidad limitada.</p>
+    <ul>
+        <li><strong>Duración:</strong> segundos a minutos</li>
+        <li><strong>Capacidad:</strong> limitada (4-7 items típicamente)</li>
+        <li><strong>Contenido:</strong> información bajo procesamiento</li>
+        <li><strong>Proceso:</strong> consciente (accesible)</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Modelo de Baddeley</h2>
+    <p>Componentes de la memoria de trabajo:</p>
+    <ul>
+        <li><strong>Central Executive:</strong> Control atencional y coordinación</li>
+        <li><strong>Phonological Loop:</strong> Información verbal/auditiva</li>
+        <li><strong>Visuospatial Sketchpad:</strong> Información visual/espacial</li>
+        <li><strong>Episodic Buffer:</strong> Integración multi-modal</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Implementación: Working Memory</h2>
+    <pre><code class="python">from collections import OrderedDict
+
+class WorkingMemory:
+    """Memoria de trabajo con capacidad limitada (7±2)"""
+
+    def __init__(self, capacity=7, ttl_seconds=60):
+        self.capacity = capacity
+        self.ttl = ttl_seconds
+        self.items = OrderedDict()
+
+    def store(self, key, value):
+        """Guardar item. Si se llena, elimina el más antiguo"""
+        if len(self.items) >= self.capacity:
+            # LRU: eliminar el más antiguo
+            oldest_key = next(iter(self.items))
+            del self.items[oldest_key]
+            print(f"Memoria llena: olvidé '{oldest_key}'")
+
+        self.items[key] = {
+            'value': value,
+            'timestamp': time.time()
+        }</code></pre>
+</section>
+
+<section>
+    <h2>Operaciones en Working Memory</h2>
+    <ul>
+        <li><strong>Store:</strong> Agregar nueva información (LRU eviction)</li>
+        <li><strong>Retrieve:</strong> Acceder a información activa</li>
+        <li><strong>Update:</strong> Modificar items existentes</li>
+        <li><strong>Refresh:</strong> Renovar timestamp al acceder</li>
+        <li><strong>Clear:</strong> Vaciar completamente la memoria</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Límite de Capacidad: Ley de Miller</h2>
+    <p><strong>7 ± 2:</strong> Número mágico de Miller</p>
+    <ul>
+        <li>Humanos pueden mantener 5-9 chunks en memoria de trabajo</li>
+        <li>Chunking: agrupar información en unidades significativas</li>
+        <li>Para agentes: balance entre contexto y rendimiento</li>
+    </ul>
+    <p>Ejemplo: "FBICIANSA" → "FBI", "CIA", "NSA" (3 chunks vs 9 letras)</p>
+</section>
+
+<section>
+    <h2>Estrategias de Gestión</h2>
+    <ul>
+        <li><strong>LRU (Least Recently Used):</strong> Eliminar lo menos usado</li>
+        <li><strong>LFU (Least Frequently Used):</strong> Eliminar lo menos frecuente</li>
+        <li><strong>Priority-based:</strong> Mantener items importantes</li>
+        <li><strong>Hybrid:</strong> Combinar múltiples criterios</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Ejemplo: Agente con Working Memory</h2>
+    <pre><code class="python"># Ejemplo de uso
+working = WorkingMemory(capacity=5)
+
+# Simular procesamiento
+for i in range(7):
+    working.store(f'fact_{i}', f'información_{i}')
+
+# Resultado: fact_0 y fact_1 olvidados
+# Memoria activa: fact_2, fact_3, fact_4, fact_5, fact_6
+
+print(working.get_active())
+# {'fact_2': 'información_2',
+#  'fact_3': 'información_3', ...}</code></pre>
+</section>
+
+<section>
+    <h2>Ventanas de Contexto en LLMs</h2>
+    <p>Los modelos de lenguaje tienen límites de contexto:</p>
+    <ul>
+        <li><strong>GPT-3.5:</strong> 4K tokens (~3K palabras)</li>
+        <li><strong>GPT-4:</strong> 8K-32K tokens</li>
+        <li><strong>Claude:</strong> 100K tokens</li>
+        <li><strong>GPT-4 Turbo:</strong> 128K tokens</li>
+    </ul>
+    <p>La memoria de trabajo gestiona qué información incluir en este límite.</p>
+</section>
+
+<!-- Memoria Episódica (7 slides) -->
+<section>
+    <h2>Memoria Episódica</h2>
+    <h3>Registro de Eventos con Contexto</h3>
+    <p>La memoria episódica registra eventos específicos con contexto temporal exacto.</p>
+    <ul>
+        <li><strong>Duración:</strong> años (larga duración)</li>
+        <li><strong>Capacidad:</strong> grande (muchos eventos)</li>
+        <li><strong>Contenido:</strong> eventos datados con contexto</li>
+        <li><strong>Utilidad:</strong> aprendizaje experiencial</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Componentes de un Episodio</h2>
+    <ul>
+        <li><strong>Qué:</strong> Descripción del evento</li>
+        <li><strong>Cuándo:</strong> Timestamp preciso</li>
+        <li><strong>Dónde:</strong> Contexto espacial/situacional</li>
+        <li><strong>Quién:</strong> Actores involucrados</li>
+        <li><strong>Cómo:</strong> Secuencia de acciones</li>
+        <li><strong>Por qué:</strong> Motivación/causa</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Implementación: Episodic Memory</h2>
+    <pre><code class="python">from datetime import datetime
+
+class EpisodicMemory:
+    """Memoria episódica: eventos con contexto"""
+
+    def __init__(self, max_episodes=1000):
+        self.episodes = []
+        self.max_episodes = max_episodes
+
+    def record_episode(self, description, context=None):
+        """Registrar un evento con timestamp exacto"""
+        episode = {
+            'description': description,
+            'context': context,
+            'timestamp': datetime.now(),
+            'episode_id': len(self.episodes)
+        }
+        self.episodes.append(episode)</code></pre>
+</section>
+
+<section>
+    <h2>Retrieval: Búsqueda Temporal</h2>
+    <pre><code class="python">def recall_by_time(self, days_ago=0):
+    """Recordar eventos de cierto período"""
+    if days_ago == 0:
+        return self.episodes  # Todos
+    else:
+        target_date = datetime.now() - timedelta(days=days_ago)
+        return [e for e in self.episodes
+               if e['timestamp'].date() == target_date.date()]
+
+def recall_by_context(self, context_key):
+    """Recordar eventos de cierto tipo"""
+    return [e for e in self.episodes
+           if e.get('context', {}).get('type') == context_key]</code></pre>
+</section>
+
+<section>
+    <h2>Casos de Uso: Memoria Episódica</h2>
+    <ul>
+        <li><strong>Chatbots:</strong> "¿Qué hablamos la semana pasada?"</li>
+        <li><strong>Customer service:</strong> Historial de interacciones del cliente</li>
+        <li><strong>Debugging:</strong> Secuencia de eventos que causaron error</li>
+        <li><strong>Auditoría:</strong> Registro completo de acciones del sistema</li>
+        <li><strong>Aprendizaje:</strong> Análisis de experiencias pasadas</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Consolidación Episódica → Semántica</h2>
+    <p>Con el tiempo, episodios específicos se generalizan en conocimiento semántico:</p>
+    <ul>
+        <li><strong>Múltiples episodios similares</strong> → Patrón general</li>
+        <li><strong>Eventos repetidos</strong> → Regla abstracta</li>
+        <li><strong>Detalles olvidados</strong> → Esencia preservada</li>
+    </ul>
+    <p>Ejemplo: "Visité 5 restaurantes italianos" → "Me gustan los restaurantes italianos"</p>
+</section>
+
+<section>
+    <h2>Event Sourcing</h2>
+    <p>Patrón arquitectónico basado en memoria episódica:</p>
+    <ul>
+        <li>En lugar de guardar estado actual, guardar eventos que lo generaron</li>
+        <li>Estado actual = replay de todos los eventos</li>
+        <li>Permite auditoría completa y time-travel debugging</li>
+        <li>Utilizado en sistemas financieros y aplicaciones críticas</li>
+    </ul>
+</section>
+
+<!-- Memoria Semántica (7 slides) -->
+<section>
+    <h2>Memoria Semántica</h2>
+    <h3>Base de Conocimiento Factual</h3>
+    <p>La memoria semántica almacena hechos abstractos, generalizaciones, sin referencia temporal.</p>
+    <ul>
+        <li><strong>Duración:</strong> años (larga)</li>
+        <li><strong>Capacidad:</strong> muy grande (base de conocimiento)</li>
+        <li><strong>Contenido:</strong> hechos generalizados, sin tiempo</li>
+        <li><strong>Compartible:</strong> entre agentes</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Características Semánticas</h2>
+    <ul>
+        <li><strong>Atemporal:</strong> "Python es un lenguaje de programación" (sin "cuándo aprendí esto")</li>
+        <li><strong>Factual:</strong> Información objetiva verificable</li>
+        <li><strong>Relacional:</strong> Conceptos conectados por relaciones</li>
+        <li><strong>Jerárquica:</strong> Taxonomías y ontologías</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Implementación: Semantic Memory</h2>
+    <pre><code class="python">class SemanticMemory:
+    """Memoria semántica: hechos y conocimiento"""
+
+    def __init__(self):
+        self.facts = {}  # fact_id -> content
+        self.relations = {}  # (entity1, relation, entity2)
+
+    def store_fact(self, fact_id, content):
+        """Guardar un hecho"""
+        self.facts[fact_id] = {
+            'content': content,
+            'learned_at': datetime.now(),
+            'usefulness': 0
+        }
+
+    def store_relation(self, entity1, relation, entity2):
+        """Guardar relación entre entidades"""
+        key = (entity1, relation, entity2)
+        self.relations[key] = True</code></pre>
+</section>
+
+<section>
+    <h2>Grafos de Conocimiento</h2>
+    <p>Representación ideal para memoria semántica:</p>
+    <ul>
+        <li><strong>Nodos:</strong> Entidades y conceptos</li>
+        <li><strong>Aristas:</strong> Relaciones entre entidades</li>
+        <li><strong>Propiedades:</strong> Atributos de nodos/aristas</li>
+    </ul>
+    <pre><code>(Python) --[es_un]--> (Lenguaje de Programación)
+(Python) --[usado_para]--> (Data Science)
+(Python) --[creado_por]--> (Guido van Rossum)</code></pre>
+</section>
+
+<section>
+    <h2>Consultas y Razonamiento</h2>
+    <pre><code class="python">def query_fact(self, fact_id):
+    """Recuperar un hecho"""
+    if fact_id in self.facts:
+        self.facts[fact_id]['usefulness'] += 1
+        return self.facts[fact_id]['content']
+    return None
+
+def query_related(self, entity):
+    """Encontrar todo relacionado a entidad"""
+    related = []
+    for (e1, rel, e2) in self.relations:
+        if e1 == entity or e2 == entity:
+            related.append((e1, rel, e2))
+    return related</code></pre>
+</section>
+
+<section>
+    <h2>Ontologías y Taxonomías</h2>
+    <p>Organización jerárquica del conocimiento:</p>
+    <ul>
+        <li><strong>Is-a hierarchy:</strong> "Perro is-a Mamífero is-a Animal"</li>
+        <li><strong>Part-of hierarchy:</strong> "Motor part-of Coche"</li>
+        <li><strong>Propiedades heredadas:</strong> Perro hereda propiedades de Mamífero</li>
+    </ul>
+    <p>Utilizado en: WordNet, DBpedia, Wikidata, ontologías de dominio específico</p>
+</section>
+
+<section>
+    <h2>Actualización y Corrección</h2>
+    <ul>
+        <li><strong>Aprendizaje continuo:</strong> Agregar nuevos hechos</li>
+        <li><strong>Corrección de errores:</strong> Actualizar información incorrecta</li>
+        <li><strong>Confidence scoring:</strong> Nivel de certeza de cada hecho</li>
+        <li><strong>Versionado:</strong> Mantener historial de cambios</li>
+    </ul>
+    <p>Desafío: ¿Cómo saber cuándo un "hecho" está desactualizado?</p>
+</section>
+
+<!-- Memoria Procedural (6 slides) -->
+<section>
+    <h2>Memoria Procedural</h2>
+    <h3>Habilidades y Automatización</h3>
+    <p>La memoria procedural almacena cómo hacer cosas: habilidades, scripts, políticas.</p>
+    <ul>
+        <li><strong>Duración:</strong> años (larga)</li>
+        <li><strong>Capacidad:</strong> muchos procedimientos</li>
+        <li><strong>Contenido:</strong> secuencias aprendidas</li>
+        <li><strong>Proceso:</strong> automático con práctica</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Características de Memoria Procedural</h2>
+    <ul>
+        <li><strong>Implícita:</strong> Difícil de verbalizar ("cómo andar en bicicleta")</li>
+        <li><strong>Mejora con práctica:</strong> Skill level aumenta con repetición</li>
+        <li><strong>Automática:</strong> Requiere poca atención consciente después de dominar</li>
+        <li><strong>Resistente al olvido:</strong> Habilidades persisten a largo plazo</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Implementación: Procedural Memory</h2>
+    <pre><code class="python">class ProceduralMemory:
+    """Memoria procedural: habilidades y scripts"""
+
+    def __init__(self):
+        self.procedures = {}  # name -> steps
+        self.skill_level = {}  # name -> level (0-1)
+
+    def learn_procedure(self, name, steps):
+        """Aprender nuevo procedimiento"""
+        self.procedures[name] = steps
+        self.skill_level[name] = 0.0  # Novato
+
+    def execute_procedure(self, name, context=None):
+        """Ejecutar procedimiento"""
+        steps = self.procedures[name]
+        for step in steps:
+            self._execute_step(step, context)
+        # Mejorar skill con práctica
+        self.skill_level[name] = min(1.0,
+            self.skill_level[name] + 0.01)</code></pre>
+</section>
+
+<section>
+    <h2>Tipos de Procedimientos</h2>
+    <ul>
+        <li><strong>Scripts:</strong> Secuencias fijas de acciones ("ir a restaurante")</li>
+        <li><strong>Políticas:</strong> Reglas de decisión (if-then rules)</li>
+        <li><strong>Skills:</strong> Habilidades complejas (tocar piano)</li>
+        <li><strong>Heurísticas:</strong> Atajos mentales para resolución rápida</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Aprendizaje por Práctica</h2>
+    <p>Curva de aprendizaje - Power Law of Practice:</p>
+    <ul>
+        <li><strong>Inicial:</strong> Lento, requiere atención consciente</li>
+        <li><strong>Intermedio:</strong> Mejora rápida con práctica</li>
+        <li><strong>Experto:</strong> Automático, alta velocidad, pocos errores</li>
+    </ul>
+    <p>Tiempo = A × N^(-α) donde N = número de intentos, α ≈ 0.4</p>
+</section>
+
+<section>
+    <h2>Casos de Uso: Procedural Memory</h2>
+    <ul>
+        <li><strong>Robótica:</strong> Secuencias motoras (pick and place)</li>
+        <li><strong>Game AI:</strong> Estrategias y tácticas aprendidas</li>
+        <li><strong>Process automation:</strong> Workflows empresariales</li>
+        <li><strong>Code generation:</strong> Patrones de código frecuentes</li>
+        <li><strong>Tool use:</strong> Cómo usar APIs y herramientas</li>
+    </ul>
+</section>
+
+<!-- Representación Contexto (8 slides) -->
+<section>
+    <h2>Representación de Contexto</h2>
+    <h3>Formatos y Estructuras</h3>
+    <p>El contexto es la información relevante para procesar una tarea actual.</p>
+    <ul>
+        <li><strong>Tokens:</strong> Secuencias de texto para LLMs</li>
+        <li><strong>Vectores:</strong> Embeddings semánticos</li>
+        <li><strong>Grafos:</strong> Relaciones estructuradas</li>
+        <li><strong>Estados:</strong> Variables y atributos</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Contexto como Tokens</h2>
+    <p>Representación más común para LLMs:</p>
+    <pre><code class="python">context = """
+Historial de conversación:
+Usuario: Hola, ¿cómo estás?
+Asistente: ¡Hola! Muy bien, ¿en qué puedo ayudarte?
+Usuario: Necesito ayuda con Python
+
+Información del usuario:
+- Nivel: Principiante
+- Intereses: Data Science
+- Idioma: Español
+"""</code></pre>
+    <p>Límite: Ventana de contexto del modelo (tokens)</p>
+</section>
+
+<section>
+    <h2>Contexto como Vectores (Embeddings)</h2>
+    <p>Representación semántica densa:</p>
+    <ul>
+        <li><strong>Dense vectors:</strong> [0.23, -0.45, 0.67, ...] (dimensión 768-1536)</li>
+        <li><strong>Captura significado:</strong> Palabras similares → vectores cercanos</li>
+        <li><strong>Búsqueda por similitud:</strong> Cosine similarity, dot product</li>
+        <li><strong>Modelos:</strong> BERT, Sentence-Transformers, OpenAI embeddings</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Contexto como Grafo</h2>
+    <p>Memoria estructurada con relaciones explícitas:</p>
+    <pre><code>Usuario_123
+  |-- tiene_preferencia --> "tema oscuro"
+  |-- habla_idioma --> "español"
+  |-- interactúa_con --> Agente_001
+  |-- creó --> Conversación_456
+      |-- contiene --> Mensaje_1
+      |-- contiene --> Mensaje_2</code></pre>
+    <p>Útil para razonamiento complejo y consultas relacionales.</p>
+</section>
+
+<section>
+    <h2>Estado del Agente</h2>
+    <p>Representación estructurada del contexto actual:</p>
+    <pre><code class="python">state = {
+    'user_id': 'user_123',
+    'conversation_id': 'conv_456',
+    'current_topic': 'Python programming',
+    'context_window': [...],  # Últimos N mensajes
+    'user_profile': {...},
+    'session_data': {...},
+    'active_entities': {...}
+}</code></pre>
+</section>
+
+<section>
+    <h2>Gestión de Ventana de Contexto</h2>
+    <ul>
+        <li><strong>Sliding window:</strong> Mantener últimos N tokens</li>
+        <li><strong>Summarization:</strong> Comprimir historial antiguo</li>
+        <li><strong>Entity tracking:</strong> Mantener entidades importantes</li>
+        <li><strong>Hierarchical:</strong> Diferentes niveles de detalle</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Compresión de Contexto</h2>
+    <p>Técnicas para caber en límites de tokens:</p>
+    <ul>
+        <li><strong>Summarization:</strong> Resumir mensajes antiguos</li>
+        <li><strong>Pruning:</strong> Eliminar información redundante</li>
+        <li><strong>Abstraction:</strong> Reemplazar detalles por conceptos</li>
+        <li><strong>Selective retention:</strong> Mantener solo lo relevante</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Trade-offs en Representación</h2>
+    <table style="font-size: 0.5em;">
+        <tr>
+            <th>Formato</th>
+            <th>Pros</th>
+            <th>Contras</th>
+        </tr>
+        <tr>
+            <td>Tokens</td>
+            <td>Simple, directo para LLMs</td>
+            <td>Límite de ventana</td>
+        </tr>
+        <tr>
+            <td>Vectores</td>
+            <td>Búsqueda semántica</td>
+            <td>Pérdida de detalles</td>
+        </tr>
+        <tr>
+            <td>Grafos</td>
+            <td>Relaciones explícitas</td>
+            <td>Complejidad de consultas</td>
+        </tr>
+        <tr>
+            <td>Estados</td>
+            <td>Estructurado, eficiente</td>
+            <td>Requiere diseño cuidadoso</td>
+        </tr>
+    </table>
+</section>
+
+<!-- Buffer Memory (8 slides) -->
+<section>
+    <h2>Buffer Memory</h2>
+    <h3>Memoria Simple de Conversación</h3>
+    <p>La implementación más básica: mantener historial completo de mensajes en buffer.</p>
+</section>
+
+<section>
+    <h2>Implementación: ConversationBufferMemory</h2>
+    <pre><code class="python">class ConversationBufferMemory:
+    """Buffer simple de conversación"""
+
+    def __init__(self):
+        self.messages = []
+
+    def add_message(self, role, content):
+        """Agregar mensaje al historial"""
+        self.messages.append({
+            'role': role,  # 'user' o 'assistant'
+            'content': content,
+            'timestamp': datetime.now()
+        })
+
+    def get_context(self):
+        """Obtener todo el historial"""
+        return "\n".join([
+            f"{msg['role']}: {msg['content']}"
+            for msg in self.messages
+        ])</code></pre>
+</section>
+
+<section>
+    <h2>Ventajas del Buffer Memory</h2>
+    <ul>
+        <li><strong>Simplicidad:</strong> Fácil de implementar y entender</li>
+        <li><strong>Completitud:</strong> No se pierde información</li>
+        <li><strong>Orden cronológico:</strong> Preserva secuencia temporal</li>
+        <li><strong>Debugging:</strong> Fácil inspección del historial</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Desventajas del Buffer Memory</h2>
+    <ul>
+        <li><strong>Crecimiento ilimitado:</strong> Memoria crece sin control</li>
+        <li><strong>Límite de tokens:</strong> Eventualmente excede ventana del modelo</li>
+        <li><strong>Sin priorización:</strong> Todo tiene igual importancia</li>
+        <li><strong>Performance:</strong> Overhead al procesar historial completo</li>
+        <li><strong>Costo:</strong> Más tokens = mayor costo en APIs</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Ejemplo de Uso</h2>
+    <pre><code class="python">from langchain.memory import ConversationBufferMemory
+
+memory = ConversationBufferMemory()
+
+memory.save_context(
+    {"input": "Hola, ¿cómo estás?"},
+    {"output": "¡Hola! Muy bien, ¿en qué puedo ayudarte?"}
+)
+
+memory.save_context(
+    {"input": "Necesito ayuda con Python"},
+    {"output": "Claro, ¿qué necesitas hacer en Python?"}
+)
+
+print(memory.load_memory_variables({})['history'])</code></pre>
+</section>
+
+<section>
+    <h2>Cuándo Usar Buffer Memory</h2>
+    <ul>
+        <li><strong>Conversaciones cortas:</strong> Pocos turnos (< 10)</li>
+        <li><strong>Prototipos:</strong> Desarrollo rápido y testing</li>
+        <li><strong>Debugging:</strong> Inspección completa del historial</li>
+        <li><strong>Contexto crítico:</strong> Cuando no se puede perder nada</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Mejoras Simples</h2>
+    <p>Extensiones comunes al buffer básico:</p>
+    <ul>
+        <li><strong>Max length:</strong> Límite de mensajes o tokens</li>
+        <li><strong>Return messages:</strong> Devolver objetos en lugar de strings</li>
+        <li><strong>Human/AI prefix:</strong> Personalizar prefijos</li>
+        <li><strong>Memory key:</strong> Nombre de variable para el historial</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Integración con LangChain</h2>
+    <pre><code class="python">from langchain.chains import ConversationChain
+from langchain.memory import ConversationBufferMemory
+from langchain.llms import OpenAI
+
+conversation = ConversationChain(
+    llm=OpenAI(temperature=0),
+    memory=ConversationBufferMemory()
+)
+
+conversation.predict(input="Hola!")
+# "¡Hola! ¿Cómo puedo ayudarte hoy?"
+
+conversation.predict(input="¿Cuál es tu nombre?")
+# "Soy un asistente de IA..."</code></pre>
+</section>
+
+<!-- Sliding Window Memory (8 slides) -->
+<section>
+    <h2>Sliding Window Memory</h2>
+    <h3>Ventana Deslizante de Contexto</h3>
+    <p>Mantiene solo los últimos N mensajes o K tokens, descartando los más antiguos.</p>
+</section>
+
+<section>
+    <h2>Concepto de Ventana Deslizante</h2>
+    <pre><code>Tiempo →
+[M1] [M2] [M3] [M4] [M5] [M6] [M7] [M8]
+ ↓    ↓    ↓    ↓    ↓
+Ventana (tamaño 5):
+     [M4] [M5] [M6] [M7] [M8]
+
+Nuevos mensajes empujan los antiguos fuera de la ventana.</code></pre>
+</section>
+
+<section>
+    <h2>Implementación: ConversationBufferWindowMemory</h2>
+    <pre><code class="python">class ConversationBufferWindowMemory:
+    """Ventana deslizante de conversación"""
+
+    def __init__(self, k=5):
+        self.messages = []
+        self.k = k  # Número de interacciones a mantener
+
+    def add_message(self, role, content):
+        self.messages.append({
+            'role': role,
+            'content': content
+        })
+        # Mantener solo últimos k*2 mensajes (k turnos)
+        if len(self.messages) > self.k * 2:
+            self.messages.pop(0)
+
+    def get_context(self):
+        return "\n".join([
+            f"{msg['role']}: {msg['content']}"
+            for msg in self.messages
+        ])</code></pre>
+</section>
+
+<section>
+    <h2>Ventajas de Sliding Window</h2>
+    <ul>
+        <li><strong>Tamaño controlado:</strong> No crece indefinidamente</li>
+        <li><strong>Contexto reciente:</strong> Enfoque en información actual</li>
+        <li><strong>Predecible:</strong> Uso de tokens constante</li>
+        <li><strong>Performance:</strong> Overhead constante</li>
+        <li><strong>Simple:</strong> Fácil de implementar y entender</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Desventajas de Sliding Window</h2>
+    <ul>
+        <li><strong>Pérdida de información:</strong> Contexto antiguo se descarta</li>
+        <li><strong>Sin discriminación:</strong> No distingue importancia</li>
+        <li><strong>Breaks largo contexto:</strong> Conversaciones largas pierden coherencia</li>
+        <li><strong>Entidades perdidas:</strong> Referencias antiguas desaparecen</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Ejemplo con LangChain</h2>
+    <pre><code class="python">from langchain.memory import ConversationBufferWindowMemory
+
+memory = ConversationBufferWindowMemory(k=2)
+
+# Agregar 5 interacciones
+for i in range(5):
+    memory.save_context(
+        {"input": f"Pregunta {i}"},
+        {"output": f"Respuesta {i}"}
+    )
+
+# Solo últimas 2 interacciones se mantienen
+print(memory.load_memory_variables({})['history'])
+# Pregunta 3, Respuesta 3, Pregunta 4, Respuesta 4</code></pre>
+</section>
+
+<section>
+    <h2>Casos de Uso</h2>
+    <ul>
+        <li><strong>Chatbots simples:</strong> Conversaciones con contexto limitado</li>
+        <li><strong>Customer service:</strong> Focus en problema actual</li>
+        <li><strong>Transaccional:</strong> Cada interacción independiente</li>
+        <li><strong>Recursos limitados:</strong> Dispositivos con poca memoria</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Variantes y Optimizaciones</h2>
+    <ul>
+        <li><strong>Token-based window:</strong> Límite por tokens en lugar de mensajes</li>
+        <li><strong>Time-based window:</strong> Últimos N minutos</li>
+        <li><strong>Adaptive window:</strong> Tamaño cambia según complejidad</li>
+        <li><strong>Hierarchical:</strong> Ventanas anidadas de diferentes tamaños</li>
+    </ul>
+</section>
+
+<!-- Summary Memory (8 slides) -->
+<section>
+    <h2>Summary Memory</h2>
+    <h3>Resumen Automático del Historial</h3>
+    <p>Comprime conversaciones antiguas en resúmenes, manteniendo mensajes recientes completos.</p>
+</section>
+
+<section>
+    <h2>Arquitectura de Summary Memory</h2>
+    <pre><code>┌─────────────────────────────────┐
+│ Resumen de conversación antigua │  (comprimido)
+├─────────────────────────────────┤
+│ Mensaje 1: "..."                │
+│ Mensaje 2: "..."                │  (recientes, completos)
+│ Mensaje 3: "..."                │
+└─────────────────────────────────┘</code></pre>
+    <p>El resumen se actualiza periódicamente usando el LLM.</p>
+</section>
+
+<section>
+    <h2>Implementación: ConversationSummaryMemory</h2>
+    <pre><code class="python">class ConversationSummaryMemory:
+    """Memoria con resumen automático"""
+
+    def __init__(self, llm, max_token_limit=2000):
+        self.summary = ""
+        self.recent_messages = []
+        self.llm = llm
+        self.max_token_limit = max_token_limit
+
+    def add_message(self, role, content):
+        self.recent_messages.append({
+            'role': role, 'content': content
+        })
+        # Si excede límite, resumir
+        if self._count_tokens() > self.max_token_limit:
+            self._update_summary()</code></pre>
+</section>
+
+<section>
+    <h2>Proceso de Resumen</h2>
+    <pre><code class="python">def _update_summary(self):
+    """Generar resumen de mensajes antiguos"""
+    # Combinar resumen previo + mensajes a resumir
+    to_summarize = self.summary + "\n" + \
+        self._format_messages(self.recent_messages[:-5])
+
+    # Usar LLM para generar nuevo resumen
+    prompt = f"Resume la siguiente conversación:\n{to_summarize}"
+    self.summary = self.llm.generate(prompt)
+
+    # Mantener solo últimos 5 mensajes completos
+    self.recent_messages = self.recent_messages[-5:]</code></pre>
+</section>
+
+<section>
+    <h2>Ventajas de Summary Memory</h2>
+    <ul>
+        <li><strong>Contexto largo:</strong> Mantiene esencia de conversaciones largas</li>
+        <li><strong>Tamaño controlado:</strong> Crece lentamente (solo resumen)</li>
+        <li><strong>Información clave:</strong> Preserva puntos importantes</li>
+        <li><strong>Escalable:</strong> Funciona con conversaciones extensas</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Desventajas de Summary Memory</h2>
+    <ul>
+        <li><strong>Pérdida de detalles:</strong> Información específica puede perderse</li>
+        <li><strong>Costo adicional:</strong> Llamadas al LLM para resumir</li>
+        <li><strong>Latencia:</strong> Resumen puede tardar</li>
+        <li><strong>Calidad variable:</strong> Depende del LLM usado</li>
+        <li><strong>Pérdida de orden:</strong> Secuencia exacta se difumina</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Ejemplo con LangChain</h2>
+    <pre><code class="python">from langchain.memory import ConversationSummaryMemory
+from langchain.llms import OpenAI
+
+llm = OpenAI(temperature=0)
+memory = ConversationSummaryMemory(llm=llm)
+
+# Agregar múltiples interacciones
+for i in range(10):
+    memory.save_context(
+        {"input": f"Pregunta larga {i} con muchos detalles..."},
+        {"output": f"Respuesta detallada {i}..."}
+    )
+
+# Historial ahora es: resumen + últimos mensajes
+print(memory.load_memory_variables({}))</code></pre>
+</section>
+
+<section>
+    <h2>Casos de Uso Ideales</h2>
+    <ul>
+        <li><strong>Conversaciones largas:</strong> Sesiones de horas/días</li>
+        <li><strong>Customer support:</strong> Historial extenso con cliente</li>
+        <li><strong>Tutores educativos:</strong> Progreso a largo plazo</li>
+        <li><strong>Asistentes personales:</strong> Contexto acumulativo</li>
+    </ul>
+</section>
+
+<!-- Token Buffer Memory (7 slides) -->
+<section>
+    <h2>Token Buffer Memory</h2>
+    <h3>Límite por Tokens en Lugar de Mensajes</h3>
+    <p>Similar a sliding window, pero cuenta tokens exactos en lugar de número de mensajes.</p>
+</section>
+
+<section>
+    <h2>¿Por qué contar tokens?</h2>
+    <ul>
+        <li><strong>Mensajes variables:</strong> Algunos mensajes son largos, otros cortos</li>
+        <li><strong>Ventana real:</strong> LLMs tienen límite en tokens, no en mensajes</li>
+        <li><strong>Optimización de costo:</strong> APIs cobran por token</li>
+        <li><strong>Precisión:</strong> Control exacto del contexto enviado</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Implementación: ConversationTokenBufferMemory</h2>
+    <pre><code class="python">class ConversationTokenBufferMemory:
+    """Buffer con límite de tokens"""
+
+    def __init__(self, llm, max_token_limit=2000):
+        self.messages = []
+        self.llm = llm
+        self.max_token_limit = max_token_limit
+
+    def add_message(self, role, content):
+        self.messages.append({'role': role, 'content': content})
+        # Eliminar mensajes antiguos hasta estar bajo límite
+        while self._count_tokens() > self.max_token_limit:
+            self.messages.pop(0)
+
+    def _count_tokens(self):
+        text = self._format_messages()
+        return self.llm.get_num_tokens(text)</code></pre>
+</section>
+
+<section>
+    <h2>Conteo de Tokens</h2>
+    <p>Diferentes tokenizers para diferentes modelos:</p>
+    <ul>
+        <li><strong>GPT:</strong> tiktoken (cl100k_base para GPT-4)</li>
+        <li><strong>BERT:</strong> WordPiece tokenizer</li>
+        <li><strong>Claude:</strong> Propio tokenizer</li>
+    </ul>
+    <pre><code class="python">import tiktoken
+
+encoding = tiktoken.encoding_for_model("gpt-4")
+num_tokens = len(encoding.encode("Hola, ¿cómo estás?"))
+# num_tokens ≈ 6</code></pre>
+</section>
+
+<section>
+    <h2>Ventajas</h2>
+    <ul>
+        <li><strong>Control preciso:</strong> Exactamente dentro de límite</li>
+        <li><strong>Optimización de costo:</strong> No desperdiciar tokens</li>
+        <li><strong>Maximiza contexto:</strong> Aprovecha toda la ventana disponible</li>
+        <li><strong>Adaptativo:</strong> Se ajusta a mensajes de diferente longitud</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Desventajas</h2>
+    <ul>
+        <li><strong>Overhead de conteo:</strong> Tokenización en cada mensaje</li>
+        <li><strong>Dependencia del modelo:</strong> Diferentes tokenizers</li>
+        <li><strong>Complejidad:</strong> Más difícil de implementar que contador simple</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Ejemplo con LangChain</h2>
+    <pre><code class="python">from langchain.memory import ConversationTokenBufferMemory
+from langchain.llms import OpenAI
+
+llm = OpenAI()
+memory = ConversationTokenBufferMemory(
+    llm=llm,
+    max_token_limit=500
+)
+
+memory.save_context(
+    {"input": "Mensaje muy largo con muchos tokens..."},
+    {"output": "Respuesta igualmente larga..."}
+)
+
+# Automáticamente descarta mensajes viejos
+# para mantenerse bajo 500 tokens</code></pre>
+</section>
+
+<!-- Conversation Memory (7 slides) -->
+<section>
+    <h2>Conversation Memory</h2>
+    <h3>Gestión de Diálogos Multi-Turno</h3>
+    <p>Memoria especializada para mantener coherencia en conversaciones extendidas.</p>
+</section>
+
+<section>
+    <h2>Componentes de Conversation Memory</h2>
+    <ul>
+        <li><strong>Historial de turnos:</strong> Secuencia user/assistant</li>
+        <li><strong>Context tracking:</strong> Tema actual, cambios de tema</li>
+        <li><strong>Entity tracking:</strong> Seguimiento de entidades mencionadas</li>
+        <li><strong>Intent recognition:</strong> Propósito de cada turno</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Implementación Completa</h2>
+    <pre><code class="python">class ConversationMemory:
+    """Memoria conversacional inteligente"""
+
+    def __init__(self, max_turns=20):
+        self.turns = []
+        self.max_turns = max_turns
+        self.user_context = {}
+        self.entities = {}
+        self.current_topic = None
+
+    def add_turn(self, user_msg, agent_msg):
+        turn = {
+            'timestamp': datetime.now(),
+            'user': user_msg,
+            'agent': agent_msg,
+            'topic': self._detect_topic(user_msg),
+            'entities': self._extract_entities(user_msg)
+        }
+        self.turns.append(turn)
+        if len(self.turns) > self.max_turns:
+            self.turns.pop(0)</code></pre>
+</section>
+
+<section>
+    <h2>Detección de Cambios de Tema</h2>
+    <pre><code class="python">def _detect_topic_change(self, new_msg):
+    """Detectar si hay cambio de tema"""
+    if not self.current_topic:
+        return True
+
+    # Calcular similitud con tema actual
+    similarity = self._compute_similarity(
+        new_msg, self.current_topic
+    )
+
+    # Umbral: < 0.5 = cambio de tema
+    if similarity < 0.5:
+        print(f"Cambio de tema detectado: {self.current_topic} → nuevo")
+        return True
+    return False</code></pre>
+</section>
+
+<section>
+    <h2>Ventana de Contexto Adaptativa</h2>
+    <pre><code class="python">def get_context_window(self, strategy='recent'):
+    """Obtener contexto según estrategia"""
+
+    if strategy == 'recent':
+        # Últimos 5 turnos
+        return self.turns[-5:]
+
+    elif strategy == 'topic':
+        # Solo turnos del tema actual
+        return [t for t in self.turns
+                if t['topic'] == self.current_topic]
+
+    elif strategy == 'entity':
+        # Turnos que mencionan entidades importantes
+        return [t for t in self.turns
+                if len(t['entities']) > 0]</code></pre>
+</section>
+
+<section>
+    <h2>Resolución de Referencias</h2>
+    <p>Resolver pronombres y referencias anafóricas:</p>
+    <pre><code class="python">def resolve_reference(self, pronoun, context):
+    """Resolver 'él', 'ella', 'eso', etc."""
+
+    # Buscar última entidad del tipo apropiado
+    for turn in reversed(self.turns):
+        entities = turn['entities']
+        for entity in entities:
+            if self._matches_pronoun(entity, pronoun):
+                return entity
+
+    return pronoun  # No resuelto</code></pre>
+</section>
+
+<section>
+    <h2>Casos de Uso</h2>
+    <ul>
+        <li><strong>Asistentes conversacionales:</strong> Diálogo natural extendido</li>
+        <li><strong>Terapia/Counseling bots:</strong> Seguimiento de contexto emocional</li>
+        <li><strong>Tutores educativos:</strong> Progreso a través de conversación</li>
+        <li><strong>Customer service:</strong> Resolución de problemas complejos</li>
+    </ul>
+</section>
+
+<!-- Entity Memory (6 slides) -->
+<section>
+    <h2>Entity Memory</h2>
+    <h3>Seguimiento de Entidades Mencionadas</h3>
+    <p>Rastrear entidades (personas, lugares, organizaciones, conceptos) a lo largo de la conversación.</p>
+</section>
+
+<section>
+    <h2>¿Qué son las Entidades?</h2>
+    <ul>
+        <li><strong>Personas:</strong> "Juan", "María García"</li>
+        <li><strong>Lugares:</strong> "Madrid", "Central Park"</li>
+        <li><strong>Organizaciones:</strong> "Google", "Universidad de Stanford"</li>
+        <li><strong>Fechas:</strong> "25 de diciembre", "próximo lunes"</li>
+        <li><strong>Cantidades:</strong> "$1000", "5 kilómetros"</li>
+        <li><strong>Conceptos:</strong> "machine learning", "inflación"</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Implementación: EntityMemory</h2>
+    <pre><code class="python">class EntityMemory:
+    """Rastreo de entidades en conversación"""
+
+    def __init__(self):
+        self.entities = defaultdict(list)  # tipo -> [nombres]
+        self.entity_properties = {}  # entidad -> {propiedades}
+        self.mentions = defaultdict(int)  # entidad -> count
+
+    def track_entity(self, name, entity_type, properties=None):
+        """Rastrear una entidad"""
+        self.entities[entity_type].append(name)
+        self.mentions[name] += 1
+
+        if properties:
+            if name not in self.entity_properties:
+                self.entity_properties[name] = {}
+            self.entity_properties[name].update(properties)</code></pre>
+</section>
+
+<section>
+    <h2>Extracción Automática de Entidades (NER)</h2>
+    <pre><code class="python">import spacy
+
+nlp = spacy.load("es_core_news_sm")
+
+def extract_entities(text):
+    """Extraer entidades con spaCy"""
+    doc = nlp(text)
+    entities = {}
+
+    for ent in doc.ents:
+        if ent.label_ not in entities:
+            entities[ent.label_] = []
+        entities[ent.label_].append(ent.text)
+
+    return entities
+
+# Ejemplo
+text = "Juan trabaja en Google en Madrid desde 2020"
+print(extract_entities(text))
+# {'PERSON': ['Juan'], 'ORG': ['Google'],
+#  'LOC': ['Madrid'], 'DATE': ['2020']}</code></pre>
+</section>
+
+<section>
+    <h2>Ventajas de Entity Memory</h2>
+    <ul>
+        <li><strong>Coherencia:</strong> Recordar detalles sobre entidades</li>
+        <li><strong>Personalización:</strong> Adaptar respuestas a contexto</li>
+        <li><strong>Resolución de referencias:</strong> "él" → "Juan"</li>
+        <li><strong>Conocimiento acumulativo:</strong> Construir perfil de entidades</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Ejemplo con LangChain</h2>
+    <pre><code class="python">from langchain.memory import ConversationEntityMemory
+
+memory = ConversationEntityMemory(llm=llm)
+
+memory.save_context(
+    {"input": "Juan es ingeniero en Google"},
+    {"output": "Entendido, Juan trabaja en Google como ingeniero"}
+)
+
+# Memoria ahora conoce:
+# - Entidad: "Juan"
+# - Propiedades: {profesión: "ingeniero", empresa: "Google"}
+
+memory.save_context(
+    {"input": "¿Qué hace Juan?"},
+    {"output": "Juan es ingeniero en Google"}
+)
+# Usa conocimiento previo de la entidad</code></pre>
+</section>
+
+<!-- Persistencia Memoria (7 slides) -->
+<section>
+    <h2>Persistencia de Memoria</h2>
+    <h3>Almacenamiento a Largo Plazo</h3>
+    <p>Guardar memoria entre sesiones y recuperarse de fallos.</p>
+</section>
+
+<section>
+    <h2>Opciones de Almacenamiento</h2>
+    <ul>
+        <li><strong>Archivos JSON/YAML:</strong> Simple, legible, local</li>
+        <li><strong>SQLite:</strong> Base de datos local, SQL queries</li>
+        <li><strong>PostgreSQL:</strong> Robusto, escalable, relacional</li>
+        <li><strong>Redis:</strong> In-memory, rápido, key-value</li>
+        <li><strong>MongoDB:</strong> NoSQL, flexible, documentos</li>
+        <li><strong>Vector DBs:</strong> Pinecone, Weaviate, Chroma</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Persistencia en Archivos JSON</h2>
+    <pre><code class="python">import json
+from pathlib import Path
+
+class FilePersistence:
+    """Persistir memoria en archivo JSON"""
+
+    def __init__(self, storage_path="./memory.json"):
+        self.storage_path = Path(storage_path)
+
+    def save(self, memory_data):
+        """Guardar memoria a disco"""
+        with open(self.storage_path, 'w') as f:
+            json.dump(memory_data, f, indent=2, default=str)
+
+    def load(self):
+        """Cargar memoria desde disco"""
+        if self.storage_path.exists():
+            with open(self.storage_path, 'r') as f:
+                return json.load(f)
+        return {}</code></pre>
+</section>
+
+<section>
+    <h2>Persistencia en Base de Datos</h2>
+    <pre><code class="python">import sqlite3
+
+class DatabasePersistence:
+    """Persistir en SQLite"""
+
+    def __init__(self, db_path="./memory.db"):
+        self.conn = sqlite3.connect(db_path)
+        self._create_tables()
+
+    def _create_tables(self):
+        self.conn.execute('''
+            CREATE TABLE IF NOT EXISTS messages (
+                id INTEGER PRIMARY KEY,
+                role TEXT,
+                content TEXT,
+                timestamp TEXT
+            )
+        ''')
+
+    def save_message(self, role, content):
+        self.conn.execute(
+            "INSERT INTO messages (role, content, timestamp) VALUES (?, ?, ?)",
+            (role, content, datetime.now().isoformat())
+        )
+        self.conn.commit()</code></pre>
+</section>
+
+<section>
+    <h2>Checkpoints y Snapshots</h2>
+    <pre><code class="python">class CheckpointManager:
+    """Gestión de checkpoints de memoria"""
+
+    def __init__(self, checkpoint_dir="./checkpoints"):
+        self.checkpoint_dir = Path(checkpoint_dir)
+        self.checkpoint_dir.mkdir(exist_ok=True)
+
+    def save_checkpoint(self, state, name=None):
+        """Guardar snapshot del estado"""
+        if name is None:
+            name = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+        checkpoint_path = self.checkpoint_dir / f"{name}.json"
+        with open(checkpoint_path, 'w') as f:
+            json.dump(state, f, indent=2, default=str)
+
+        return checkpoint_path</code></pre>
+</section>
+
+<section>
+    <h2>Backup y Recuperación</h2>
+    <ul>
+        <li><strong>Backups periódicos:</strong> Snapshots cada N minutos/horas</li>
+        <li><strong>Versionado:</strong> Mantener múltiples versiones</li>
+        <li><strong>Compresión:</strong> Reducir tamaño de almacenamiento</li>
+        <li><strong>Replicación:</strong> Múltiples copias en diferentes ubicaciones</li>
+        <li><strong>Recovery testing:</strong> Verificar que backups funcionan</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Migración de Esquemas</h2>
+    <pre><code class="python">class SchemaMigration:
+    """Migrar datos entre versiones"""
+
+    CURRENT_VERSION = "2.0"
+
+    def migrate(self, data, from_version):
+        """Migrar paso a paso"""
+        migrations = {
+            "1.0": self._migrate_1_to_1_5,
+            "1.5": self._migrate_1_5_to_2_0,
+        }
+
+        current = data
+        for version, migrator in sorted(migrations.items()):
+            if from_version <= version < self.CURRENT_VERSION:
+                current = migrator(current)
+
+        return current</code></pre>
+</section>
+
+<!-- Gestión Contexto Cadenas (8 slides) -->
+<section>
+    <h2>Gestión de Contexto en Cadenas</h2>
+    <h3>Integración con LangChain</h3>
+    <p>Cómo se integra la memoria en pipelines de procesamiento.</p>
+</section>
+
+<section>
+    <h2>Cadenas con Memoria</h2>
+    <pre><code class="python">from langchain.chains import ConversationChain
+from langchain.memory import ConversationBufferMemory
+from langchain.llms import OpenAI
+
+llm = OpenAI(temperature=0.7)
+memory = ConversationBufferMemory()
+
+chain = ConversationChain(
+    llm=llm,
+    memory=memory,
+    verbose=True  # Ver prompts completos
+)
+
+response = chain.predict(input="Hola, mi nombre es Juan")
+# "¡Hola Juan! Encantado de conocerte..."
+
+response = chain.predict(input="¿Cuál es mi nombre?")
+# "Tu nombre es Juan" (recupera de memoria)</code></pre>
+</section>
+
+<section>
+    <h2>Tipos de Cadenas</h2>
+    <ul>
+        <li><strong>ConversationChain:</strong> Conversación simple con memoria</li>
+        <li><strong>LLMChain:</strong> Llamada básica a LLM con template</li>
+        <li><strong>SequentialChain:</strong> Múltiples pasos en secuencia</li>
+        <li><strong>RouterChain:</strong> Enrutamiento condicional</li>
+        <li><strong>RetrievalQA:</strong> Búsqueda + generación (RAG)</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Parámetros de Memoria en Cadenas</h2>
+    <ul>
+        <li><strong>memory_key:</strong> Nombre de variable (default: "history")</li>
+        <li><strong>input_key:</strong> Key para input del usuario</li>
+        <li><strong>output_key:</strong> Key para output del modelo</li>
+        <li><strong>return_messages:</strong> Devolver objetos Message vs strings</li>
+        <li><strong>human_prefix:</strong> Prefijo para mensajes del usuario</li>
+        <li><strong>ai_prefix:</strong> Prefijo para respuestas del agente</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Custom Memory en Cadenas</h2>
+    <pre><code class="python">from langchain.memory import BaseChatMemory
+
+class CustomMemory(BaseChatMemory):
+    """Implementación personalizada"""
+
+    def save_context(self, inputs, outputs):
+        """Guardar contexto después de llamada"""
+        # Lógica personalizada
+        pass
+
+    def load_memory_variables(self, inputs):
+        """Cargar variables para el prompt"""
+        return {
+            "history": self._get_formatted_history(),
+            "user_info": self._get_user_context()
+        }
+
+    def clear(self):
+        """Limpiar memoria"""
+        pass</code></pre>
+</section>
+
+<section>
+    <h2>Múltiples Memorias en una Cadena</h2>
+    <pre><code class="python">from langchain.memory import CombinedMemory
+
+# Combinar diferentes tipos de memoria
+entity_memory = ConversationEntityMemory(llm=llm)
+buffer_memory = ConversationBufferMemory()
+
+combined_memory = CombinedMemory(memories=[
+    entity_memory,
+    buffer_memory
+])
+
+chain = ConversationChain(
+    llm=llm,
+    memory=combined_memory
+)
+# Ahora usa ambas memorias simultáneamente</code></pre>
+</section>
+
+<section>
+    <h2>Memoria en RAG (Retrieval-Augmented Generation)</h2>
+    <pre><code class="python">from langchain.chains import RetrievalQA
+from langchain.memory import ConversationBufferMemory
+
+qa_chain = RetrievalQA.from_chain_type(
+    llm=llm,
+    retriever=vector_store.as_retriever(),
+    memory=ConversationBufferMemory(),
+    return_source_documents=True
+)
+
+# Ahora las consultas tienen:
+# 1. Contexto de documentos recuperados (retrieval)
+# 2. Historial de conversación (memory)</code></pre>
+</section>
+
+<section>
+    <h2>Debugging de Memoria en Cadenas</h2>
+    <ul>
+        <li><strong>verbose=True:</strong> Ver prompts completos enviados</li>
+        <li><strong>Inspeccionar memory.buffer:</strong> Revisar historial almacenado</li>
+        <li><strong>Logging:</strong> Registrar save_context y load_memory_variables</li>
+        <li><strong>Callbacks:</strong> Hooks para monitorear operaciones</li>
+    </ul>
+</section>
+
+<!-- Optimización Memoria (8 slides) -->
+<section>
+    <h2>Optimización de Memoria</h2>
+    <h3>Performance y Eficiencia</h3>
+    <p>Técnicas para optimizar el uso de memoria en producción.</p>
+</section>
+
+<section>
+    <h2>Métricas de Performance</h2>
+    <ul>
+        <li><strong>Latencia de recuperación:</strong> Tiempo para cargar contexto</li>
+        <li><strong>Throughput:</strong> Consultas por segundo</li>
+        <li><strong>Memoria RAM:</strong> Uso de memoria del sistema</li>
+        <li><strong>Costo de tokens:</strong> Tokens enviados al LLM</li>
+        <li><strong>Hit rate (cache):</strong> % de aciertos en caché</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Caching de Contexto</h2>
+    <pre><code class="python">from functools import lru_cache
+import hashlib
+
+class ContextCache:
+    """Caché de contextos frecuentes"""
+
+    def __init__(self, max_size=100):
+        self.cache = {}
+        self.max_size = max_size
+
+    def get_or_compute(self, key, compute_fn):
+        """Obtener de caché o computar"""
+        cache_key = hashlib.md5(str(key).encode()).hexdigest()
+
+        if cache_key in self.cache:
+            return self.cache[cache_key]
+
+        result = compute_fn()
+        self.cache[cache_key] = result
+        return result</code></pre>
+</section>
+
+<section>
+    <h2>Compresión de Contexto</h2>
+    <ul>
+        <li><strong>Summarization:</strong> Resumir mensajes antiguos</li>
+        <li><strong>Deduplication:</strong> Eliminar información redundante</li>
+        <li><strong>Abstraction:</strong> Reemplazar detalles por conceptos</li>
+        <li><strong>Truncation:</strong> Cortar mensajes muy largos</li>
+    </ul>
+    <p>Objetivo: Reducir tokens sin perder información esencial.</p>
+</section>
+
+<section>
+    <h2>Indexación para Búsqueda Rápida</h2>
+    <pre><code class="python">from sklearn.feature_extraction.text import TfidfVectorizer
+
+class FastRetrieval:
+    """Búsqueda rápida con índices"""
+
+    def __init__(self):
+        self.messages = []
+        self.vectorizer = TfidfVectorizer()
+        self.index = None
+
+    def add_messages(self, messages):
+        """Indexar mensajes"""
+        self.messages.extend(messages)
+        texts = [m['content'] for m in self.messages]
+        self.index = self.vectorizer.fit_transform(texts)
+
+    def search(self, query, top_k=5):
+        """Búsqueda vectorial rápida"""
+        query_vec = self.vectorizer.transform([query])
+        scores = (self.index @ query_vec.T).toarray().flatten()
+        top_indices = scores.argsort()[-top_k:][::-1]
+        return [self.messages[i] for i in top_indices]</code></pre>
+</section>
+
+<section>
+    <h2>Lazy Loading</h2>
+    <pre><code class="python">class LazyMemory:
+    """Cargar contexto solo cuando sea necesario"""
+
+    def __init__(self, storage):
+        self.storage = storage
+        self._cache = None
+
+    @property
+    def messages(self):
+        """Lazy load de mensajes"""
+        if self._cache is None:
+            self._cache = self.storage.load_all()
+        return self._cache
+
+    def invalidate_cache(self):
+        """Forzar recarga en próximo acceso"""
+        self._cache = None</code></pre>
+</section>
+
+<section>
+    <h2>Batch Processing</h2>
+    <p>Procesar múltiples operaciones juntas:</p>
+    <ul>
+        <li><strong>Batch embeddings:</strong> Generar embeddings en lote</li>
+        <li><strong>Batch saves:</strong> Escribir múltiples mensajes a la vez</li>
+        <li><strong>Bulk inserts:</strong> Operaciones de BD en lote</li>
+    </ul>
+    <pre><code class="python"># Malo: N llamadas
+for msg in messages:
+    db.save(msg)
+
+# Bueno: 1 llamada
+db.bulk_insert(messages)</code></pre>
+</section>
+
+<section>
+    <h2>Optimización de Costos</h2>
+    <ul>
+        <li><strong>Reducir tokens enviados:</strong> Usar resúmenes cuando sea posible</li>
+        <li><strong>Caché de respuestas:</strong> Evitar llamadas duplicadas</li>
+        <li><strong>Modelos más baratos:</strong> GPT-3.5 para tareas simples</li>
+        <li><strong>Embeddings locales:</strong> Sentence-Transformers en lugar de API</li>
+        <li><strong>Batch embeddings:</strong> Tarifas reducidas por volumen</li>
+    </ul>
+</section>
+
+<!-- Evaluación Memoria (6 slides) -->
+<section>
+    <h2>Evaluación de Memoria</h2>
+    <h3>Testing y Métricas</h3>
+    <p>Cómo medir la efectividad del sistema de memoria.</p>
+</section>
+
+<section>
+    <h2>Métricas de Calidad</h2>
+    <ul>
+        <li><strong>Recall:</strong> % de información importante recordada</li>
+        <li><strong>Precision:</strong> % de información recuperada que es relevante</li>
+        <li><strong>Coherencia:</strong> Consistencia en respuestas a lo largo del tiempo</li>
+        <li><strong>Relevancia:</strong> Qué tan pertinente es el contexto recuperado</li>
+        <li><strong>Latencia:</strong> Tiempo de respuesta</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Testing de Memoria</h2>
+    <pre><code class="python">class MemoryTester:
+    """Suite de tests para memoria"""
+
+    def test_recall(self, memory, facts):
+        """Verificar que recuerda información clave"""
+        for fact in facts:
+            memory.add_message("user", fact)
+
+        # Después de varias interacciones
+        for _ in range(10):
+            memory.add_message("user", "mensaje irrelevante")
+
+        # ¿Puede recordar los hechos originales?
+        context = memory.get_context()
+        recalled = sum(1 for fact in facts if fact in context)
+
+        return recalled / len(facts)  # Recall score</code></pre>
+</section>
+
+<section>
+    <h2>Tests de Coherencia</h2>
+    <pre><code class="python">def test_coherence(agent, conversation):
+    """Verificar consistencia en conversación"""
+
+    # Establecer hecho
+    agent.process("Mi nombre es Juan")
+    response1 = agent.process("¿Cuál es mi nombre?")
+
+    # Múltiples turnos después
+    for msg in conversation:
+        agent.process(msg)
+
+    # Verificar que sigue recordando
+    response2 = agent.process("¿Cuál es mi nombre?")
+
+    # Ambas respuestas deben mencionar "Juan"
+    return "Juan" in response1 and "Juan" in response2</code></pre>
+</section>
+
+<section>
+    <h2>Benchmarks de Performance</h2>
+    <pre><code class="python">import time
+
+def benchmark_memory(memory_impl, num_ops=1000):
+    """Medir performance de implementación"""
+
+    # Benchmark de escritura
+    start = time.time()
+    for i in range(num_ops):
+        memory_impl.add_message("user", f"mensaje {i}")
+    write_time = time.time() - start
+
+    # Benchmark de lectura
+    start = time.time()
+    for i in range(num_ops):
+        memory_impl.get_context()
+    read_time = time.time() - start
+
+    return {
+        'write_ops_per_sec': num_ops / write_time,
+        'read_ops_per_sec': num_ops / read_time
+    }</code></pre>
+</section>
+
+<section>
+    <h2>Evaluación en Producción</h2>
+    <ul>
+        <li><strong>A/B testing:</strong> Comparar diferentes estrategias de memoria</li>
+        <li><strong>User feedback:</strong> Satisfacción del usuario con coherencia</li>
+        <li><strong>Error rate:</strong> Frecuencia de inconsistencias</li>
+        <li><strong>Session length:</strong> Duración de conversaciones exitosas</li>
+        <li><strong>Cost metrics:</strong> Costo por conversación</li>
+    </ul>
+</section>
+
+<!-- Casos de Uso (7 slides) -->
+<section>
+    <h2>Casos de Uso</h2>
+    <h3>Aplicaciones Reales de Sistemas de Memoria</h3>
+</section>
+
+<section>
+    <h2>1. Chatbots de Customer Service</h2>
+    <p><strong>Requisitos:</strong></p>
+    <ul>
+        <li>Recordar problemas previos del cliente</li>
+        <li>Seguimiento de tickets abiertos</li>
+        <li>Personalización basada en historial</li>
+        <li>Transferencia de contexto entre agentes</li>
+    </ul>
+    <p><strong>Memoria recomendada:</strong> Entity Memory + Summary Memory</p>
+</section>
+
+<section>
+    <h2>2. Asistentes Personales</h2>
+    <p><strong>Requisitos:</strong></p>
+    <ul>
+        <li>Aprender preferencias del usuario</li>
+        <li>Recordar tareas y compromisos</li>
+        <li>Adaptar comunicación a estilo del usuario</li>
+        <li>Contexto a largo plazo (meses/años)</li>
+    </ul>
+    <p><strong>Memoria recomendada:</strong> User Profile + Episodic + Semantic</p>
+</section>
+
+<section>
+    <h2>3. Tutores Educativos</h2>
+    <p><strong>Requisitos:</strong></p>
+    <ul>
+        <li>Seguimiento de progreso del estudiante</li>
+        <li>Identificar áreas de dificultad</li>
+        <li>Adaptar dificultad según desempeño</li>
+        <li>Recordar conceptos ya enseñados</li>
+    </ul>
+    <p><strong>Memoria recomendada:</strong> Episodic (para progreso) + Semantic (para conocimiento)</p>
+</section>
+
+<section>
+    <h2>4. Agentes de Análisis</h2>
+    <p><strong>Requisitos:</strong></p>
+    <ul>
+        <li>Acumular información de múltiples fuentes</li>
+        <li>Detectar patrones a lo largo del tiempo</li>
+        <li>Generar reportes basados en tendencias</li>
+        <li>Actualizar conocimiento con nueva data</li>
+    </ul>
+    <p><strong>Memoria recomendada:</strong> Semantic + Vector Store (RAG)</p>
+</section>
+
+<section>
+    <h2>5. Asistentes de Programación</h2>
+    <p><strong>Requisitos:</strong></p>
+    <ul>
+        <li>Recordar estilo de código del proyecto</li>
+        <li>Seguimiento de arquitectura y patrones</li>
+        <li>Aprender de correcciones del usuario</li>
+        <li>Contexto de codebase completo</li>
+    </ul>
+    <p><strong>Memoria recomendada:</strong> Procedural + Semantic + Vector Store</p>
+</section>
+
+<section>
+    <h2>6. Agentes de Investigación</h2>
+    <p><strong>Requisitos:</strong></p>
+    <ul>
+        <li>Mantener estado de investigación actual</li>
+        <li>Recordar papers/fuentes consultadas</li>
+        <li>Evitar búsquedas duplicadas</li>
+        <li>Sintetizar información de múltiples fuentes</li>
+    </ul>
+    <p><strong>Memoria recomendada:</strong> Episodic (búsquedas) + Summary + Vector DB</p>
+</section>
+
+<section>
+    <h2>Selección de Tipo de Memoria</h2>
+    <table style="font-size: 0.45em;">
+        <tr>
+            <th>Caso de Uso</th>
+            <th>Duración</th>
+            <th>Memoria Recomendada</th>
+        </tr>
+        <tr>
+            <td>Chat casual</td>
+            <td>Minutos</td>
+            <td>Buffer Window</td>
+        </tr>
+        <tr>
+            <td>Customer service</td>
+            <td>Días/semanas</td>
+            <td>Entity + Summary</td>
+        </tr>
+        <tr>
+            <td>Asistente personal</td>
+            <td>Meses/años</td>
+            <td>All types + Vector DB</td>
+        </tr>
+        <tr>
+            <td>Análisis temporal</td>
+            <td>Horas/días</td>
+            <td>Episodic + Semantic</td>
+        </tr>
+    </table>
+</section>
+
+<!-- Mejores Prácticas (8 slides) -->
+<section>
+    <h2>Mejores Prácticas</h2>
+    <h3>Diseño, Seguridad y Mantenimiento</h3>
+</section>
+
+<section>
+    <h2>1. Diseño de Sistema de Memoria</h2>
+    <ul>
+        <li><strong>Empieza simple:</strong> Buffer → Window → Summary según necesidad</li>
+        <li><strong>Mide primero:</strong> Benchmark antes de optimizar</li>
+        <li><strong>Separation of concerns:</strong> Memoria separada de lógica de negocio</li>
+        <li><strong>Interfaces claras:</strong> API bien definida</li>
+        <li><strong>Testeable:</strong> Diseña para facilitar testing</li>
+    </ul>
+</section>
+
+<section>
+    <h2>2. Seguridad y Privacidad</h2>
+    <ul>
+        <li><strong>Encriptación:</strong> Datos sensibles encriptados en reposo</li>
+        <li><strong>Control de acceso:</strong> Autorización para leer/escribir memoria</li>
+        <li><strong>Redacción:</strong> PII (datos personales) enmascarados en logs</li>
+        <li><strong>Retention policies:</strong> Eliminar datos después de tiempo límite</li>
+        <li><strong>Derecho al olvido:</strong> Implementar GDPR Article 17</li>
+        <li><strong>Audit trail:</strong> Registro de quién accedió a qué</li>
+    </ul>
+</section>
+
+<section>
+    <h2>3. Escalabilidad</h2>
+    <ul>
+        <li><strong>Sharding:</strong> Distribuir memoria por usuario/sesión</li>
+        <li><strong>Caching layers:</strong> L1 (memoria) → L2 (Redis) → L3 (DB)</li>
+        <li><strong>Async operations:</strong> Escrituras asíncronas</li>
+        <li><strong>Batch processing:</strong> Operaciones en lote</li>
+        <li><strong>Read replicas:</strong> Réplicas de solo lectura para queries</li>
+    </ul>
+</section>
+
+<section>
+    <h2>4. Gestión de Errores</h2>
+    <pre><code class="python">class RobustMemory:
+    """Memoria con manejo de errores"""
+
+    def add_message(self, role, content):
+        try:
+            # Validación
+            if not content or len(content) > 10000:
+                raise ValueError("Contenido inválido")
+
+            # Operación
+            self._save_to_db(role, content)
+
+        except Exception as e:
+            # Log error
+            logger.error(f"Error guardando mensaje: {e}")
+            # Fallback: guardar en memoria temporal
+            self._fallback_storage.append((role, content))
+            # Re-raise o retornar False según criticidad
+            return False
+
+        return True</code></pre>
+</section>
+
+<section>
+    <h2>5. Monitoreo y Observabilidad</h2>
+    <ul>
+        <li><strong>Métricas:</strong> Latencia, throughput, tasa de error</li>
+        <li><strong>Logging:</strong> Eventos importantes (no contenido sensible)</li>
+        <li><strong>Alertas:</strong> Notificación de anomalías</li>
+        <li><strong>Dashboards:</strong> Visualización de salud del sistema</li>
+        <li><strong>Tracing:</strong> Seguimiento de operaciones distribuidas</li>
+    </ul>
+</section>
+
+<section>
+    <h2>6. Versionado y Migración</h2>
+    <pre><code class="python">class MemoryVersioning:
+    """Versionado de esquemas de memoria"""
+
+    VERSION = "2.0"
+
+    def migrate_if_needed(self, data):
+        """Auto-migrar datos antiguos"""
+        if 'version' not in data:
+            data = self._migrate_from_v1(data)
+
+        if data['version'] != self.VERSION:
+            data = self._apply_migrations(
+                data,
+                from_version=data['version'],
+                to_version=self.VERSION
+            )
+
+        return data</code></pre>
+</section>
+
+<section>
+    <h2>7. Testing Estratégico</h2>
+    <ul>
+        <li><strong>Unit tests:</strong> Componentes individuales de memoria</li>
+        <li><strong>Integration tests:</strong> Memoria + agente completo</li>
+        <li><strong>Load tests:</strong> Performance bajo carga</li>
+        <li><strong>Chaos engineering:</strong> Resilencia ante fallos</li>
+        <li><strong>Regression tests:</strong> Verificar que cambios no rompen nada</li>
+    </ul>
+</section>
+
+<section>
+    <h2>8. Documentación</h2>
+    <ul>
+        <li><strong>Arquitectura:</strong> Diagrama del sistema de memoria</li>
+        <li><strong>API reference:</strong> Documentación de métodos públicos</li>
+        <li><strong>Runbooks:</strong> Guías de operaciones y troubleshooting</li>
+        <li><strong>Decision log:</strong> Por qué se eligió cierta implementación</li>
+        <li><strong>Examples:</strong> Código de ejemplo para casos comunes</li>
+    </ul>
+</section>
+
+<!-- Troubleshooting (5 slides) -->
+<section>
+    <h2>Troubleshooting</h2>
+    <h3>Problemas Comunes y Soluciones</h3>
+</section>
+
+<section>
+    <h2>Problema 1: Memoria Crece Sin Control</h2>
+    <p><strong>Síntomas:</strong></p>
+    <ul>
+        <li>Uso de RAM aumenta continuamente</li>
+        <li>Performance degrada con el tiempo</li>
+        <li>Out of memory errors</li>
+    </ul>
+    <p><strong>Soluciones:</strong></p>
+    <ul>
+        <li>Implementar límites de tamaño (max messages/tokens)</li>
+        <li>Usar sliding window en lugar de buffer ilimitado</li>
+        <li>Implementar garbage collection periódico</li>
+        <li>Mover a storage persistente (DB)</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Problema 2: Contexto Pierde Información Importante</h2>
+    <p><strong>Síntomas:</strong></p>
+    <ul>
+        <li>Agente "olvida" hechos mencionados antes</li>
+        <li>Respuestas inconsistentes</li>
+    </ul>
+    <p><strong>Soluciones:</strong></p>
+    <ul>
+        <li>Usar Entity Memory para trackear información clave</li>
+        <li>Implementar Summary Memory para comprimir sin perder esencia</li>
+        <li>Aumentar tamaño de ventana de contexto</li>
+        <li>Usar retrieval (RAG) para buscar información relevante</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Problema 3: Alta Latencia en Recuperación</h2>
+    <p><strong>Síntomas:</strong></p>
+    <ul>
+        <li>Respuestas lentas del agente</li>
+        <li>Timeout errors</li>
+    </ul>
+    <p><strong>Soluciones:</strong></p>
+    <ul>
+        <li>Implementar caching de contextos frecuentes</li>
+        <li>Indexar mensajes para búsqueda rápida</li>
+        <li>Usar lazy loading (cargar solo cuando necesario)</li>
+        <li>Optimizar queries a base de datos</li>
+        <li>Paralelizar operaciones de retrieval</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Problema 4: Costos Elevados de API</h2>
+    <p><strong>Síntomas:</strong></p>
+    <ul>
+        <li>Factura de OpenAI muy alta</li>
+        <li>Muchos tokens enviados en cada llamada</li>
+    </ul>
+    <p><strong>Soluciones:</strong></p>
+    <ul>
+        <li>Usar Summary Memory para comprimir contexto</li>
+        <li>Implementar Token Buffer para controlar exactamente tokens enviados</li>
+        <li>Caché de respuestas para evitar llamadas duplicadas</li>
+        <li>Usar modelos más baratos para tareas simples (GPT-3.5 vs GPT-4)</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Problema 5: Pérdida de Datos por Fallos</h2>
+    <p><strong>Síntomas:</strong></p>
+    <ul>
+        <li>Memoria se resetea después de crash</li>
+        <li>Usuarios pierden historial de conversación</li>
+    </ul>
+    <p><strong>Soluciones:</strong></p>
+    <ul>
+        <li>Implementar persistencia a disco/BD</li>
+        <li>Checkpoints periódicos automáticos</li>
+        <li>Write-ahead logging (WAL)</li>
+        <li>Replicación de datos</li>
+        <li>Testing de recovery procedures</li>
+    </ul>
+</section>
+
+<!-- Conclusión (3 slides) -->
+<section>
+    <h2>Conclusión</h2>
+    <h3>Resumen del Módulo</h3>
+</section>
+
+<section>
+    <h2>Puntos Clave</h2>
+    <ul>
+        <li>La memoria es esencial para agentes inteligentes y conversacionales</li>
+        <li>Existen múltiples tipos de memoria, cada uno con trade-offs específicos</li>
+        <li>La elección de implementación depende del caso de uso</li>
+        <li>Combinar múltiples tipos de memoria para máxima efectividad</li>
+        <li>Optimización, seguridad y escalabilidad son críticas en producción</li>
+        <li>Testing continuo asegura calidad del sistema de memoria</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Próximos Pasos</h2>
+    <ul>
+        <li><strong>Práctica:</strong> Implementar diferentes tipos de memoria</li>
+        <li><strong>Experimentación:</strong> Probar trade-offs en tu caso de uso</li>
+        <li><strong>Proyecto integrador:</strong> Sistema completo de memoria</li>
+        <li><strong>Profundización:</strong> Vector databases, RAG avanzado</li>
+        <li><strong>Investigación:</strong> Papers recientes sobre memory-augmented agents</li>
+    </ul>
+    <p>¡Gracias por tu atención!</p>
+</section>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/plugin/highlight/highlight.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            plugins: [RevealHighlight],
+            slideNumber: 'c/t',
+            transition: 'slide'
+        });
+    </script>
+</body>
+</html>

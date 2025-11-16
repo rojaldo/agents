@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-agentes y Coordinación</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/theme/white.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-light.min.css">
+    <style>
+        .reveal { text-align: left; color: #555555; }
+        .reveal section { text-align: left; padding: 40px; display: flex; flex-direction: column; justify-content: flex-start; }
+        .reveal h1, .reveal h2, .reveal h3 { text-transform: none; text-align: left; color: #555555; }
+
+        /* Encabezados */
+        .reveal h1 { font-size: 1.05em; margin-bottom: 0.5em; }
+        .reveal h2 { font-size: 1em; margin-bottom: 0.5em; }
+        .reveal h3 { font-size: 0.75em; margin-bottom: 0.3em; }
+
+        /* Párrafos y énfasis */
+        .reveal p { font-size: 0.6em; margin: 0.3em 0; color: #555555; }
+        .reveal strong { font-size: 1em; font-weight: bold; }
+
+        /* Código */
+        .reveal pre { background: #f8f8f8; border: 1px solid #ddd; width: 100%; padding: 0.5em; margin: 0.5em 0; }
+        .reveal pre code { font-size: 0.7em; color: #555555; }
+
+        /* Listas y elementos */
+        .reveal ul { font-size: 0.55em; text-align: left; margin-left: 0.5em; color: #555555; }
+        .reveal li { margin: 0.3em 0; color: #555555; }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- SLIDES DE INTRODUCCIÓN -->
+            <section>
+                <h1>Multi-Agentes y Coordinación</h1>
+                <h2>Sistemas Distribuidos de Agentes Inteligentes</h2>
+                <p>Cómo diseñar sistemas donde múltiples agentes trabajan juntos</p>
+            </section>
+
+            <section>
+                <h2>¿Por qué Multi-Agentes?</h2>
+                <ul>
+                    <li>Problemas complejos no pueden ser resueltos por un solo agente</li>
+                    <li>Escalabilidad: Múltiples agentes = más capacidad</li>
+                    <li>Robustez: Si un agente falla, otros continúan</li>
+                    <li>Velocidad: Trabajo paralelo es más rápido</li>
+                    <li>Especificación: Cada agente puede ser especializado</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Aplicaciones Reales</h2>
+                <ul>
+                    <li><strong>Tráfico Inteligente:</strong> Múltiples semáforos coordinados</li>
+                    <li><strong>Robots:</strong> Equipo de robots colaborando en tarea</li>
+                    <li><strong>Trading:</strong> Agentes negociando en mercados</li>
+                    <li><strong>Juegos:</strong> Enemigos NPC coordinados</li>
+                    <li><strong>Energía:</strong> Red inteligente con múltiples proveedores</li>
+                    <li><strong>Logística:</strong> Vehículos entregando paquetes</li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 1: FUNDAMENTOS -->
+            <section>
+                <h2>MÓDULO 1: Fundamentos de Sistemas Multi-Agente</h2>
+            </section>
+
+            <section>
+                <h3>¿Qué es un Agente?</h3>
+                <ul>
+                    <li><strong>Definición:</strong> Entidad autónoma que percibe ambiente y actúa</li>
+                    <li><strong>Componentes básicos:</strong>
+                        <ul>
+                            <li>Sensores: Percibir estado del mundo</li>
+                            <li>Razonamiento: Decidir qué hacer</li>
+                            <li>Actuadores: Actuar en el mundo</li>
+                        </ul>
+                    </li>
+                    <li><strong>Ciclo Percepto-Acción:</strong>
+                        <ul>
+                            <li>1. Percibir (input de sensores)</li>
+                            <li>2. Procesar (tomar decisión)</li>
+                            <li>3. Actuar (realizar acción)</li>
+                            <li>4. Repetir</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Autonomía vs Heteronomía</h3>
+                <ul>
+                    <li><strong>Autónomo:</strong> Toma decisiones propias, sin control externo
+                        <ul>
+                            <li>Ejemplo: Robot vacío que elige dónde ir</li>
+                            <li>Ventaja: Flexible, adaptable</li>
+                        </ul>
+                    </li>
+                    <li><strong>Heterónomo:</strong> Recibe órdenes de controlador externo
+                        <ul>
+                            <li>Ejemplo: Dron telecomandado</li>
+                            <li>Ventaja: Controlable, predecible</li>
+                        </ul>
+                    </li>
+                    <li><strong>Grado de Autonomía:</strong> Espectro entre ambos extremos</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Racionalidad en Agentes</h3>
+                <ul>
+                    <li><strong>Agente Racional:</strong> Elige acciones que maximizan utilidad
+                        <ul>
+                            <li>Utility: Medida de deseo de resultado</li>
+                            <li>Expected Utility: Utilidad promedio considerando incertidumbre</li>
+                        </ul>
+                    </li>
+                    <li><strong>Ejemplo:</strong>
+                        <ul>
+                            <li>Agente entrega: Debe ir a dirección A o B?</li>
+                            <li>Evaluación: Distancia, tráfico, prioridad de entrega</li>
+                            <li>Decisión: Opción con mayor utilidad esperada</li>
+                        </ul>
+                    </li>
+                    <li><strong>Desafío:</strong> Incertidumbre y información incompleta</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Propiedades del Ambiente</h3>
+                <ul>
+                    <li><strong>Determinístico vs Estocástico:</strong>
+                        <ul>
+                            <li>Determinístico: Acción A siempre lleva a resultado B</li>
+                            <li>Estocástico: Acción A lleva a B con probabilidad 0.7</li>
+                        </ul>
+                    </li>
+                    <li><strong>Estático vs Dinámico:</strong>
+                        <ul>
+                            <li>Estático: Ambiente no cambia mientras agente piensa</li>
+                            <li>Dinámico: Ambiente cambia sin importar agente</li>
+                        </ul>
+                    </li>
+                    <li><strong>Discreto vs Continuo:</strong>
+                        <ul>
+                            <li>Discreto: Estados y acciones finitas (ajedrez)</li>
+                            <li>Continuo: Estados infinitos (control de motor)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Observable:</strong> ¿Agente ve todo o solo parcial?</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Sistemas Distribuidos</h2>
+            </section>
+
+            <section>
+                <h3>Principios de Sistemas Distribuidos</h3>
+                <ul>
+                    <li><strong>Múltiples computadoras (nodos):</strong> Cada una corre código autónomamente</li>
+                    <li><strong>Comunicación por red:</strong> Envío de mensajes entre nodos</li>
+                    <li><strong>Sin reloj global:</strong> Nodos no comparten tiempo exacto</li>
+                    <li><strong>Fallos posibles:</strong> Nodos pueden crashear o desconectarse</li>
+                    <li><strong>Necesidad de coordinación:</strong> Consenso sobre estado del sistema</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Desafío 1: Sincronización</h3>
+                <ul>
+                    <li><strong>Problema:</strong> ¿En qué orden pasaron los eventos?
+                        <ul>
+                            <li>Nodo A envía mensaje T1</li>
+                            <li>Nodo B envía mensaje T2</li>
+                            <li>¿Cuál fue primero sin reloj global?</li>
+                        </ul>
+                    </li>
+                    <li><strong>Soluciones:</strong>
+                        <ul>
+                            <li>Lamport Clock: Contador incremental en cada evento</li>
+                            <li>Vector Clock: Cada nodo sabe de todos los otros</li>
+                        </ul>
+                    </li>
+                    <li><strong>Impacto:</strong> Determina causalidad de eventos</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Desafío 2: Consistencia</h3>
+                <ul>
+                    <li><strong>Strong Consistency:</strong> Lectura siempre ve último cambio
+                        <ul>
+                            <li>Garantía total, pero lento</li>
+                        </ul>
+                    </li>
+                    <li><strong>Eventual Consistency:</strong> Eventualmente todos verán mismo dato
+                        <ul>
+                            <li>Rápido, pero puede haber desincronización temporal</li>
+                        </ul>
+                    </li>
+                    <li><strong>Weak Consistency:</strong> Sin garantías
+                        <ul>
+                            <li>Más rápido, pero risky</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Desafío 3: Tolerancia a Fallos</h3>
+                <ul>
+                    <li><strong>Heartbeat:</strong> Nodo periódicamente dice "estoy vivo"
+                        <ul>
+                            <li>Si no hay heartbeat en X segundos → asumir muerto</li>
+                        </ul>
+                    </li>
+                    <li><strong>Timeout:</strong> Esperar respuesta por T segundos
+                        <ul>
+                            <li>Si no responde → reintentar o marcar como fallo</li>
+                        </ul>
+                    </li>
+                    <li><strong>Quorum:</strong> Mayoría de nodos debe estar de acuerdo
+                        <ul>
+                            <li>Si 5 nodos totales: Necesito acuerdo de 3+ para decisión</li>
+                            <li>Resiste fallo de hasta 2 nodos</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Emergencia: Stigmergy</h3>
+                <ul>
+                    <li><strong>Concepto:</strong> Agentes coordinan sin comunicación directa
+                        <ul>
+                            <li>Coordinación a través de modificación del ambiente</li>
+                        </ul>
+                    </li>
+                    <li><strong>Ejemplo - Hormigas:</strong>
+                        <ul>
+                            <li>Hormiga 1 encuentra comida, deja feromona</li>
+                            <li>Hormiga 2 sigue feromona a comida</li>
+                            <li>Hormiga 2 también deja feromona</li>
+                            <li>Trail emerge sin coordinación consciente</li>
+                        </ul>
+                    </li>
+                    <li><strong>Aplicaciones:</strong> Optimización, búsqueda, logística</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Emergencia: Flocking</h3>
+                <ul>
+                    <li><strong>Concepto:</strong> Comportamiento colectivo desde reglas simples
+                        <ul>
+                            <li>Cada agente sigue 3 reglas simples</li>
+                            <li>Emergen bancos, rebaños complejos</li>
+                        </ul>
+                    </li>
+                    <li><strong>Las 3 Reglas (Boid):</strong>
+                        <ul>
+                            <li>Separación: Evita choque con vecinos</li>
+                            <li>Alineación: Muévete en dirección promedio de vecinos</li>
+                            <li>Cohesión: Muévete hacia posición promedio de vecinos</li>
+                        </ul>
+                    </li>
+                    <li><strong>Resultado:</strong> Comportamiento colectivo realista</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Cooperación vs Colaboración vs Competencia</h3>
+                <ul>
+                    <li><strong>Cooperación:</strong> Trabajan sin comunicación directa
+                        <ul>
+                            <li>Ejemplo: Hormigas (stigmergy)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Colaboración:</strong> Trabajan juntos CON comunicación
+                        <ul>
+                            <li>Ejemplo: Equipo de robots comunicándose</li>
+                        </ul>
+                    </li>
+                    <li><strong>Competencia:</strong> Objetivos conflictivos
+                        <ul>
+                            <li>Ejemplo: Agentes en subasta compitiendo</li>
+                        </ul>
+                    </li>
+                    <li><strong>Coopetición:</strong> Mix de cooperación y competencia
+                        <ul>
+                            <li>Ejemplo: Empresas que cooperan y compiten</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Arquitecturas Multi-Agente</h3>
+                <ul>
+                    <li><strong>1. Centralizada (Hub & Spoke):</strong>
+                        <ul>
+                            <li>Nodo central coordina todos</li>
+                            <li>Ventaja: Control total, fácil de entender</li>
+                            <li>Desventaja: Cuello de botella, punto de fallo único</li>
+                        </ul>
+                    </li>
+                    <li><strong>2. Descentralizada (P2P):</strong>
+                        <ul>
+                            <li>Todos los nodos con igual poder</li>
+                            <li>Ventaja: Robusta, escalable</li>
+                            <li>Desventaja: Coordinación difícil</li>
+                        </ul>
+                    </li>
+                    <li><strong>3. Jerárquica:</strong>
+                        <ul>
+                            <li>Niveles de autoridad (militar-style)</li>
+                            <li>Ventaja: Balance entre control y escalabilidad</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 2: COMUNICACIÓN -->
+            <section>
+                <h2>MÓDULO 2: Comunicación Entre Agentes</h2>
+            </section>
+
+            <section>
+                <h3>Paradigmas de Comunicación</h3>
+                <ul>
+                    <li><strong>Síncrona (RPC):</strong>
+                        <ul>
+                            <li>Cliente espera respuesta</li>
+                            <li>Ventaja: Simple, garantía de entrega</li>
+                            <li>Desventaja: Bloqueante, lento</li>
+                        </ul>
+                    </li>
+                    <li><strong>Asíncrona (Queue):</strong>
+                        <ul>
+                            <li>Cliente coloca mensaje y continúa</li>
+                            <li>Ventaja: No bloqueante, escalable</li>
+                            <li>Desventaja: Complejo, latencia desconocida</li>
+                        </ul>
+                    </li>
+                    <li><strong>Pub/Sub:</strong>
+                        <ul>
+                            <li>Publishers emiten eventos, subscribers escuchan</li>
+                            <li>Ventaja: Desacoplamiento, flexible</li>
+                            <li>Desventaja: Orden puede no ser garantizado</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Formatos de Mensajes</h3>
+                <ul>
+                    <li><strong>FIPA ACL:</strong> Estándar IEEE para comunicación de agentes
+                        <ul>
+                            <li>Más formal, expresivo</li>
+                            <li>Usado en sistemas enterprise</li>
+                        </ul>
+                    </li>
+                    <li><strong>JSON-RPC:</strong> Llamadas remotas en JSON
+                        <ul>
+                            <li>Simple, humano-legible</li>
+                        </ul>
+                    </li>
+                    <li><strong>gRPC:</strong> RPC binaria de Google con Protocol Buffers
+                        <ul>
+                            <li>Rápido, eficiente</li>
+                        </ul>
+                    </li>
+                    <li><strong>MQTT:</strong> Para IoT
+                        <ul>
+                            <li>Ultraligero, para dispositivos de bajo poder</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Message Brokers</h3>
+                <ul>
+                    <li><strong>RabbitMQ:</strong>
+                        <ul>
+                            <li>Clásico, estable, confiable</li>
+                            <li>Soporta múltiples patrones (queue, pub/sub)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Apache Kafka:</strong>
+                        <ul>
+                            <li>Streaming de alto volumen</li>
+                            <li>Persistencia en disco</li>
+                            <li>Consumer groups para procesamiento paralelo</li>
+                        </ul>
+                    </li>
+                    <li><strong>Redis Streams:</strong>
+                        <ul>
+                            <li>Simple, rápido</li>
+                            <li>En-memoria (datos en RAM)</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Topologías de Comunicación</h3>
+                <ul>
+                    <li><strong>Point-to-Point:</strong> A → B (directo)
+                        <ul>
+                            <li>Simple, bajo latency</li>
+                        </ul>
+                    </li>
+                    <li><strong>Broadcasting:</strong> A → Todos
+                        <ul>
+                            <li>Todos reciben mensaje</li>
+                        </ul>
+                    </li>
+                    <li><strong>Multicasting:</strong> A → Grupo
+                        <ul>
+                            <li>Solo miembros del grupo reciben</li>
+                        </ul>
+                    </li>
+                    <li><strong>Jerárquica:</strong> A → B → C → D (tree)
+                        <ul>
+                            <li>Escalable pero latencia crece</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Garantías de Entrega</h3>
+                <ul>
+                    <li><strong>At-Most-Once:</strong> Puede no llegar
+                        <ul>
+                            <li>Riesgo: Mensaje se pierde</li>
+                            <li>Ventaja: Rápido, sin overhead</li>
+                        </ul>
+                    </li>
+                    <li><strong>At-Least-Once:</strong> Garantía de entrega mínimo 1 vez
+                        <ul>
+                            <li>Riesgo: Puede llegar duplicado (requiere idempotencia)</li>
+                            <li>Ventaja: Seguro, razonable overhead</li>
+                        </ul>
+                    </li>
+                    <li><strong>Exactly-Once:</strong> Teóricamente imposible en sistemas distribuidos
+                        <ul>
+                            <li>En la práctica: Simular con deduplicación</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Confiabilidad: ACK y Reintentos</h3>
+                <ul>
+                    <li><strong>ACK (Acknowledgment):</strong>
+                        <ul>
+                            <li>Receptor confirma recepción</li>
+                            <li>Si no hay ACK en T segundos → reintentar</li>
+                        </ul>
+                    </li>
+                    <li><strong>Exponential Backoff:</strong>
+                        <ul>
+                            <li>Intento 1: Espera 1 segundo</li>
+                            <li>Intento 2: Espera 2 segundos</li>
+                            <li>Intento 3: Espera 4 segundos</li>
+                            <li>Evita sobrecargar servidor si está caído</li>
+                        </ul>
+                    </li>
+                    <li><strong>Límite de Reintentos:</strong> Después de N fallos → dar por vencido</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Manejo de Latencia</h3>
+                <ul>
+                    <li><strong>Latencia:</strong> Tiempo desde envío a recepción
+                        <ul>
+                            <li>Red lenta → latencia alta</li>
+                            <li>Impacta sincronización de agentes</li>
+                        </ul>
+                    </li>
+                    <li><strong>Timeout Strategy:</strong>
+                        <ul>
+                            <li>Agresivo: Corto, puede reintentar falsos positivos</li>
+                            <li>Conservador: Largo, más seguro pero lento</li>
+                            <li>Adaptivo: Ajustar basado en condiciones</li>
+                        </ul>
+                    </li>
+                    <li><strong>Especulación Temprana:</strong> Asumir resultado probable sin esperar</li>
+                    <li><strong>Pipelining:</strong> Enviar múltiples mensajes sin esperar respuestas</li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 3: COORDINACIÓN -->
+            <section>
+                <h2>MÓDULO 3: Coordinación y Orquestación</h2>
+            </section>
+
+            <section>
+                <h3>Estrategias de Coordinación</h3>
+                <ul>
+                    <li><strong>Centralizada (Master-Slave):</strong>
+                        <ul>
+                            <li>Master toma decisiones globales</li>
+                            <li>Slaves ejecutan órdenes</li>
+                            <li>Ventaja: Control total, consistencia</li>
+                            <li>Desventaja: Punto de fallo único</li>
+                        </ul>
+                    </li>
+                    <li><strong>Jerárquica:</strong>
+                        <ul>
+                            <li>Múltiples niveles de coordinadores</li>
+                            <li>Cada uno coordina su región</li>
+                        </ul>
+                    </li>
+                    <li><strong>Distribuida (P2P):</strong>
+                        <ul>
+                            <li>Todos se coordinan sin autoridad central</li>
+                            <li>Gossip protocol: Compartir info entre vecinos</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Barreras de Sincronización</h3>
+                <ul>
+                    <li><strong>Concepto:</strong> Punto donde todos deben esperar
+                        <ul>
+                            <li>Agente A llega a barrera, espera</li>
+                            <li>Agente B llega a barrera, espera</li>
+                            <li>Agente C llega a barrera → TODOS avanzan</li>
+                        </ul>
+                    </li>
+                    <li><strong>Uso:</strong> Sincronizar inicio de fase
+                        <ul>
+                            <li>Fase 1: Todos recopilan datos</li>
+                            <li>Barrera</li>
+                            <li>Fase 2: Todos procesan datos</li>
+                        </ul>
+                    </li>
+                    <li><strong>Implementación:</strong> Contador compartido + mutex</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Token Ring</h3>
+                <ul>
+                    <li><strong>Concepto:</strong> Token pasa de nodo en nodo circularmente
+                        <ul>
+                            <li>Nodo con token tiene derecho a actuar</li>
+                            <li>Después cede token al siguiente</li>
+                        </ul>
+                    </li>
+                    <li><strong>Ventaja:</strong> Exclusión mutua simple sin lock central
+                        <ul>
+                            <li>Solo nodo con token puede acceder recurso crítico</li>
+                        </ul>
+                    </li>
+                    <li><strong>Desafío:</strong> Si nodo muere con token → necesitar recuperación</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Resource Allocation</h3>
+                <ul>
+                    <li><strong>Problema:</strong> Distribuir tareas a agentes optimalmente
+                        <ul>
+                            <li>5 tareas, 3 agentes: Cómo asignar?</li>
+                        </ul>
+                    </li>
+                    <li><strong>Hungarian Algorithm:</strong>
+                        <ul>
+                            <li>Busca asignación óptima</li>
+                            <li>Minimiza costo total</li>
+                            <li>Complejidad O(n³)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Greedy Algorithm:</strong>
+                        <ul>
+                            <li>Más rápido (O(n log n))</li>
+                            <li>Pero puede no ser óptimo</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Race Conditions</h3>
+                <ul>
+                    <li><strong>Problema:</strong> Acceso simultáneo a recurso compartido
+                        <ul>
+                            <li>A lee contador: 5</li>
+                            <li>B lee contador: 5</li>
+                            <li>A escribe: 6</li>
+                            <li>B escribe: 6 ← INCORRECTO (debería ser 7)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Solución: Mutex (Mutual Exclusion)</strong>
+                        <ul>
+                            <li>Solo 1 agente puede acceder recurso a la vez</li>
+                            <li>Lock before, Unlock after</li>
+                        </ul>
+                    </li>
+                    <li><strong>Riesgo del Mutex:</strong> Deadlock si no es cuidadoso</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Deadlock</h3>
+                <ul>
+                    <li><strong>Problema:</strong> Agentes esperan mutuamente, ninguno avanza
+                        <ul>
+                            <li>A espera recurso de B</li>
+                            <li>B espera recurso de A</li>
+                            <li>Ambos bloqueados para siempre</li>
+                        </ul>
+                    </li>
+                    <li><strong>4 Condiciones Necesarias:</strong>
+                        <ul>
+                            <li>1. Exclusión mutua (solo 1 puede tener recurso)</li>
+                            <li>2. Hold and wait (teniendo 1, espera otro)</li>
+                            <li>3. No preemption (no se puede quitar a la fuerza)</li>
+                            <li>4. Circular wait (A→B→A)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Prevención:</strong> Romper una condición
+                        <ul>
+                            <li>Timeout: Si no obtengo recurso en T → liberar todo</li>
+                            <li>Ordered locking: Siempre pedir en mismo orden</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 4: COLABORACIÓN -->
+            <section>
+                <h2>MÓDULO 4: Colaboración y Trabajo en Equipo</h2>
+            </section>
+
+            <section>
+                <h3>Coalition Formation</h3>
+                <ul>
+                    <li><strong>Coalición:</strong> Grupo de agentes que trabajan juntos
+                        <ul>
+                            <li>Ejemplo: 3 robots se alían para tarea grande</li>
+                        </ul>
+                    </li>
+                    <li><strong>Shapley Value:</strong> Distribución JUSTA del valor
+                        <ul>
+                            <li>Cada agente recibe según su contribución marginal</li>
+                            <li>Fórmula compleja pero garantiza equidad</li>
+                        </ul>
+                    </li>
+                    <li><strong>Decisión de Unirse:</strong>
+                        <ul>
+                            <li>¿Mi ganancia sola > ganancia en coalición?</li>
+                            <li>Si no → no unirse</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Consenso y Votación</h3>
+                <ul>
+                    <li><strong>Consenso:</strong> Todos acuerdan en decisión
+                        <ul>
+                            <li>Unanimidad: 100% de acuerdo (difícil de lograr)</li>
+                            <li>Mayoría: >50% de acuerdo (más rápido)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Raft Consensus:</strong> Algoritmo distribuido confiable
+                        <ul>
+                            <li>1 líder: Propone decisiones</li>
+                            <li>Otros: Votan sí/no</li>
+                            <li>Si mayoría dice sí → confirmado</li>
+                        </ul>
+                    </li>
+                    <li><strong>Ventaja:</strong> Tolerancia a fallos (tolera hasta N-1/2 fallos)</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Delegación y Supervisión</h3>
+                <ul>
+                    <li><strong>Delegación:</strong> Agente A da tarea a Agente B
+                        <ul>
+                            <li>A no hace trabajo, B sí</li>
+                            <li>A verifica que B cumple</li>
+                        </ul>
+                    </li>
+                    <li><strong>SLA (Service Level Agreement):</strong>
+                        <ul>
+                            <li>Contrato: "Entregarás en < 24 horas"</li>
+                            <li>Supervisor monitorea cumplimiento</li>
+                        </ul>
+                    </li>
+                    <li><strong>Violación:</strong> Si incumple → penalización</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Resolución Colaborativa de Problemas</h3>
+                <ul>
+                    <li><strong>Fase 1: Brainstorming</strong>
+                        <ul>
+                            <li>Todos sugieren soluciones</li>
+                            <li>Sin crítica inicial</li>
+                        </ul>
+                    </li>
+                    <li><strong>Fase 2: Búsqueda colaborativa</strong>
+                        <ul>
+                            <li>Trabajar juntos en mejores soluciones</li>
+                        </ul>
+                    </li>
+                    <li><strong>Fase 3: Verificación</strong>
+                        <ul>
+                            <li>Testar soluciones</li>
+                            <li>¿Realmente funciona?</li>
+                        </ul>
+                    </li>
+                    <li><strong>Free-Rider Detection:</strong> Algunos no trabajan → detectar y penalizar</li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 5: NEGOCIACIÓN -->
+            <section>
+                <h2>MÓDULO 5: Negociación y Resolución de Conflictos</h2>
+            </section>
+
+            <section>
+                <h3>Conceptos Básicos de Negociación</h3>
+                <ul>
+                    <li><strong>BATNA:</strong> Best Alternative To Negotiated Agreement
+                        <ul>
+                            <li>Mi mejor opción si no llego a acuerdo</li>
+                            <li>Menos que BATNA → rechazar negociación</li>
+                        </ul>
+                    </li>
+                    <li><strong>ZOPA:</strong> Zone Of Possible Agreement
+                        <ul>
+                            <li>Rango donde ambas partes ganan vs BATNA</li>
+                            <li>Si ZOPA vacía → imposible acuerdo</li>
+                        </ul>
+                    </li>
+                    <li><strong>Utility Function:</strong> Qué tan valioso es cada resultado</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Protocolos de Negociación</h3>
+                <ul>
+                    <li><strong>Oferta-Contraoferta:</strong>
+                        <ul>
+                            <li>A propone precio X</li>
+                            <li>B contraoferta X-10%</li>
+                            <li>A contraoferta X-5%</li>
+                            <li>Convergencia a acuerdo</li>
+                        </ul>
+                    </li>
+                    <li><strong>Subastas:</strong>
+                        <ul>
+                            <li>Inglesa: Precio sube hasta que 1 queda</li>
+                            <li>Holandesa: Precio baja hasta que alguien compra</li>
+                            <li>Sellada: Todos ofrecen simultáneamente</li>
+                        </ul>
+                    </li>
+                    <li><strong>Contract Net Protocol:</strong> Propuesta → Bids → Seleccionar ganador</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Estrategias de Negociación</h3>
+                <ul>
+                    <li><strong>Competitiva:</strong> Maximizar mi ganancia
+                        <ul>
+                            <li>Oferta agresiva, poco ceder</li>
+                            <li>Riesgo: Otro se retira</li>
+                        </ul>
+                    </li>
+                    <li><strong>Colaborativa:</strong> Crear valor mutuo
+                        <ul>
+                            <li>Expandir torta, no solo repartir</li>
+                            <li>Mejor resultado para ambos</li>
+                        </ul>
+                    </li>
+                    <li><strong>Compromiso:</strong> Ceder en ambas partes
+                        <ul>
+                            <li>Yo ofrezco 100, tú 50 → Nos vemos en 75</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Resolución de Conflictos</h3>
+                <ul>
+                    <li><strong>Negociación:</strong> Las partes resuelven directo
+                        <ul>
+                            <li>Ventaja: Rápido, control total</li>
+                        </ul>
+                    </li>
+                    <li><strong>Mediación:</strong> Tercera parte neutral ayuda
+                        <ul>
+                            <li>Mediador: No decide, facilita acuerdo</li>
+                        </ul>
+                    </li>
+                    <li><strong>Arbitraje:</strong> Tercera parte decide
+                        <ul>
+                            <li>Árbitro: Escucha ambas partes, sentencia</li>
+                            <li>Decisión es vinculante</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 6: COMPETENCIA -->
+            <section>
+                <h2>MÓDULO 6: Competencia y Juegos</h2>
+            </section>
+
+            <section>
+                <h3>Teoría de Juegos: Conceptos Básicos</h3>
+                <ul>
+                    <li><strong>Juego:</strong> Interacción estratégica entre agentes
+                        <ul>
+                            <li>Jugadores, acciones disponibles, payoffs</li>
+                        </ul>
+                    </li>
+                    <li><strong>Estrategia Pura:</strong> Plan fijo de acción
+                        <ul>
+                            <li>Ejemplo: Siempre jugar "Roca" en Piedra-Papel-Tijera</li>
+                        </ul>
+                    </li>
+                    <li><strong>Estrategia Mixta:</strong> Probabilístico
+                        <ul>
+                            <li>Ejemplo: 33% Roca, 33% Papel, 33% Tijera</li>
+                        </ul>
+                    </li>
+                    <li><strong>Información:</strong>
+                        <ul>
+                            <li>Perfecta: Todos saben todo</li>
+                            <li>Incompleta: Hay incertidumbre</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Equilibrio de Nash</h3>
+                <ul>
+                    <li><strong>Definición:</strong> Situación donde nadie quiere cambiar
+                        <ul>
+                            <li>A juega su mejor respuesta a B</li>
+                            <li>B juega su mejor respuesta a A</li>
+                            <li>Ambos satisfechos → Equilibrio</li>
+                        </ul>
+                    </li>
+                    <li><strong>Ejemplo - Dilema del Prisionero:</strong>
+                        <ul>
+                            <li>Ambos confiesan (defecto) es equilibrio de Nash</li>
+                            <li>Aunque ambos callarían mejora (cooperación) es mejor para ambos</li>
+                            <li>Pero incentivos individuales llevan a defecto</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Juegos Comunes</h3>
+                <ul>
+                    <li><strong>Dilema del Prisionero:</strong>
+                        <ul>
+                            <li>Cooperar (callarse): -1 año</li>
+                            <li>Defectar (confesar): 0 años si otro calla, 3 años si ambos confiesan</li>
+                            <li>Incentivo individual → ambos confiesan (peor para ambos)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Batalla de los Sexos:</strong>
+                        <ul>
+                            <li>Pareja elige cine (ella) vs football (él)</li>
+                            <li>Ambos prefieren juntos que solos</li>
+                        </ul>
+                    </li>
+                    <li><strong>Matching Pennies:</strong>
+                        <ul>
+                            <li>Suma cero: Ganancia de uno = pérdida del otro</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Algoritmos Competitivos</h3>
+                <ul>
+                    <li><strong>Minimax:</strong> Minimizar pérdida máxima posible
+                        <ul>
+                            <li>Ajedrez: Buscar movimiento que minimiza mejor respuesta del oponente</li>
+                        </ul>
+                    </li>
+                    <li><strong>Alpha-Beta Pruning:</strong> Optimización de Minimax
+                        <ul>
+                            <li>Podar ramas que no pueden cambiar resultado</li>
+                            <li>Mucho más rápido que Minimax puro</li>
+                        </ul>
+                    </li>
+                    <li><strong>Q-Learning Multi-Agente:</strong> Aprender mejores estrategias
+                        <ul>
+                            <li>Refuerzo: Recompensa por victoria</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 7: FRAMEWORKS -->
+            <section>
+                <h2>MÓDULO 7: Frameworks Multi-Agente Prácticos</h2>
+            </section>
+
+            <section>
+                <h3>Frameworks Disponibles</h3>
+                <ul>
+                    <li><strong>JADE (Java):</strong>
+                        <ul>
+                            <li>Enterprise, maduro, estable</li>
+                            <li>Sigue estándar FIPA</li>
+                        </ul>
+                    </li>
+                    <li><strong>Mesa (Python):</strong>
+                        <ul>
+                            <li>Educativo, fácil de aprender</li>
+                            <li>Bueno para simulaciones</li>
+                        </ul>
+                    </li>
+                    <li><strong>AutoGen (Microsoft):</strong>
+                        <ul>
+                            <li>Enfocado en LLMs</li>
+                            <li>Agentes basados en GPT</li>
+                        </ul>
+                    </li>
+                    <li><strong>CrewAI:</strong> Orquestación de equipos de agentes</li>
+                    <li><strong>Ray RLlib:</strong> Refuerzo distribuido</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Arquitectura Típica de Framework</h3>
+                <ul>
+                    <li><strong>Agent Manager:</strong> Crea y gestiona agentes
+                        <ul>
+                            <li>Registra agentes</li>
+                            <li>Asigna IDs únicos</li>
+                        </ul>
+                    </li>
+                    <li><strong>Message Broker:</strong> Enruta mensajes
+                        <ul>
+                            <li>A → B: Broker entrega mensaje</li>
+                        </ul>
+                    </li>
+                    <li><strong>Platform Services:</strong> Servicios compartidos
+                        <ul>
+                            <li>Registro amarillo (yellowpages)</li>
+                            <li>Sincronización</li>
+                        </ul>
+                    </li>
+                    <li><strong>Agent Loop:</strong> Ciclo percepto-acción repetido</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Ciclo de Vida de Agente</h3>
+                <ul>
+                    <li><strong>1. Creación:</strong> Agente instanciado
+                        <ul>
+                            <li>Setup inicial</li>
+                        </ul>
+                    </li>
+                    <li><strong>2. Registro:</strong> Se registra con platform
+                        <ul>
+                            <li>Obtiene dirección única</li>
+                        </ul>
+                    </li>
+                    <li><strong>3. Ejecución:</strong> Loop percibe → actúa
+                        <ul>
+                            <li>Puede durar horas, días</li>
+                        </ul>
+                    </li>
+                    <li><strong>4. Terminación:</strong> Agente finaliza
+                        <ul>
+                            <li>Se desregistra</li>
+                            <li>Limpia recursos</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Debugging de Sistemas Multi-Agente</h3>
+                <ul>
+                    <li><strong>Desafío:</strong> Múltiples agentes corriendo, difícil trackear
+                        <ul>
+                            <li>No puedes breakpoint en todos</li>
+                            <li>Orden de ejecución no determinístico</li>
+                        </ul>
+                    </li>
+                    <li><strong>Estrategias:</strong>
+                        <ul>
+                            <li>Logging extensivo: Cada decisión del agente</li>
+                            <li>Visualización: Graficar estado del sistema</li>
+                            <li>Grabación: Reproducir ejecución (replay)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Herramientas:</strong> Grafana, ELK Stack, TensorBoard</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Testing de Sistemas Multi-Agente</h3>
+                <ul>
+                    <li><strong>Unit Tests:</strong> Individual agent logic
+                        <ul>
+                            <li>¿Decision logic es correcta?</li>
+                        </ul>
+                    </li>
+                    <li><strong>Integration Tests:</strong> Agentes interactuando
+                        <ul>
+                            <li>¿Mensajes se entregan?</li>
+                            <li>¿Coordinación funciona?</li>
+                        </ul>
+                    </li>
+                    <li><strong>Scenario Tests:</strong> Casos de uso completos
+                        <ul>
+                            <li>Simular mundo real</li>
+                        </ul>
+                    </li>
+                    <li><strong>Stress Tests:</strong> 100+ agentes simultáneos
+                        <ul>
+                            <li>¿Escalable?</li>
+                        </ul>
+                    </li>
+                    <li><strong>Reproducibilidad:</strong> Fijar seeds para determinismo</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Deployment</h3>
+                <ul>
+                    <li><strong>Containerización:</strong> Docker
+                        <ul>
+                            <li>Cada agente en contenedor</li>
+                            <li>Fácil escalar (crear más contenedores)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Orquestación:</strong> Kubernetes
+                        <ul>
+                            <li>Manage múltiples contenedores</li>
+                            <li>Scaling automático</li>
+                        </ul>
+                    </li>
+                    <li><strong>Monitoreo:</strong> Prometheus + Grafana
+                        <ul>
+                            <li>Métricas de cada agente</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- CIERRE -->
+            <section>
+                <h2>Proyecto Integrador</h2>
+            </section>
+
+            <section>
+                <h3>Ejemplos de Dominios</h3>
+                <ul>
+                    <li><strong>Tráfico Inteligente:</strong> Semáforos coordinados
+                        <ul>
+                            <li>Reducir congestión, mejorar flujo</li>
+                        </ul>
+                    </li>
+                    <li><strong>Marketplace Distribuido:</strong> Compradores/vendedores
+                        <ul>
+                            <li>Negociación, fijación de precios</li>
+                        </ul>
+                    </li>
+                    <li><strong>Equipo Robótico:</strong> Robots colaborativos
+                        <ul>
+                            <li>Coordinación para tarea compleja</li>
+                        </ul>
+                    </li>
+                    <li><strong>Red Inteligente de Energía:</strong> Múltiples productores
+                        <ul>
+                            <li>Balance oferta/demanda</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Requisitos del Proyecto</h3>
+                <ul>
+                    <li>Mínimo 3-5 agentes con objetivos distintos</li>
+                    <li>Comunicación entre agentes (mensajes)</li>
+                    <li>Mecanismo de coordinación (centralizado, distribuido, etc)</li>
+                    <li>Resolución de conflictos (negociación o mediación)</li>
+                    <li>Testing completo (unit, integration, scenario)</li>
+                    <li>Documentación clara</li>
+                    <li>Demostración/visualización del sistema</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Conceptos Clave Revisados</h2>
+            </section>
+
+            <section>
+                <h3>Resumen de Módulos</h3>
+                <ul>
+                    <li><strong>Mod 1:</strong> Agentes autónomos, sistemas distribuidos, emergencia</li>
+                    <li><strong>Mod 2:</strong> Comunicación síncrona/asíncrona, message brokers</li>
+                    <li><strong>Mod 3:</strong> Coordinación centralizada/distribuida, deadlocks</li>
+                    <li><strong>Mod 4:</strong> Coaliciones, consenso, delegación</li>
+                    <li><strong>Mod 5:</strong> Negociación, BATNA/ZOPA, resolución de conflictos</li>
+                    <li><strong>Mod 6:</strong> Teoría de juegos, Nash, estrategias competitivas</li>
+                    <li><strong>Mod 7:</strong> Frameworks, debugging, deployment, testing</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Desafíos Principales</h3>
+                <ul>
+                    <li>Sincronización sin reloj global</li>
+                    <li>Consistencia en datos distribuidos</li>
+                    <li>Tolerancia a fallos de nodos</li>
+                    <li>Evitar race conditions y deadlocks</li>
+                    <li>Coordinación eficiente</li>
+                    <li>Resolución de conflictos</li>
+                    <li>Escalabilidad a miles de agentes</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Próximos Pasos</h3>
+                <ul>
+                    <li>1. Elegir framework (Mesa para educativo, JADE para enterprise)</li>
+                    <li>2. Diseñar arquitectura de agentes</li>
+                    <li>3. Implementar comunicación básica</li>
+                    <li>4. Agregar coordinación</li>
+                    <li>5. Manejar conflictos (negociación)</li>
+                    <li>6. Testing exhaustivo</li>
+                    <li>7. Deploy y monitoreo</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Recursos y Comunidades</h2>
+            </section>
+
+            <section>
+                <h3>Herramientas Mencionadas</h3>
+                <ul>
+                    <li><strong>Frameworks:</strong> JADE, Mesa, AutoGen, CrewAI, Ray RLlib</li>
+                    <li><strong>Message Brokers:</strong> RabbitMQ, Kafka, Redis</li>
+                    <li><strong>Coordinación:</strong> Zookeeper, Consul, etcd</li>
+                    <li><strong>Monitoring:</strong> Prometheus, Grafana, ELK Stack</li>
+                    <li><strong>Simulación:</strong> AnyLogic, GAMA, Repast</li>
+                    <li><strong>Orquestación:</strong> Kubernetes, Docker Swarm</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>¡Gracias!</h2>
+                <p>Ahora tienes las herramientas para diseñar sistemas multi-agente coordinados</p>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: true,
+            transition: 'slide',
+            backgroundTransition: 'fade'
+        });
+    </script>
+</body>
+</html>

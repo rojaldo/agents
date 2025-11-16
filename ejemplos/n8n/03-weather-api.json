@@ -1,0 +1,192 @@
+{
+  "name": "Obtener datos de clima",
+  "nodes": [
+    {
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        250,
+        300
+      ],
+      "parameters": {
+        "triggerTimes": {
+          "item": [
+            "00:00"
+          ]
+        },
+        "triggerDays": {
+          "item": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "name": "HTTP Request - Open Weather",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        450,
+        300
+      ],
+      "parameters": {
+        "url": "https://api.openweathermap.org/data/2.5/weather?q=Madrid&appid=YOUR_API_KEY&units=metric",
+        "method": "GET",
+        "authentication": "none"
+      }
+    },
+    {
+      "name": "Transformar Datos",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [
+        650,
+        300
+      ],
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "city",
+              "value": "{{ $json.name }}"
+            },
+            {
+              "name": "temperature",
+              "value": "{{ $json.main.temp }}"
+            },
+            {
+              "name": "feels_like",
+              "value": "{{ $json.main.feels_like }}"
+            },
+            {
+              "name": "humidity",
+              "value": "{{ $json.main.humidity }}"
+            },
+            {
+              "name": "description",
+              "value": "{{ $json.weather[0].description }}"
+            },
+            {
+              "name": "icon",
+              "value": "{{ $json.weather[0].icon }}"
+            },
+            {
+              "name": "wind_speed",
+              "value": "{{ $json.wind.speed }}"
+            },
+            {
+              "name": "clouds",
+              "value": "{{ $json.clouds.all }}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Enviar a Slack",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        850,
+        300
+      ],
+      "parameters": {
+        "url": "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK",
+        "method": "POST",
+        "jsonBody": true,
+        "body": {
+          "text": "🌍 Reporte del clima",
+          "blocks": [
+            {
+              "type": "header",
+              "text": {
+                "type": "plain_text",
+                "text": "Clima en {{ $json.city }}"
+              }
+            },
+            {
+              "type": "section",
+              "fields": [
+                {
+                  "type": "mrkdwn",
+                  "text": "*Temperatura:*\n{{ $json.temperature }}°C"
+                },
+                {
+                  "type": "mrkdwn",
+                  "text": "*Se siente como:*\n{{ $json.feels_like }}°C"
+                },
+                {
+                  "type": "mrkdwn",
+                  "text": "*Humedad:*\n{{ $json.humidity }}%"
+                },
+                {
+                  "type": "mrkdwn",
+                  "text": "*Viento:*\n{{ $json.wind_speed }} m/s"
+                }
+              ]
+            },
+            {
+              "type": "section",
+              "text": {
+                "type": "mrkdwn",
+                "text": "*Condiciones:*\n{{ $json.description }}"
+              }
+            },
+            {
+              "type": "context",
+              "elements": [
+                {
+                  "type": "mrkdwn",
+                  "text": "Actualizado: {{ $now | dateFormat('HH:mm:ss') }}"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request - Open Weather",
+            "branch": 0,
+            "socket": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request - Open Weather": {
+      "main": [
+        [
+          {
+            "node": "Transformar Datos",
+            "branch": 0,
+            "socket": 0
+          }
+        ]
+      ]
+    },
+    "Transformar Datos": {
+      "main": [
+        [
+          {
+            "node": "Enviar a Slack",
+            "branch": 0,
+            "socket": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false
+}

@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Langflow: Construcción Visual de Aplicaciones IA</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/theme/white.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-light.min.css">
+
+    <style>
+        .reveal { text-align: left; color: #555555; }
+        .reveal section { text-align: left; padding: 40px; display: flex; flex-direction: column; justify-content: flex-start; }
+        .reveal h1, .reveal h2, .reveal h3 { text-transform: none; text-align: left; color: #555555; }
+
+        /* Encabezados */
+        .reveal h1 { font-size: 1.05em; margin-bottom: 0.5em; }
+        .reveal h2 { font-size: 1em; margin-bottom: 0.5em; }
+        .reveal h3 { font-size: 0.75em; margin-bottom: 0.3em; }
+
+        /* Párrafos y énfasis */
+        .reveal p { font-size: 0.6em; margin: 0.3em 0; color: #555555; }
+        .reveal strong { font-size: 1em; font-weight: bold; }
+
+        /* Código */
+        .reveal pre { background: #f8f8f8; border: 1px solid #ddd; width: 100%; padding: 0.5em; margin: 0.5em 0; }
+        .reveal pre code { font-size: 0.7em; color: #555555; }
+
+        /* Listas y elementos */
+        .reveal ul { font-size: 0.55em; text-align: left; margin-left: 0.5em; color: #555555; }
+        .reveal li { margin: 0.3em 0; color: #555555; }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- Diapositiva 1: Portada -->
+            <section>
+                <h1>Langflow</h1>
+                <h2>Construcción Visual de Aplicaciones IA</h2>
+                <p>De Principiante a Producción: Crear apps sin código</p>
+            </section>
+
+            <!-- Diapositiva 2: El Problema -->
+            <section>
+                <h2>El Problema: Complejidad sin Langflow</h2>
+                <p><strong>Sin Langflow:</strong> Necesitas escribir miles de líneas de código Python</p>
+                <ul>
+                    <li>Manejar conexiones complejas</li>
+                    <li>Debugging tedioso</li>
+                    <li>Integración manual de APIs</li>
+                    <li>Requiere conocimiento técnico profundo</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 3: La Solución -->
+            <section>
+                <h2>La Solución: Langflow es el "Figma para IA"</h2>
+                <p><strong>Langflow:</strong> Interfaz visual drag-and-drop para construir aplicaciones IA</p>
+                <ul>
+                    <li>Arrastra y suelta componentes</li>
+                    <li>Conecta visualmente</li>
+                    <li>Prueba en tiempo real</li>
+                    <li>Sin necesidad de escribir código complejo</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 4: Definición Formal -->
+            <section>
+                <h2>¿Qué es Langflow?</h2>
+                <p><strong>Plataforma visual de código abierto</strong> que permite construir aplicaciones basadas en LLMs sin escribir código.</p>
+                <p><strong>Características:</strong></p>
+                <ul>
+                    <li>Interfaz drag-and-drop intuitiva</li>
+                    <li>Componentes predefinidos reutilizables</li>
+                    <li>Ejecución local o en servidor</li>
+                    <li>Exportación como código Python (FastAPI)</li>
+                    <li>Testing integrado en tiempo real</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 5: Comparativa vs Alternativas -->
+            <section>
+                <h2>Langflow vs LangChain vs AutoGen</h2>
+                <ul style="font-size: 0.5em;">
+                    <li><strong>Interface:</strong> Langflow (Visual), LangChain (Código), AutoGen (Código)</li>
+                    <li><strong>Curva aprendizaje:</strong> Langflow (Muy baja), LangChain (Media), AutoGen (Media-Alta)</li>
+                    <li><strong>Prototipado:</strong> Langflow (Muy rápido), LangChain (Rápido), AutoGen (Medio)</li>
+                    <li><strong>Para no-programadores:</strong> Langflow (✅ Sí), LangChain (❌ No), AutoGen (❌ No)</li>
+                    <li><strong>Testing visual:</strong> Langflow (✅ Integrado), LangChain (❌ Manual), AutoGen (❌ Manual)</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 6: Caso de Uso 1 -->
+            <section>
+                <h2>Caso de Uso 1: Chatbot de Soporte</h2>
+                <p><strong>Problema:</strong> 100 preguntas de soporte diarias</p>
+                <p><strong>Solución:</strong> Chat Input → Classifier → LLM → Knowledge Base → Output</p>
+                <p><strong>Resultado:</strong> 70% de preguntas resueltas automáticamente en 5-10 minutos</p>
+            </section>
+
+            <!-- Diapositiva 7: Caso de Uso 2 -->
+            <section>
+                <h2>Caso de Uso 2: Procesador RAG</h2>
+                <p><strong>Problema:</strong> Analizar documentos grandes sin código</p>
+                <p><strong>Solución:</strong> PDF → Splitter → Embeddings → Vector Store → Search → LLM</p>
+                <p><strong>Resultado:</strong> Sistema RAG profesional en 10 minutos</p>
+            </section>
+
+            <!-- Diapositiva 8: Caso de Uso 3 -->
+            <section>
+                <h2>Caso de Uso 3: Automatización Workflow</h2>
+                <p><strong>Problema:</strong> Procesar órdenes manualmente (8 horas/día)</p>
+                <p><strong>Solución:</strong> Webhook → Extractor → Generator → Database → Webhook</p>
+                <p><strong>Resultado:</strong> 15 minutos para automatizar, reduce 8 horas/día de trabajo</p>
+            </section>
+
+            <!-- Diapositiva 9: Ventajas Clave -->
+            <section>
+                <h2>Ventajas Clave de Langflow</h2>
+                <ul>
+                    <li><strong>Visual:</strong> Ver flujo completo de un vistazo</li>
+                    <li><strong>Rápido:</strong> Prototipo en minutos, no días</li>
+                    <li><strong>Sin código:</strong> No requiere Python avanzado</li>
+                    <li><strong>Flexible:</strong> Soporta Ollama, OpenAI, Anthropic, local</li>
+                    <li><strong>Exportable:</strong> Genera API REST automáticamente</li>
+                    <li><strong>Testeable:</strong> Play button para pruebas inmediatas</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 10: Instalación -->
+            <section>
+                <h2>Instalación Rápida</h2>
+                <pre><code># Crear entorno virtual
+python -m venv langflow_env
+source langflow_env/bin/activate
+
+# Instalar Langflow
+pip install langflow
+
+# Instalar Ollama (opcional, para LLMs locales)
+curl https://ollama.ai/install.sh | sh
+ollama pull mistral
+
+# Iniciar Langflow
+langflow run
+# Abre http://localhost:7860</code></pre>
+            </section>
+
+            <!-- Diapositiva 11: Estructura Básica -->
+            <section>
+                <h2>Estructura Básica de Langflow</h2>
+                <p><strong>Chat Input</strong> (usuario escribe) → <strong>Ollama LLM</strong> (procesa) → <strong>Chat Output</strong> (responde)</p>
+                <p>Todos conectados visualmente en la interfaz. Sin código Python.</p>
+                <p><strong>Prueba:</strong> Play button (▶️) ejecuta el flujo inmediatamente</p>
+            </section>
+
+            <!-- Diapositiva 12: Componentes - Input -->
+            <section>
+                <h2>Componentes: Entrada</h2>
+                <p><strong>Chat Input:</strong> Recibe texto del usuario</p>
+                <p><strong>File Upload:</strong> Recibe archivos (PDF, CSV, etc)</p>
+                <p><strong>Text Input:</strong> Campo de texto simple</p>
+                <p><strong>Webhook:</strong> Recibe datos de fuentes externas</p>
+            </section>
+
+            <!-- Diapositiva 13: Componentes - Procesamiento -->
+            <section>
+                <h2>Componentes: Procesamiento (LLM)</h2>
+                <p><strong>Ollama LLM:</strong> Mistral, Llama, etc (local)</p>
+                <p><strong>OpenAI GPT:</strong> GPT-3.5, GPT-4 (cloud)</p>
+                <p><strong>Claude:</strong> Anthropic Claude (cloud)</p>
+                <p><strong>Hugging Face:</strong> Modelos de Hugging Face</p>
+            </section>
+
+            <!-- Diapositiva 14: Componentes - Herramientas -->
+            <section>
+                <h2>Componentes: Herramientas</h2>
+                <p><strong>Web Search:</strong> Busca en Google/Bing</p>
+                <p><strong>Calculator:</strong> Operaciones matemáticas</p>
+                <p><strong>Text Splitter:</strong> Divide documentos en chunks</p>
+                <p><strong>Embeddings:</strong> Convierte texto a vectores</p>
+                <p><strong>Vector Store:</strong> FAISS, Pinecone, etc</p>
+            </section>
+
+            <!-- Diapositiva 15: Componentes - Salida -->
+            <section>
+                <h2>Componentes: Salida</h2>
+                <p><strong>Chat Output:</strong> Muestra respuesta en UI</p>
+                <p><strong>JSON Output:</strong> Exporta datos como JSON</p>
+                <p><strong>Text Output:</strong> Texto plano</p>
+                <p><strong>Webhook:</strong> Envía datos a sistemas externos</p>
+            </section>
+
+            <!-- Diapositiva 16: Conexiones y Tipos de Datos -->
+            <section>
+                <h2>Conexiones: Tipos de Datos</h2>
+                <p><strong>Regla importante:</strong> Los tipos deben coincidir</p>
+                <ul>
+                    <li><strong>string:</strong> "Hola mundo"</li>
+                    <li><strong>number:</strong> 42, 3.14</li>
+                    <li><strong>boolean:</strong> true, false</li>
+                    <li><strong>array:</strong> [1, 2, 3]</li>
+                    <li><strong>object:</strong> {nombre: "Juan"}</li>
+                    <li><strong>file:</strong> /path/to/file.pdf</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 17: Conexiones - Ejemplo -->
+            <section>
+                <h2>Conexiones: Correcto vs Incorrecto</h2>
+                <p><strong>❌ INCORRECTO:</strong> Chat Input (string) → File Upload (espera file)</p>
+                <p><strong>✅ CORRECTO:</strong> Chat Input (string) → Prompt Template (espera string)</p>
+                <p>Langflow valida automáticamente las conexiones</p>
+            </section>
+
+            <!-- Diapositiva 18: Prompts -->
+            <section>
+                <h2>Prompts: Estructura de un Buen Prompt</h2>
+                <ul>
+                    <li><strong>Contexto:</strong> Quién eres, qué rol tienes</li>
+                    <li><strong>Tarea:</strong> Qué específicamente debe hacer</li>
+                    <li><strong>Formato:</strong> Cómo quieres la respuesta (JSON, markdown)</li>
+                    <li><strong>Restricciones:</strong> Qué NO hacer, límites de longitud</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 19: Mal Prompt vs Buen Prompt -->
+            <section>
+                <h2>Ejemplo: Mal vs Buen Prompt</h2>
+                <p><strong>❌ Mal:</strong> "¿Qué es Python?"</p>
+                <p>Problema: Vago, puede escribir 10 párrafos o 1</p>
+                <p><strong>✅ Bien:</strong> "Explica Python en 2 párrafos para principiantes. Incluye: definición, 3 características, 1 ejemplo código"</p>
+                <p>Ventaja: Específico, claro, limitado en longitud</p>
+            </section>
+
+            <!-- Diapositiva 20: Prompt Templates -->
+            <section>
+                <h2>Prompt Templates con Variables</h2>
+                <pre><code>Template:
+"Eres experto en {tema}.
+Explica {concepto} en nivel {nivel_dificultad}."
+
+Variables:
+- tema: string
+- concepto: string
+- nivel_dificultad: string
+
+Resultado:
+"Eres experto en Python.
+Explica decoradores en nivel principiante."</code></pre>
+            </section>
+
+            <!-- Diapositiva 21: Testing - Play Button -->
+            <section>
+                <h2>Testing: Play Button</h2>
+                <p><strong>¿Qué hace?</strong> Ejecuta tu flujo en tiempo real</p>
+                <ul>
+                    <li>Prueba flujo completo</li>
+                    <li>Ver entrada y salida de cada componente</li>
+                    <li>Debuggear problemas fácilmente</li>
+                    <li>Ajustar parámetros al instante</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 22: Testing - Chat Interface -->
+            <section>
+                <h2>Testing: Chat Interface</h2>
+                <p><strong>Simula conversaciones reales:</strong></p>
+                <ul>
+                    <li>Escribe mensajes naturales</li>
+                    <li>Ver respuesta completa del flujo</li>
+                    <li>Multi-turn conversations</li>
+                    <li>Historial de mensajes</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 23: Memoria - Problema -->
+            <section>
+                <h2>Memoria: El Problema</h2>
+                <p><strong>Pregunta 1:</strong> "Hola, soy Juan"</p>
+                <p><strong>LLM responde:</strong> "Gusto, Juan"</p>
+                <p><strong>Pregunta 2:</strong> "¿Mi nombre?"</p>
+                <p><strong>❌ Sin memoria:</strong> "No sé tu nombre"</p>
+                <p><strong>✅ Con memoria:</strong> "Tu nombre es Juan"</p>
+            </section>
+
+            <!-- Diapositiva 24: Buffer Memory -->
+            <section>
+                <h2>Tipos de Memoria: Buffer</h2>
+                <p><strong>¿Qué es?</strong> Guarda toda la conversación</p>
+                <p><strong>Ventaja:</strong> Contexto completo</p>
+                <p><strong>Desventaja:</strong> Usa muchos tokens (caro)</p>
+                <p><strong>Cuándo usar:</strong> Chats cortos (5-10 mensajes)</p>
+            </section>
+
+            <!-- Diapositiva 25: Window Memory -->
+            <section>
+                <h2>Tipos de Memoria: Window</h2>
+                <p><strong>¿Qué es?</strong> Últimos N mensajes (ej: últimos 5)</p>
+                <p><strong>Ventaja:</strong> Menos tokens, mantiene contexto reciente</p>
+                <p><strong>Desventaja:</strong> Pierde contexto antiguo</p>
+                <p><strong>Cuándo usar:</strong> Chats largos (100+ mensajes)</p>
+            </section>
+
+            <!-- Diapositiva 26: Summary Memory -->
+            <section>
+                <h2>Tipos de Memoria: Summary</h2>
+                <p><strong>¿Qué es?</strong> Resume automáticamente la conversación</p>
+                <p><strong>Ventaja:</strong> Mucho menos tokens</p>
+                <p><strong>Desventaja:</strong> Pierde detalles específicos</p>
+                <p><strong>Cuándo usar:</strong> Cuando el costo importa mucho</p>
+            </section>
+
+            <!-- Diapositiva 27: Vector Memory -->
+            <section>
+                <h2>Tipos de Memoria: Vector</h2>
+                <p><strong>¿Qué es?</strong> Busca semánticamente contexto relevante</p>
+                <p><strong>Ventaja:</strong> Contexto relevante, no todo</p>
+                <p><strong>Desventaja:</strong> Requiere computación extra</p>
+                <p><strong>Cuándo usar:</strong> Búsqueda semántica importante</p>
+            </section>
+
+            <!-- Diapositiva 28: Memoria - Comparativa -->
+            <section>
+                <h2>Tipos de Memoria: Comparativa</h2>
+                <ul style="font-size: 0.55em;">
+                    <li><strong>Buffer:</strong> Contexto completo | Chats cortos | Alto costo</li>
+                    <li><strong>Window:</strong> Últimos N msgs | Chats largos | Costo moderado</li>
+                    <li><strong>Summary:</strong> Resumen auto | Costo bajo | Pierde detalles</li>
+                    <li><strong>Vector:</strong> Relevancia semántica | Búsqueda específica | Moderado</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 29: Web Search -->
+            <section>
+                <h2>Integraciones: Web Search</h2>
+                <p><strong>¿Qué hace?</strong> Busca información en tiempo real en Google/Bing</p>
+                <p><strong>Caso de uso:</strong> Bot de noticias, precios, clima</p>
+                <p><strong>Flujo:</strong> Chat Input → Web Search → LLM → Chat Output</p>
+            </section>
+
+            <!-- Diapositiva 30: HTTP Requests -->
+            <section>
+                <h2>Integraciones: HTTP Requests</h2>
+                <p><strong>¿Qué hace?</strong> Llamadas a cualquier API REST</p>
+                <p><strong>Ejemplo:</strong> Weather API, Stripe, Slack</p>
+                <p><strong>Flujo:</strong> Extract Input → HTTP Request → Parse JSON → LLM</p>
+            </section>
+
+            <!-- Diapositiva 31: Integraciones - Weather -->
+            <section>
+                <h2>Ejemplo: Obtener Weather</h2>
+                <pre><code>Chat Input "NYC weather"
+  ↓
+Text Extractor (NYC)
+  ↓
+HTTP Request (openweathermap API)
+  ↓
+JSON Parser
+  ↓
+Prompt Template
+  ↓
+Chat Output (respuesta amigable)</code></pre>
+            </section>
+
+            <!-- Diapositiva 32: Database Connections -->
+            <section>
+                <h2>Integraciones: Base de Datos</h2>
+                <ul>
+                    <li><strong>PostgreSQL:</strong> Datos relacionales en producción</li>
+                    <li><strong>MongoDB:</strong> Documentos JSON, flexibilidad</li>
+                    <li><strong>SQLite:</strong> Desarrollo, testing local</li>
+                    <li><strong>Pinecone:</strong> Vector store para embeddings</li>
+                    <li><strong>Supabase:</strong> Backend completo con auth</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 33: Caso Práctico 1: RAG Fase 1 -->
+            <section>
+                <h2>Caso Práctico 1: RAG - Preparación</h2>
+                <p><strong>Fase 1: Setup</strong></p>
+                <pre><code>PDF Upload
+  ↓
+Text Splitter (chunks 500 chars)
+  ↓
+Embeddings (1536-dimensional)
+  ↓
+Vector Store (FAISS/Pinecone)</code></pre>
+            </section>
+
+            <!-- Diapositiva 34: Caso Práctico 1: RAG Fase 2 -->
+            <section>
+                <h2>Caso Práctico 1: RAG - Consulta</h2>
+                <p><strong>Fase 2: Query</strong></p>
+                <pre><code>User Query "¿Qué es programación?"
+  ↓
+Embed Query (1536-dim)
+  ↓
+Similarity Search (top 3)
+  ↓
+Prompt Template (contexto + pregunta)
+  ↓
+LLM (genera respuesta)
+  ↓
+Chat Output</code></pre>
+            </section>
+
+            <!-- Diapositiva 35: Caso Práctico 2: Análisis Sentimiento -->
+            <section>
+                <h2>Caso Práctico 2: Análisis de Sentimiento</h2>
+                <p><strong>Input:</strong> "Este producto es horrible"</p>
+                <pre><code>Chat Input
+  ↓
+Prompt Template (análisis sentimiento)
+  ↓
+LLM (OpenAI)
+  ↓
+Response Parser (extrae score)
+  ↓
+Router (si NEGATIVE → escalar manager)</code></pre>
+            </section>
+
+            <!-- Diapositiva 36: Caso Práctico 3: Email Automation -->
+            <section>
+                <h2>Caso Práctico 3: Automatización de Emails</h2>
+                <p><strong>Input:</strong> Webhook de Stripe</p>
+                <pre><code>Webhook Input
+  ↓
+Extract (subject, body)
+  ↓
+Intent Classifier
+  ↓
+Template Select
+  ↓
+Variable Fill
+  ↓
+Send Email + Log</code></pre>
+                <p>Resultado: 90% emails automáticos en &lt;1 segundo</p>
+            </section>
+
+            <!-- Diapositiva 37: Exportar como FastAPI -->
+            <section>
+                <h2>Exportación: FastAPI</h2>
+                <p><strong>¿Qué genera?</strong> Código Python completo</p>
+                <ul>
+                    <li>main.py (aplicación FastAPI)</li>
+                    <li>requirements.txt (dependencias)</li>
+                    <li>config.py (configuración)</li>
+                    <li>Endpoints REST listos para usar</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 38: FastAPI Generado -->
+            <section>
+                <h2>Estructura Generada (FastAPI)</h2>
+                <pre><code>from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.post("/query")
+async def query(input_text: str):
+    # Tu lógica de Langflow aquí
+    return {"result": output}
+
+# Ejecuta: uvicorn main:app --reload</code></pre>
+            </section>
+
+            <!-- Diapositiva 39: Deployment - Heroku -->
+            <section>
+                <h2>Deployment: Heroku</h2>
+                <p><strong>Proceso:</strong> Push código → Auto deploy</p>
+                <p><strong>Costo:</strong> $5-50/mes</p>
+                <pre><code>git push heroku main
+# Automáticamente deploye y corre</code></pre>
+            </section>
+
+            <!-- Diapositiva 40: Deployment - Railway -->
+            <section>
+                <h2>Deployment: Railway</h2>
+                <p><strong>Proceso:</strong> Git integration → Deploy automático</p>
+                <p><strong>Costo:</strong> $5-50/mes</p>
+                <p><strong>Ventaja:</strong> Más simple que Heroku, más moderno</p>
+            </section>
+
+            <!-- Diapositiva 41: Deployment - Docker -->
+            <section>
+                <h2>Deployment: Docker</h2>
+                <pre><code>FROM python:3.11
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+COPY . .
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0"]</code></pre>
+                <p>Corre en cualquier lugar: AWS, GCP, DigitalOcean</p>
+            </section>
+
+            <!-- Diapositiva 42: Variables de Entorno -->
+            <section>
+                <h2>Secretos y Variables de Entorno</h2>
+                <p><strong>¿Por qué?</strong> Proteger API keys, passwords</p>
+                <pre><code>OPENAI_API_KEY=sk-...
+PINECONE_API_KEY=...
+DATABASE_URL=postgresql://...</code></pre>
+                <p>Langflow carga automáticamente desde .env</p>
+            </section>
+
+            <!-- Diapositiva 43: Componentes Personalizados - Por qué -->
+            <section>
+                <h2>Componentes Personalizados: Cuándo Crear</h2>
+                <ul>
+                    <li>Lógica específica del negocio</li>
+                    <li>Integración con sistemas propios</li>
+                    <li>Procesamiento complejo no estándar</li>
+                    <li>Componentes con estado</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 44: Componentes Personalizados - Estructura -->
+            <section>
+                <h2>Componentes Personalizados: Estructura</h2>
+                <pre><code>from langflow.custom.component import Component
+
+class MyComponent(Component):
+    def __init__(self):
+        super().__init__()
+
+    def build(self, input_value: str) -> str:
+        # Tu lógica aquí
+        return f"Procesado: {input_value}"</code></pre>
+            </section>
+
+            <!-- Diapositiva 45: Componentes - Ejemplo Real -->
+            <section>
+                <h2>Componentes Personalizados: Ejemplo</h2>
+                <p><strong>Validador de emails:</strong></p>
+                <pre><code>def build(self, email: str) -> bool:
+    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    return bool(re.match(pattern, email))</code></pre>
+                <p>Salida: true/false (booleano)</p>
+            </section>
+
+            <!-- Diapositiva 46: Performance - Latencia Objetivo -->
+            <section>
+                <h2>Performance: Latencia Objetivo</h2>
+                <ul>
+                    <li><strong>&lt;1s:</strong> Óptimo (usuario no percibe delay)</li>
+                    <li><strong>1-3s:</strong> Bueno (aceptable)</li>
+                    <li><strong>3-10s:</strong> Aceptable (perceptible pero tolerable)</li>
+                    <li><strong>&gt;10s:</strong> Malo (usuario se aburre)</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 47: Performance - Bottlenecks -->
+            <section>
+                <h2>Performance: Bottlenecks Comunes</h2>
+                <ul>
+                    <li><strong>LLM lento:</strong> Llamada a API (5-10s)</li>
+                    <li><strong>API externa:</strong> Latencia de red</li>
+                    <li><strong>Embeddings:</strong> 5s por query</li>
+                    <li><strong>Database:</strong> Queries sin índices</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 48: Performance - Caching -->
+            <section>
+                <h2>Performance: Caching</h2>
+                <p><strong>Problema:</strong> Misma pregunta tarda 5s cada vez</p>
+                <p><strong>Solución:</strong> Guardar respuesta</p>
+                <p><strong>Resultado:</strong> Segunda vez: 0.1s (50x más rápido)</p>
+                <p>Implementación: Redis, Langflow cache, base de datos</p>
+            </section>
+
+            <!-- Diapositiva 49: Performance - Modelos Rápidos -->
+            <section>
+                <h2>Performance: Elegir Modelos Rápidos</h2>
+                <ul>
+                    <li><strong>Mistral-7B:</strong> Rápido + calidad buena (recomendado)</li>
+                    <li><strong>Llama-13B:</strong> Medio, más calidad</li>
+                    <li><strong>GPT-3.5:</strong> Rápido en cloud</li>
+                    <li><strong>GPT-4:</strong> Lento pero excelente (último recurso)</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 50: Performance - Batch Processing -->
+            <section>
+                <h2>Performance: Batch Processing</h2>
+                <p><strong>Problema:</strong> 1000 docs × 5s = 8.3 horas secuencial</p>
+                <p><strong>Solución:</strong> Procesar 10 en paralelo</p>
+                <p><strong>Resultado:</strong> 50 minutos (10x más rápido)</p>
+                <p>Langflow soporta async/parallelización</p>
+            </section>
+
+            <!-- Diapositiva 51: Performance - Database Índices -->
+            <section>
+                <h2>Performance: Database Índices</h2>
+                <p><strong>Sin índice:</strong> Query tarda 2 segundos (escaneo completo)</p>
+                <p><strong>Con índice:</strong> Query tarda 0.01 segundos</p>
+                <pre><code>CREATE INDEX idx_user_email ON users(email);
+-- 200x más rápido</code></pre>
+            </section>
+
+            <!-- Diapositiva 52: Performance - Reducción Tokens -->
+            <section>
+                <h2>Performance: Reducción de Tokens</h2>
+                <p><strong>Costo sin optimización:</strong> $0.04 por request</p>
+                <p><strong>Técnicas:</strong> Prompts cortos, max_tokens límite, truncado</p>
+                <p><strong>Costo optimizado:</strong> $0.01 por request (4x reduction)</p>
+            </section>
+
+            <!-- Diapositiva 53: Monitoreo - Latencia -->
+            <section>
+                <h2>Monitoreo: Latencia (Percentiles)</h2>
+                <ul>
+                    <li><strong>P50:</strong> 50% de requests, objetivo &lt;1s</li>
+                    <li><strong>P95:</strong> 95% de requests, objetivo &lt;5s</li>
+                    <li><strong>P99:</strong> 99% de requests, objetivo &lt;10s</li>
+                </ul>
+                <p>Mejor monitorear percentiles que promedio</p>
+            </section>
+
+            <!-- Diapositiva 54: Logging - Niveles -->
+            <section>
+                <h2>Logging: Niveles de Log</h2>
+                <ul>
+                    <li><strong>DEBUG:</strong> Detalles para desarrollo</li>
+                    <li><strong>INFO:</strong> Operación normal ("Usuario logueó")</li>
+                    <li><strong>WARNING:</strong> Potencial problema ("API timeout 1 vez")</li>
+                    <li><strong>ERROR:</strong> Problema importante ("API timeout 3 veces")</li>
+                    <li><strong>CRITICAL:</strong> Sistema fuera ("Database offline")</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 55: Error Handling - Graceful -->
+            <section>
+                <h2>Error Handling: Fallback Graceful</h2>
+                <pre><code>Intenta API 1 (OpenAI)
+  ├─ Éxito → Usar respuesta ✓
+  └─ Error → Intenta API 2 (Ollama)
+     ├─ Éxito → Usar respuesta ✓
+     └─ Error → Respuesta por defecto ✓</code></pre>
+                <p>Nunca falla completamente: siempre hay alternativa</p>
+            </section>
+
+            <!-- Diapositiva 56: Error Handling - Try-Except -->
+            <section>
+                <h2>Error Handling: Try-Except Pattern</h2>
+                <pre><code>try:
+    response = api_call()
+except Exception as e:
+    log.error(f"API failed: {e}")
+    response = fallback_response()
+return response</code></pre>
+            </section>
+
+            <!-- Diapositiva 57: Debugging - Play Button -->
+            <section>
+                <h2>Debugging: Usa el Play Button</h2>
+                <p><strong>Pasos:</strong></p>
+                <ol style="font-size: 0.55em;">
+                    <li>Configura entrada (ej: escribe en Chat Input)</li>
+                    <li>Haz clic en ▶️ Play</li>
+                    <li>Observa cómo fluyen los datos</li>
+                    <li>Verifica salida de cada componente</li>
+                    <li>Si hay error, identifica componente culpable</li>
+                    <li>Ajusta parámetros</li>
+                    <li>Prueba de nuevo</li>
+                </ol>
+            </section>
+
+            <!-- Diapositiva 58: Debugging - Inspeccionar Datos -->
+            <section>
+                <h2>Debugging: Inspeccionar Datos</h2>
+                <p><strong>En Langflow:</strong> Haz click en componente para ver:</p>
+                <ul>
+                    <li>Entrada (input)</li>
+                    <li>Parámetros configurados</li>
+                    <li>Salida (output)</li>
+                    <li>Errores si los hay</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 59: Mejores Prácticas - Modularidad -->
+            <section>
+                <h2>Mejores Prácticas: Modularidad</h2>
+                <p><strong>Principio:</strong> Componentes independientes y reutilizables</p>
+                <ul>
+                    <li>Cada componente hace UNA cosa bien</li>
+                    <li>Fácil de testear aisladamente</li>
+                    <li>Reutilizable en otros flujos</li>
+                    <li>Mantenimiento simplificado</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 60: Mejores Prácticas - Testing -->
+            <section>
+                <h2>Mejores Prácticas: Testing Iterativo</h2>
+                <p><strong>Estrategia:</strong> Testea cada paso antes de flujo completo</p>
+                <ol style="font-size: 0.55em;">
+                    <li>Chat Input solo → Verifica entra texto ✓</li>
+                    <li>Chat Input → Prompt Template → Verifica formato ✓</li>
+                    <li>Prompt Template → LLM → Verifica respuesta ✓</li>
+                    <li>LLM → Output → Verifica salida final ✓</li>
+                </ol>
+            </section>
+
+            <!-- Diapositiva 61: Mejores Prácticas - Fail Fast -->
+            <section>
+                <h2>Mejores Prácticas: Fail Fast vs Fail Gracefully</h2>
+                <p><strong>Fail Fast:</strong> Valida inmediatamente, error temprano</p>
+                <p><strong>Fail Gracefully:</strong> Intenta alternativas, respuesta útil siempre</p>
+                <p><strong>Combina ambas:</strong> Validación rápida + fallbacks</p>
+            </section>
+
+            <!-- Diapositiva 62: Mejores Prácticas - Versionado -->
+            <section>
+                <h2>Mejores Prácticas: Versionado de Flujos</h2>
+                <ul>
+                    <li><strong>v1.0:</strong> Versión inicial en producción</li>
+                    <li><strong>v1.1:</strong> Bug fixes, mejoras menores</li>
+                    <li><strong>v2.0:</strong> Cambios mayores</li>
+                    <li><strong>Rollback:</strong> Vuelve a v1.0 si v2.0 falla</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 63: Mejores Prácticas - Documentación -->
+            <section>
+                <h2>Mejores Prácticas: Documentación</h2>
+                <ul>
+                    <li><strong>Nombre claro:</strong> "email_validation_flow" no "flow2"</li>
+                    <li><strong>Descripción:</strong> Qué hace, para qué</li>
+                    <li><strong>Componentes:</strong> Por qué cada uno</li>
+                    <li><strong>Parámetros:</strong> Valores recomendados</li>
+                    <li><strong>Ejemplos:</strong> Input/output reales</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 64: Mejores Prácticas - Seguridad -->
+            <section>
+                <h2>Mejores Prácticas: Seguridad</h2>
+                <ul>
+                    <li>NUNCA hardcodear API keys en código</li>
+                    <li>Usar variables de entorno (.env)</li>
+                    <li>Rotar secrets regularmente</li>
+                    <li>Logging sin datos sensibles</li>
+                    <li>HTTPS en producción siempre</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 65: Caso de Uso: Chatbot RAG Completo -->
+            <section>
+                <h2>Caso Completo: Chatbot RAG</h2>
+                <p><strong>Requisito:</strong> Bot responde preguntas sobre documentos propios</p>
+                <p><strong>Tiempo construcción:</strong> 30 minutos</p>
+                <p><strong>Componentes:</strong> Upload, Splitter, Embeddings, VectorStore, Search, LLM, Output</p>
+                <p><strong>Resultado:</strong> Sistema RAG profesional sin código</p>
+            </section>
+
+            <!-- Diapositiva 66: Integración Multi-Framework -->
+            <section>
+                <h2>Langflow + Otros Frameworks</h2>
+                <ul>
+                    <li><strong>Langflow:</strong> Visual building</li>
+                    <li><strong>LangChain:</strong> Components complejos</li>
+                    <li><strong>LlamaIndex:</strong> Indexación documentos</li>
+                    <li><strong>OpenAI/Claude:</strong> Modelos cloud</li>
+                    <li><strong>Ollama:</strong> Modelos locales</li>
+                </ul>
+                <p>Langflow integra todo automáticamente</p>
+            </section>
+
+            <!-- Diapositiva 67: Comparativa: Langflow vs Código -->
+            <section>
+                <h2>Langflow vs Código Manual</h2>
+                <ul style="font-size: 0.55em;">
+                    <li><strong>Sin Langflow:</strong> 500+ líneas Python, debugging 2 horas</li>
+                    <li><strong>Con Langflow:</strong> 0 líneas código, debugging 5 minutos</li>
+                    <li><strong>Velocidad:</strong> 24x más rápido con Langflow</li>
+                    <li><strong>Mantenimiento:</strong> Cambios visuales vs recompilación</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 68: API REST Generada -->
+            <section>
+                <h2>API REST Generada</h2>
+                <pre><code>curl -X POST http://localhost:8000/query \
+  -H "Content-Type: application/json" \
+  -d '{"message": "¿Qué es Python?"}'
+
+{
+  "result": "Python es un lenguaje...",
+  "tokens_used": 256
+}</code></pre>
+            </section>
+
+            <!-- Diapositiva 69: Escalabilidad -->
+            <section>
+                <h2>Escalabilidad</h2>
+                <p><strong>Pequeño:</strong> 1-10 requests/seg (1 instancia)</p>
+                <p><strong>Mediano:</strong> 10-100 requests/seg (3-5 instancias)</p>
+                <p><strong>Grande:</strong> 100-1000 requests/seg (10+ instancias + load balancer)</p>
+                <p>Docker + Kubernetes: Escala horizontalmente</p>
+            </section>
+
+            <!-- Diapositiva 70: Multi-LLM Strategy -->
+            <section>
+                <h2>Estrategia Multi-LLM</h2>
+                <ul>
+                    <li><strong>Rápido:</strong> Mistral (primero, 80% de casos)</li>
+                    <li><strong>Calidad:</strong> Claude (cuando Mistral inseguro)</li>
+                    <li><strong>Precisión:</strong> GPT-4 (último recurso, casos críticos)</li>
+                    <li><strong>Local:</strong> Ollama fallback si cloud cae</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 71: Mantenimiento en Producción -->
+            <section>
+                <h2>Mantenimiento en Producción</h2>
+                <ul>
+                    <li>Monitoreo 24/7 (uptime, latencia, errores)</li>
+                    <li>Alertas automáticas (Slack, email)</li>
+                    <li>Logs centralizados (ELK, DataDog)</li>
+                    <li>Rollback automático si error rate sube</li>
+                    <li>Backups de flujos y datos</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 72: Testing en Producción -->
+            <section>
+                <h2>Testing en Producción</h2>
+                <ul>
+                    <li><strong>Canary deployment:</strong> 5% usuarios new version</li>
+                    <li><strong>Health checks:</strong> Verifica cada minuto</li>
+                    <li><strong>Synthetic tests:</strong> Requests automáticos</li>
+                    <li><strong>A/B testing:</strong> Compara versiones</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 73: Casos de No-Usar Langflow -->
+            <section>
+                <h2>Cuándo NO usar Langflow</h2>
+                <ul>
+                    <li>Lógica ultra-compleja (mejor código puro)</li>
+                    <li>Performance crítico al millisegundo</li>
+                    <li>Requisitos muy específicos de negocio</li>
+                    <li>Necesidad de control total sobre arquitectura</li>
+                </ul>
+                <p>Para 90% de casos: Langflow es la mejor opción</p>
+            </section>
+
+            <!-- Diapositiva 74: Roadmap Langflow -->
+            <section>
+                <h2>Futuro de Langflow</h2>
+                <ul>
+                    <li>Mejor soporte multi-agent</li>
+                    <li>Componentes más especializados</li>
+                    <li>Marketplace de componentes</li>
+                    <li>Mejor monitoreo integrado</li>
+                    <li>Soporte de más modelos LLM</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 75: Comunidad -->
+            <section>
+                <h2>Comunidad y Recursos</h2>
+                <ul>
+                    <li><strong>GitHub:</strong> github.com/logspace-ai/langflow</li>
+                    <li><strong>Docs:</strong> docs.langflow.org</li>
+                    <li><strong>Discord:</strong> Comunidad activa</li>
+                    <li><strong>YouTube:</strong> Tutoriales</li>
+                    <li><strong>Examples:</strong> 50+ flujos de ejemplo</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 76: Tips and Tricks -->
+            <section>
+                <h2>Tips and Tricks</h2>
+                <ul>
+                    <li>Usa Prompt Templates para reutilización</li>
+                    <li>Prueba componentes aislados primero</li>
+                    <li>Guarda versiones (v1.0, v1.1, v2.0)</li>
+                    <li>Documenta cada flujo claramente</li>
+                    <li>Usa memory para conversaciones naturales</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 77: Errores Comunes -->
+            <section>
+                <h2>Errores Comunes a Evitar</h2>
+                <ul>
+                    <li>Conectar tipos de datos incompatibles</li>
+                    <li>Prompts vagos sin contexto claro</li>
+                    <li>Ignorar latencia y performance</li>
+                    <li>Hardcodear secrets en flujos</li>
+                    <li>No documentar flujos complejos</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 78: Métricas de Éxito -->
+            <section>
+                <h2>Métricas de Éxito</h2>
+                <ul>
+                    <li><strong>Latencia P95:</strong> &lt;5 segundos</li>
+                    <li><strong>Uptime:</strong> &gt;99%</li>
+                    <li><strong>Error rate:</strong> &lt;0.1%</li>
+                    <li><strong>Satisfacción usuario:</strong> &gt;4.5/5</li>
+                    <li><strong>Cost per request:</strong> &lt;$0.05</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 79: Comparativa Final -->
+            <section>
+                <h2>Langflow: Resumen Comparativa</h2>
+                <ul style="font-size: 0.55em;">
+                    <li><strong>vs Código:</strong> 24x más rápido, 0% código</li>
+                    <li><strong>vs LangChain:</strong> Visual vs código, más rápido prototipado</li>
+                    <li><strong>vs AutoGen:</strong> Menor curva aprendizaje, más flexibilidad UI</li>
+                    <li><strong>vs n8n:</strong> Más IA-nativo, mejor componentes LLM</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 80: ROI - Cálculo -->
+            <section>
+                <h2>ROI: Análisis Costo-Beneficio</h2>
+                <p><strong>Desarrollo manual:</strong> 40 horas × $100/hora = $4,000</p>
+                <p><strong>Con Langflow:</strong> 2 horas × $100/hora = $200</p>
+                <p><strong>Ahorros:</strong> $3,800 por proyecto</p>
+                <p><strong>Payback:</strong> 1-2 proyectos recuperas herramientas</p>
+            </section>
+
+            <!-- Diapositiva 81: Aplicación Real 1 -->
+            <section>
+                <h2>Aplicación Real 1: Startup</h2>
+                <p><strong>Contexto:</strong> Startup SaaS 5 personas, presupuesto limitado</p>
+                <p><strong>Solución:</strong> Langflow RAG para documentación</p>
+                <p><strong>Beneficio:</strong> 90% soporte automático, 1 FTE liberado</p>
+                <p><strong>Resultado:</strong> $50k/año en ahorros</p>
+            </section>
+
+            <!-- Diapositiva 82: Aplicación Real 2 -->
+            <section>
+                <h2>Aplicación Real 2: Empresa Grande</h2>
+                <p><strong>Contexto:</strong> Empresa 500+ personas, múltiples departamentos</p>
+                <p><strong>Solución:</strong> Langflow workflows para HR, Finance, Support</p>
+                <p><strong>Beneficio:</strong> Automatización sin DevOps</p>
+                <p><strong>Resultado:</strong> 200 FTE liberadas, $2M+ ahorros/año</p>
+            </section>
+
+            <!-- Diapositiva 83: Próximos Pasos - 1 -->
+            <section>
+                <h2>Próximos Pasos: Esta Semana</h2>
+                <ol style="font-size: 0.6em;">
+                    <li>Instala Langflow + Ollama</li>
+                    <li>Crea primer flujo (Chat simple)</li>
+                    <li>Añade Web Search</li>
+                    <li>Prueba con Play button</li>
+                    <li>Exporta como FastAPI</li>
+                </ol>
+            </section>
+
+            <!-- Diapositiva 84: Próximos Pasos - 2 -->
+            <section>
+                <h2>Próximos Pasos: Este Mes</h2>
+                <ol style="font-size: 0.6em;">
+                    <li>Aprende tipos de Memoria</li>
+                    <li>Crea flujo RAG con PDF</li>
+                    <li>Integra con API real</li>
+                    <li>Deployment en Railway</li>
+                    <li>Monitorea en producción</li>
+                </ol>
+            </section>
+
+            <!-- Diapositiva 85: Próximos Pasos - 3 -->
+            <section>
+                <h2>Próximos Pasos: Próximos 3 Meses</h2>
+                <ol style="font-size: 0.6em;">
+                    <li>Crea componentes personalizados</li>
+                    <li>Optimiza performance</li>
+                    <li>Implementa error handling robusto</li>
+                    <li>Versionado y rollback automático</li>
+                    <li>Multi-LLM fallback strategy</li>
+                </ol>
+            </section>
+
+            <!-- Diapositiva 86: Recursos Esenciales -->
+            <section>
+                <h2>Recursos Esenciales</h2>
+                <ul>
+                    <li><strong>Documentación oficial:</strong> docs.langflow.org</li>
+                    <li><strong>GitHub repo:</strong> github.com/logspace-ai/langflow</li>
+                    <li><strong>Discord comunidad:</strong> Soporte en tiempo real</li>
+                    <li><strong>YouTube channel:</strong> Tutoriales paso a paso</li>
+                    <li><strong>Examples gallery:</strong> 50+ casos de uso</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 87: Inspiración -->
+            <section>
+                <h2>¿Qué es Posible con Langflow?</h2>
+                <ul>
+                    <li>Chatbots conversacionales inteligentes</li>
+                    <li>RAG sobre tus datos privados</li>
+                    <li>Automatización de procesos complejos</li>
+                    <li>APIs REST sin DevOps</li>
+                    <li>Análisis en tiempo real de documentos</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 88: Motivación Final -->
+            <section>
+                <h2>Motivación: Tu Próximo Proyecto</h2>
+                <p><strong>Antes:</strong> Idea → Meses de desarrollo → Producto</p>
+                <p><strong>Con Langflow:</strong> Idea → Días de desarrollo → Producto</p>
+                <p><strong>Impacto:</strong> Itera 10x más rápido, llega al mercado primero</p>
+            </section>
+
+            <!-- Diapositiva 89: Reflexión -->
+            <section>
+                <h2>Reflexión Final</h2>
+                <p><strong>Langflow es la democratización de la IA.</strong></p>
+                <p>No necesitas ser experto en Python para crear aplicaciones IA sofisticadas.</p>
+                <p>El futuro es visual, rápido, y accesible para todos.</p>
+            </section>
+
+            <!-- Diapositiva 90: Llamada a la Acción -->
+            <section>
+                <h2>Llamada a la Acción</h2>
+                <ol style="font-size: 0.6em;">
+                    <li>Instala Langflow hoy mismo</li>
+                    <li>Crea tu primer flujo esta semana</li>
+                    <li>Comparte con tu equipo/comunidad</li>
+                    <li>Contribuye a la comunidad open source</li>
+                    <li>Construye el futuro de la IA juntos</li>
+                </ol>
+            </section>
+
+            <!-- Diapositiva 91: Preguntas Comunes -->
+            <section>
+                <h2>Preguntas Comunes - 1</h2>
+                <p><strong>¿Requiere programación?</strong> No, interfaz visual</p>
+                <p><strong>¿Tiene límite de complejidad?</strong> Soporta workflows muy complejos</p>
+                <p><strong>¿Funciona offline?</strong> Sí, con Ollama local</p>
+            </section>
+
+            <!-- Diapositiva 92: Preguntas Comunes - 2 -->
+            <section>
+                <h2>Preguntas Comunes - 2</h2>
+                <p><strong>¿Qué modelos soporta?</strong> OpenAI, Claude, Ollama, HuggingFace, custom</p>
+                <p><strong>¿Costo de producción?</strong> Desde $0 (local) hasta $5000+/mes (cloud)</p>
+                <p><strong>¿Seguridad?</strong> Variables de entorno, HTTPS, secrets protegidos</p>
+            </section>
+
+            <!-- Diapositiva 93: Preguntas Comunes - 3 -->
+            <section>
+                <h2>Preguntas Comunes - 3</h2>
+                <p><strong>¿Escalabilidad?</strong> Docker + Kubernetes: 1000+ requests/seg</p>
+                <p><strong>¿Integración?</strong> REST API, webhooks, bases de datos</p>
+                <p><strong>¿Soporte?</strong> Comunidad activa, documentación excelente</p>
+            </section>
+
+            <!-- Diapositiva 94: Comparativa Visual -->
+            <section>
+                <h2>Comparativa Visual: Tiempo de Setup</h2>
+                <ul style="font-size: 0.55em;">
+                    <li><strong>Código manual:</strong> █████████████████████ 40+ horas</li>
+                    <li><strong>LangChain:</strong> ████████████ 20 horas</li>
+                    <li><strong>AutoGen:</strong> █████████ 15 horas</li>
+                    <li><strong>Langflow:</strong> ██ 2 horas</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 95: Casos de Éxito -->
+            <section>
+                <h2>Casos de Éxito Documentados</h2>
+                <ul>
+                    <li>500+ empresas usando Langflow en producción</li>
+                    <li>GitHub stars: 20,000+</li>
+                    <li>Comunidad: 5000+ miembros Discord</li>
+                    <li>Contribuidores: 100+ en open source</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 96: Tendencias 2024 -->
+            <section>
+                <h2>Tendencias 2024: Low-Code/No-Code IA</h2>
+                <ul>
+                    <li>Más empresas adoptan plataformas visuales</li>
+                    <li>Menos desarrolladores, más "citizen developers"</li>
+                    <li>Velocity y time-to-market son críticos</li>
+                    <li>Langflow lidera en segment visual</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 97: Conclusión - Resumen -->
+            <section>
+                <h2>Conclusión: Resumen</h2>
+                <ul>
+                    <li>Langflow: Visual, rápido, accesible</li>
+                    <li>Componentes: Entrada, Procesamiento, Herramientas, Salida</li>
+                    <li>Memoria: Esencial para conversaciones naturales</li>
+                    <li>Deployment: FastAPI, Docker, Cloud (Railway, Heroku)</li>
+                    <li>Performance: Monitoreo, caching, optimización</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 98: Conclusión - Impacto -->
+            <section>
+                <h2>Conclusión: Impacto</h2>
+                <p><strong>Langflow democratiza la IA:</strong></p>
+                <p>No necesitas ser experto en Python para crear aplicaciones sofisticadas.</p>
+                <p>Equipos pequeños pueden competir con grandes empresas.</p>
+                <p>El futuro es visual, rápido, y para todos.</p>
+            </section>
+
+            <!-- Diapositiva 99: Conclusión - Aprendizaje -->
+            <section>
+                <h2>Conclusión: Aprendizaje</h2>
+                <p><strong>Has aprendido:</strong></p>
+                <ul style="font-size: 0.55em;">
+                    <li>Qué es Langflow y cuándo usarlo</li>
+                    <li>Cómo construir flujos visuales complejos</li>
+                    <li>Integrar LLMs, herramientas, APIs, bases de datos</li>
+                    <li>Exportar y desplegar en producción</li>
+                    <li>Optimizar performance y monitorear</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 100: Conclusión - Invitación -->
+            <section>
+                <h2>Conclusión: Invitación</h2>
+                <p><strong>Ahora es tu turno.</strong></p>
+                <p>Toma estos conocimientos y construye.</p>
+                <p>Crea la próxima aplicación IA que revolucionará tu industria.</p>
+                <p>La comunidad Langflow te espera.</p>
+            </section>
+
+            <!-- Diapositiva 101: Agradecimiento -->
+            <section>
+                <h2>¡Gracias!</h2>
+                <p><strong>Langflow: Construyendo el futuro de la IA, visualmente</strong></p>
+                <p>¿Preguntas? ¿Ideas? ¿Flujos para compartir?</p>
+                <p>Conecta con la comunidad en Discord y GitHub</p>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/plugin/highlight.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: true,
+            transition: 'slide',
+            backgroundTransition: 'fade'
+        });
+    </script>
+</body>
+</html>

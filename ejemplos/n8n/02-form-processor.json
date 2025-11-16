@@ -1,0 +1,167 @@
+{
+  "name": "Procesar Formulario de Contacto",
+  "nodes": [
+    {
+      "name": "Webhook - Formulario",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        250,
+        300
+      ],
+      "webhookId": "webhook_form",
+      "parameters": {
+        "path": "contact-form",
+        "httpMethod": "POST"
+      }
+    },
+    {
+      "name": "Validar Email",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        450,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": [
+            {
+              "leftValue": "{{ $json.email }}",
+              "rightValue": null,
+              "condition": "regex",
+              "operator": "&&",
+              "value": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Guardar en Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 2,
+      "position": [
+        650,
+        200
+      ],
+      "credentials": {
+        "googleSheetsOAuth2": {
+          "id": "YOUR_GOOGLE_CREDENTIALS",
+          "name": "Google Sheets Account"
+        }
+      },
+      "parameters": {
+        "mode": "append",
+        "spreadsheetId": "YOUR_SPREADSHEET_ID",
+        "sheetName": "Contactos",
+        "columns": {
+          "mappingMode": "defineByName",
+          "value": [
+            {
+              "column": "Nombre",
+              "value": "{{ $json.name }}"
+            },
+            {
+              "column": "Email",
+              "value": "{{ $json.email }}"
+            },
+            {
+              "column": "Mensaje",
+              "value": "{{ $json.message }}"
+            },
+            {
+              "column": "Fecha",
+              "value": "{{ $now | dateFormat('YYYY-MM-DD HH:mm:ss') }}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Enviar Confirmación",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [
+        850,
+        200
+      ],
+      "credentials": {
+        "smtp": {
+          "id": "YOUR_EMAIL_CREDENTIALS",
+          "name": "Email Account"
+        }
+      },
+      "parameters": {
+        "fromEmail": "noreply@example.com",
+        "toEmail": "{{ $json.email }}",
+        "subject": "Hemos recibido tu mensaje",
+        "text": "Hola {{ $json.name }},\n\nGracias por ponerte en contacto. Hemos recibido tu mensaje y te responderemos pronto.\n\nSaludos,\nEl equipo"
+      }
+    },
+    {
+      "name": "Enviar Error",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [
+        650,
+        400
+      ],
+      "credentials": {
+        "smtp": {
+          "id": "YOUR_EMAIL_CREDENTIALS",
+          "name": "Email Account"
+        }
+      },
+      "parameters": {
+        "fromEmail": "noreply@example.com",
+        "toEmail": "{{ $json.email }}",
+        "subject": "Error: Email no válido",
+        "text": "Hola,\n\nParece que el email que proporcionaste no es válido.\nPor favor, intenta nuevamente con una dirección de email válida.\n\nSaludos"
+      }
+    }
+  ],
+  "connections": {
+    "Webhook - Formulario": {
+      "main": [
+        [
+          {
+            "node": "Validar Email",
+            "branch": 0,
+            "socket": 0
+          }
+        ]
+      ]
+    },
+    "Validar Email": {
+      "main": [
+        [
+          {
+            "node": "Guardar en Google Sheets",
+            "branch": 0,
+            "socket": 0
+          }
+        ],
+        [
+          {
+            "node": "Enviar Error",
+            "branch": 0,
+            "socket": 0
+          }
+        ]
+      ]
+    },
+    "Guardar en Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Enviar Confirmación",
+            "branch": 0,
+            "socket": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false
+}

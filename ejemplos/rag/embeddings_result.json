@@ -1,0 +1,81 @@
+{
+  "embeddings": [
+    {
+      "id": 0,
+      "texto": "Python es un lenguaje de programación poderoso y versátil",
+      "dimensión": 50,
+      "embedding_preview": [
+        0.0,
+        0.0,
+        0.3333333333333333,
+        0.3333333333333333,
+        0.0
+      ]
+    },
+    {
+      "id": 1,
+      "texto": "El aprendizaje automático utiliza algoritmos para aprender de datos",
+      "dimensión": 50,
+      "embedding_preview": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "id": 2,
+      "texto": "RAG combina búsqueda con generación de texto inteligente",
+      "dimensión": 50,
+      "embedding_preview": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "id": 3,
+      "texto": "Los embeddings convierten texto en vectores numéricos",
+      "dimensión": 50,
+      "embedding_preview": [
+        0.0,
+        0.37796447300922725,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "id": 4,
+      "texto": "La similitud coseno mide la similitud entre dos vectores",
+      "dimensión": 50,
+      "embedding_preview": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.5163977794943223
+      ]
+    }
+  ],
+  "búsqueda": {
+    "pregunta": "¿Cómo funcionan los embeddings?",
+    "resultados": [
+      {
+        "documento": "Los embeddings convierten texto en vectores numéricos",
+        "similitud": 0.37796447300922725
+      },
+      {
+        "documento": "RAG combina búsqueda con generación de texto inteligente",
+        "similitud": 0.2886751345948129
+      },
+      {
+        "documento": "Python es un lenguaje de programación poderoso y versátil",
+        "similitud": 0.16666666666666666
+      }
+    ]
+  }
+}

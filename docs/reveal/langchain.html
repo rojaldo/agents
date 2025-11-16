@@ -1,0 +1,1827 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LangChain - Curso Completo</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/theme/white.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-light.min.css">
+
+    <style>
+        .reveal { text-align: left; color: #555555; }
+        .reveal section { text-align: left; padding: 40px; display: flex; flex-direction: column; justify-content: flex-start; }
+        .reveal h1, .reveal h2, .reveal h3 { text-transform: none; text-align: left; color: #555555; }
+
+        /* Encabezados */
+        .reveal h1 { font-size: 1.05em; margin-bottom: 0.5em; }
+        .reveal h2 { font-size: 1em; margin-bottom: 0.5em; }
+        .reveal h3 { font-size: 0.75em; margin-bottom: 0.3em; }
+
+        /* Párrafos y énfasis */
+        .reveal p { font-size: 0.6em; margin: 0.3em 0; color: #555555; }
+        .reveal strong { font-size: 1em; font-weight: bold; }
+
+        /* Código */
+        .reveal pre { background: #f8f8f8; border: 1px solid #ddd; width: 100%; padding: 0.5em; margin: 0.5em 0; }
+        .reveal pre code { font-size: 0.7em; color: #555555; }
+
+        /* Listas y elementos */
+        .reveal ul { font-size: 0.55em; text-align: left; margin-left: 0.5em; color: #555555; }
+        .reveal li { margin: 0.3em 0; color: #555555; }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Slide 1: Portada -->
+            <section>
+                <h1>Curso Completo de LangChain</h1>
+                <p><strong>Desde Principiante hasta Producción</strong></p>
+                <p>Aprende a construir aplicaciones inteligentes con modelos de lenguaje</p>
+            </section>
+
+            <!-- Slide 2: Tabla de Contenidos -->
+            <section>
+                <h2>Tabla de Contenidos</h2>
+                <ul>
+                    <li>Introducción a LangChain</li>
+                    <li>Instalación y Configuración</li>
+                    <li>LLMs - El Núcleo</li>
+                    <li>Prompts - El Arte</li>
+                    <li>Output Parsers</li>
+                    <li>Cadenas (Chains)</li>
+                    <li>Memoria (Memory)</li>
+                    <li>Agentes (Agents)</li>
+                    <li>Herramientas (Tools)</li>
+                    <li>Recuperación y RAG</li>
+                    <li>Patrones y Arquitectura</li>
+                    <li>Casos de Uso Prácticos</li>
+                    <li>Producción y Optimización</li>
+                    <li>Proyecto Final</li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 1: Introducción a LangChain (8 slides) -->
+            <section>
+                <h1>Introducción a LangChain</h1>
+            </section>
+
+            <section>
+                <h2>¿Qué es LangChain?</h2>
+                <p><strong>Concepto Fundamental</strong></p>
+                <p>LangChain es un framework que orquesta modelos de lenguaje (LLMs) con otros componentes</p>
+                <ul>
+                    <li>Mantener conversaciones con memoria</li>
+                    <li>Buscar información en bases de datos</li>
+                    <li>Usar herramientas externas (APIs, calculadoras)</li>
+                    <li>Tomar decisiones y ejecutar acciones</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Definición Formal</h2>
+                <p>Framework de código abierto para aplicaciones basadas en LLMs</p>
+                <ul>
+                    <li><strong>Interfaces unificadas:</strong> Trabaja con OpenAI, Anthropic, Ollama</li>
+                    <li><strong>Composición elegante:</strong> Combina componentes como bloques</li>
+                    <li><strong>Gestión de estado:</strong> Memoria para conversaciones</li>
+                    <li><strong>Integración de herramientas:</strong> Conexión con APIs externas</li>
+                    <li><strong>RAG:</strong> Búsqueda en documentos propios</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>¿Por qué no llamar directamente a la API?</h2>
+                <p><strong>Forma primitiva (sin LangChain)</strong></p>
+                <pre><code class="python">import requests
+response = requests.post(
+    "https://api.openai.com/v1/chat/completions",
+    headers={"Authorization": f"Bearer {api_key}"},
+    json={"model": "gpt-4", "messages": [...]}
+)
+resultado = response.json()["choices"][0]["message"]["content"]</code></pre>
+                <p>Mucho boilerplate, manejo manual de errores, sin memoria</p>
+            </section>
+
+            <section>
+                <h2>Con LangChain es más simple</h2>
+                <pre><code class="python">from langchain_community.llms import Ollama
+
+llm = Ollama(model="mistral")
+respuesta = llm.invoke("¿Hola?")
+print(respuesta)</code></pre>
+                <p>Limpio, encapsula complejidad, fácil de mantener</p>
+            </section>
+
+            <section>
+                <h2>Diferencias con AutoGen y CrewAI</h2>
+                <ul>
+                    <li><strong>LangChain:</strong> Framework general, curva gradual, ideal para cadenas y RAG</li>
+                    <li><strong>AutoGen:</strong> Agentes conversacionales, media complejidad, 2-3 agentes</li>
+                    <li><strong>CrewAI:</strong> Equipos coordinados, alta complejidad, múltiples agentes especializados</li>
+                </ul>
+                <p><strong>Recomendación:</strong> Usa LangChain para tu primer proyecto con LLMs</p>
+            </section>
+
+            <section>
+                <h2>Casos de Uso Reales</h2>
+                <ul>
+                    <li><strong>Chatbot de servicio al cliente:</strong> Con RAG y memoria contextual</li>
+                    <li><strong>Análisis de documentos:</strong> Revisar contratos, extraer información</li>
+                    <li><strong>Agente autónomo:</strong> Ejecuta queries SQL, resume datos, toma decisiones</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Ventajas y Limitaciones</h2>
+                <p><strong>Ventajas</strong></p>
+                <ul>
+                    <li>Abstracción sobre proveedores (OpenAI, Ollama, etc.)</li>
+                    <li>LCEL: sintaxis elegante con operador pipe</li>
+                    <li>Ecosistema rico: 200+ integraciones</li>
+                    <li>Comunidad activa (30K+ stars)</li>
+                </ul>
+                <p><strong>Limitaciones</strong></p>
+                <ul>
+                    <li>Complejidad agregada para casos muy simples</li>
+                    <li>Curva de aprendizaje con muchos conceptos</li>
+                    <li>Overhead computacional por abstracciones</li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 2: Instalación y Configuración (6 slides) -->
+            <section>
+                <h1>Instalación y Configuración</h1>
+            </section>
+
+            <section>
+                <h2>Requisitos Previos</h2>
+                <ul>
+                    <li><strong>Python 3.10+:</strong> Verifica con <code>python --version</code></li>
+                    <li><strong>pip:</strong> Gestor de paquetes de Python</li>
+                    <li><strong>Terminal/Consola:</strong> Para ejecutar comandos</li>
+                    <li><strong>Ollama instalado:</strong> Descarga desde https://ollama.ai</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Crear Entorno Virtual</h2>
+                <pre><code class="bash"># Crear entorno virtual
+python3 -m venv venv_langchain
+
+# Activar (Linux/macOS)
+source venv_langchain/bin/activate
+
+# Activar (Windows)
+venv_langchain\Scripts\activate</code></pre>
+                <p>Los entornos virtuales aíslan dependencias por proyecto</p>
+            </section>
+
+            <section>
+                <h2>Instalar LangChain</h2>
+                <pre><code class="bash"># Actualizar pip
+pip install --upgrade pip
+
+# Instalar LangChain
+pip install langchain langchain-community langchain-core
+
+# Para Ollama
+pip install ollama
+
+# Herramientas adicionales
+pip install python-dotenv pydantic requests</code></pre>
+            </section>
+
+            <section>
+                <h2>Configurar Ollama</h2>
+                <pre><code class="bash"># Descargar modelo
+ollama pull mistral
+
+# Iniciar servidor
+ollama serve
+
+# Verificar
+curl http://localhost:11434/api/tags</code></pre>
+                <p><strong>Modelos recomendados:</strong> mistral (4.1 GB), neural-chat (3.8 GB), llama2 (3.8 GB)</p>
+            </section>
+
+            <section>
+                <h2>Archivo .env y Verificación</h2>
+                <p><strong>Archivo .env</strong></p>
+                <pre><code class="bash">OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_MODEL=mistral
+LOG_LEVEL=INFO</code></pre>
+                <p><strong>Verificar instalación</strong></p>
+                <pre><code class="python">from langchain_community.llms import Ollama
+
+llm = Ollama(model="mistral")
+respuesta = llm.invoke("¿Hola?")
+print(respuesta)</code></pre>
+            </section>
+
+            <section>
+                <h2>Estructura de Proyecto Recomendada</h2>
+                <pre><code>mi_proyecto_langchain/
+├── .env
+├── requirements.txt
+├── src/
+│   ├── chains/
+│   ├── agents/
+│   ├── tools/
+│   └── api/
+├── data/
+│   └── documents/
+├── tests/
+└── main.py</code></pre>
+            </section>
+
+            <!-- MÓDULO 3: LLMs - El Núcleo (7 slides) -->
+            <section>
+                <h1>LLMs - El Núcleo</h1>
+            </section>
+
+            <section>
+                <h2>Entender los LLMs</h2>
+                <p>Un Language Model es una red neuronal entrenada con texto</p>
+                <ul>
+                    <li>Operan con tokens (palabras o fragmentos)</li>
+                    <li>Predicen estadísticamente el siguiente token</li>
+                    <li>No "entienden", sino que generan patrones</li>
+                    <li>Tienen límites de contexto (máximo de tokens)</li>
+                </ul>
+                <p><strong>Importante:</strong> En APIs comerciales, se paga por token</p>
+            </section>
+
+            <section>
+                <h2>Interfaz LLM vs ChatModel</h2>
+                <p><strong>LLM (Clásica)</strong></p>
+                <pre><code class="python">from langchain_community.llms import Ollama
+
+llm = Ollama(model="mistral")
+respuesta = llm.invoke("¿Cuál es la capital de Francia?")
+print(respuesta)</code></pre>
+                <p>Simple y directo, menos tokens, pero no entiende roles</p>
+            </section>
+
+            <section>
+                <h2>ChatModel (Recomendado)</h2>
+                <pre><code class="python">from langchain_core.prompts import ChatPromptTemplate
+from langchain_community.llms import Ollama
+
+llm = Ollama(model="mistral")
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "Eres un geógrafo experto"),
+    ("user", "{pregunta}")
+])
+cadena = prompt | llm
+respuesta = cadena.invoke({"pregunta": "¿Capital de Francia?"})</code></pre>
+                <p>Soporta roles (system, user, assistant), mejor para conversaciones</p>
+            </section>
+
+            <section>
+                <h2>Parámetros Clave de LLMs</h2>
+                <pre><code class="python">llm = Ollama(
+    model="mistral",
+    temperature=0.7,      # Creatividad (0=determinístico, 1=aleatorio)
+    top_p=0.9,            # Diversidad de tokens
+    top_k=40,             # Cuántos tokens considera
+    num_predict=256,      # Máximo tokens a generar
+    request_timeout=120   # Tiempo máximo de espera
+)</code></pre>
+            </section>
+
+            <section>
+                <h2>Configuración según Caso de Uso</h2>
+                <p><strong>Para análisis de datos (necesitas exactitud)</strong></p>
+                <pre><code class="python">llm = Ollama(model="mistral", temperature=0.1, top_p=0.3)</code></pre>
+                <p><strong>Para escritura creativa (necesitas variedad)</strong></p>
+                <pre><code class="python">llm = Ollama(model="mistral", temperature=0.9, top_p=0.95)</code></pre>
+            </section>
+
+            <section>
+                <h2>Selección de Modelos</h2>
+                <ul>
+                    <li><strong>mistral (4.1GB):</strong> Rápido, buena calidad, uso general</li>
+                    <li><strong>neural-chat (3.8GB):</strong> Muy rápido, prototipado</li>
+                    <li><strong>llama2 (3.8GB):</strong> Muy buena calidad</li>
+                    <li><strong>openchat (3.5GB):</strong> Producción con recursos limitados</li>
+                </ul>
+                <p><strong>Recomendación:</strong> Comienza con mistral</p>
+            </section>
+
+            <!-- MÓDULO 4: Prompts - El Arte (8 slides) -->
+            <section>
+                <h1>Prompts - El Arte</h1>
+            </section>
+
+            <section>
+                <h2>¿Qué es un Prompt?</h2>
+                <p>Un prompt es una instrucción que le das al LLM</p>
+                <p><strong>Prompt simple:</strong></p>
+                <pre><code>"¿Cuál es la capital de Francia?"</code></pre>
+                <p><strong>Prompt complejo:</strong></p>
+                <pre><code>Eres un profesor de historia experto.
+Un estudiante te pregunta sobre la Revolución Francesa.
+Responde de forma educativa y con ejemplos.
+
+Pregunta: "¿Por qué fue importante la Revolución?"</code></pre>
+                <p>La calidad del prompt determina la calidad de la respuesta</p>
+            </section>
+
+            <section>
+                <h2>PromptTemplate - Parametrizar Prompts</h2>
+                <pre><code class="python">from langchain_core.prompts import PromptTemplate
+
+template = """Eres un experto en {tema}.
+Un estudiante te pregunta: {pregunta}
+Responde de forma clara y concisa."""
+
+prompt = PromptTemplate(
+    input_variables=["tema", "pregunta"],
+    template=template
+)
+
+resultado = prompt.format(
+    tema="Python",
+    pregunta="¿Qué es un decorador?"
+)</code></pre>
+                <p>Reutilizable, fácil de mantener</p>
+            </section>
+
+            <section>
+                <h2>ChatPromptTemplate - Para Conversaciones</h2>
+                <pre><code class="python">from langchain_core.prompts import ChatPromptTemplate
+
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "Eres un asistente matemático experto."),
+    ("user", "Explica: {concepto}"),
+])
+
+mensajes = prompt.format_messages(concepto="derivadas")
+# [SystemMessage(...), HumanMessage(...)]</code></pre>
+                <p>Especifica roles para cada mensaje</p>
+            </section>
+
+            <section>
+                <h2>Few-Shot Prompting - Enseñar con Ejemplos</h2>
+                <pre><code class="python">from langchain_core.prompts import FewShotPromptTemplate
+
+ejemplos = [
+    {"entrada": "2 + 2", "salida": "4"},
+    {"entrada": "5 * 3", "salida": "15"},
+    {"entrada": "10 - 7", "salida": "3"}
+]
+
+prompt = FewShotPromptTemplate(
+    examples=ejemplos,
+    example_prompt=ejemplo_template,
+    suffix="Ahora, resuelve: {entrada}",
+    input_variables=["entrada"]
+)</code></pre>
+                <p>El LLM ve el patrón y lo sigue</p>
+            </section>
+
+            <section>
+                <h2>Partial Variables - Fijar Variables</h2>
+                <pre><code class="python">template = "Eres {rol} en {tema}. {pregunta}"
+
+prompt = PromptTemplate(
+    template=template,
+    input_variables=["pregunta"],
+    partial_variables={
+        "rol": "Profesor Experto",
+        "tema": "Matemáticas"
+    }
+)
+
+resultado = prompt.format(pregunta="¿Qué es una derivada?")</code></pre>
+                <p>Útil cuando tienes un system prompt fijo</p>
+            </section>
+
+            <section>
+                <h2>Chain of Thought (CoT)</h2>
+                <p>Pedirle al LLM que piense paso a paso</p>
+                <pre><code>Pregunta: Si tengo 5 manzanas y doy 2, ¿cuántas tengo?
+Prompt: Pensemos paso a paso:
+  1. Empiezo con 5 manzanas
+  2. Doy 2 a un amigo (resto 2)
+  3. 5 - 2 = 3
+Respuesta: 3 manzanas</code></pre>
+                <p>La forma explícita reduce errores</p>
+            </section>
+
+            <section>
+                <h2>Role Playing y Structured Output</h2>
+                <p><strong>Role Playing</strong></p>
+                <pre><code>Eres un instructor con 10 años de experiencia.
+Explica Python en términos simples para principiantes.</code></pre>
+                <p><strong>Structured Output</strong></p>
+                <pre><code>Analiza: iPhone 15
+Devuelve JSON con: nombre, precio, características (lista)</code></pre>
+                <p>Roles mejoran la estructura, formatos facilitan parsing</p>
+            </section>
+
+            <!-- MÓDULO 5: Output Parsers (6 slides) -->
+            <section>
+                <h1>Output Parsers</h1>
+            </section>
+
+            <section>
+                <h2>Problema que Resuelven</h2>
+                <p>Los LLMs devuelven strings, necesitas estructurarlos</p>
+                <pre><code class="python">respuesta = llm.invoke("Dame lista de frutas")
+# Output: "Las frutas incluyen manzana, plátano, naranja"
+
+# Quieres:
+frutas = ["manzana", "plátano", "naranja"]</code></pre>
+                <p>Los Output Parsers convierten texto en datos estructurados</p>
+            </section>
+
+            <section>
+                <h2>StrOutputParser - El Más Simple</h2>
+                <pre><code class="python">from langchain_core.output_parsers import StrOutputParser
+
+llm = Ollama(model="mistral")
+prompt = ChatPromptTemplate.from_messages([
+    ("user", "{pregunta}")
+])
+
+parser = StrOutputParser()
+cadena = prompt | llm | parser
+
+respuesta = cadena.invoke({"pregunta": "¿Hola?"})
+print(type(respuesta))  # <class 'str'></code></pre>
+            </section>
+
+            <section>
+                <h2>PydanticOutputParser - Validación</h2>
+                <pre><code class="python">from langchain_core.output_parsers import PydanticOutputParser
+from pydantic import BaseModel, Field
+
+class Persona(BaseModel):
+    nombre: str = Field(description="Nombre completo")
+    edad: int = Field(description="Edad en años")
+    ciudad: str = Field(description="Ciudad")
+
+parser = PydanticOutputParser(pydantic_object=Persona)
+
+resultado = cadena.invoke({
+    "texto": "Juan, 30 años, Madrid",
+    "format_instructions": parser.get_format_instructions()
+})</code></pre>
+            </section>
+
+            <section>
+                <h2>JsonOutputParser - JSON Flexible</h2>
+                <pre><code class="python">from langchain_core.output_parsers import JsonOutputParser
+
+parser = JsonOutputParser()
+
+respuesta_texto = '''
+{
+  "nombre": "María",
+  "edad": 25,
+  "habilidades": ["Python", "JavaScript"]
+}
+'''
+
+datos = parser.parse(respuesta_texto)
+print(datos["nombre"])  # "María"</code></pre>
+            </section>
+
+            <section>
+                <h2>Parsers Personalizados</h2>
+                <pre><code class="python">from langchain_core.output_parsers import BaseOutputParser
+
+class ListaParser(BaseOutputParser):
+    """Parser que divide por líneas"""
+
+    def parse(self, text: str) -> list:
+        lineas = text.strip().split("\n")
+        return [l.strip() for l in lineas if l.strip()]
+
+parser = ListaParser()
+frutas = parser.parse("Manzana\nPlátano\nNaranja")
+# ["Manzana", "Plátano", "Naranja"]</code></pre>
+            </section>
+
+            <section>
+                <h2>Ventajas de Output Parsers</h2>
+                <ul>
+                    <li><strong>Validación automática:</strong> Verifica tipos de datos</li>
+                    <li><strong>Estructuración:</strong> De texto plano a objetos Python</li>
+                    <li><strong>Error handling:</strong> Detecta formatos inválidos</li>
+                    <li><strong>Reutilizable:</strong> Define una vez, usa en múltiples cadenas</li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 6: Cadenas (Chains) (10 slides) -->
+            <section>
+                <h1>Cadenas (Chains)</h1>
+            </section>
+
+            <section>
+                <h2>Concepto de Cadena</h2>
+                <p>Una cadena es una secuencia de operaciones conectadas</p>
+                <pre><code>[Entrada] → [Prompt] → [LLM] → [Parser] → [Salida]</code></pre>
+                <p><strong>Ejemplo simple:</strong></p>
+                <pre><code>Usuario: "Explica Python"
+  ↓
+PromptTemplate: "Eres experto. Explica: {concepto}"
+  ↓
+LLM: Genera explicación
+  ↓
+StrOutputParser: Limpia respuesta
+  ↓
+"Python es un lenguaje..."</code></pre>
+            </section>
+
+            <section>
+                <h2>Forma Clásica vs LCEL</h2>
+                <p><strong>Forma Clásica (Antigua)</strong></p>
+                <pre><code class="python">from langchain.chains import LLMChain
+
+chain = LLMChain(llm=llm, prompt=prompt)
+respuesta = chain.run(concepto="Decoradores")</code></pre>
+                <p><strong>Forma Moderna con LCEL (Recomendada)</strong></p>
+                <pre><code class="python">cadena = prompt | llm
+respuesta = cadena.invoke({"concepto": "Decoradores"})</code></pre>
+                <p>LCEL es más legible, flexible y con mejor rendimiento</p>
+            </section>
+
+            <section>
+                <h2>LCEL y Operador Pipe |</h2>
+                <pre><code class="python">from langchain_core.prompts import ChatPromptTemplate
+from langchain_community.llms import Ollama
+from langchain_core.output_parsers import StrOutputParser
+
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "Eres poeta"),
+    ("user", "Escribe poema sobre {tema}")
+])
+llm = Ollama(model="mistral")
+parser = StrOutputParser()
+
+cadena = prompt | llm | parser
+resultado = cadena.invoke({"tema": "la lluvia"})</code></pre>
+            </section>
+
+            <section>
+                <h2>RunnableLambda - Funciones Personalizadas</h2>
+                <pre><code class="python">from langchain_core.runnables import RunnableLambda
+from datetime import datetime
+
+def enriquecer_entrada(texto):
+    return {
+        "texto": texto,
+        "timestamp": datetime.now().isoformat(),
+        "idioma": "es"
+    }
+
+prompt = ChatPromptTemplate.from_messages([
+    ("user", "Texto: {texto}, enviado: {timestamp}")
+])
+
+cadena = RunnableLambda(enriquecer_entrada) | prompt | llm</code></pre>
+            </section>
+
+            <section>
+                <h2>RunnableParallel - Ejecutar en Paralelo</h2>
+                <pre><code class="python">from langchain_core.runnables import RunnableParallel
+
+cadena_qa = PromptTemplate.from_template("Q: {pregunta}\nA:") | llm
+cadena_resumen = PromptTemplate.from_template("Resume: {pregunta}") | llm
+
+paralelo = RunnableParallel(
+    respuesta=cadena_qa,
+    resumen=cadena_resumen
+)
+
+resultado = paralelo.invoke({"pregunta": "¿Qué es Python?"})
+# {"respuesta": "...", "resumen": "..."}</code></pre>
+                <p>Las cadenas se ejecutan concurrentemente</p>
+            </section>
+
+            <section>
+                <h2>RunnableBranch - Lógica Condicional</h2>
+                <pre><code class="python">from langchain_core.runnables import RunnableBranch
+
+rama_programacion = PromptTemplate.from_template(
+    "Eres experto en programación. {pregunta}"
+) | llm
+
+rama_general = PromptTemplate.from_template(
+    "Eres asistente general. {pregunta}"
+) | llm
+
+rama = RunnableBranch(
+    (lambda x: "código" in x["pregunta"].lower(), rama_programacion),
+    rama_general
+)</code></pre>
+            </section>
+
+            <section>
+                <h2>Métodos de Invocación (1)</h2>
+                <pre><code class="python">cadena = prompt | llm
+
+# invoke: Una entrada, una salida
+resultado = cadena.invoke({"pregunta": "¿Hola?"})
+
+# batch: Múltiples entradas, más rápido
+resultados = cadena.batch([
+    {"pregunta": "¿Hola?"},
+    {"pregunta": "¿Cómo estás?"},
+    {"pregunta": "¿Qué es Python?"}
+])</code></pre>
+            </section>
+
+            <section>
+                <h2>Métodos de Invocación (2)</h2>
+                <pre><code class="python"># stream: Respuesta en tiempo real
+print("Respuesta: ", end="", flush=True)
+for chunk in cadena.stream({"pregunta": "Cuéntame un chiste"}):
+    print(chunk, end="", flush=True)
+
+# ainvoke: Asincrónica (para apps web)
+import asyncio
+resultado = await cadena.ainvoke({"pregunta": "¿Hola?"})</code></pre>
+            </section>
+
+            <section>
+                <h2>Cuándo Usar Cada Método</h2>
+                <ul>
+                    <li><strong>invoke:</strong> Una sola pregunta, simple</li>
+                    <li><strong>batch:</strong> 10+ preguntas, más rápido que invoke múltiple</li>
+                    <li><strong>stream:</strong> Mostrar respuesta en vivo, usuario ve progreso</li>
+                    <li><strong>ainvoke:</strong> Aplicación web/Telegram, no bloquea</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Ventajas de LCEL</h2>
+                <ul>
+                    <li><strong>Legibilidad:</strong> Línea clara de operaciones</li>
+                    <li><strong>Flexibilidad:</strong> Fácil agregar/quitar componentes</li>
+                    <li><strong>Rendimiento:</strong> Streaming y paralelización automática</li>
+                    <li><strong>Futuro de LangChain:</strong> Todas las nuevas features usan LCEL</li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 7: Memoria (Memory) (10 slides) -->
+            <section>
+                <h1>Memoria (Memory)</h1>
+            </section>
+
+            <section>
+                <h2>Problema que Resuelve</h2>
+                <p><strong>Sin Memoria</strong></p>
+                <pre><code>Usuario: "Mi nombre es Juan"
+Bot: "Hola Juan"
+
+Usuario: "¿Cuál es mi nombre?"
+Bot: "No tengo información sobre tu nombre" ❌</code></pre>
+                <p><strong>Con Memoria</strong></p>
+                <pre><code>Usuario: "Mi nombre es Juan"
+Bot: "Hola Juan" [Guarda: "Mi nombre es Juan"]
+
+Usuario: "¿Cuál es mi nombre?"
+Bot: [Recupera historial] "Tu nombre es Juan" ✓</code></pre>
+            </section>
+
+            <section>
+                <h2>ConversationBufferMemory</h2>
+                <p>La forma más simple: guarda todo</p>
+                <pre><code class="python">from langchain.memory import ConversationBufferMemory
+
+memoria = ConversationBufferMemory(
+    memory_key="chat_history",
+    return_messages=True
+)
+
+# Guardar contexto
+memoria.save_context(
+    {"input": "Mi nombre es Juan"},
+    {"output": "Hola Juan"}
+)
+
+# Recuperar historial
+historial = memoria.load_memory_variables({})
+print(historial["chat_history"])</code></pre>
+            </section>
+
+            <section>
+                <h2>Usar Memoria en Cadena</h2>
+                <pre><code class="python">prompt = ChatPromptTemplate.from_messages([
+    ("system", "Eres un asistente útil"),
+    ("placeholder", "{chat_history}"),
+    ("user", "{input}")
+])
+cadena = prompt | llm
+
+for entrada in turnos:
+    historial = memoria.load_memory_variables({})
+    respuesta = cadena.invoke({
+        "chat_history": historial["chat_history"],
+        "input": entrada
+    })
+    memoria.save_context(
+        {"input": entrada},
+        {"output": respuesta}
+    )</code></pre>
+            </section>
+
+            <section>
+                <h2>Limitación de BufferMemory</h2>
+                <p>Guarda TODO, puede ser un problema</p>
+                <pre><code>Conversación de 100 turnos = 5000 tokens
+Al LLM le quedan solo 500 tokens para responder
+El contexto disponible es limitado</code></pre>
+                <p>Para conversaciones largas, necesitas alternativas</p>
+            </section>
+
+            <section>
+                <h2>ConversationWindowMemory</h2>
+                <p>Guarda solo los últimos N turnos</p>
+                <pre><code class="python">from langchain.memory import ConversationBufferWindowMemory
+
+memoria = ConversationBufferWindowMemory(
+    k=2,  # Mantener solo últimos 2 turnos
+    memory_key="chat_history",
+    return_messages=True
+)
+
+# Turno 1 y 2 se guardan
+# Turno 3 se guarda, turno 1 se olvida
+# Memory: [Turno 2, Turno 3]</code></pre>
+                <p>Menos tokens, conversaciones más rápidas, pero olvida información antigua</p>
+            </section>
+
+            <section>
+                <h2>ConversationSummaryMemory</h2>
+                <p>Resume la conversación automáticamente</p>
+                <pre><code class="python">from langchain.memory import ConversationSummaryMemory
+
+memoria = ConversationSummaryMemory(
+    llm=llm,
+    buffer="",
+    memory_key="chat_history"
+)
+
+memoria.save_context(
+    {"input": "Soy ingeniero, trabajo en Madrid, me llamo Juan"},
+    {"output": "Entendido, eres ingeniero en Madrid"}
+)
+
+# Memoria almacena resumen:
+# "Usuario es ingeniero, trabaja en Madrid, se llama Juan"</code></pre>
+            </section>
+
+            <section>
+                <h2>ConversationTokenBufferMemory</h2>
+                <p>Limita por tokens, no por turnos</p>
+                <pre><code class="python">from langchain.memory import ConversationTokenBufferMemory
+
+memoria = ConversationTokenBufferMemory(
+    llm=llm,
+    max_token_limit=100,  # Máximo 100 tokens
+    memory_key="chat_history",
+    return_messages=True
+)
+
+# Guarda lo máximo que cabe en 100 tokens</code></pre>
+            </section>
+
+            <section>
+                <h2>Matriz de Selección de Memoria</h2>
+                <ul>
+                    <li><strong>BufferMemory:</strong> Tokens altos, info completa, conversaciones cortas</li>
+                    <li><strong>WindowMemory:</strong> Tokens bajos, últimos N turnos, conversaciones largas rápidas</li>
+                    <li><strong>SummaryMemory:</strong> Tokens bajos, resumen, contexto completo sin tokens</li>
+                    <li><strong>TokenBufferMemory:</strong> Tokens exactos, máximo posible, límite estricto</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Ejemplo Completo de Conversación</h2>
+                <pre><code class="python">turnos = [
+    "Mi nombre es Juan",
+    "¿Cuál es mi nombre?",
+    "Trabajo en tecnología",
+    "¿En qué trabajo?"
+]
+
+for entrada in turnos:
+    print(f"Usuario: {entrada}")
+    historial = memoria.load_memory_variables({})
+    respuesta = cadena.invoke({
+        "chat_history": historial["chat_history"],
+        "input": entrada
+    })
+    print(f"Bot: {respuesta}")
+    memoria.save_context({"input": entrada}, {"output": respuesta})</code></pre>
+            </section>
+
+            <section>
+                <h2>Persistencia de Memoria</h2>
+                <p>Las memorias se pierden al reiniciar la aplicación</p>
+                <ul>
+                    <li><strong>Solución 1:</strong> Guardar en base de datos (Redis, PostgreSQL)</li>
+                    <li><strong>Solución 2:</strong> Guardar en archivo JSON</li>
+                    <li><strong>Solución 3:</strong> Usar servicios de terceros (LangSmith)</li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 8: Agentes (Agents) (12 slides) -->
+            <section>
+                <h1>Agentes (Agents)</h1>
+            </section>
+
+            <section>
+                <h2>¿Qué es un Agente?</h2>
+                <p><strong>Cadena:</strong> Flujo predeterminado</p>
+                <pre><code>[Prompt] → [LLM] → [Output] → [Usuario]
+Siempre la misma ruta</code></pre>
+                <p><strong>Agente:</strong> Toma decisiones</p>
+                <pre><code>        ┌─ ¿Necesito herramientas?
+[Pensar] ─ Sí → [Seleccionar herramienta] → [Ejecutar]
+        └─ No → [Responder directamente]
+La ruta depende de la pregunta</code></pre>
+            </section>
+
+            <section>
+                <h2>Ejemplo Real de Agente</h2>
+                <p><strong>Usuario:</strong> "¿Cuánto es 15 * 27 y dime en texto?"</p>
+                <pre><code>Pensamiento: "Necesito calcular 15 * 27"
+Acción: Uso herramienta "Multiplicar"
+Observación: 405
+Pensamiento: "Ahora convertir a texto"
+Acción: Generar respuesta
+Respuesta: "El resultado es cuatrocientos cinco"</code></pre>
+            </section>
+
+            <section>
+                <h2>Componentes de un Agente</h2>
+                <ul>
+                    <li><strong>LLM:</strong> Para pensar y decidir</li>
+                    <li><strong>Herramientas (Tools):</strong> Para actuar</li>
+                    <li><strong>Memoria:</strong> Para recordar contexto (opcional)</li>
+                    <li><strong>Prompt:</strong> Instrucciones sobre cómo actuar</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Crear Herramientas con @tool</h2>
+                <pre><code class="python">from langchain_core.tools import tool
+
+@tool
+def multiplicar(a: int, b: int) -> int:
+    """Multiplica dos números.
+
+    Args:
+        a: Primer número
+        b: Segundo número
+    """
+    return a * b
+
+print(multiplicar.name)  # "multiplicar"
+print(multiplicar.description)  # "Multiplica dos números..."</code></pre>
+            </section>
+
+            <section>
+                <h2>Herramienta de Búsqueda</h2>
+                <pre><code class="python">@tool
+def buscar_informacion(tema: str) -> str:
+    """Busca información sobre un tema.
+
+    Realiza búsqueda en base de conocimiento.
+    """
+    resultados = {
+        "Python": "Lenguaje creado por Guido van Rossum",
+        "JavaScript": "Lenguaje para desarrollo web",
+        "Rust": "Lenguaje seguro y rápido"
+    }
+    return resultados.get(tema, "No encontrado")
+
+resultado = buscar_informacion.invoke({"tema": "Python"})</code></pre>
+            </section>
+
+            <section>
+                <h2>Crear Agente con create_react_agent</h2>
+                <pre><code class="python">from langchain.agents import create_react_agent, AgentExecutor
+
+@tool
+def sumar(a: int, b: int) -> int:
+    """Suma dos números"""
+    return a + b
+
+@tool
+def multiplicar(a: int, b: int) -> int:
+    """Multiplica dos números"""
+    return a * b
+
+herramientas = [sumar, multiplicar]
+llm = Ollama(model="mistral")</code></pre>
+            </section>
+
+            <section>
+                <h2>Prompt para el Agente</h2>
+                <pre><code class="python">prompt_template = """Eres asistente matemático.
+Tienes acceso a: {tools}
+
+Usa este formato:
+Question: la pregunta
+Thought: qué hacer
+Action: acción de [{tool_names}]
+Action Input: input (JSON)
+Observation: resultado
+... (repite si necesario)
+Final Answer: respuesta final
+
+Question: {input}"""
+
+prompt = PromptTemplate.from_template(prompt_template)
+agente = create_react_agent(llm, herramientas, prompt)</code></pre>
+            </section>
+
+            <section>
+                <h2>AgentExecutor</h2>
+                <pre><code class="python">executor = AgentExecutor(
+    agent=agente,
+    tools=herramientas,
+    verbose=True,
+    max_iterations=5
+)
+
+resultado = executor.invoke({
+    "input": "¿Cuánto es (5 + 3) * 2?"
+})
+
+print(resultado)</code></pre>
+            </section>
+
+            <section>
+                <h2>Salida del Agente (verbose=True)</h2>
+                <pre><code>> Entering new AgentExecutor chain...
+Thought: Primero sumar 5 + 3
+Action: sumar
+Action Input: {"a": 5, "b": 3}
+Observation: 8
+Thought: Ahora multiplicar 8 * 2
+Action: multiplicar
+Action Input: {"a": 8, "b": 2}
+Observation: 16
+Thought: Tengo la respuesta
+Final Answer: (5 + 3) * 2 = 16
+
+> Finished AgentExecutor chain.</code></pre>
+            </section>
+
+            <section>
+                <h2>Configuración Avanzada de AgentExecutor</h2>
+                <pre><code class="python">executor = AgentExecutor(
+    agent=agente,
+    tools=herramientas,
+    verbose=True,                    # Ver pasos
+    max_iterations=10,               # Máximo iteraciones
+    early_stopping_method="force",   # Detener si supera max
+    handle_parsing_errors=True,      # No fallar con formato raro
+    memory=memoria,                  # Conversación con contexto
+    return_intermediate_steps=True   # Devolver todos los pasos
+)</code></pre>
+            </section>
+
+            <section>
+                <h2>Tipos de Agentes</h2>
+                <ul>
+                    <li><strong>ReAct:</strong> Reasoning + Acting, razona y actúa</li>
+                    <li><strong>OpenAI Functions:</strong> Para modelos OpenAI con function calling</li>
+                    <li><strong>Structured Chat:</strong> Para múltiples inputs estructurados</li>
+                    <li><strong>Self-ask with search:</strong> Agente que se hace preguntas a sí mismo</li>
+                </ul>
+                <p><strong>Recomendación:</strong> Usa ReAct para la mayoría de casos</p>
+            </section>
+
+            <section>
+                <h2>Casos de Uso de Agentes</h2>
+                <ul>
+                    <li><strong>Asistente SQL:</strong> Analiza pregunta, genera query, ejecuta, resume</li>
+                    <li><strong>Investigador web:</strong> Busca, lee, sintetiza información</li>
+                    <li><strong>Automatización:</strong> Envía emails, crea tickets, actualiza bases de datos</li>
+                    <li><strong>Análisis de datos:</strong> Lee CSV, genera gráficos, interpreta resultados</li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 9: Herramientas (Tools) (6 slides) -->
+            <section>
+                <h1>Herramientas (Tools)</h1>
+            </section>
+
+            <section>
+                <h2>¿Por Qué Herramientas?</h2>
+                <p>Los LLMs solo generan texto. Las herramientas permiten:</p>
+                <ul>
+                    <li>Usar calculadoras (sin errores aritméticos)</li>
+                    <li>Consultar APIs (información actualizada)</li>
+                    <li>Acceder a bases de datos (datos reales)</li>
+                    <li>Ejecutar código (acciones complejas)</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Herramienta Simple</h2>
+                <pre><code class="python">from langchain_core.tools import tool
+
+@tool
+def obtener_clima(ciudad: str) -> str:
+    """Obtiene clima de una ciudad.
+
+    Args:
+        ciudad: Nombre de la ciudad
+    """
+    climas = {
+        "Madrid": "Soleado, 25°C",
+        "Barcelona": "Nublado, 22°C",
+        "Valencia": "Lluvioso, 18°C"
+    }
+    return climas.get(ciudad, "Ciudad no encontrada")
+
+clima = obtener_clima("Madrid")  # "Soleado, 25°C"</code></pre>
+            </section>
+
+            <section>
+                <h2>Herramienta con Validación</h2>
+                <pre><code class="python">from pydantic import BaseModel, Field, validator
+
+class ParametrosCalculadora(BaseModel):
+    a: float = Field(description="Primer número", ge=-1000, le=1000)
+    b: float = Field(description="Segundo número", ge=-1000, le=1000)
+
+    @validator('a', 'b')
+    def validar_rango(cls, v):
+        if not (-1000 <= v <= 1000):
+            raise ValueError("Entre -1000 y 1000")
+        return v
+
+@tool(args_schema=ParametrosCalculadora)
+def sumar(a: float, b: float) -> float:
+    """Suma dos números validados"""
+    return a + b</code></pre>
+            </section>
+
+            <section>
+                <h2>Herramienta Asincrónica</h2>
+                <pre><code class="python">import asyncio
+from langchain_core.tools import tool
+
+@tool
+async def buscar_en_internet(query: str) -> str:
+    """Busca un tema en la web"""
+    # Simular búsqueda asincrónica
+    await asyncio.sleep(1)
+    return f"Resultados para '{query}': ..."
+
+# En agente async
+async def ejecutar_agente_async():
+    resultado = await executor.ainvoke({
+        "input": "Busca información sobre Python"
+    })
+    return resultado</code></pre>
+            </section>
+
+            <section>
+                <h2>Herramientas Integradas de LangChain</h2>
+                <ul>
+                    <li><strong>DuckDuckGoSearchRun:</strong> Búsqueda web</li>
+                    <li><strong>WikipediaQueryRun:</strong> Consultar Wikipedia</li>
+                    <li><strong>PythonREPLTool:</strong> Ejecutar código Python</li>
+                    <li><strong>ShellTool:</strong> Ejecutar comandos shell</li>
+                    <li><strong>RequestsGetTool:</strong> Hacer requests HTTP</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Mejores Prácticas para Tools</h2>
+                <ul>
+                    <li><strong>Descripción clara:</strong> El LLM decide cuándo usarla según descripción</li>
+                    <li><strong>Validación de inputs:</strong> Usa Pydantic para validar</li>
+                    <li><strong>Error handling:</strong> Captura excepciones y devuelve mensajes útiles</li>
+                    <li><strong>Nombres descriptivos:</strong> "buscar_clima" mejor que "tool1"</li>
+                    <li><strong>Límites de tiempo:</strong> Timeout para operaciones lentas</li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 10: Recuperación y RAG (8 slides) -->
+            <section>
+                <h1>Recuperación y RAG</h1>
+            </section>
+
+            <section>
+                <h2>Problema: LLMs no saben tus datos</h2>
+                <p>El LLM fue entrenado con datos públicos. No sabe de:</p>
+                <ul>
+                    <li>Tu documentación privada</li>
+                    <li>Tu base de conocimiento interna</li>
+                    <li>Archivos PDF/Word específicos</li>
+                    <li>Datos de tu empresa</li>
+                </ul>
+                <p><strong>Solución: RAG (Retrieval Augmented Generation)</strong></p>
+            </section>
+
+            <section>
+                <h2>Embeddings - Texto a Vectores</h2>
+                <p>Un embedding es representación numérica del significado</p>
+                <pre><code>Texto: "Python es un lenguaje de programación"
+Embedding: [0.234, -0.123, 0.567, ..., 0.345] (1536 números)
+
+Pregunta: "¿Qué es Python?"
+Embedding: [0.240, -0.125, 0.560, ..., 0.340]
+
+Similitud = 99.5% ← Están relacionados!</code></pre>
+            </section>
+
+            <section>
+                <h2>Crear Embeddings</h2>
+                <pre><code class="python">from langchain_community.embeddings import OllamaEmbeddings
+
+embeddings = OllamaEmbeddings(
+    model="mistral",
+    base_url="http://localhost:11434"
+)
+
+vector1 = embeddings.embed_query("Python es un lenguaje")
+vector2 = embeddings.embed_query("JavaScript es un lenguaje")
+
+from sklearn.metrics.pairwise import cosine_similarity
+similaridad = cosine_similarity([vector1], [vector2])[0][0]
+print(f"Similaridad: {similaridad:.2%}")</code></pre>
+            </section>
+
+            <section>
+                <h2>Vector Stores - FAISS</h2>
+                <pre><code class="python">from langchain_community.vectorstores import FAISS
+from langchain.schema import Document
+
+textos = [
+    "Python es lenguaje interpretado",
+    "JavaScript para desarrollo web",
+    "Rust es lenguaje seguro y rápido",
+    "Java para aplicaciones empresariales"
+]
+
+documentos = [Document(page_content=t) for t in textos]
+embeddings = OllamaEmbeddings(model="mistral")
+vector_store = FAISS.from_documents(documentos, embeddings)</code></pre>
+            </section>
+
+            <section>
+                <h2>Búsqueda por Similitud</h2>
+                <pre><code class="python"># Buscar documentos similares
+query = "¿Qué es Python?"
+resultados = vector_store.similarity_search(query, k=2)
+
+for resultado in resultados:
+    print(f"- {resultado.page_content}")
+
+# Output:
+# - Python es lenguaje interpretado
+# - JavaScript para desarrollo web</code></pre>
+            </section>
+
+            <section>
+                <h2>Búsqueda con Scores</h2>
+                <pre><code class="python">resultados = vector_store.similarity_search_with_relevance_scores(
+    "¿Qué es Python?",
+    k=3
+)
+
+for documento, score in resultados:
+    print(f"({score:.2%}) {documento.page_content}")
+
+# Output:
+# (98.5%) Python es lenguaje interpretado
+# (42.1%) JavaScript para desarrollo web
+# (38.9%) Rust es lenguaje seguro y rápido</code></pre>
+            </section>
+
+            <section>
+                <h2>MMR - Resultados Diversos</h2>
+                <p>A veces quieres variedad, no solo lo más similar</p>
+                <pre><code class="python"># Sin MMR: los 3 resultados muy similares
+resultados = vector_store.similarity_search("lenguaje", k=3)
+
+# Con MMR: similares pero diversos
+resultados = vector_store.max_marginal_relevance_search(
+    "lenguaje",
+    k=3,
+    fetch_k=10  # Busca 10, devuelve 3 más diversos
+)
+
+# Sin MMR: [99% similar, 98%, 97%]
+# Con MMR: [99% similar, 65%, 50%] (más variedad)</code></pre>
+            </section>
+
+            <section>
+                <h2>RAG - Patrón Completo</h2>
+                <p>RAG combina tres pasos:</p>
+                <ul>
+                    <li><strong>Retrieve:</strong> Buscar documentos relevantes</li>
+                    <li><strong>Augment:</strong> Incluirlos en el prompt</li>
+                    <li><strong>Generate:</strong> LLM genera respuesta basada en docs</li>
+                </ul>
+                <pre><code>Pregunta → Vector Store → Docs [1,2,3]
+                    ↓
+Prompt: "Basado en: {docs}, responde: {pregunta}"
+                    ↓
+LLM → Respuesta enriquecida</code></pre>
+            </section>
+
+            <!-- MÓDULO 11: Patrones y Arquitectura (8 slides) -->
+            <section>
+                <h1>Patrones y Arquitectura</h1>
+            </section>
+
+            <section>
+                <h2>Patrón Sequential (Secuencial)</h2>
+                <p>Ejecutar cadenas una tras otra, cada una refinando resultado</p>
+                <pre><code class="python">clasificador = PromptTemplate.from_template(
+    "¿Es técnica o general? {pregunta}"
+) | llm
+
+respondedor_tecnico = PromptTemplate.from_template(
+    "Como experto técnico: {pregunta}"
+) | llm
+
+def pipeline(pregunta):
+    clasificacion = clasificador.invoke({"pregunta": pregunta})
+    if "técnica" in clasificacion.lower():
+        return respondedor_tecnico.invoke({"pregunta": pregunta})
+    return respondedor_general.invoke({"pregunta": pregunta})</code></pre>
+            </section>
+
+            <section>
+                <h2>Patrón Branching (Bifurcación)</h2>
+                <pre><code class="python">from langchain_core.runnables import RunnableBranch
+
+rama_programacion = PromptTemplate.from_template(
+    "Eres experto en programación. {pregunta}"
+) | llm
+
+rama_general = PromptTemplate.from_template(
+    "Eres asistente general. {pregunta}"
+) | llm
+
+rama = RunnableBranch(
+    (lambda x: "código" in x["pregunta"].lower(), rama_programacion),
+    rama_general
+)
+
+resultado = rama.invoke({"pregunta": "¿Cómo programar?"})</code></pre>
+            </section>
+
+            <section>
+                <h2>Patrón Fallback (Respaldo)</h2>
+                <p>Si una cadena falla, usa respaldo</p>
+                <pre><code class="python">cadena_principal = PromptTemplate.from_template(
+    "Eres experto. {pregunta}"
+) | llm
+
+cadena_respaldo = PromptTemplate.from_template(
+    "Responde simplemente: {pregunta}"
+) | llm
+
+cadena_segura = cadena_principal.with_fallbacks([cadena_respaldo])
+
+# Si principal falla, usa respaldo automáticamente
+resultado = cadena_segura.invoke({"pregunta": "..."})</code></pre>
+            </section>
+
+            <section>
+                <h2>Patrón Map-Reduce</h2>
+                <p>Procesar múltiples documentos en paralelo, luego combinar</p>
+                <pre><code>Documentos: [Doc1, Doc2, Doc3, Doc4]
+         ↓
+    [Map en paralelo]
+[Resumen1] [Resumen2] [Resumen3] [Resumen4]
+         ↓
+    [Reduce/Combinar]
+    Resumen Final</code></pre>
+                <p>Útil para analizar muchos documentos largos</p>
+            </section>
+
+            <section>
+                <h2>Patrón Router (Enrutador)</h2>
+                <pre><code class="python">def router(entrada):
+    """Enruta según tipo de pregunta"""
+    pregunta = entrada["pregunta"].lower()
+
+    if "matemáticas" in pregunta or "calcular" in pregunta:
+        return cadena_matematicas
+    elif "historia" in pregunta or "cuando" in pregunta:
+        return cadena_historia
+    elif "programación" in pregunta or "código" in pregunta:
+        return cadena_programacion
+    else:
+        return cadena_general
+
+cadena_router = RunnableLambda(router)</code></pre>
+            </section>
+
+            <section>
+                <h2>Composición Avanzada</h2>
+                <pre><code class="python"># Combinar múltiples patrones
+cadena_compleja = (
+    RunnableLambda(validar_entrada)
+    | RunnableBranch(
+        (es_tecnica, rama_tecnica | parser_tecnico),
+        (es_general, rama_general | parser_general)
+    )
+    | RunnableLambda(post_procesar)
+    | output_parser
+)
+
+resultado = cadena_compleja.invoke({"pregunta": "..."})</code></pre>
+            </section>
+
+            <section>
+                <h2>Arquitectura de Sistema Real</h2>
+                <pre><code>┌────────────┐
+│  Usuario   │
+└─────┬──────┘
+      │
+┌─────▼─────────┐
+│  FastAPI      │
+│  /chat /ask   │
+└─────┬─────────┘
+      │
+  ┌───┴───┬───────┐
+┌─▼─┐ ┌──▼──┐ ┌──▼──┐
+│Chat│ │Agent│ │ RAG │
+└─┬─┘ └──┬──┘ └──┬──┘
+  └──────┼───────┘
+    ┌────▼────┐
+    │Ollama LLM│
+    └──────────┘</code></pre>
+            </section>
+
+            <section>
+                <h2>Mejores Prácticas de Arquitectura</h2>
+                <ul>
+                    <li><strong>Separación de responsabilidades:</strong> Cada componente una tarea</li>
+                    <li><strong>Reutilización:</strong> Define prompts y parsers una vez</li>
+                    <li><strong>Configuración centralizada:</strong> Un solo lugar para configuración</li>
+                    <li><strong>Error handling en cada capa:</strong> Manejo robusto de errores</li>
+                    <li><strong>Logging comprehensivo:</strong> Trazabilidad de operaciones</li>
+                    <li><strong>Testing unitario:</strong> Cada componente testeado</li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 12: Casos de Uso Prácticos (7 slides) -->
+            <section>
+                <h1>Casos de Uso Prácticos</h1>
+            </section>
+
+            <section>
+                <h2>Chatbot Conversacional</h2>
+                <pre><code class="python">class ChatAssistant:
+    def __init__(self):
+        self.llm = Ollama(model="mistral")
+        self.memoria = ConversationBufferMemory(return_messages=True)
+        self.prompt = ChatPromptTemplate.from_messages([
+            ("system", "Eres asistente amable"),
+            ("placeholder", "{chat_history}"),
+            ("user", "{input}")
+        ])
+        self.cadena = self.prompt | self.llm
+
+    def chat(self, user_input):
+        historial = self.memoria.load_memory_variables({})
+        respuesta = self.cadena.invoke({
+            "chat_history": historial['chat_history'],
+            "input": user_input
+        })
+        self.memoria.save_context(
+            {"input": user_input}, {"output": respuesta}
+        )
+        return respuesta</code></pre>
+            </section>
+
+            <section>
+                <h2>Sistema RAG para Documentos</h2>
+                <pre><code class="python">from langchain.chains import RetrievalQA
+
+textos = [
+    "Revolución Francesa fue movimiento (1789-1799)",
+    "Causó cambios en sociedad europea",
+    "Líderes: Robespierre, Danton, Marat"
+]
+
+documentos = [Document(page_content=t) for t in textos]
+embeddings = OllamaEmbeddings(model="mistral")
+vector_store = FAISS.from_documents(documentos, embeddings)
+
+rag_chain = RetrievalQA.from_chain_type(
+    llm=llm,
+    chain_type="stuff",
+    retriever=vector_store.as_retriever(search_kwargs={"k": 2})
+)</code></pre>
+            </section>
+
+            <section>
+                <h2>Agente Autónomo Matemático</h2>
+                <pre><code class="python">@tool
+def calcular(expresion: str) -> float:
+    """Calcula expresión matemática"""
+    return eval(expresion)
+
+@tool
+def convertir_a_texto(numero: float) -> str:
+    """Convierte número a texto en español"""
+    # Implementación de conversión
+    return texto
+
+agente = create_react_agent(llm, [calcular, convertir_a_texto], prompt)
+executor = AgentExecutor(agent=agente, tools=[...])
+
+resultado = executor.invoke({
+    "input": "Calcula 25 * 17 y dime en texto"
+})</code></pre>
+            </section>
+
+            <section>
+                <h2>Análisis de Documentos PDF</h2>
+                <pre><code class="python">from langchain_community.document_loaders import PyPDFLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+
+# Cargar PDF
+loader = PyPDFLoader("contrato.pdf")
+documentos = loader.load()
+
+# Dividir en chunks
+text_splitter = RecursiveCharacterTextSplitter(
+    chunk_size=1000,
+    chunk_overlap=200
+)
+chunks = text_splitter.split_documents(documentos)
+
+# Crear vector store
+vector_store = FAISS.from_documents(chunks, embeddings)
+
+# Sistema Q&A
+qa_chain = RetrievalQA.from_chain_type(llm, retriever=vector_store.as_retriever())</code></pre>
+            </section>
+
+            <section>
+                <h2>Sistema de Clasificación</h2>
+                <pre><code class="python">from pydantic import BaseModel, Field
+
+class Clasificacion(BaseModel):
+    categoria: str = Field(description="Categoría del texto")
+    confianza: float = Field(description="Confianza 0-1")
+    razon: str = Field(description="Razón de clasificación")
+
+parser = PydanticOutputParser(pydantic_object=Clasificacion)
+
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "Clasifica el siguiente texto"),
+    ("user", "{texto}"),
+    ("user", "{format_instructions}")
+])
+
+cadena = prompt | llm | parser
+resultado = cadena.invoke({
+    "texto": "Me encanta este producto",
+    "format_instructions": parser.get_format_instructions()
+})</code></pre>
+            </section>
+
+            <section>
+                <h2>Generador de Resúmenes</h2>
+                <pre><code class="python">from langchain.chains.summarize import load_summarize_chain
+
+# Documento largo
+documento_largo = Document(page_content="..." * 10000)
+
+# Estrategia map_reduce para documentos grandes
+cadena_resumen = load_summarize_chain(
+    llm,
+    chain_type="map_reduce",
+    verbose=True
+)
+
+resumen = cadena_resumen.run([documento_largo])
+print(resumen)</code></pre>
+            </section>
+
+            <section>
+                <h2>Extractor de Información Estructurada</h2>
+                <pre><code class="python">class InformacionContacto(BaseModel):
+    nombre: str
+    email: str
+    telefono: str
+    empresa: str
+
+parser = PydanticOutputParser(pydantic_object=InformacionContacto)
+
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "Extrae información de contacto"),
+    ("user", "{texto}"),
+    ("user", "{format_instructions}")
+])
+
+cadena = prompt | llm | parser
+
+texto = "Soy Juan Pérez, juan@empresa.com, 666-123-456, TechCorp"
+info = cadena.invoke({
+    "texto": texto,
+    "format_instructions": parser.get_format_instructions()
+})</code></pre>
+            </section>
+
+            <!-- MÓDULO 13: Producción y Optimización (6 slides) -->
+            <section>
+                <h1>Producción y Optimización</h1>
+            </section>
+
+            <section>
+                <h2>Error Handling Robusto</h2>
+                <pre><code class="python">import logging
+from typing import Optional
+
+logger = logging.getLogger(__name__)
+
+def invocar_seguro(cadena, inputs: dict) -> Optional[str]:
+    try:
+        resultado = cadena.invoke(inputs)
+        logger.info(f"Éxito: {len(resultado)} caracteres")
+        return resultado
+    except TimeoutError:
+        logger.error("Timeout")
+        return "Sistema tardó demasiado"
+    except ValueError as e:
+        logger.error(f"Error validación: {e}")
+        return f"Input inválido: {str(e)}"
+    except Exception as e:
+        logger.critical(f"Error inesperado: {e}")
+        return "Error inesperado"</code></pre>
+            </section>
+
+            <section>
+                <h2>Caching para Rendimiento</h2>
+                <pre><code class="python">from langchain.cache import InMemoryCache
+import langchain
+import time
+
+langchain.llm_cache = InMemoryCache()
+
+llm = Ollama(model="mistral")
+
+# Primera llamada: 2.5 segundos
+inicio = time.time()
+respuesta1 = llm.invoke("¿Capital de Francia?")
+tiempo1 = time.time() - inicio
+
+# Segunda llamada (caché): 0.001 segundos
+inicio = time.time()
+respuesta2 = llm.invoke("¿Capital de Francia?")
+tiempo2 = time.time() - inicio
+
+print(f"Mejora: {tiempo1/tiempo2:.0f}x más rápido")</code></pre>
+            </section>
+
+            <section>
+                <h2>Batch Processing</h2>
+                <pre><code class="python"># Procesar múltiples items es más eficiente
+preguntas = [
+    {"pregunta": "¿Qué es Python?"},
+    {"pregunta": "¿Qué es JavaScript?"},
+    {"pregunta": "¿Qué es Rust?"},
+    {"pregunta": "¿Qué es Go?"}
+]
+
+# Forma lenta: invoke 4 veces (4 x 2s = 8s)
+# respuestas = [cadena.invoke(p) for p in preguntas]
+
+# Forma rápida: batch (3s total)
+respuestas = cadena.batch(preguntas)
+
+for pregunta, respuesta in zip(preguntas, respuestas):
+    print(f"{pregunta['pregunta']}: {respuesta[:50]}...")</code></pre>
+            </section>
+
+            <section>
+                <h2>Async/Await para Concurrencia</h2>
+                <pre><code class="python">import asyncio
+
+async def procesar_asincrono():
+    """Procesar múltiples requests concurrentemente"""
+    tareas = [
+        cadena.ainvoke({"pregunta": "¿Qué es Python?"}),
+        cadena.ainvoke({"pregunta": "¿Qué es JavaScript?"}),
+        cadena.ainvoke({"pregunta": "¿Qué es Rust?"})
+    ]
+
+    # Esperar todas (ejecutan en paralelo)
+    resultados = await asyncio.gather(*tareas)
+    return resultados
+
+# Ejecutar
+resultados = asyncio.run(procesar_asincrono())</code></pre>
+            </section>
+
+            <section>
+                <h2>Monitoring y Observabilidad</h2>
+                <pre><code class="python">import time
+from functools import wraps
+
+def monitor(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        inicio = time.time()
+        try:
+            resultado = func(*args, **kwargs)
+            duracion = time.time() - inicio
+            logger.info(f"{func.__name__} OK ({duracion:.2f}s)")
+            return resultado
+        except Exception as e:
+            duracion = time.time() - inicio
+            logger.error(f"{func.__name__} ERROR ({duracion:.2f}s): {e}")
+            raise
+    return wrapper
+
+@monitor
+def ejecutar_cadena(entrada):
+    return cadena.invoke(entrada)</code></pre>
+            </section>
+
+            <section>
+                <h2>Mejores Prácticas de Producción</h2>
+                <ul>
+                    <li><strong>Rate limiting:</strong> Limitar requests por segundo</li>
+                    <li><strong>Circuit breaker:</strong> Detener si servicio está caído</li>
+                    <li><strong>Retry logic:</strong> Reintentar operaciones fallidas</li>
+                    <li><strong>Timeout configurables:</strong> No esperar infinitamente</li>
+                    <li><strong>Métricas:</strong> Latencia, throughput, error rate</li>
+                    <li><strong>Health checks:</strong> Endpoints para monitoreo</li>
+                    <li><strong>Versionado de prompts:</strong> Control de cambios</li>
+                </ul>
+            </section>
+
+            <!-- MÓDULO 14: Proyecto Final (5 slides) -->
+            <section>
+                <h1>Proyecto Final</h1>
+            </section>
+
+            <section>
+                <h2>Arquitectura del Sistema</h2>
+                <pre><code>┌─────────────────┐
+│   Usuario CLI   │
+└────────┬────────┘
+         │
+┌────────▼─────────────────┐
+│   SmartAssistant        │
+│  (Clase Principal)      │
+└─┬─────────┬──────────┬──┘
+  │         │          │
+┌─▼──┐  ┌──▼───┐  ┌───▼──┐
+│Chat│  │Agent │  │ RAG  │
+│Mem │  │Tools │  │Search│
+└─┬──┘  └──┬───┘  └───┬──┘
+  └────────┼──────────┘
+      ┌────▼─────┐
+      │Ollama LLM│
+      └──────────┘</code></pre>
+            </section>
+
+            <section>
+                <h2>Componentes del Proyecto</h2>
+                <ul>
+                    <li><strong>ConfigManager:</strong> Configuración centralizada</li>
+                    <li><strong>ChatModule:</strong> Conversaciones con memoria</li>
+                    <li><strong>RAGModule:</strong> Búsqueda en documentos</li>
+                    <li><strong>AgentModule:</strong> Tareas autónomas con herramientas</li>
+                    <li><strong>SmartAssistant:</strong> Orquestador principal</li>
+                    <li><strong>CLI:</strong> Interfaz de usuario</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Implementación - Chat Module</h2>
+                <pre><code class="python">class ChatModule:
+    def __init__(self, llm, memoria):
+        self.llm = llm
+        self.memoria = memoria
+        self.prompt = ChatPromptTemplate.from_messages([
+            ("system", "Eres asistente experto"),
+            ("placeholder", "{chat_history}"),
+            ("user", "{input}")
+        ])
+        self.cadena = self.prompt | self.llm
+
+    def chat(self, mensaje):
+        historial = self.memoria.load_memory_variables({})
+        respuesta = self.cadena.invoke({
+            "chat_history": historial["chat_history"],
+            "input": mensaje
+        })
+        self.memoria.save_context(
+            {"input": mensaje}, {"output": respuesta}
+        )
+        return respuesta</code></pre>
+            </section>
+
+            <section>
+                <h2>Demo y Uso del Proyecto</h2>
+                <pre><code class="python">from smart_assistant import SmartAssistant
+
+# Inicializar
+asistente = SmartAssistant()
+
+# Modo chat
+respuesta = asistente.chat("Hola, ¿cómo estás?")
+
+# Modo RAG
+asistente.cargar_documentos("./docs")
+respuesta = asistente.preguntar_documentos(
+    "¿Qué dice sobre Python?"
+)
+
+# Modo agente
+respuesta = asistente.ejecutar_tarea(
+    "Calcula 125 * 37 y convierte a texto"
+)
+
+print(respuesta)</code></pre>
+            </section>
+
+            <section>
+                <h2>Características del Proyecto Final</h2>
+                <ul>
+                    <li><strong>Multi-modal:</strong> Chat, RAG y Agente en uno</li>
+                    <li><strong>Configuración flexible:</strong> Archivo .env</li>
+                    <li><strong>Error handling completo:</strong> Manejo robusto</li>
+                    <li><strong>Logging estructurado:</strong> Trazabilidad</li>
+                    <li><strong>Testing incluido:</strong> Tests unitarios</li>
+                    <li><strong>Documentación:</strong> Código documentado</li>
+                    <li><strong>CLI intuitivo:</strong> Fácil de usar</li>
+                    <li><strong>Extensible:</strong> Fácil agregar funcionalidad</li>
+                </ul>
+            </section>
+
+            <!-- Conclusión (2 slides) -->
+            <section>
+                <h1>Conclusión y Próximos Pasos</h1>
+            </section>
+
+            <section>
+                <h2>Has Aprendido</h2>
+                <ul>
+                    <li>Conceptos fundamentales: LLMs, Prompts, Output Parsers</li>
+                    <li>Composición de cadenas con LCEL</li>
+                    <li>Memoria para conversaciones contextuales</li>
+                    <li>Agentes autónomos con herramientas</li>
+                    <li>RAG para búsqueda en documentos</li>
+                    <li>Patrones de producción (error handling, logging)</li>
+                    <li>Arquitectura de sistemas complejos</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Próximas Acciones</h2>
+                <p><strong>Recursos recomendados:</strong></p>
+                <ul>
+                    <li>Documentación oficial: https://docs.langchain.com</li>
+                    <li>GitHub: https://github.com/langchain-ai/langchain</li>
+                    <li>Discord: https://discord.gg/langchain</li>
+                    <li>Stack Overflow: tag <code>langchain</code></li>
+                </ul>
+                <p><strong>Próximos pasos:</strong></p>
+                <ul>
+                    <li>Ejecuta todos los ejemplos del curso</li>
+                    <li>Modifica los ejemplos para tus casos de uso</li>
+                    <li>Construye tu primer proyecto</li>
+                    <li>Contribuye con mejoras a LangChain</li>
+                </ul>
+            </section>
+
+            <section>
+                <h1>¡Gracias!</h1>
+                <p><strong>Has completado el curso de LangChain</strong></p>
+                <p>Ahora estás preparado para construir aplicaciones inteligentes con modelos de lenguaje</p>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/plugin/highlight/highlight.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: true,
+            transition: 'slide',
+            plugins: [ RevealHighlight ]
+        });
+    </script>
+</body>
+</html>

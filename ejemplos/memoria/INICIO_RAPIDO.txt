@@ -1,0 +1,285 @@
+================================================================================
+  INICIO RÁPIDO - EJEMPLOS DE MEMORIA Y CONTEXTO EN AGENTES
+================================================================================
+
+📦 CONTENIDO ENTREGADO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ 7 Ejemplos Funcionales:
+   01_tipos_memoria.py             → 5 tipos de memoria (neurobiológica)
+   02_gestion_estado.py            → State + Event Sourcing + Persistencia
+   03_buffer_contexto.py           → Límites contexto en LLMs
+   04_embeddings_busqueda.py       → Embeddings + Búsqueda Semántica
+   05_rag_retrieval.py             → RAG (Retrieval-Augmented Generation)
+   06_memoria_conversacional.py    → Conversaciones + NER + Privacidad
+   07_memoria_jerarquica.py        → Arquitectura Jerárquica
+
+✅ Documentación:
+   README.md                       → Guía completa (500+ líneas)
+   INDICE_CONTENIDOS.md            → Mapa de contenidos
+   ENTREGA_FINAL.md                → Resumen ejecutivo
+   INICIO_RAPIDO.txt               → Este archivo
+
+✅ Testing:
+   test_ejemplos.py                → Suite de 7 pruebas (todas pasan ✓)
+
+📊 ESTADÍSTICAS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Código Python:      ~2,800 líneas
+Documentación:      ~1,300 líneas
+Total:              ~5,100 líneas
+
+Clases:             33
+Funciones:          223+
+Métodos:            180+
+
+Tamaño:             200 KB
+Dependencias:       ¡CERO! (opcional para integración)
+
+🚀 INICIO RÁPIDO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Verificar que funciona todo:
+   $ python test_ejemplos.py
+
+2. Ver prueba simple de tipos de memoria:
+   $ python 01_tipos_memoria.py | head -50
+
+3. Leer la guía completa:
+   $ cat README.md
+
+4. Ver índice de contenidos:
+   $ cat INDICE_CONTENIDOS.md
+
+📚 ORDEN RECOMENDADO DE APRENDIZAJE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Día 1: Fundamentos
+  $ python 01_tipos_memoria.py           (20 min)
+  → Aprendes: 5 tipos de memoria
+
+Día 2: Persistencia
+  $ python 02_gestion_estado.py          (25 min)
+  → Aprendes: State + Event Sourcing
+
+Día 3: Limitaciones Prácticas
+  $ python 03_buffer_contexto.py         (20 min)
+  → Aprendes: Límites de contexto
+
+Día 4: Búsqueda Inteligente
+  $ python 04_embeddings_busqueda.py     (25 min)
+  → Aprendes: Embeddings + Semántica
+
+Día 5: Generación Fundamentada
+  $ python 05_rag_retrieval.py           (25 min)
+  → Aprendes: RAG pipeline
+
+Día 6: Conversaciones Naturales
+  $ python 06_memoria_conversacional.py  (20 min)
+  → Aprendes: Coherencia conversacional
+
+Día 7: Arquitectura Avanzada
+  $ python 07_memoria_jerarquica.py      (25 min)
+  → Aprendes: Consolidación jerárquica
+
+Total: ~2 horas de ejecución + comprensión
+
+🔧 INTEGRACIÓN CON OLLAMA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Instalar Ollama:
+   https://ollama.ai
+
+2. En terminal 1, ejecutar servidor:
+   $ ollama serve
+
+3. En terminal 2, descargar modelo:
+   $ ollama pull mistral
+
+4. En tu código Python:
+   from langchain.llms import Ollama
+   llm = Ollama(model="mistral")
+   respuesta = llm("Tu pregunta aquí")
+
+5. Ver ejemplo de integración en:
+   → 05_rag_retrieval.py (pseudocódigo comentado)
+
+✅ VERIFICACIÓN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Ejecutar:
+$ python test_ejemplos.py
+
+Esperado:
+✅ 01_tipos_memoria: EXITOSA
+✅ 02_gestion_estado: EXITOSA
+✅ 03_buffer_contexto: EXITOSA
+✅ 04_embeddings_busqueda: EXITOSA
+✅ 05_rag_retrieval: EXITOSA
+✅ 06_memoria_conversacional: EXITOSA
+✅ 07_memoria_jerarquica: EXITOSA
+
+🎯 CONCEPTOS CLAVE POR ARCHIVO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+01: 5 Tipos Neurobiológicos
+    - Sensorial (milisegundos)
+    - Trabajo (segundos-minutos)
+    - Episódica (específica)
+    - Semántica (abstracta)
+    - Procedural (habilidades)
+
+02: Persistencia y Recuperación
+    - Identidad + Estado
+    - Event Sourcing
+    - Snapshots
+    - Versionado
+
+03: Restricciones Prácticas
+    - Límites de contexto
+    - Estrategias de compresión
+    - Buffer circular
+    - FIFO, LRU, Relevancia
+
+04: Búsqueda Semántica
+    - Embeddings (vectores)
+    - Similitud coseno
+    - Keyword search
+    - Búsqueda híbrida
+
+05: RAG Pipeline
+    - Recuperación
+    - Construcción contexto
+    - Prompt enrichment
+    - Generación fundamentada
+
+06: Conversaciones
+    - Historial acumulativo
+    - NER (Named Entity Recognition)
+    - Anaphora resolution
+    - Privacidad (GDPR)
+
+07: Jerarquía Avanzada
+    - 3 niveles de abstracción
+    - Consolidación automática
+    - Olvido adaptativo
+    - Compresión
+
+📖 DOCUMENTACIÓN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+README.md:
+  - Descripción detallada de cada ejemplo
+  - Requisitos e instalación
+  - Quickstart
+  - Mapeo a temario
+  - Integración Ollama+LangChain
+  - Troubleshooting
+
+INDICE_CONTENIDOS.md:
+  - Estructura de archivos
+  - Correlación con temario
+  - Guía de ejecución
+  - Casos de uso
+  - FAQ
+  - Checklist de aprendizaje
+
+ENTREGA_FINAL.md:
+  - Resumen ejecutivo
+  - Listado de entregables
+  - Estadísticas
+  - Checklist de entrega
+
+🎓 CHECKLIST DE APRENDIZAJE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Después de completar todos los ejemplos, deberías saber:
+
+✓ Entiendo 5 tipos de memoria humana
+✓ Sé cómo guardar y recuperar estado (event sourcing)
+✓ Conozco limitaciones de contexto en LLMs
+✓ Puedo hacer búsqueda semántica
+✓ Sé qué es RAG y por qué reduce alucinaciones
+✓ Entiendo coreference resolution
+✓ Sé cómo consolidar memoria en jerarquías
+✓ Puedo integrar con Ollama en mis proyectos
+
+💡 TIPS ÚTILES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Modificar parámetros en los ejemplos:
+   - Cambiar capacidad de memoria de trabajo (línea ~45 en ejemplo 1)
+   - Cambiar max_tokens en buffer (línea ~150 en ejemplo 3)
+   - Cambiar modelos y estrategias
+
+2. Combinar ejemplos:
+   - Usar RAG (05) con Memoria Conversacional (06)
+   - Integrar Buffer (03) con Embeddings (04)
+   - Agregar Jerarquía (07) a Gestión de Estado (02)
+
+3. Para producción:
+   - Reemplazar GeneradorEmbeddings → SentenceTransformer
+   - Reemplazar IndiceVectorial → Pinecone/Weaviate
+   - Reemplazar respuesta simulada → Ollama/OpenAI
+
+❓ PREGUNTAS FRECUENTES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+P: ¿Por dónde empiezo?
+R: Ejecuta test_ejemplos.py, luego lee README.md
+
+P: ¿Necesito instalar algo?
+R: No, los ejemplos funcionan sin dependencias. Ollama es opcional.
+
+P: ¿Puedo usar esto en producción?
+R: Son educativos, pero están diseñados para fácil adaptación.
+
+P: ¿Cómo integro con mi modelo LLM?
+R: Ver ejemplo 05_rag_retrieval.py, sección "Integración con Ollama"
+
+P: ¿Dónde está el temario completo?
+R: En /home/rojaldo/cursos/agents/02-memoria-contexto.adoc
+
+🔗 REFERENCIAS RÁPIDAS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+- LangChain: https://python.langchain.com
+- Ollama: https://ollama.ai
+- Sentence Transformers: https://www.sbert.net
+- Papers: "Attention is All You Need", "RAG" (Lewis et al.)
+
+📁 UBICACIÓN DE ARCHIVOS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+/home/rojaldo/cursos/agents/ejemplos/memoria/
+├── 01_tipos_memoria.py
+├── 02_gestion_estado.py
+├── 03_buffer_contexto.py
+├── 04_embeddings_busqueda.py
+├── 05_rag_retrieval.py
+├── 06_memoria_conversacional.py
+├── 07_memoria_jerarquica.py
+├── test_ejemplos.py
+├── README.md
+├── INDICE_CONTENIDOS.md
+├── ENTREGA_FINAL.md
+└── INICIO_RAPIDO.txt (este archivo)
+
+✨ ¡LISTO PARA APRENDER!
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Comienza ejecutando:
+  $ python test_ejemplos.py
+
+Luego lee:
+  $ cat README.md
+
+Después ejecuta cada ejemplo:
+  $ python 01_tipos_memoria.py
+
+¡Disfruta aprendiendo sobre memoria y contexto en agentes de IA! 🚀
+
+================================================================================
+Versión: 1.0 | Noviembre 2024 | Estado: ✅ COMPLETADO
+================================================================================

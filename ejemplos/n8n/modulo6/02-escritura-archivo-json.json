@@ -1,0 +1,119 @@
+{
+  "name": "M6.2 - Escritura de Datos en Archivos JSON",
+  "nodes": [
+    {
+      "parameters": {
+        "triggerTimes": {
+          "item": [
+            {
+              "hour": 8,
+              "minute": 0
+            }
+          ]
+        }
+      },
+      "id": "start",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [100, 300]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "datos",
+              "value": "{\"usuarios\": [{\"id\": 1, \"nombre\": \"Juan\", \"email\": \"juan@example.com\"}, {\"id\": 2, \"nombre\": \"María\", \"email\": \"maria@example.com\"}]}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "set-data",
+      "name": "Set Data - Crear Estructura JSON",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [300, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Convertir string JSON en objeto y procesarlo\nconst datos = JSON.parse($input.first().json.datos);\nreturn {\n  json: {\n    datos: datos,\n    timestamp: new Date().toISOString(),\n    total_usuarios: datos.usuarios.length\n  }\n};"
+      },
+      "id": "code-process",
+      "name": "Code - Procesar JSON",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "/tmp/n8n_usuarios.json",
+        "fileContent": "{{ JSON.stringify($input.first().json, null, 2) }}"
+      },
+      "id": "write-file",
+      "name": "Write File - Guardar JSON",
+      "type": "n8n-nodes-base.writeFile",
+      "typeVersion": 1,
+      "position": [700, 300]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "fileName": "/tmp/n8n_usuarios.json"
+      },
+      "id": "read-file",
+      "name": "Read File - Verificar Lectura",
+      "type": "n8n-nodes-base.readFile",
+      "typeVersion": 1,
+      "position": [900, 300]
+    }
+  ],
+  "connections": {
+    "start": {
+      "main": [
+        [
+          {
+            "node": "set-data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set-data": {
+      "main": [
+        [
+          {
+            "node": "code-process",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "code-process": {
+      "main": [
+        [
+          {
+            "node": "write-file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "write-file": {
+      "main": [
+        [
+          {
+            "node": "read-file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

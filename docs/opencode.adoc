@@ -1,0 +1,112 @@
+= Guía de Uso de OpenCode
+:doctype: book
+:toc:
+:toclevels: 4
+:sectnums:
+:icons: font
+:source-highlighter: highlight.js
+:highlightjsdir: https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0
+:highlightjs-theme: atom-one-light
+:data-uri:
+
+== Introducción
+
+OpenCode es una herramienta orientada al desarrollo colaborativo con modelos locales y remotos de inteligencia artificial.  
+Permite editar, ejecutar y depurar código asistido por IA dentro de entornos locales o integraciones con herramientas como VS Code y Ollama.
+
+== Requisitos Previos
+
+* Tener instalado Node.js 18 o superior.
+* Docker o Podman para entornos aislados (opcional).
+* Acceso a OpenCode desde la línea de comandos o mediante interfaz web.
+
+== Instalación
+
+[source,bash]
+----
+# Clonar el repositorio oficial
+git clone https://github.com/opencodeai/opencode.git
+cd opencode
+
+# Instalar dependencias
+npm install
+
+# Ejecutar OpenCode localmente
+npm run dev
+----
+
+== Configuración Inicial
+
+[source,json]
+----
+{
+  "model": "llama3",
+  "api": {
+    "endpoint": "http://localhost:11434/api"
+  },
+  "workspace": {
+    "path": "~/proyectos/codigo"
+  }
+}
+----
+
+== Conexión con Modelos Locales
+
+[source,bash]
+----
+# Verificar que Ollama está corriendo
+ollama serve
+
+# Listar modelos disponibles
+ollama list
+
+# Conectar OpenCode con Ollama
+opencode connect --ollama http://localhost:11434
+----
+
+== Uso Básico
+
+* Crear un archivo de proyecto:
++
+[source,bash]
+----
+opencode new proyecto-demo
+----
+
+* Ejecutar el editor asistido:
++
+[source,bash]
+----
+opencode edit src/index.js
+----
+
+* Solicitar sugerencias de código:
++
+[source,bash]
+----
+opencode suggest "optimizar función de búsqueda en index.js"
+----
+
+== Integración con VS Code
+
+1. Instalar la extensión "OpenCode Assistant".
+2. Configurar el endpoint local de la siguiente forma:
++
+[source,json]
+----
+{
+  "opencode.endpoint": "http://localhost:5173/api"
+}
+----
+3. Usar el comando `OpenCode: Prompt` en la paleta de comandos (Ctrl+Shift+P).
+
+== Solución de Problemas
+
+* **El modelo no responde:** Asegúrate de que Ollama o el servidor remoto esté activo.  
+* **Error de conexión:** Verifica las variables de entorno y los permisos de red.  
+* **No carga el entorno:** Borra la carpeta `.opencode_cache` y reinicia el servicio.
+
+== Recursos Adicionales
+
+* Documentación oficial: consultar el README del proyecto.
+* Comunidad: foros y canal de Discord de OpenCode.

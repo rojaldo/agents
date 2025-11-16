@@ -1,0 +1,45 @@
+{
+  "sistema": "Q&A sobre Documentos",
+  "documentos_totales": 3,
+  "preguntas_procesadas": 4,
+  "resultados": [
+    {
+      "pregunta": "¿Qué es Python y para qué sirve?",
+      "documentos_encontrados": 3,
+      "titulos_documentos": [
+        "Introducción a Python",
+        "RAG - Retrieval-Augmented Generation",
+        "Ollama - Modelos Locales"
+      ],
+      "respuesta": "Basándome en los documentos encontrados:\n\nCONTEXTO:\n\nPython es un lenguaje de programación interpretado de alto nivel.\nFue creado por Guido van Rossum y lanzado en 1991.\nSe caracteriza por su sintaxis simple y legible.\nPython es ampliamente usado en:\n- Desarrollo web (Django, Flask)\n- Ciencia de datos (Pandas, NumPy)\n- Machine learning (TensorFlow, PyTorch)\n- Automatización de tareas\n- Scripting y desarrollo de herramientas\nEs gratuito y de código abierto.\n                \n---\n\nRAG es una arquitectura que combina recuperación de documentos con ge...\n\nRESPUESTA:\nTu pregunta sobre '¿Qué es Python y para qué sirve?' se relaciona con los temas mencionados arriba.\nLos documentos proporcionan información detallada sobre este tema.\n"
+    },
+    {
+      "pregunta": "¿Cómo funciona RAG?",
+      "documentos_encontrados": 1,
+      "titulos_documentos": [
+        "RAG - Retrieval-Augmented Generation"
+      ],
+      "respuesta": "Basándome en los documentos encontrados:\n\nCONTEXTO:\n\nRAG es una arquitectura que combina recuperación de documentos con generación de texto.\nEl proceso funciona en dos fases:\n1. Recuperación: Buscar documentos relevantes en una base de datos\n2. Generación: Usar esos documentos para generar una respuesta\n\nVentajas de RAG:\n- Respuestas más precisas basadas en datos reales\n- Fácil de actualizar con nuevos documentos\n- Mantiene privacidad de datos sensibles\n- Permite citar fuentes de información\n- Funciona con modelos más pequeños\n\nRAG es especialmen...\n\nRESPUESTA:\nTu pregunta sobre '¿Cómo funciona RAG?' se relaciona con los temas mencionados arriba.\nLos documentos proporcionan información detallada sobre este tema.\n"
+    },
+    {
+      "pregunta": "¿Puedo usar Ollama en mi computadora?",
+      "documentos_encontrados": 3,
+      "titulos_documentos": [
+        "Ollama - Modelos Locales",
+        "RAG - Retrieval-Augmented Generation",
+        "Introducción a Python"
+      ],
+      "respuesta": "Basándome en los documentos encontrados:\n\nCONTEXTO:\n\nOllama es una herramienta que permite ejecutar modelos de lenguaje localmente.\nPrincipales características:\n- Modelos disponibles: Mistral, Llama2, Neural-Chat, TinyLlama\n- No requiere GPUs potentes\n- Todo se ejecuta en tu máquina (sin APIs externas)\n- Privacidad total de los datos\n\nUso básico:\nollama pull mistral\nollama serve\n\nModelos recomendados:\n- Mistral 7B: Mejor relación velocidad/calidad\n- Llama2 7B: Muy versátil\n- TinyLlama 1.1B: Rápido para desarrollo\n                \n---\n\nRAG es una ...\n\nRESPUESTA:\nTu pregunta sobre '¿Puedo usar Ollama en mi computadora?' se relaciona con los temas mencionados arriba.\nLos documentos proporcionan información detallada sobre este tema.\n"
+    },
+    {
+      "pregunta": "¿Cuál es la diferencia entre Python y otros lenguajes?",
+      "documentos_encontrados": 3,
+      "titulos_documentos": [
+        "Introducción a Python",
+        "RAG - Retrieval-Augmented Generation",
+        "Ollama - Modelos Locales"
+      ],
+      "respuesta": "Basándome en los documentos encontrados:\n\nCONTEXTO:\n\nPython es un lenguaje de programación interpretado de alto nivel.\nFue creado por Guido van Rossum y lanzado en 1991.\nSe caracteriza por su sintaxis simple y legible.\nPython es ampliamente usado en:\n- Desarrollo web (Django, Flask)\n- Ciencia de datos (Pandas, NumPy)\n- Machine learning (TensorFlow, PyTorch)\n- Automatización de tareas\n- Scripting y desarrollo de herramientas\nEs gratuito y de código abierto.\n                \n---\n\nRAG es una arquitectura que combina recuperación de documentos con ge...\n\nRESPUESTA:\nTu pregunta sobre '¿Cuál es la diferencia entre Python y otros lenguajes?' se relaciona con los temas mencionados arriba.\nLos documentos proporcionan información detallada sobre este tema.\n"
+    }
+  ]
+}

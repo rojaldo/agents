@@ -1,0 +1,32 @@
+{
+  "ollama_disponible": false,
+  "sistema": "RAG Básico",
+  "modelo_recomendado": "N/A",
+  "preguntas_respondidas": 3,
+  "resultados": [
+    {
+      "pregunta": "¿Qué es RAG?",
+      "documentos_utilizados": [
+        "RAG es Retrieval-Augmented Generation. Combina búsqueda de documentos con generación de texto.",
+        "Los embeddings convierten texto en vectores numéricos para búsqueda semántica."
+      ],
+      "respuesta": "Basándome en el contexto proporcionado:\n\n- RAG es Retrieval-Augmented Generation. Combina búsqueda de documentos con generación de texto.\n- Los embeddings convierten texto en vectores numéricos para búsqueda semántica.\n\nLa respuesta es: Los concepto mencionados en el contexto son fundamentales para entender RAG. "
+    },
+    {
+      "pregunta": "¿Cómo funcionan los embeddings?",
+      "documentos_utilizados": [
+        "Los embeddings convierten texto en vectores numéricos para búsqueda semántica.",
+        "LangChain es un framework para construir aplicaciones con modelos de lenguaje."
+      ],
+      "respuesta": "Basándome en el contexto proporcionado:\n\n- Los embeddings convierten texto en vectores numéricos para búsqueda semántica.\n- LangChain es un framework para construir aplicaciones con modelos de lenguaje.\n\nLa respuesta es: Los concepto mencionados en el contexto son fundamentales para entender RAG. "
+    },
+    {
+      "pregunta": "¿Qué es LangChain?",
+      "documentos_utilizados": [
+        "RAG es Retrieval-Augmented Generation. Combina búsqueda de documentos con generación de texto.",
+        "Los embeddings convierten texto en vectores numéricos para búsqueda semántica."
+      ],
+      "respuesta": "Basándome en el contexto proporcionado:\n\n- RAG es Retrieval-Augmented Generation. Combina búsqueda de documentos con generación de texto.\n- Los embeddings convierten texto en vectores numéricos para búsqueda semántica.\n\nLa respuesta es: Los concepto mencionados en el contexto son fundamentales para entender RAG. "
+    }
+  ]
+}

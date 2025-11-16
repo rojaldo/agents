@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bases de Datos Vectoriales y de Grafos</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/theme/white.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-light.min.css">
+    <style>
+        .reveal { text-align: left; color: #555555; }
+        .reveal section { text-align: left; padding: 40px; display: flex; flex-direction: column; justify-content: flex-start; }
+        .reveal h1, .reveal h2, .reveal h3 { text-transform: none; text-align: left; color: #555555; }
+
+        /* Encabezados */
+        .reveal h1 { font-size: 1.05em; margin-bottom: 0.5em; }
+        .reveal h2 { font-size: 1em; margin-bottom: 0.5em; }
+        .reveal h3 { font-size: 0.75em; margin-bottom: 0.3em; }
+
+        /* Párrafos y énfasis */
+        .reveal p { font-size: 0.6em; margin: 0.3em 0; color: #555555; }
+        .reveal strong { font-size: 1em; font-weight: bold; }
+
+        /* Código */
+        .reveal pre { background: #f8f8f8; border: 1px solid #ddd; width: 100%; padding: 0.5em; margin: 0.5em 0; }
+        .reveal pre code { font-size: 0.7em; color: #555555; }
+
+        /* Listas y elementos */
+        .reveal ul { font-size: 0.55em; text-align: left; margin-left: 0.5em; color: #555555; }
+        .reveal li { margin: 0.3em 0; color: #555555; }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- INTRODUCCIÓN -->
+            <section>
+                <h1>Bases de Datos Vectoriales y de Grafos</h1>
+                <h2>Para Aplicaciones de IA Avanzadas</h2>
+                <p>Cómo almacenar, buscar y razonar sobre datos complejos</p>
+            </section>
+
+            <section>
+                <h2>¿Por qué Vectores y Grafos?</h2>
+                <ul>
+                    <li><strong>Vectores:</strong> Representar significado semántico en embeddings</li>
+                    <li><strong>Grafos:</strong> Modelar relaciones complejas entre entidades</li>
+                    <li><strong>Juntos:</strong> Sistemas de IA más inteligentes y explicables</li>
+                    <li>Bases de datos tradicionales no están optimizadas para esto</li>
+                    <li>Se necesitan estructuras especializadas</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Objetivos del Curso</h2>
+                <ul>
+                    <li>Entender vectores de embedding y búsqueda semántica</li>
+                    <li>Dominar ChromaDB, Weaviate, Qdrant, Milvus</li>
+                    <li>Aprender teoría de grafos y casos de uso</li>
+                    <li>Dominar Neo4j y ArangoDB</li>
+                    <li>Crear sistemas híbridos vectorial + grafo</li>
+                    <li>Optimizar para producción</li>
+                </ul>
+            </section>
+
+            <!-- PARTE I: VECTORIALES -->
+            <section>
+                <h2>PARTE I: Bases de Datos Vectoriales</h2>
+            </section>
+
+            <section>
+                <h3>¿Qué son Vectores?</h3>
+                <ul>
+                    <li><strong>Embedding:</strong> Representación numérica de texto/imagen
+                        <ul>
+                            <li>Ejemplo: "El gato está en la mesa" → [0.2, -0.5, 0.8, ...]</li>
+                        </ul>
+                    </li>
+                    <li><strong>Dimensión:</strong> Número de coordenadas (típicamente 384-1536)</li>
+                    <li><strong>Significado semántico:</strong> Palabras similares → vectores similares</li>
+                    <li><strong>Generación:</strong> Modelos como OpenAI, Ollama, Hugging Face</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Similitud en Espacios Vectoriales</h3>
+                <ul>
+                    <li><strong>Cosine Similarity:</strong> Ángulo entre vectores
+                        <ul>
+                            <li>Rango: -1 a 1 (1 = idénticos)</li>
+                            <li>Más usada en NLP</li>
+                        </ul>
+                    </li>
+                    <li><strong>Euclidean Distance:</strong> Distancia geométrica
+                        <ul>
+                            <li>Rango: 0 a ∞ (0 = idénticos)</li>
+                            <li>Para espacios de alta dimensión</li>
+                        </ul>
+                    </li>
+                    <li><strong>Manhattan Distance:</strong> Distancia en grid
+                        <ul>
+                            <li>Más rápida de calcular</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Ventajas de Bases de Datos Vectoriales</h3>
+                <ul>
+                    <li><strong>Búsqueda Semántica:</strong> No exacta, por significado
+                        <ul>
+                            <li>"¿Cuándo se creó?" es similar a "¿En qué año fue fundada?"</li>
+                        </ul>
+                    </li>
+                    <li><strong>Escalable:</strong> Millones de vectores en milisegundos</li>
+                    <li><strong>Relevancia:</strong> Scores de similaridad para ranking</li>
+                    <li><strong>Flexibilidad:</strong> Metadatos + búsqueda vectorial</li>
+                    <li><strong>RAG Friendly:</strong> Base perfecta para Retrieval Augmented Generation</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Casos de Uso Vectoriales</h3>
+                <ul>
+                    <li><strong>RAG:</strong> Recuperar contexto relevante para LLMs</li>
+                    <li><strong>Búsqueda Semántica:</strong> Google, código, documentos</li>
+                    <li><strong>Recomendación:</strong> Películas, productos, contenido</li>
+                    <li><strong>Detección de Duplicados:</strong> Plagiarismo, fraude</li>
+                    <li><strong>Clustering:</strong> Agrupar documentos similares</li>
+                    <li><strong>Clasificación:</strong> Sin entrenar nuevos modelos</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Módulo 1: ChromaDB</h2>
+            </section>
+
+            <section>
+                <h3>ChromaDB: Introducción</h3>
+                <ul>
+                    <li><strong>¿Qué es?</strong> Base de datos vectorial ligera y open-source</li>
+                    <li><strong>Instalación:</strong> <code>pip install chromadb</code></li>
+                    <li><strong>Ventajas:</strong>
+                        <ul>
+                            <li>Local y simple (no requiere servidor)</li>
+                            <li>Excelente para prototipado rápido</li>
+                            <li>Integrado con LangChain</li>
+                            <li>Embeddings locales con Ollama</li>
+                        </ul>
+                    </li>
+                    <li><strong>Desventajas:</strong> No ideal para escala masiva (>100M vectores)</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>ChromaDB Básico</h3>
+                <pre style="font-size: 0.5em;"><code>import chromadb
+
+client = chromadb.Client()
+collection = client.create_collection(name="docs")
+
+collection.add(
+  documents=["El gato saltó", "Un perro ladró"],
+  metadatas=[{"type": "gato"}, {"type": "perro"}],
+  ids=["1", "2"]
+)
+
+results = collection.query(
+  query_texts=["animal saltando"],
+  n_results=2
+)</code></pre>
+                <ul>
+                    <li>Embeddings generados automáticamente (default: sentence-transformers)</li>
+                    <li>Búsqueda por similaridad inmediata</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>ChromaDB con LangChain</h3>
+                <ul>
+                    <li><strong>Integración perfecta:</strong> Chroma como vector store de LangChain</li>
+                    <li><strong>Flujo:</strong>
+                        <ul>
+                            <li>1. Cargar documentos (PDFs, texto)</li>
+                            <li>2. Split en chunks</li>
+                            <li>3. Generar embeddings</li>
+                            <li>4. Guardar en Chroma</li>
+                            <li>5. Usar como retriever en RAG</li>
+                        </ul>
+                    </li>
+                    <li><strong>Ventaja:</strong> Código muy limpio y Pythonic</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>ChromaDB: Operaciones Avanzadas</h3>
+                <ul>
+                    <li><strong>Filtrado por Metadata:</strong> where="type == 'importante'"</li>
+                    <li><strong>MMR (Maximum Marginal Relevance):</strong> Evitar duplicados en resultados</li>
+                    <li><strong>Delete:</strong> Eliminar documentos por ID</li>
+                    <li><strong>Update:</strong> Modificar documentos existentes</li>
+                    <li><strong>Get:</strong> Recuperar por ID sin query vector</li>
+                    <li><strong>Count:</strong> Total de documentos en collection</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>ChromaDB: Configuración de Embedding</h3>
+                <ul>
+                    <li><strong>Embedding Functions:</strong> Qué modelo usar
+                        <ul>
+                            <li>Default: sentence-transformers/all-MiniLM-L6-v2</li>
+                            <li>OpenAI: text-embedding-ada-002</li>
+                            <li>Ollama local: nomic-embed-text, mxbai-embed-large</li>
+                            <li>Hugging Face: cualquier modelo de embeddings</li>
+                        </ul>
+                    </li>
+                    <li><strong>Ventaja Ollama:</strong> Privacidad total, sin API key, offline</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>ChromaDB: Sistema RAG Completo</h3>
+                <ul>
+                    <li><strong>Flujo RAG:</strong>
+                        <ul>
+                            <li>1. Usuario pregunta: "¿Qué es chromadb?"</li>
+                            <li>2. Buscar documentos relacionados en Chroma</li>
+                            <li>3. Pasar top 3 resultados como contexto</li>
+                            <li>4. LLM genera respuesta con contexto</li>
+                            <li>5. Usuario obtiene respuesta precisa y fundamentada</li>
+                        </ul>
+                    </li>
+                    <li><strong>Implementación:</strong> RetrievalQA chain de LangChain</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>ChromaDB: Casos de Uso Prácticos</h3>
+                <ul>
+                    <li><strong>Sistema de Soporte:</strong> Documentos de ayuda indexados</li>
+                    <li><strong>Búsqueda de Código:</strong> Buscar funciones por descripción</li>
+                    <li><strong>Recomendación de Contenido:</strong> "Lectura relacionada"</li>
+                    <li><strong>Detección de Plagio:</strong> Comparar similarities entre documentos</li>
+                    <li><strong>Clustering:</strong> Agrupar documentos automáticamente</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>ChromaDB: Optimización</h3>
+                <ul>
+                    <li><strong>HNSW Index:</strong> Algoritmo de indexación rápido
+                        <ul>
+                            <li>efConstruction: 200 (default)</li>
+                            <li>efSearch: 10-50 (trade-off velocidad/recall)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Batch Operations:</strong> Agregar múltiples documentos a la vez</li>
+                    <li><strong>Persistence:</strong> Guardar en disco vs memoria</li>
+                    <li><strong>Benchmarking:</strong> Medir tiempo de query y recall</li>
+                </ul>
+            </section>
+
+            <!-- OTRAS BASES VECTORIALES -->
+            <section>
+                <h2>Módulo 2: Otras Bases Vectoriales</h2>
+            </section>
+
+            <section>
+                <h3>Weaviate</h3>
+                <ul>
+                    <li><strong>Características:</strong>
+                        <ul>
+                            <li>API GraphQL + REST</li>
+                            <li>Búsqueda híbrida (vectorial + full-text)</li>
+                            <li>Módulos de vectorización integrados</li>
+                        </ul>
+                    </li>
+                    <li><strong>Ventajas:</strong> Muy flexible, enterprise-ready</li>
+                    <li><strong>Desventajas:</strong> Más compleja que ChromaDB, requiere servidor</li>
+                    <li><strong>Ideal para:</strong> Sistemas grandes con múltiples tipos de búsqueda</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Qdrant</h3>
+                <ul>
+                    <li><strong>Características:</strong>
+                        <ul>
+                            <li>Muy rápida y optimizada</li>
+                            <li>REST y gRPC APIs</li>
+                            <li>Filtrado complejo de metadata</li>
+                        </ul>
+                    </li>
+                    <li><strong>Ventajas:</strong> Performance excepcional, escalable</li>
+                    <li><strong>Desventajas:</strong> Menos integraciones que otros</li>
+                    <li><strong>Ideal para:</strong> Producción con alto volumen de queries</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Milvus</h3>
+                <ul>
+                    <li><strong>Características:</strong>
+                        <ul>
+                            <li>Arquitectura distribuida</li>
+                            <li>Manejo masivo de datos (billones de vectores)</li>
+                            <li>Múltiples algoritmos de índice</li>
+                        </ul>
+                    </li>
+                    <li><strong>Ventajas:</strong> Escalabilidad extrema</li>
+                    <li><strong>Desventajas:</strong> Operacionalmente compleja</li>
+                    <li><strong>Ideal para:</strong> Escala masiva empresarial</li>
+                </ul>
+            </section>
+
+            <!-- COMPARATIVA -->
+            <section>
+                <h2>Comparativa de Bases Vectoriales</h2>
+            </section>
+
+            <section>
+                <h3>Matriz Comparativa</h3>
+                <ul>
+                    <li><strong>ChromaDB:</strong> Simple, local, rápida para prototipado</li>
+                    <li><strong>Weaviate:</strong> Flexible, hybrid search, GraphQL</li>
+                    <li><strong>Qdrant:</strong> Performance, escalable, REST/gRPC</li>
+                    <li><strong>Milvus:</strong> Masiva escala, distribuida, compleja</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>¿Cuál Elegir?</h3>
+                <ul>
+                    <li><strong>¿Prototipado rápido?</strong> → ChromaDB</li>
+                    <li><strong>¿Búsqueda híbrida?</strong> → Weaviate</li>
+                    <li><strong>¿Producción + performance?</strong> → Qdrant</li>
+                    <li><strong>¿Escala billones de vectores?</strong> → Milvus</li>
+                    <li><strong>¿Indeciso?</strong> → Comienza con ChromaDB, migra si creces</li>
+                </ul>
+            </section>
+
+            <!-- PARTE II: GRAFOS -->
+            <section>
+                <h2>PARTE II: Bases de Datos de Grafos</h2>
+            </section>
+
+            <section>
+                <h3>¿Qué son Grafos?</h3>
+                <ul>
+                    <li><strong>Nodo (Node):</strong> Entidad con propiedades
+                        <ul>
+                            <li>Ejemplo: Persona {nombre: "Juan", edad: 30}</li>
+                        </ul>
+                    </li>
+                    <li><strong>Relación (Edge):</strong> Conexión entre nodos
+                        <ul>
+                            <li>Ejemplo: Juan -[AMIGO_DE]-> María</li>
+                        </ul>
+                    </li>
+                    <li><strong>Propiedad:</strong> Datos en nodos y relaciones</li>
+                    <li><strong>Etiqueta:</strong> Tipo de nodo (Persona, Empresa, etc)</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Tipos de Grafos</h3>
+                <ul>
+                    <li><strong>Dirigido:</strong> Relaciones tienen dirección (A→B, no B→A)</li>
+                    <li><strong>No Dirigido:</strong> Relaciones bidireccionales (A-B)</li>
+                    <li><strong>Ponderado:</strong> Relaciones con peso (importancia, costo)</li>
+                    <li><strong>Heterogéneo:</strong> Múltiples tipos de nodos y relaciones</li>
+                    <li><strong>Etiquetado:</strong> Nodos y edges con etiquetas y propiedades</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Conceptos Avanzados de Grafos</h3>
+                <ul>
+                    <li><strong>Camino (Path):</strong> Secuencia de nodos conectados
+                        <ul>
+                            <li>Ejemplo: A → B → C → D</li>
+                        </ul>
+                    </li>
+                    <li><strong>Ciclo:</strong> Camino que regresa al nodo inicial
+                        <ul>
+                            <li>Detectar lazado de dinero (A→B→C→A)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Centralidad:</strong> Importancia de un nodo
+                        <ul>
+                            <li>Degree: Cuántas conexiones tiene</li>
+                            <li>Betweenness: Nodos intermedios en caminos</li>
+                        </ul>
+                    </li>
+                    <li><strong>Comunidades:</strong> Grupos densamente conectados</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Ventajas de Grafos vs Tablas</h3>
+                <ul>
+                    <li><strong>Relaciones Explícitas:</strong> No requiere JOINs complejos</li>
+                    <li><strong>Traversal Rápido:</strong> Navegar relaciones es O(1)</li>
+                    <li><strong>Patrones Naturales:</strong> Modelan bien jerarquías y redes</li>
+                    <li><strong>Análisis Complejo:</strong> Detección de comunidades, caminos</li>
+                    <li><strong>Escalabilidad:</strong> Eficientes incluso con millones de relaciones</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Casos de Uso de Grafos</h3>
+                <ul>
+                    <li><strong>Redes Sociales:</strong> Amigos, followers, mensajes</li>
+                    <li><strong>Recomendación:</strong> Qué le gustaría al usuario basado en amigos</li>
+                    <li><strong>Detección de Fraude:</strong> Ciclos sospechosos de transacciones</li>
+                    <li><strong>Knowledge Graphs:</strong> Entidades y sus relaciones (Wikipedia)</li>
+                    <li><strong>Rutas:</strong> Mapas, logística (camino más corto)</li>
+                    <li><strong>Organización:</strong> Estructura empresarial, dependencias</li>
+                </ul>
+            </section>
+
+            <!-- NEO4J -->
+            <section>
+                <h2>Módulo 3: Neo4j</h2>
+            </section>
+
+            <section>
+                <h3>Neo4j: Introducción</h3>
+                <ul>
+                    <li><strong>¿Qué es?</strong> Base de datos de grafos líder en la industria</li>
+                    <li><strong>Instalación:</strong> Docker o cloud (neo4j.com)</li>
+                    <li><strong>Ventajas:</strong>
+                        <ul>
+                            <li>Cypher: Lenguaje específico para grafos (fácil y poderoso)</li>
+                            <li>GDS (Graph Data Science): Algoritmos avanzados</li>
+                            <li>Excelente documentación</li>
+                            <li>Comunidad grande</li>
+                        </ul>
+                    </li>
+                    <li><strong>Versiones:</strong> Community (free) y Enterprise</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Cypher Básico</h3>
+                <pre style="font-size: 0.5em;"><code>CREATE (p:Persona {nombre: "Juan", edad: 30})
+
+MATCH (p:Persona) WHERE p.nombre = "Juan"
+RETURN p
+
+MATCH (p1:Persona)-[r:AMIGO_DE]->(p2:Persona)
+WHERE p1.nombre = "Juan"
+RETURN p2.nombre, r
+
+CREATE (p1:Persona {nombre: "Juan"})
+-[r:AMIGO_DE {desde: 2020}]->
+(p2:Persona {nombre: "María"})</code></pre>
+                <ul>
+                    <li>CREATE: Crear nodos y relaciones</li>
+                    <li>MATCH: Buscar patrones</li>
+                    <li>WHERE: Filtros</li>
+                    <li>RETURN: Qué devolver</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Neo4j con Python</h3>
+                <pre style="font-size: 0.5em;"><code>from neo4j import GraphDatabase
+
+driver = GraphDatabase.driver(
+  "bolt://localhost:7687",
+  auth=("neo4j", "password")
+)
+
+with driver.session() as session:
+  result = session.run(
+    "MATCH (p:Persona) RETURN p.nombre"
+  )
+  for record in result:
+    print(record["p.nombre"])</code></pre>
+                <ul>
+                    <li>Conexión simple y pythonic</li>
+                    <li>Sessions y transactions</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Neo4j: Patrones Avanzados</h3>
+                <ul>
+                    <li><strong>Amigos de Amigos:</strong> Usuarios que podrían interesarte
+                        <ul>
+                            <li>MATCH (yo:Usuario)-[:AMIGO_DE]->(amigo:Usuario)-[:AMIGO_DE]->(sugerido:Usuario)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Camino Más Corto:</strong> Distancia entre dos nodos</li>
+                    <li><strong>Detección de Ciclos:</strong> Lazos cerrados (fraude)</li>
+                    <li><strong>Influencers:</strong> Nodos con más conexiones (PageRank)</li>
+                    <li><strong>Comunidades:</strong> Agrupaciones naturales en grafo</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Neo4j: Modelado de Datos</h3>
+                <ul>
+                    <li><strong>Principios:</strong>
+                        <ul>
+                            <li>Entiende tu dominio primero</li>
+                            <li>Nodos = cosas, Relaciones = conexiones</li>
+                            <li>Propiedades = datos en nodos y relaciones</li>
+                            <li>Evitar nodos innecesarios</li>
+                        </ul>
+                    </li>
+                    <li><strong>Ejemplo Red Social:</strong>
+                        <ul>
+                            <li>Nodos: Usuario, Publicación, Comentario, Hashtag</li>
+                            <li>Relaciones: AMIGO_DE, ESCRIBIO, COMENTO, USA_HASHTAG</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Neo4j: Algoritmos GDS</h3>
+                <ul>
+                    <li><strong>PageRank:</strong> Importancia de nodos (Google)</li>
+                    <li><strong>Louvain:</strong> Detección de comunidades</li>
+                    <li><strong>Dijkstra:</strong> Camino más corto</li>
+                    <li><strong>Betweenness Centrality:</strong> Nodos "puentes"</li>
+                    <li><strong>Node Similarity:</strong> Qué tan parecidos son dos nodos</li>
+                    <li><strong>Ventaja:</strong> Implementaciones altamente optimizadas</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Caso de Uso: Sistema E-Commerce</h3>
+                <ul>
+                    <li><strong>Nodos:</strong> Usuarios, Productos, Órdenes, Categorías</li>
+                    <li><strong>Relaciones:</strong> COMPRO, CONTENIDO_EN, CATEGORIZADO_COMO</li>
+                    <li><strong>Queries Útiles:</strong>
+                        <ul>
+                            <li>Recomendaciones: "Usuarios como tú compraron esto"</li>
+                            <li>Inventario: "Productos en la misma categoría"</li>
+                            <li>Análisis: "Usuarios VIP (múltiples órdenes)"</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Caso de Uso: Detección de Fraude</h3>
+                <ul>
+                    <li><strong>Nodos:</strong> Transacciones, Cuentas, Direcciones</li>
+                    <li><strong>Relaciones:</strong> DE, HACIA, DESDE (IP/geolocalización)</li>
+                    <li><strong>Detecciones:</strong>
+                        <ul>
+                            <li>Ciclos: A→B→C→A (money laundering)</li>
+                            <li>Velocidad: Múltiples transacciones en segundos</li>
+                            <li>Outliers: Nodos con patrones inusuales</li>
+                        </ul>
+                    </li>
+                    <li><strong>Ventaja Neo4j:</strong> Queries de ciclos extremadamente rápidas</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Neo4j: Optimización</h3>
+                <ul>
+                    <li><strong>Índices:</strong> En propiedades frecuentemente buscadas
+                        <ul>
+                            <li>CREATE INDEX ON :Persona(email)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Constraints:</strong> Garantizar unicidad
+                        <ul>
+                            <li>CREATE CONSTRAINT ON (u:Usuario) ASSERT u.id IS UNIQUE</li>
+                        </ul>
+                    </li>
+                    <li><strong>Query Optimization:</strong> EXPLAIN para ver plan de ejecución</li>
+                    <li><strong>Bulk Loading:</strong> Importar millones de nodos eficientemente</li>
+                </ul>
+            </section>
+
+            <!-- OTRAS BASES DE GRAFOS -->
+            <section>
+                <h2>Módulo 4: Otras Bases de Grafos</h2>
+            </section>
+
+            <section>
+                <h3>ArangoDB</h3>
+                <ul>
+                    <li><strong>¿Qué es?</strong> Base de datos multi-modelo (docs + grafos)</li>
+                    <li><strong>Características:</strong>
+                        <ul>
+                            <li>Puedes usar como documento (JSON) o grafo</li>
+                            <li>AQL: Lenguaje poderoso similar a SQL</li>
+                            <li>Más flexible que Neo4j pero menos especializado</li>
+                        </ul>
+                    </li>
+                    <li><strong>Ideal para:</strong> Sistemas que necesitan flexibilidad</li>
+                    <li><strong>vs Neo4j:</strong> Neo4j es más especializado en grafos</li>
+                </ul>
+            </section>
+
+            <!-- HYBRID -->
+            <section>
+                <h2>Vectores + Grafos</h2>
+            </section>
+
+            <section>
+                <h3>Búsqueda Híbrida</h3>
+                <ul>
+                    <li><strong>Concepto:</strong> Combinar vectorial + grafo para máxima potencia</li>
+                    <li><strong>Ejemplo:</strong>
+                        <ul>
+                            <li>1. Búsqueda vectorial: Encontrar documentos similares</li>
+                            <li>2. Búsqueda de grafos: Expandir por relaciones</li>
+                            <li>3. Combinar: Resultados más contextualizados</li>
+                        </ul>
+                    </li>
+                    <li><strong>Caso RAG Híbrido:</strong> Recuperar documentos + contexto relacionado</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Knowledge Graphs desde Texto</h3>
+                <ul>
+                    <li><strong>Pipeline:</strong>
+                        <ul>
+                            <li>1. Extraer entidades con NLP (Personas, Lugares, Empresas)</li>
+                            <li>2. Identificar relaciones entre entidades</li>
+                            <li>3. Crear grafo en Neo4j</li>
+                            <li>4. Hacer queries sobre el grafo</li>
+                        </ul>
+                    </li>
+                    <li><strong>Beneficio:</strong> Conocimiento estructurado, consultable</li>
+                    <li><strong>Ejemplo:</strong> Wikipedia → Knowledge Graph</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Sistema Híbrido Completo</h3>
+                <ul>
+                    <li><strong>Arquitectura:</strong>
+                        <ul>
+                            <li>ChromaDB: Indexar documentos vectorialmente</li>
+                            <li>Neo4j: Relaciones entre entidades</li>
+                            <li>LangChain: Orquestar ambos sistemas</li>
+                        </ul>
+                    </li>
+                    <li><strong>Flujo Query:</strong>
+                        <ul>
+                            <li>1. Buscar documentos relevantes (Chroma)</li>
+                            <li>2. Extraer entidades clave</li>
+                            <li>3. Expandir por grafo (Neo4j)</li>
+                            <li>4. LLM integra toda la información</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- APLICACIONES AVANZADAS -->
+            <section>
+                <h2>Aplicaciones Avanzadas</h2>
+            </section>
+
+            <section>
+                <h3>Sistema de Recomendación</h3>
+                <ul>
+                    <li><strong>Técnicas:</strong>
+                        <ul>
+                            <li>Collaborative Filtering: "Usuarios como tú"</li>
+                            <li>Content-Based: "Contenido similar"</li>
+                            <li>Hybrid: Combinar ambas</li>
+                        </ul>
+                    </li>
+                    <li><strong>Implementación Grafo:</strong>
+                        <ul>
+                            <li>Usuario1 -[VIO]-> Video1</li>
+                            <li>Usuario2 -[VIO]-> Video1</li>
+                            <li>Recomendar Video2 a Usuario1 si Usuario2 lo vio</li>
+                        </ul>
+                    </li>
+                    <li><strong>Vectorial:</strong> Embeddings de items para similaridad</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Detección de Fraude Avanzada</h3>
+                <ul>
+                    <li><strong>Señales en Grafo:</strong>
+                        <ul>
+                            <li>Ciclos cerrados (A→B→C→A)</li>
+                            <li>Núcleos densamente conectados</li>
+                            <li>Nodos intermediarios (bridges)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Algoritmos:</strong>
+                        <ul>
+                            <li>Community Detection: Identificar bandas</li>
+                            <li>PageRank: "Influencers" en red fraudulenta</li>
+                            <li>Shortest Path: Cómo se conectan sospechosos</li>
+                        </ul>
+                    </li>
+                    <li><strong>Precisión:</strong> Combinar múltiples señales</li>
+                </ul>
+            </section>
+
+            <!-- PRODUCCIÓN -->
+            <section>
+                <h2>Producción y Escalabilidad</h2>
+            </section>
+
+            <section>
+                <h3>Optimización de Consultas</h3>
+                <ul>
+                    <li><strong>Índices:</strong> Crear en atributos de búsqueda frecuente</li>
+                    <li><strong>Query Plan:</strong> Usar EXPLAIN para ver ejecución</li>
+                    <li><strong>Evitar Cartesian Products:</strong> Problemas de rendimiento</li>
+                    <li><strong>Batch Operations:</strong> Múltiples cambios juntos</li>
+                    <li><strong>Caché:</strong> Guardar resultados de queries costosas</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Escalabilidad de Vectores</h3>
+                <ul>
+                    <li><strong>ChromaDB:</strong> Excelente hasta 1-10M vectores</li>
+                    <li><strong>Qdrant:</strong> Hasta 100M+ vectores en un servidor</li>
+                    <li><strong>Milvus:</strong> Distribuido, escala a billones</li>
+                    <li><strong>Considerar:</strong> Dimensión, frecuencia de query, throughput</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Escalabilidad de Grafos</h3>
+                <ul>
+                    <li><strong>Neo4j Community:</strong> Excelente hasta 10B nodos/relaciones</li>
+                    <li><strong>Neo4j Enterprise:</strong> Clustering, replicación</li>
+                    <li><strong>Particionamiento:</strong> Dividir grafo por dominios</li>
+                    <li><strong>Caché de Queries:</strong> Resultados frecuentes</li>
+                </ul>
+            </section>
+
+            <!-- COMPARATIVAS Y DECISIÓN -->
+            <section>
+                <h2>Decisiones Arquitectónicas</h2>
+            </section>
+
+            <section>
+                <h3>¿Vectores o Grafos?</h3>
+                <ul>
+                    <li><strong>Usa Vectores si:</strong>
+                        <ul>
+                            <li>Necesitas búsqueda semántica</li>
+                            <li>Datos no estructurados (texto, imágenes)</li>
+                            <li>RAG es tu caso de uso primario</li>
+                        </ul>
+                    </li>
+                    <li><strong>Usa Grafos si:</strong>
+                        <ul>
+                            <li>Las relaciones son críticas</li>
+                            <li>Necesitas análisis de patrones</li>
+                            <li>Datos altamente conectados</li>
+                        </ul>
+                    </li>
+                    <li><strong>Usa Ambos si:</strong>
+                        <ul>
+                            <li>Necesitas búsqueda + contexto relacional</li>
+                            <li>Sistema complejo con múltiples dimensiones</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Stack Recomendado</h3>
+                <ul>
+                    <li><strong>Prototipado:</strong> ChromaDB + Neo4j Community (local)</li>
+                    <li><strong>Producción Pequeña:</strong> Qdrant + Neo4j Community (cloud)</li>
+                    <li><strong>Producción Grande:</strong> Milvus/Qdrant + Neo4j Enterprise</li>
+                    <li><strong>Todo-en-Uno:</strong> Weaviate (vectorial + grafo)</li>
+                    <li><strong>Orquestación:</strong> LangChain + LlamaIndex</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Mejores Prácticas</h3>
+                <ul>
+                    <li><strong>Testing:</strong> Queries con diferentes datos y volúmenes</li>
+                    <li><strong>Monitoring:</strong> Métricas de latencia y recall</li>
+                    <li><strong>Backup:</strong> Estrategia de recuperación ante fallos</li>
+                    <li><strong>Versionamiento:</strong> Control de cambios en esquema</li>
+                    <li><strong>Documentación:</strong> Schema y patrones de queries</li>
+                </ul>
+            </section>
+
+            <!-- CIERRE -->
+            <section>
+                <h2>Proyecto Integrador</h2>
+            </section>
+
+            <section>
+                <h3>Sistema Completo</h3>
+                <ul>
+                    <li><strong>Objetivo:</strong> Aplicación RAG + Recomendación + Detección de Anomalías</li>
+                    <li><strong>Stack:</strong>
+                        <ul>
+                            <li>ChromaDB/Qdrant: Indexación de documentos</li>
+                            <li>Neo4j: Grafo de entidades y relaciones</li>
+                            <li>LangChain: Orquestación</li>
+                            <li>FastAPI: API REST</li>
+                        </ul>
+                    </li>
+                    <li><strong>Funcionalidades:</strong>
+                        <ul>
+                            <li>Búsqueda semántica</li>
+                            <li>Recomendaciones basadas en grafo</li>
+                            <li>Detección de anomalías</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Recursos y Comunidades</h2>
+            </section>
+
+            <section>
+                <h3>Herramientas Mencionadas</h3>
+                <ul>
+                    <li><strong>Vector DBs:</strong> ChromaDB, Weaviate, Qdrant, Milvus</li>
+                    <li><strong>Graph DBs:</strong> Neo4j, ArangoDB</li>
+                    <li><strong>Frameworks:</strong> LangChain, LlamaIndex, Ollama</li>
+                    <li><strong>Embeddings:</strong> sentence-transformers, OpenAI, Hugging Face</li>
+                    <li><strong>APIs:</strong> gRPC, GraphQL, REST</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Próximos Pasos</h3>
+                <ul>
+                    <li>1. Instala ChromaDB localmente, experimenta</li>
+                    <li>2. Crea primer RAG con LangChain</li>
+                    <li>3. Sube a Qdrant o Weaviate</li>
+                    <li>4. Aprende Neo4j con dataset pequeño</li>
+                    <li>5. Combina vectores + grafos en un proyecto</li>
+                    <li>6. Deploy a producción con monitoreo</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>¡Gracias!</h2>
+                <p>Ahora tienes las herramientas para construir sistemas inteligentes con vectores y grafos</p>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: true,
+            transition: 'slide',
+            backgroundTransition: 'fade'
+        });
+    </script>
+</body>
+</html>

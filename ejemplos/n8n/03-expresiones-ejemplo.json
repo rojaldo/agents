@@ -1,0 +1,215 @@
+{
+  "name": "Ejemplos de Expresiones",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "7j5l3h85-0j8l-1i1i-6i0h-3k2l5m9h8i1j",
+      "name": "Start",
+      "type": "n8n-nodes-base.start",
+      "typeVersion": 1,
+      "position": [
+        250,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://jsonplaceholder.typicode.com/users",
+        "method": "GET",
+        "options": {}
+      },
+      "id": "8k6m4i96-1k9m-2j2j-7j1i-4l3m6n0i9j2k",
+      "name": "Obtener Usuarios",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        450,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "nombreCompleto",
+              "value": "={{ $json.name }}"
+            },
+            {
+              "name": "nombreMayusculas",
+              "value": "={{ $json.name.toUpperCase() }}"
+            },
+            {
+              "name": "primerNombre",
+              "value": "={{ $json.name.split(' ')[0] }}"
+            },
+            {
+              "name": "emailDominio",
+              "value": "={{ $json.email.split('@')[1] }}"
+            },
+            {
+              "name": "ciudadPais",
+              "value": "={{ $json.address.city + ', ' + $json.address.zipcode }}"
+            },
+            {
+              "name": "esAdministrador",
+              "value": "={{ $json.id === 1 ? 'Sí' : 'No' }}"
+            }
+          ],
+          "number": [
+            {
+              "name": "userId",
+              "value": "={{ $json.id }}"
+            },
+            {
+              "name": "userIdDoble",
+              "value": "={{ $json.id * 2 }}"
+            }
+          ],
+          "boolean": [
+            {
+              "name": "tieneWebsite",
+              "value": "={{ $json.website !== undefined && $json.website !== '' }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9l7n5j07-2l0n-3k3k-8k2j-5m4n7o1j0k3l",
+      "name": "Transformar con Expresiones",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [
+        650,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.tieneWebsite }}",
+              "operation": "equals",
+              "value2": "true"
+            }
+          ]
+        }
+      },
+      "id": "0m8o6k18-3m1o-4l4l-9l3k-6n5o8p2k1l4m",
+      "name": "Filtrar Solo con Website",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        850,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "mensaje",
+              "value": "={{ 'Usuario ' + $json.nombreCompleto + ' de ' + $json.ciudadPais }}"
+            },
+            {
+              "name": "fechaActual",
+              "value": "={{ $now.toFormat('yyyy-MM-dd HH:mm:ss') }}"
+            },
+            {
+              "name": "timestamp",
+              "value": "={{ Date.now().toString() }}"
+            },
+            {
+              "name": "workflowName",
+              "value": "={{ $workflow.name }}"
+            },
+            {
+              "name": "executionId",
+              "value": "={{ $execution.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1n9p7l29-4n2p-5m5m-0m4l-7o6p9q3l2m5n",
+      "name": "Agregar Metadata",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [
+        1050,
+        200
+      ]
+    }
+  ],
+  "connections": {
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Obtener Usuarios",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtener Usuarios": {
+      "main": [
+        [
+          {
+            "node": "Transformar con Expresiones",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transformar con Expresiones": {
+      "main": [
+        [
+          {
+            "node": "Filtrar Solo con Website",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtrar Solo con Website": {
+      "main": [
+        [
+          {
+            "node": "Agregar Metadata",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1",
+  "meta": {
+    "instanceId": "ejemplo"
+  },
+  "tags": [
+    {
+      "createdAt": "2025-01-15T10:00:00.000Z",
+      "updatedAt": "2025-01-15T10:00:00.000Z",
+      "id": "3",
+      "name": "Expresiones"
+    },
+    {
+      "createdAt": "2025-01-15T10:00:00.000Z",
+      "updatedAt": "2025-01-15T10:00:00.000Z",
+      "id": "1",
+      "name": "Tutorial"
+    }
+  ]
+}

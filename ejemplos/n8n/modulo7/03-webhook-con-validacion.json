@@ -1,0 +1,79 @@
+{
+  "name": "M7.3 - Webhook con Validación",
+  "description": "Validar datos recibidos en webhook",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "webhook-validado",
+        "method": "POST",
+        "options": {}
+      },
+      "id": "webhook",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [100, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Validar datos recibidos\nconst data = $input.first().json;\nconst errores = [];\n\n// Validar nombre\nif (!data.nombre || data.nombre.length < 3) {\n  errores.push('Nombre debe tener mínimo 3 caracteres');\n}\n\n// Validar email\nif (!data.email || !data.email.match(/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/)) {\n  errores.push('Email inválido');\n}\n\n// Validar edad\nif (data.edad && (isNaN(data.edad) || data.edad < 18 || data.edad > 120)) {\n  errores.push('Edad debe estar entre 18 y 120');\n}\n\nif (errores.length > 0) {\n  throw new Error(errores.join(', '));\n}\n\nreturn {\n  json: {\n    valido: true,\n    datos: data,\n    timestamp: new Date().toISOString()\n  }\n};"
+      },
+      "id": "validate",
+      "name": "Code - Validar",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [300, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Respuesta exitosa\nreturn {\n  json: {\n    exito: true,\n    mensaje: 'Datos validados y procesados correctamente',\n    datos: $input.first().json.datos\n  }\n};"
+      },
+      "id": "response-success",
+      "name": "Code - Respuesta Exitosa",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Respuesta de error\nreturn {\n  json: {\n    exito: false,\n    error: $input.first().json.message || 'Error en validación',\n    timestamp: new Date().toISOString()\n  }\n};"
+      },
+      "id": "response-error",
+      "name": "Code - Respuesta Error",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [500, 500]
+    }
+  ],
+  "connections": {
+    "webhook": {
+      "main": [
+        [
+          {
+            "node": "validate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "validate": {
+      "main": [
+        [
+          {
+            "node": "response-success",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "response-error",
+            "type": "error",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

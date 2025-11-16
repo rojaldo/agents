@@ -1,0 +1,4231 @@
+= Curso de Agentes de IA: Multi-agentes y Coordinación
+:doctype: book
+:toc:
+:toclevels: 4
+:sectnums:
+:icons: font
+:source-highlighter: highlight.js
+:highlightjsdir: https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0
+:highlightjs-theme: atom-one-light
+:data-uri:
+
+== Introducción
+
+Los sistemas multi-agente representan una evolución fundamental en la inteligencia artificial, permitiendo que múltiples entidades autónomas trabajen juntas para resolver problemas complejos. Este módulo explora las arquitecturas, protocolos y estrategias que hacen posible la coordinación, colaboración y negociación entre agentes.
+
+== Módulo 1: Fundamentos de Sistemas Multi-Agente
+
+=== Objetivos de aprendizaje
+
+.Al completar este módulo, los estudiantes podrán:
+* Entender los principios fundamentales de agentes autónomos en ambientes distribuidos
+* Diferenciar entre arquitecturas centralizadas y descentralizadas
+* Identificar cuándo usar sistemas multi-agente vs soluciones monolíticas
+* Analizar casos de uso reales de sistemas multi-agente
+
+=== Contenidos
+
+==== 1.1 Conceptos Básicos de Agentes Autónomos
+
+===== ¿Qué es un Agente?
+
+.Un **agente** es una entidad de software que:
+* **Percibe** su ambiente a través de sensores
+* **Razona** sobre lo percibido usando su lógica interna
+* **Actúa** sobre el ambiente para lograr sus objetivos
+
+Esta es la triada fundamental del comportamiento inteligente.
+
+===== El Ciclo Percepto-Acción Básico
+
+El corazón de cualquier agente es un ciclo simple pero poderoso:
+
+[source,python]
+----
+class Agent:
+    """Agente básico que percibe, razona y actúa"""
+
+    def __init__(self, name):
+        self.name = name
+        self.beliefs = {}  # Lo que cree del mundo
+        self.objectives = []  # Sus metas
+
+    def perceive(self, environment):
+        """Paso 1: Percibir - obtener información del ambiente"""
+        percepts = {
+            'temperature': environment.get_temperature(),
+            'light_level': environment.get_light(),
+            'nearby_objects': environment.get_nearby_objects()
+        }
+        return percepts
+
+    def reason(self, percepts):
+        """Paso 2: Razonar - analizar información y decidir acción"""
+        if percepts['temperature'] > 30:
+            decision = 'activate_cooling'
+        elif percepts['light_level'] < 50:
+            decision = 'turn_on_lights'
+        else:
+            decision = 'maintain_status'
+
+        return decision
+
+    def act(self, decision):
+        """Paso 3: Actuar - ejecutar la decisión en el ambiente"""
+        if decision == 'activate_cooling':
+            print(f"{self.name}: Activando sistema de enfriamiento")
+        elif decision == 'turn_on_lights':
+            print(f"{self.name}: Encendiendo luces")
+
+        return decision
+
+    def step(self, environment):
+        """Ejecutar un ciclo completo: Percibir → Razonar → Actuar"""
+        # 1. Percibir
+        percepts = self.perceive(environment)
+
+        # 2. Razonar
+        decision = self.reason(percepts)
+
+        # 3. Actuar
+        result = self.act(decision)
+
+        # 4. Actualizar creencias (opcional)
+        self.beliefs['last_action'] = result
+        self.beliefs['last_percepts'] = percepts
+
+        return result
+
+# Ejemplo de uso
+class SimpleEnvironment:
+    def get_temperature(self): return 35
+    def get_light(self): return 100
+    def get_nearby_objects(self): return []
+
+# Crear agente y ejecutar
+agent = Agent("ThermostatAgent")
+env = SimpleEnvironment()
+
+for step in range(5):
+    print(f"\n--- Paso {step + 1} ---")
+    agent.step(env)
+    print(f"Creencias: {agent.beliefs}")
+----
+
+===== Autonomía vs Heteronomía
+
+* **Autonomía**: El agente toma sus propias decisiones basadas en su lógica interna
+  - Ejemplo: Un termostato decide enfriar o calentar sin intervención humana
+
+* **Heteronomía**: El agente sigue órdenes externas
+  - Ejemplo: Un robot que espera comandos del usuario
+
+Los agentes autónomos son más interesantes porque pueden adaptarse sin control central.
+
+===== Racionalidad en Agentes
+
+Un agente es **racional** si toma acciones que maximizan su utilidad esperada:
+
+[source,python]
+----
+class RationalAgent:
+    """Agente que evalúa opciones según utilidad"""
+
+    def __init__(self):
+        self.utility_function = {
+            'food_near': 10,  # Comer es muy útil
+            'danger_near': -100,  # Evitar peligro es crítico
+            'explore': 1  # Explorar tiene poco valor
+        }
+
+    def evaluate_action(self, percepts):
+        """Calcular utilidad esperada de cada acción"""
+        utilities = {}
+
+        if percepts['food_nearby']:
+            utilities['move_to_food'] = self.utility_function['food_near']
+
+        if percepts['danger_nearby']:
+            utilities['flee'] = self.utility_function['danger_near']
+
+        utilities['explore'] = self.utility_function['explore']
+
+        # Elegir acción con máxima utilidad
+        best_action = max(utilities, key=utilities.get)
+        return best_action, utilities[best_action]
+
+# Ejemplo
+agent = RationalAgent()
+percepts = {'food_nearby': True, 'danger_nearby': False}
+action, utility = agent.evaluate_action(percepts)
+print(f"Mejor acción: {action} (utilidad: {utility})")
+----
+
+===== Propiedades del Ambiente
+
+El ambiente donde actúa el agente determina su complejidad:
+
+.**1. Determinista vs Estocástico**
+- Determinista: Misma acción siempre produce mismo resultado
+- Estocástico: Acción tiene resultados aleatorios
+
+[source,python]
+----
+# Determinista
+if agente.move_forward():
+    agente.position += 1  # Siempre avanza 1
+
+# Estocástico
+if agente.move_forward():
+    if random.random() < 0.8:
+        agente.position += 1  # 80% probabilidad
+    else:
+        agente.position += 0.5  # Movimiento errado
+----
+
+.**2. Estático vs Dinámico**
+- Estático: Ambiente no cambia mientras agente actúa
+- Dinámico: Otros elementos cambian independientemente
+
+.**3. Discreto vs Continuo**
+- Discreto: Números finitos de percepciones/acciones
+- Continuo: Infinitos valores posibles
+
+.**4. Totalidad Observable**
+- Completamente observable: El agente ve TODO
+- Parcialmente observable: El agente tiene "puntos ciegos"
+
+==== 1.2 Sistemas Distribuidos y Descentralizados
+
+===== Principios Fundamentales
+
+La computación distribuida se basa en la idea de que múltiples computadoras (o procesos) trabajan coordinadamente sin un reloj global compartido. Esto contrasta con los sistemas centralizados donde existe un único punto de control.
+
+**Características clave:**
+
+. **Autonomía**: Cada nodo toma decisiones independientemente
+. **Concurrencia**: Múltiples procesos ejecutan simultáneamente
+. **No sincronización global**: No hay reloj central, difícil sincronizarse
+. **Tolerancia a fallos**: El sistema continúa si parte falla
+. **Comunicación asíncrona**: Mensajes tienen latencia variable
+
+===== Nodos, Procesos y Comunicación
+
+En un sistema distribuido:
+
+* **Nodo**: Computadora o servidor físico/virtual
+* **Proceso**: Programa ejecutándose en un nodo (agente)
+* **Comunicación**: Intercambio de mensajes entre procesos
+  - Point-to-point: directo entre dos procesos
+  - Broadcast: desde uno a todos
+  - Multicast: desde uno a un grupo
+
+[source,python]
+----
+# Ejemplo: Tres nodos en un sistema distribuido
+class DistributedNode:
+    """Representa un nodo en sistema distribuido"""
+
+    def __init__(self, node_id, neighbors=None):
+        self.node_id = node_id
+        self.neighbors = neighbors or []
+        self.clock = 0  # Reloj lógico (Lamport clock)
+        self.messages = []  # Cola de mensajes recibidos
+
+    def send_message(self, to_node_id, content):
+        """Enviar mensaje a otro nodo"""
+        self.clock += 1
+        message = {
+            'from': self.node_id,
+            'to': to_node_id,
+            'content': content,
+            'timestamp': self.clock
+        }
+        # En sistema real, se transmitiría por red
+        return message
+
+    def receive_message(self, message):
+        """Recibir mensaje de otro nodo"""
+        # Actualizar reloj lógico
+        self.clock = max(self.clock, message['timestamp']) + 1
+        self.messages.append(message)
+        print(f"Nodo {self.node_id}: Recibí mensaje de {message['from']}")
+
+    def broadcast(self, content):
+        """Enviar mensaje a todos los vecinos"""
+        for neighbor in self.neighbors:
+            self.send_message(neighbor.node_id, content)
+
+# Crear red de 3 nodos
+node_a = DistributedNode('A')
+node_b = DistributedNode('B')
+node_c = DistributedNode('C')
+
+# Conectar: A-B-C (topología lineal)
+node_a.neighbors = [node_b]
+node_b.neighbors = [node_a, node_c]
+node_c.neighbors = [node_b]
+
+# A envía a B
+msg = node_a.send_message('B', 'Hola desde A')
+node_b.receive_message(msg)
+----
+
+===== Desafíos Principales de la Distribución
+
+**1. Sincronización**
+
+Sin reloj global, es difícil saber si evento A ocurrió antes que B. Soluciones:
+
+* **Reloj de Lamport**: Contador lógico que se incrementa
+  - No da tiempo real, solo orden relativo
+  - Insuficiente si dos eventos en nodos diferentes ocurren sin comunicación
+
+* **Relojes Vectoriales**: Cada nodo mantiene vector de contadores
+  - Más preciso que Lamport
+  - Permite detectar si eventos son causalmente relacionados
+
+[source,python]
+----
+class VectorClock:
+    """Reloj vectorial para causalidad distribuida"""
+
+    def __init__(self, process_id, num_processes):
+        self.process_id = process_id
+        self.clock = [0] * num_processes
+
+    def increment(self):
+        """Incrementar componente local"""
+        self.clock[self.process_id] += 1
+
+    def send(self):
+        """Preparar mensaje"""
+        self.increment()
+        return self.clock.copy()
+
+    def receive(self, received_clock):
+        """Recibir mensaje"""
+        for i in range(len(self.clock)):
+            self.clock[i] = max(self.clock[i], received_clock[i])
+        self.increment()
+
+    def happens_before(self, other):
+        """¿Este reloj ocurrió antes?"""
+        less_or_equal = all(a <= b for a, b in zip(self.clock, other.clock))
+        strictly_less = any(a < b for a, b in zip(self.clock, other.clock))
+        return less_or_equal and strictly_less
+
+# Simulación
+clocks = [VectorClock(i, 3) for i in range(3)]
+
+# Proceso 0 envía
+clock_msg = clocks[0].send()  # [1, 0, 0]
+
+# Proceso 1 recibe
+clocks[1].receive(clock_msg)  # [1, 1, 0]
+
+# Proceso 1 envía a 2
+clock_msg2 = clocks[1].send()  # [1, 2, 0]
+
+# Proceso 2 recibe
+clocks[2].receive(clock_msg2)  # [1, 2, 1]
+----
+
+**2. Consistencia**
+
+Cuando hay datos compartidos replicados, ¿cómo asegurar que todos ven lo mismo?
+
+* **Consistencia Fuerte**: Lectura inmediata ve última escritura
+  - Requiere sincronización de todo el cluster
+  - Caro en latencia
+
+* **Consistencia Eventual**: Todos eventualmente convergen a mismo valor
+  - Rápido, tolera particiones
+  - Temporal inconsistencia aceptada
+
+* **Consistencia Débil**: Solo se promete consistencia tras sincronización explícita
+  - Intermedio
+
+Ejemplo con base de datos distribuida: Si servidor A acepta un cambio, ¿cuándo lo ven servidores B y C?
+
+**3. Tolerancia a Fallos**
+
+El famoso "FLP Impossibility Result" dice que en sistema asíncrono no podemos garantizar consenso si hay un fallo.
+
+Estrategias prácticas:
+
+* **Heartbeat**: Nodos envían "estoy vivo" periódicamente
+* **Timeout**: Si no recibo heartbeat en X segundos, asumo nodo muerto
+* **Quórum**: Necesitar mayoría para tomar decisión
+  - Con 3 nodos: necesito 2 (si 1 falla, mayoría sigue)
+  - Con 5 nodos: necesito 3
+
+[source,python]
+----
+class QuorumNode:
+    """Nodo que usa quórum para tolerancia a fallos"""
+
+    def __init__(self, node_id, total_nodes):
+        self.node_id = node_id
+        self.total_nodes = total_nodes
+        self.quorum_size = (total_nodes // 2) + 1  # Mayoría
+        self.alive_nodes = set(range(total_nodes))
+
+    def can_proceed(self):
+        """¿Tenemos quórum?"""
+        return len(self.alive_nodes) >= self.quorum_size
+
+    def node_failed(self, failed_node_id):
+        """Marcar nodo como muerto"""
+        self.alive_nodes.discard(failed_node_id)
+        if self.can_proceed():
+            print(f"Tenemos quórum con {len(self.alive_nodes)} nodos")
+        else:
+            print(f"PÉRDIDA DE QUÓRUM: Solo {len(self.alive_nodes)} nodos")
+
+# 5 nodos, necesitan 3 para consenso
+nodes = [QuorumNode(i, 5) for i in range(5)]
+
+nodes[0].node_failed(1)  # Falla nodo 1 -> 4 vivos, OK
+nodes[0].node_failed(2)  # Falla nodo 2 -> 3 vivos, OK
+nodes[0].node_failed(3)  # Falla nodo 3 -> 2 vivos, PÉRDIDA
+----
+
+===== Sistemas Descentralizados vs Peer-to-Peer
+
+**Descentralizado**: Arquitectura sin jerarquía pero puede haber estructura.
+* Ejemplo: Red de sensores distribuida donde cada sensor reporta a vecinos cercanos
+* Hay coordinación pero sin autoridad central
+
+**Peer-to-Peer (P2P)**: Todos son iguales, no hay distinción servidor/cliente.
+* Ejemplo: BitTorrent, Blockchain
+* Máxima simetría pero máxima complejidad
+
+[source,python]
+----
+# Comparativa: Descentralizado vs P2P
+
+# DESCENTRALIZADO: Estructura con clusters
+class ClusteredNetwork:
+    def __init__(self):
+        self.clusters = {
+            'A': ['A1', 'A2', 'A3'],  # Cluster liderado por A1
+            'B': ['B1', 'B2', 'B3'],  # Cluster liderado por B1
+        }
+        self.inter_cluster_links = [('A1', 'B1')]  # A1 y B1 se comunican
+
+    def message_path(self, from_node, to_node):
+        """Rutear mensaje dentro o entre clusters"""
+        # Si en mismo cluster, routing local
+        # Si en diferente, pasar por líderes de cluster
+
+# P2P: Todos equivalentes
+class P2PNetwork:
+    def __init__(self, num_nodes):
+        self.nodes = [f"Node{i}" for i in range(num_nodes)]
+        # Cada nodo conectado a algunos otros (random graph)
+        self.connections = {}
+        for node in self.nodes:
+            # DHT (Distributed Hash Table) para descubrir vecinos
+            self.connections[node] = self._find_neighbors(node)
+
+    def _find_neighbors(self, node):
+        """Descubrir vecinos dinámicamente"""
+        # En Bitcoin/Ethereum usa DHT
+        return []
+----
+
+===== Emergencia de Comportamiento Complejo
+
+Fenómeno sorprendente: De reglas simples locales emerge comportamiento complejo global.
+
+Ejemplo 1: **Stigmergy** (comunicación indirecta)
+* Las hormigas dejan feromonas
+* Otras hormigas sienten feromona y ajustan su camino
+* Globalmente: camino óptimo emerge sin coordinación explícita
+
+[source,python]
+----
+import random
+
+class PheromoneTrail:
+    """Simulación de stigmergy en hormigas"""
+
+    def __init__(self, grid_size=10):
+        self.grid = [[0.0 for _ in range(grid_size)] for _ in range(grid_size)]
+        self.ants = []
+
+    def add_ant(self, x, y):
+        self.ants.append({'x': x, 'y': y, 'carrying_food': False})
+
+    def deposit_pheromone(self, x, y, amount=1.0):
+        """Depositar feromona (hormiga deja marca)"""
+        self.grid[x][y] += amount
+
+    def evaporate(self, rate=0.95):
+        """Feromona se evapora con el tiempo"""
+        for i in range(len(self.grid)):
+            for j in range(len(self.grid[i])):
+                self.grid[i][j] *= rate
+
+    def ant_step(self, ant_id):
+        """Un paso de hormiga"""
+        ant = self.ants[ant_id]
+
+        # Moverse hacia feromona más fuerte
+        neighbors = self._get_neighbors(ant['x'], ant['y'])
+        best_neighbor = max(neighbors,
+                           key=lambda n: self.grid[n[0]][n[1]])
+
+        ant['x'], ant['y'] = best_neighbor
+
+        # Si encontró comida, depositar feromona
+        if ant['carrying_food']:
+            self.deposit_pheromone(ant['x'], ant['y'])
+
+    def _get_neighbors(self, x, y):
+        # Retornar posiciones válidas adyacentes
+        neighbors = []
+        for dx in [-1, 0, 1]:
+            for dy in [-1, 0, 1]:
+                nx, ny = x + dx, y + dy
+                if 0 <= nx < len(self.grid) and 0 <= ny < len(self.grid[0]):
+                    neighbors.append((nx, ny))
+        return neighbors
+
+# Simulación: hormigas encuentran óptimamente camino a comida
+trail = PheromoneTrail(20)
+for i in range(100):
+    trail.add_ant(10, 10)  # Nido en centro
+
+for step in range(100):
+    for ant_id in range(len(trail.ants)):
+        trail.ant_step(ant_id)
+    trail.evaporate()
+----
+
+Ejemplo 2: **Flocking** (bandadas de pájaros)
+* Cada pájaro sigue 3 reglas simples:
+  1. Separación: no chocar con vecinos
+  2. Alineación: volar en dirección promedio de vecinos
+  3. Cohesión: moverse hacia centro de masa de vecinos
+* Resultado: comportamiento elegante de bandada sin director
+
+Estos fenómenos son fundamentales en sistemas multi-agente porque permiten soluciones descentralizadas eficientes.
+
+==== 1.3 Comparativa: Cooperación, Colaboración y Competencia
+
+Aunque a menudo se usan intercambiablemente, estos términos tienen significados distintos en sistemas multi-agente:
+
+===== Cooperación (Cooperation)
+
+**Definición**: Múltiples agentes trabajan hacia objetivo común **sin comunicación explícita**.
+
+Características:
+
+
+* Cada agente actúa independientemente
+* No hay diálogo directo
+* Coordinación emerge de la estructura del problema
+* Ejemplo: Bandada de pájaros siguiendo reglas locales
+
+[source,python]
+----
+class CooperativeAgent:
+    """Agente cooperativo sin comunicación explícita"""
+
+    def __init__(self, agent_id, all_agents):
+        self.id = agent_id
+        self.all_agents = all_agents
+        self.position = 0
+        self.goal = 100  # Objetivo común
+
+    def step(self):
+        """Cada agente sigue regla simple"""
+        # Regla: moverse hacia la meta sin hablar con otros
+        if self.position < self.goal:
+            self.position += 1
+
+        # Efectivamente cooperamos porque compartimos objetivo
+        # No necesitamos comunicación para coordinar
+
+# Simulación: agentes cooperativos
+agents = [CooperativeAgent(i, None) for i in range(5)]
+
+for step in range(10):
+    for agent in agents:
+        agent.step()
+
+print("Posiciones:", [a.position for a in agents])
+# Resultado: todos avanzan hacia meta sin coordinación explícita
+----
+
+**Ventajas:**
+
+- Simple, bajo overhead de comunicación
+- Robusto a fallos de comunicación
+- Escala bien
+
+**Desventajas:**
+
+- Solo funciona si objetivo es naturalmente alineado
+- Difícil evitar ineficiencias
+- A veces subóptimo
+
+===== Colaboración (Collaboration)
+
+**Definición**: Múltiples agentes trabajan hacia objetivo común **con comunicación explícita**.
+
+Características:
+
+* Agentes intercambian información activamente
+* Coordinación es explícita
+* Pueden negociar, planificar conjuntamente
+* Ejemplo: Equipo humano resolviendo problema complejo
+
+[source,python]
+----
+class CollaborativeAgent:
+    """Agente colaborativo con comunicación explícita"""
+
+    def __init__(self, agent_id):
+        self.id = agent_id
+        self.knowledge = {}  # Lo que sé
+        self.goal = "resolver problema"
+
+    def share_knowledge(self, other_agent):
+        """Comunicación: compartir información"""
+        # Intercambiamos lo que sabemos
+        combined = {**self.knowledge, **other_agent.knowledge}
+        self.knowledge = combined
+        other_agent.knowledge = combined
+
+    def plan_together(self, other_agent):
+        """Planificación colaborativa"""
+        # Juntos decidimos plan óptimo
+        our_plan = self._compute_plan(self.knowledge)
+        their_plan = self._compute_plan(other_agent.knowledge)
+
+        # Negociar qué plan es mejor
+        if our_plan['cost'] < their_plan['cost']:
+            chosen_plan = our_plan
+        else:
+            chosen_plan = their_plan
+
+        return chosen_plan
+
+    def _compute_plan(self, knowledge):
+        return {'cost': len(knowledge), 'actions': []}
+
+# Simulación: dos agentes colaboran
+agent_a = CollaborativeAgent('A')
+agent_b = CollaborativeAgent('B')
+
+agent_a.knowledge = {'fact1': 'X', 'fact2': 'Y'}
+agent_b.knowledge = {'fact3': 'Z'}
+
+print("Antes de colaborar:")
+print(f"  A sabe: {agent_a.knowledge}")
+print(f"  B sabe: {agent_b.knowledge}")
+
+agent_a.share_knowledge(agent_b)
+
+print("\nDespués de colaborar:")
+print(f"  A sabe: {agent_a.knowledge}")
+print(f"  B sabe: {agent_b.knowledge}")
+----
+
+**Ventajas:**
+
+- Información completa permite decisiones mejores
+- Pueden alcanzar soluciones óptimas
+- Flexible: pueden adaptarse dinámicamente
+
+**Desventajas:**
+
+- Overhead de comunicación (puede ser caro)
+- Más complejo de implementar
+- Requiere protocolos robustos
+
+===== Competencia (Competition)
+
+**Definición**: Múltiples agentes con **objetivos conflictivos o contradictorios**.
+
+Características:
+
+* Ganancia de uno puede ser pérdida de otro
+* Poco o nada de comunicación cooperativa
+* Cada agente intenta maximizar su utilidad
+* Ejemplo: Jugadores en videojuego competitivo, empresas en mercado
+
+[source,python]
+----
+class CompetitiveAgent:
+    """Agente competitivo buscando maximizar su ganancia"""
+
+    def __init__(self, agent_id):
+        self.id = agent_id
+        self.resources = 10  # Recursos disponibles
+        self.score = 0
+
+    def compete(self, other_agent):
+        """Competencia por recursos"""
+        # Cada uno intenta tomar más recursos
+        my_grab = min(5, self.resources)  # Agarro 5 o lo que tengo
+        their_grab = min(5, other_agent.resources)
+
+        self.resources -= my_grab
+        other_agent.resources -= their_grab
+
+        self.score += my_grab
+        other_agent.score += their_grab
+
+# Simulación: competencia directa
+agent_x = CompetitiveAgent('X')
+agent_y = CompetitiveAgent('Y')
+
+print("Inicial:")
+print(f"  X: recursos={agent_x.resources}, score={agent_x.score}")
+print(f"  Y: recursos={agent_y.resources}, score={agent_y.score}")
+
+for round in range(3):
+    agent_x.compete(agent_y)
+    print(f"\nRonda {round + 1}:")
+    print(f"  X: recursos={agent_x.resources}, score={agent_x.score}")
+    print(f"  Y: recursos={agent_y.resources}, score={agent_y.score}")
+----
+
+**Ventajas:**
+- Incentiva innovación y eficiencia
+- Cada agente es motivado
+- Natural para mercados
+
+**Desventajas:**
+
+- Puede ser inestable (arms race)
+- Baja eficiencia global
+- Difícil predecir equilibrio
+
+===== Coopetición (Coopetition)
+
+**Definición**: Mix de cooperación y competencia. Agentes a veces cooperan, a veces compiten.
+
+Ejemplo real: Compañías de tecnología colaboran en estándares pero compiten en mercado.
+
+[source,python]
+----
+class CoopetitiveAgent:
+    """Agente que coopera Y compite según contexto"""
+
+    def __init__(self, agent_id):
+        self.id = agent_id
+        self.resources = 10
+        self.score = 0
+        self.relationships = {}  # Confianza con otros agentes
+
+    def decide_action(self, other_agent):
+        """Decidir: cooperar o competir"""
+        trust = self.relationships.get(other_agent.id, 0.5)
+
+        if trust > 0.7:
+            return 'cooperate'  # Alto nivel de confianza
+        elif trust < 0.3:
+            return 'compete'    # Bajo nivel de confianza
+        else:
+            return 'mixed'      # Nivel intermedio
+
+    def cooperate(self, other_agent):
+        """Colaborar: ambos ganan"""
+        # Intercambiar recursos para beneficio mutuo
+        transfer = 2
+        self.resources -= transfer
+        other_agent.resources += transfer
+        other_agent.resources -= transfer
+        self.resources += transfer
+
+        # Aumentar confianza
+        self.relationships[other_agent.id] = \
+            self.relationships.get(other_agent.id, 0.5) + 0.1
+
+    def compete(self, other_agent):
+        """Competir: uno gana a costa del otro"""
+        taken = min(2, other_agent.resources)
+        other_agent.resources -= taken
+        self.resources += taken
+        self.score += taken
+
+        # Disminuir confianza
+        self.relationships[other_agent.id] = \
+            self.relationships.get(other_agent.id, 0.5) - 0.1
+----
+
+===== Tabla Comparativa
+
+|===
+| Aspecto | Cooperación | Colaboración | Competencia
+
+| Objetivo
+| Común (alineado)
+| Común (alineado)
+| Conflictivo
+
+| Comunicación
+| Ninguna
+| Explícita
+| Mínima
+
+| Complejidad
+| Baja
+| Media
+| Media-Alta
+
+| Eficiencia Global
+| Buena
+| Muy Buena
+| Pobre
+
+| Robustez
+| Alta
+| Media
+| Baja
+
+| Ejemplo
+| Bandada de pájaros
+| Equipo de desarrollo
+| Mercado abierto
+|===
+
+===== Cuándo Usar Cada Paradigma
+
+* **Cooperación**: Agentes con objetivo claro compartido, ambiente determinista, comunicación confiable no necesaria
+* **Colaboración**: Agentes especializados, información distribuida, necesidad de decisiones óptimas
+* **Competencia**: Recursos limitados, múltiples actores independientes, incentivos divergentes
+* **Coopetición**: Industrias, ecosistemas donde hay cooperación estratégica pero competencia por mercado
+
+==== 1.4 Arquitecturas Multi-Agente
+
+Las tres arquitecturas fundamentales son:
+
+===== 1. Arquitectura Centralizada (Hub & Spoke)
+
+Un **agente coordinador** central dirige a todos los demás.
+
+Diagrama:
+----
+        ┌─────────────────────┐
+        │  COORDINADOR (Hub)  │
+        └──────────┬──────────┘
+              ┌────┼────┐
+              │    │    │
+           ┌──▼─┐ ┌─▼──┐ ┌─▼──┐
+           │ A1 │ │ A2 │ │ A3 │
+           └────┘ └────┘ └────┘
+           (Spokes)
+----
+
+[source,python]
+----
+class CentralizedArchitecture:
+    """Arquitectura centralizada: coordinador + agentes"""
+
+    def __init__(self):
+        self.coordinator = Coordinator()
+        self.agents = [Agent(f"A{i}") for i in range(3)]
+
+    def step(self):
+        # 1. Coordinador recibe estado de todos
+        states = [agent.get_state() for agent in self.agents]
+
+        # 2. Coordinador toma decisión global
+        plan = self.coordinator.plan(states)
+
+        # 3. Coordinador asigna tareas a agentes
+        for agent, task in zip(self.agents, plan):
+            agent.assign_task(task)
+
+        # 4. Agentes ejecutan sus tareas
+        for agent in self.agents:
+            agent.execute_task()
+
+class Coordinator:
+    def plan(self, states):
+        """Planear tareas para todos los agentes"""
+        # Lógica: optimizar para máxima eficiencia global
+        tasks = ['move', 'analyze', 'report']
+        return tasks
+----
+
+**Ventajas:**
+- Control y coordinación simple
+- Decisiones globales óptimas
+
+**Desventajas:**
+
+- Punto único de fallo (si coordinador cae, todo se detiene)
+- Escalabilidad limitada (coordinador se satura)
+- No es adaptativo a cambios locales
+
+===== 2. Arquitectura Descentralizada (P2P)
+
+Todos los agentes son equivalentes y se comunican directamente entre sí.
+
+Diagrama:
+----
+      ┌────┐
+      │ A1 │──────┐
+      └────┘      │
+        │    ┌────▼────┐
+        └───►│   A2    │◄─────┐
+             └────┬────┘      │
+                  │      ┌────┴───┐
+                  └─────►│   A3   │
+                         └────────┘
+----
+
+[source,python]
+----
+class DecentralizedArchitecture:
+    """Arquitectura descentralizada: P2P communication"""
+
+    def __init__(self):
+        # Todos son agentes iguales
+        self.agents = [Agent(f"A{i}") for i in range(3)]
+        # Conectar todos a todos
+        for i, agent_i in enumerate(self.agents):
+            for j, agent_j in enumerate(self.agents):
+                if i != j:
+                    agent_i.connect(agent_j)
+
+    def step(self):
+        # Cada agente:
+        # 1. Percibe ambiente
+        # 2. Comunica con vecinos
+        # 3. Llega a consenso local
+        # 4. Actúa independientemente
+
+        for agent in self.agents:
+            # Percibir
+            state = agent.perceive()
+
+            # Comunicar con otros agentes
+            for neighbor in agent.neighbors:
+                info = agent.get_information()
+                neighbor.receive_message(info)
+
+            # Razonar localmente
+            decision = agent.reason()
+
+            # Actuar
+            agent.act(decision)
+
+class Agent:
+    def __init__(self, name):
+        self.name = name
+        self.neighbors = []
+        self.state = {}
+
+    def connect(self, other_agent):
+        self.neighbors.append(other_agent)
+
+    def receive_message(self, msg):
+        """Recibir información de vecino"""
+        # Actualizar creencias
+        self.state['neighbor_info'] = msg
+
+    def reason(self):
+        """Razonar considerando información de vecinos"""
+        # Lógica: considerar estado propio + vecinos
+        return 'continue'
+
+    def perceive(self):
+        return {'time': time.time()}
+
+    def act(self, decision):
+        pass
+----
+
+**Ventajas:**
+- Muy robusto (sin punto único de fallo)
+- Escalable (cada agente maneja su complejidad)
+- Adaptativo
+
+**Desventajas:**
+
+- Difícil alcanzar óptimo global
+- Puede haber oscilaciones
+- Más complejo de coordinar
+
+===== 3. Arquitectura Jerárquica
+
+Múltiples niveles de coordinadores.
+
+Diagrama:
+----
+        ┌──────────────────┐
+        │ Coordinador Top  │
+        └────────┬─────────┘
+          ┌──────┴──────┐
+      ┌───▼───┐    ┌────▼───┐
+      │ Coord1│    │ Coord2 │
+      └───┬───┘    └────┬───┘
+      ┌───┼───┐    ┌────┼───┐
+    ┌─▼─┐┌─▼─┐│  ┌─▼──┐┌──▼┐
+    │A1││A2││   │A3 ││A4 │
+    └───┘└───┘   └────┘└───┘
+----
+
+[source,python]
+----
+class HierarchicalArchitecture:
+    """Arquitectura jerárquica: múltiples niveles"""
+
+    def __init__(self):
+        self.top_coordinator = TopCoordinator()
+
+        self.region1_coordinator = RegionalCoordinator("R1")
+        self.region2_coordinator = RegionalCoordinator("R2")
+
+        self.agents_r1 = [Agent(f"A1_{i}") for i in range(2)]
+        self.agents_r2 = [Agent(f"A2_{i}") for i in range(2)]
+
+    def step(self):
+        # NIVEL 1: Coordinador regional recolecta info de sus agentes
+        state_r1 = self.region1_coordinator.collect_states(
+            self.agents_r1
+        )
+        state_r2 = self.region2_coordinator.collect_states(
+            self.agents_r2
+        )
+
+        # NIVEL 2: Coordinador top obtiene resumen de regiones
+        global_state = self.top_coordinator.aggregate(
+            [state_r1, state_r2]
+        )
+
+        # NIVEL 3: Coordinador top da directrices generales
+        directives = self.top_coordinator.plan()
+
+        # NIVEL 2: Coordinadores regionales adaptan directrices
+        plan_r1 = self.region1_coordinator.adapt_plan(
+            directives, state_r1
+        )
+        plan_r2 = self.region2_coordinator.adapt_plan(
+            directives, state_r2
+        )
+
+        # NIVEL 1: Agentes ejecutan su parte del plan
+        for agent, task in zip(self.agents_r1, plan_r1):
+            agent.execute(task)
+        for agent, task in zip(self.agents_r2, plan_r2):
+            agent.execute(task)
+----
+
+**Ventajas:**
+- Balance entre control y distribución
+- Escalable a muchos agentes
+- Robusto: si coordinador regional falla, otros siguen
+
+**Desventajas:**
+
+- Más complejo de diseñar
+- Latencias en comunicación entre niveles
+
+==== 1.5 Ventajas de Sistemas Multi-Agente
+
+* Escalabilidad: mejor distribución de carga
+* Robustez: tolerancia a fallos parciales
+* Flexibilidad: adaptación a cambios
+* Paralelismo: ejecución simultánea
+* Solución de problemas complejos: descomposición natural
+
+==== 1.6 Desafíos Principales
+
+* Coordinación eficiente
+* Comunicación confiable en ambientes no deterministas
+* Resolución de conflictos
+* Consistencia de datos distribuidos
+* Seguridad y confianza entre agentes
+* Debugging y testing de sistemas complejos
+
+==== 1.7 Casos de Uso Reales
+
+* Robótica colaborativa: múltiples robots trabajando en conjunto
+* Sistemas de tráfico inteligente: vehículos autónomos coordinados
+* Redes inteligentes (Smart Grids): gestión distribuida de energía
+* Simulaciones económicas: agentes compradores y vendedores
+* Videojuegos: NPCs que cooperan o compiten
+* Trading automático: múltiples algoritmos en mercados
+* Sistemas de recomendación: agentes especializados
+
+=== Actividades Prácticas
+
+* Lectura de artículos seminales en sistemas multi-agente
+* Análisis de casos de uso: identificar qué arquitectura sería más adecuada
+* Diagrama de una solución multi-agente para un problema dado
+
+=== Evaluación
+
+* Quiz: conceptos fundamentales
+* Análisis comparativo: arquitecturas multi-agente
+* Propuesta de arquitectura para un caso de uso
+
+---
+
+== Módulo 2: Comunicación Entre Agentes
+
+=== Objetivos de aprendizaje
+
+* Entender diferentes paradigmas de comunicación
+* Implementar protocolos de mensajería
+* Diseñar esquemas de comunicación robustos
+* Manejar latencia y confiabilidad
+
+=== Contenidos
+
+==== 2.1 Paradigmas de Comunicación
+
+Existen cuatro paradigmas principales:
+
+===== 1. Comunicación Síncrona (RPC - Remote Procedure Call)
+
+El **emisor espera** hasta recibir respuesta. Bloqueante.
+
+Diagrama:
+----
+Agente A              Agente B
+   │                    │
+   │─── Petición ──────►│
+   │    (bloqueado)     │
+   │                    │ (procesando)
+   │◄────Respuesta─────│
+   │ (continúa)         │
+----
+
+[source,python]
+----
+class SynchronousCommunication:
+    """Comunicación síncrona: bloqueante"""
+
+    def __init__(self):
+        self.agents = {}
+
+    def register_agent(self, name, agent):
+        self.agents[name] = agent
+
+    def send_synchronous(self, from_agent, to_agent, message):
+        """Enviar mensaje y ESPERAR respuesta"""
+        print(f"{from_agent}: Enviando '{message}' a {to_agent}")
+
+        # BLOQUEANTE: esperar respuesta
+        response = self.agents[to_agent].handle_request(message)
+
+        print(f"{from_agent}: Recibí respuesta '{response}'")
+        return response
+
+# Uso
+class SimpleAgent:
+    def __init__(self, name):
+        self.name = name
+
+    def handle_request(self, message):
+        print(f"{self.name}: Procesando '{message}'")
+        return f"Response to {message}"
+
+comm = SynchronousCommunication()
+agent_a = SimpleAgent("A")
+agent_b = SimpleAgent("B")
+
+comm.register_agent("A", agent_a)
+comm.register_agent("B", agent_b)
+
+# A envía mensaje a B y espera respuesta
+response = comm.send_synchronous("A", "B", "¿Cómo estás?")
+print(f"Respuesta recibida: {response}")
+----
+
+**Ventajas:**
+- Simple de implementar
+- Garantiza respuesta
+- Bajo latency
+
+**Desventajas:**
+
+- Bloqueante (agente no hace nada mientras espera)
+- Si receptor es lento, todo se ralentiza
+- Falta de escalabilidad (muchos agentes esperando)
+
+===== 2. Comunicación Asíncrona (Message Queue)
+
+El **emisor continúa** sin esperar. No bloqueante.
+
+Diagrama:
+----
+Agente A         Message Queue         Agente B
+   │                  │                    │
+   │─Mensaje─────────►│                    │
+   │ (continúa)       │─Mensaje─────────►│
+   │                  │               (cuando disponible)
+   │                  │◄─Respuesta─────│
+   │◄─Respuesta───────│
+----
+
+[source,python]
+----
+from queue import Queue
+import threading
+import time
+
+class AsynchronousCommunication:
+    """Comunicación asíncrona: no bloqueante"""
+
+    def __init__(self):
+        self.agents = {}
+        self.message_queue = Queue()
+
+    def register_agent(self, name, agent):
+        self.agents[name] = agent
+        agent.set_message_queue(self.message_queue)
+
+    def send_asynchronous(self, from_agent, to_agent, message):
+        """Enviar mensaje sin esperar respuesta"""
+        msg_object = {
+            'from': from_agent,
+            'to': to_agent,
+            'content': message,
+            'timestamp': time.time()
+        }
+
+        # Encolar y continuar (NO ESPERAR)
+        self.message_queue.put(msg_object)
+        print(f"{from_agent}: Envié '{message}' a {to_agent} y continúo trabajando")
+
+class AgentAsync:
+    def __init__(self, name):
+        self.name = name
+        self.queue = None
+
+    def set_message_queue(self, queue):
+        self.queue = queue
+
+    def process_messages(self):
+        """Procesar mensajes cuando esté disponible"""
+        while True:
+            try:
+                msg = self.queue.get(timeout=1)
+
+                if msg['to'] == self.name:
+                    print(f"{self.name}: Recibí '{msg['content']}' de {msg['from']}")
+                    # Procesar y enviar respuesta
+                    response = f"Response to {msg['content']}"
+                    response_msg = {
+                        'from': self.name,
+                        'to': msg['from'],
+                        'content': response
+                    }
+                    self.queue.put(response_msg)
+            except:
+                pass  # Queue vacía, continuar
+
+# Uso
+comm = AsynchronousCommunication()
+agent_a = AgentAsync("A")
+agent_b = AgentAsync("B")
+
+comm.register_agent("A", agent_a)
+comm.register_agent("B", agent_b)
+
+# Iniciar procesamiento de mensajes en threads
+t_a = threading.Thread(target=agent_a.process_messages, daemon=True)
+t_b = threading.Thread(target=agent_b.process_messages, daemon=True)
+t_a.start()
+t_b.start()
+
+# A envía mensaje a B pero continúa
+comm.send_asynchronous("A", "B", "¿Cómo estás?")
+print("A continúa trabajando mientras B procesa")
+
+time.sleep(1)  # Dejar tiempo para procesamiento
+----
+
+**Ventajas:**
+- No bloqueante (agentes pueden seguir trabajando)
+- Escalable (muchos mensajes en cola)
+- Desacoplamiento temporal
+
+**Desventajas:**
+
+- Más complejo de implementar
+- Necesario manejo de colas
+- Posibles mensajes perdidos si no hay persistencia
+
+===== 3. Publish-Subscribe (Pub/Sub)
+
+Los agentes se **suscriben a tópicos**. Total desacoplamiento.
+
+Diagrama:
+----
+Publicador     Message Broker      Suscriptores
+               (con tópicos)
+   │               │                    │
+   │─"evento"─────►│                    │
+   │               │─"evento"─────────►│ (A suscrito)
+   │               │                    │
+   │               │─"evento"─────────►│ (B suscrito)
+----
+
+[source,python]
+----
+class PublishSubscribe:
+    """Arquitectura Pub/Sub: desacoplamiento total"""
+
+    def __init__(self):
+        self.topics = {}  # topic -> [subscribers]
+
+    def subscribe(self, topic, agent):
+        """Agente se suscribe a tópico"""
+        if topic not in self.topics:
+            self.topics[topic] = []
+        self.topics[topic].append(agent)
+        print(f"{agent.name} suscrito a '{topic}'")
+
+    def publish(self, topic, message):
+        """Publicar evento en tópico"""
+        print(f"Publicando '{message}' en tópico '{topic}'")
+
+        if topic in self.topics:
+            # Notificar a TODOS los suscritos
+            for subscriber in self.topics[topic]:
+                subscriber.notify(topic, message)
+
+class AgentPubSub:
+    def __init__(self, name):
+        self.name = name
+
+    def notify(self, topic, message):
+        """Recibir notificación de tópico suscrito"""
+        print(f"{self.name}: Recibí evento en '{topic}': '{message}'")
+
+# Uso
+broker = PublishSubscribe()
+
+agent_a = AgentPubSub("AgentA")
+agent_b = AgentPubSub("AgentB")
+agent_c = AgentPubSub("AgentC")
+
+# Suscribir agentes a tópicos
+broker.subscribe("weather", agent_a)
+broker.subscribe("weather", agent_b)
+broker.subscribe("prices", agent_c)
+
+# Publicar eventos
+broker.publish("weather", "Lluvia en la tarde")  # A y B reciben
+broker.publish("prices", "Suba de 5%")           # Solo C recibe
+----
+
+**Ventajas:**
+- Máximo desacoplamiento (publicadores no conocen suscriptores)
+- Escalable (muchos suscriptores por tópico)
+- Dinámico (suscriptores pueden cambiar en runtime)
+
+**Desventajas:**
+
+- Más infraestructura necesaria
+- Latencia variable
+- Debugging más difícil
+
+==== 2.2 Formatos de Mensajes
+
+Un mensaje en un sistema multi-agente es el principal medio de comunicación. Su estructura determina qué información se puede transmitir y qué tan fácil es de procesar.
+
+===== Especificaciones Estándar
+
+**FIPA ACL (Foundational Agent Communication Language)**
+
+Estándar de IEEE para agentes. Muy formal.
+
+[source]
+----
+(inform
+  :sender agent1
+  :receiver agent2
+  :content (temperatura = 25)
+  :language LISP
+  :ontology ambiente
+)
+----
+
+Componentes:
+
+* **Performativa**: Tipo de acto comunicativo (inform, request, query, refuse, propose)
+* **Sender/Receiver**: Identificadores de agentes
+* **Content**: El mensaje real
+* **Language**: Lenguaje de representación
+* **Ontology**: Significado compartido de términos
+* **Reply-to**: Dónde enviar respuesta
+
+**JSON-RPC**
+
+Simple, basado en JSON. Bueno para web.
+
+[source,json]
+----
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "procesarDatos",
+  "params": {"temperatura": 25, "humedad": 60}
+}
+
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {"procesado": true, "timestamp": 1234567890}
+}
+----
+
+Ventajas: simple, ubiquitous, debugging fácil
+Desventajas: sin seguridad inherente, sin tipado
+
+**gRPC**
+
+Moderno, binario, tipado fuerte.
+
+[source]
+----
+service AgentService {
+  rpc ProcessData(DataRequest) returns (DataResponse);
+  rpc StreamTelemetry(Empty) returns (stream Telemetry);
+}
+
+message DataRequest {
+  float temperature = 1;
+  float humidity = 2;
+}
+
+message DataResponse {
+  bool success = 1;
+  int32 processingTime = 2;
+}
+----
+
+Ventajas: muy rápido, soporte para streaming, multiplexing HTTP/2
+Desventajas: más complejo, requiere .proto
+
+**MQTT**
+
+Ligero para IoT y sistemas embebidos.
+
+[source]
+----
+PUBLISH sensores/temperatura 25.5
+PUBLISH sensores/humedad 60.0
+
+SUBSCRIBE sensores/+
+SUBSCRIBE actuadores/control/#
+----
+
+Ventajas: muy ligero, publish-subscribe, QoS levels (0, 1, 2)
+Desventajas: menos flexible para RPC, no tipado
+
+===== Ejemplo Comparativo
+
+[source,python]
+----
+# FIPA ACL en Python (pseudocódigo)
+message_fipa = {
+    'performative': 'inform',
+    'sender': 'Agent1',
+    'receiver': 'Agent2',
+    'content': {'temperature': 25, 'humidity': 60},
+    'language': 'python-dict',
+    'ontology': 'environment'
+}
+
+# JSON-RPC
+message_jsonrpc = {
+    'jsonrpc': '2.0',
+    'id': 1,
+    'method': 'sensor.updateReading',
+    'params': {'temperature': 25, 'humidity': 60}
+}
+
+# MQTT (topic + payload)
+mqtt_topic = 'sensores/ambiental'
+mqtt_payload = b'{"temperature": 25, "humidity": 60}'
+
+# Nuestro propio formato minimalista
+class Message:
+    def __init__(self, sender, receiver, action, payload):
+        self.sender = sender
+        self.receiver = receiver
+        self.action = action
+        self.payload = payload
+        self.timestamp = time.time()
+
+    def to_dict(self):
+        return {
+            's': self.sender,
+            'r': self.receiver,
+            'a': self.action,
+            'p': self.payload,
+            't': self.timestamp
+        }
+----
+
+===== Diseño de Mensajes Propios
+
+Si creas tu propio formato, considera:
+
+**1. Schemas y Validación**
+
+[source,python]
+----
+from jsonschema import validate
+
+MessageSchema = {
+    'type': 'object',
+    'properties': {
+        'sender': {'type': 'string'},
+        'receiver': {'type': 'string'},
+        'action': {'type': 'string', 'enum': ['query', 'inform', 'request']},
+        'payload': {'type': 'object'}
+    },
+    'required': ['sender', 'receiver', 'action']
+}
+
+msg = {'sender': 'A', 'receiver': 'B', 'action': 'query'}
+validate(instance=msg, schema=MessageSchema)  # Valida
+----
+
+**2. Versionado**
+
+[source,python]
+----
+class Message:
+    VERSION = 2
+
+    def __init__(self, sender, receiver, action, payload):
+        self.version = self.VERSION
+        self.sender = sender
+        self.receiver = receiver
+        self.action = action
+        self.payload = payload
+
+    def upgrade_from_v1(self, old_dict):
+        """Convertir mensaje v1 a v2"""
+        # v1 usaba 'from' en lugar de 'sender'
+        old_dict['sender'] = old_dict.pop('from')
+        return old_dict
+----
+
+**3. Backward Compatibility**
+
+Soporte para versiones antiguas:
+
+[source,python]
+----
+def deserialize_message(data):
+    version = data.get('version', 1)
+
+    if version == 1:
+        # Parsear formato antiguo
+        return parse_v1(data)
+    elif version == 2:
+        # Parsear formato nuevo
+        return parse_v2(data)
+    else:
+        raise ValueError(f"Versión desconocida: {version}")
+----
+
+**4. Serialización**
+
+Opciones:
+
+* **JSON**: Legible, estándar web, lento
+* **MessagePack**: Binario, compacto, rápido
+* **Protocol Buffers**: Tipado, muy compacto, requiere .proto
+* **Pickle (Python)**: Rápido, no seguro (vulnerabilidades)
+
+[source,python]
+----
+import json
+import msgpack
+
+# JSON
+json_msg = json.dumps({'action': 'query', 'data': [1, 2, 3]})
+parsed = json.loads(json_msg)
+
+# MessagePack (compacto)
+packed = msgpack.packb({'action': 'query', 'data': [1, 2, 3]})
+unpacked = msgpack.unpackb(packed)
+
+# MessagePack es más compacto:
+print(len(json_msg))      # ~30 bytes
+print(len(packed))        # ~15 bytes
+----
+
+==== 2.3 Middleware y Buses de Mensajes
+
+En sistemas grandes, los agentes no se comunican directamente. Usan intermediarios (middleware) que manejan ruteo, persistencia y confiabilidad.
+
+===== Message Brokers
+
+**RabbitMQ**
+
+Message queue con routing avanzado. El estándar industrial.
+
+[source,python]
+----
+import pika
+
+# Conexión
+connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+channel = connection.channel()
+
+# Declarar exchange (enrutador)
+channel.exchange_declare(exchange='sensor_data', exchange_type='topic')
+
+# Publicar
+channel.basic_publish(
+    exchange='sensor_data',
+    routing_key='temperatura.interior',
+    body=b'{"value": 25.5}'
+)
+
+# Suscribirse
+channel.queue_declare(queue='procesador_temp')
+channel.queue_bind(
+    exchange='sensor_data',
+    queue='procesador_temp',
+    routing_key='temperatura.*'
+)
+
+def callback(ch, method, properties, body):
+    print(f"Recibido: {body}")
+
+channel.basic_consume(
+    queue='procesador_temp',
+    on_message_callback=callback,
+    auto_ack=True
+)
+
+channel.start_consuming()
+----
+
+Características:
+
+* Routing complejo (topic, fanout, direct)
+* Persistencia: mensajes guardados en disco
+* Transacciones y confirmaciones
+* Clustering para alta disponibilidad
+
+**Apache Kafka**
+
+Streaming de eventos distribuido, muy escalable.
+
+[source,python]
+----
+from kafka import KafkaProducer, KafkaConsumer
+import json
+
+# Productor
+producer = KafkaProducer(
+    bootstrap_servers=['localhost:9092'],
+    value_serializer=lambda v: json.dumps(v).encode('utf-8')
+)
+
+# Enviar evento
+producer.send('sensor-topic', {
+    'sensor_id': 'temp_001',
+    'value': 25.5,
+    'timestamp': 1234567890
+})
+
+# Consumidor
+consumer = KafkaConsumer(
+    'sensor-topic',
+    bootstrap_servers=['localhost:9092'],
+    value_deserializer=lambda m: json.loads(m.decode('utf-8')),
+    group_id='procesador-grupo'
+)
+
+for message in consumer:
+    print(f"Evento: {message.value}")
+----
+
+Características:
+
+* Event streaming: log inmutable de eventos
+* Particiones: paralelismo automático
+* Consumer groups: múltiples consumidores procesando
+* Retencion: guardía eventos indefinidamente para replay
+
+**Redis Streams**
+
+Simple, rápido, good para casos no-críticos.
+
+[source,python]
+----
+import redis
+
+r = redis.Redis(host='localhost', port=6379)
+
+# Agregar evento a stream
+r.xadd('sensor-stream', {
+    'temperature': 25.5,
+    'humidity': 60
+})
+
+# Leer últimos eventos
+events = r.xrange('sensor-stream', count=10)
+for event_id, data in events:
+    print(f"ID: {event_id}, Data: {data}")
+
+# Consumer group
+r.xgroup_create('sensor-stream', 'grupo-procesador', id='0', mkstream=True)
+
+# Consumir como grupo
+messages = r.xreadgroup(
+    {'grupo-procesador': '>'},
+    count=1,
+    block=0
+)
+----
+
+===== Service Meshes
+
+Para microservicios, un **service mesh** maneja comunicación transparente:
+
+* **Istio**: Muy potente, observabilidad, traffic management, security
+* **Linkerd**: Ligero, performance-focused
+* **Consul Connect**: Integrado con Consul service discovery
+
+Ejemplo Istio:
+
+[source,yaml]
+----
+# VirtualService: define como routear tráfico
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: agent-service
+spec:
+  hosts:
+  - agent
+  http:
+  - match:
+    - uri:
+        prefix: /api
+    route:
+    - destination:
+        host: agent
+        port:
+          number: 8080
+      weight: 80  # 80% tráfico
+    - destination:
+        host: agent-v2
+        port:
+          number: 8080
+      weight: 20  # 20% tráfico (canary deployment)
+----
+
+==== 2.4 Topologías de Comunicación
+
+Cómo se conectan los agentes entre sí:
+
+===== Point-to-Point
+
+Comunicación directa entre dos agentes.
+
+[source,python]
+----
+# Agente A envía directamente a Agente B
+agent_a.send_to(agent_b, "Hola B")
+----
+
+Pros: bajo latency, simple
+Contras: cada agente debe conocer ubicación de otros
+
+===== Broadcasting
+
+Un agente envía a todos.
+
+[source,python]
+----
+# Agente A anuncia a todos
+coordinator.broadcast(
+    from_agent=agent_a,
+    message="Nueva tarea disponible"
+)
+# Todos los agentes reciben
+----
+
+Pros: simple, todos se enterar
+Contras: overhead, desperdicio si solo algunos necesitan
+
+===== Multicasting
+
+Un agente envía a un grupo.
+
+[source,python]
+----
+# A envía solo a grupo "sensores"
+coordinator.multicast(
+    from_agent=agent_a,
+    group="sensores",
+    message="Actualizar lecturas"
+)
+----
+
+Pros: eficiente, dirigido
+Contras: overhead de gestión de grupos
+
+===== Hierarchical
+
+Árbol de comunicación.
+
+[source]
+----
+        Coordinador
+           / | \
+          /  |  \
+         A1  A2  A3  (agentes trabajadores)
+----
+
+Pros: escalable, manejable
+Contras: latencia en niveles profundos, punto único de fallo en raíz
+
+==== 2.5 Confiabilidad y Entrega
+
+¿Qué pasa si se pierde un mensaje? ¿Si se duplica?
+
+===== Garantías de Entrega
+
+**At-Most-Once**: "Envío una vez, puede no llegar"
+* Usado en: sistemas tiempo-real donde pérdida es OK (streaming video)
+* Implementación: simple, sin reintentos
+
+**At-Least-Once**: "Envío varias veces si es necesario, puede duplicarse"
+* Usado en: aplicaciones donde los datos son críticos
+* Implementación: con ACKs y reintentos
+
+**Exactly-Once**: "Garantizo que llega exactamente una vez" (difícil)
+* Teórico: "FLP Impossibility" dice que en sistemas asincronos es imposible
+* Práctico: combinación de técnicas
+
+[source,python]
+----
+class ReliableMessenger:
+    def __init__(self):
+        self.pending = {}  # Mensajes pendientes de ACK
+
+    def send_reliable(self, to_agent, message):
+        """At-least-once: reintenta hasta ACK"""
+        msg_id = str(uuid.uuid4())
+        self.pending[msg_id] = {
+            'to': to_agent,
+            'message': message,
+            'retries': 0,
+            'max_retries': 3,
+            'ack_received': False
+        }
+
+        self._do_send(msg_id)
+
+    def _do_send(self, msg_id):
+        """Enviar y programar reintento"""
+        pending_msg = self.pending[msg_id]
+
+        # Enviar
+        to_agent = pending_msg['to']
+        to_agent.receive_message(
+            pending_msg['message'],
+            requires_ack=msg_id
+        )
+
+        # Programar timeout para reintento
+        if pending_msg['retries'] < pending_msg['max_retries']:
+            self.schedule_retry(msg_id, delay=5)
+
+    def receive_ack(self, msg_id):
+        """Confirmar recepción"""
+        if msg_id in self.pending:
+            self.pending[msg_id]['ack_received'] = True
+            del self.pending[msg_id]
+
+    def schedule_retry(self, msg_id, delay):
+        """Reintentarenviando después del delay"""
+        def retry():
+            if msg_id in self.pending:
+                pending_msg = self.pending[msg_id]
+                pending_msg['retries'] += 1
+                self._do_send(msg_id)
+
+        # En sistema real, usar threading.Timer o async
+        timer = threading.Timer(delay, retry)
+        timer.daemon = True
+        timer.start()
+----
+
+===== Técnicas de Confiabilidad
+
+**Acknowledgments (ACK)**
+
+Receptor confirma recepción:
+
+[source,python]
+----
+# Envío
+sender.send(message, requires_ack=True)
+
+# Recepción
+receiver.receive_message(message)
+receiver.send_ack(message.id)  # Confirmar
+----
+
+**Timeouts y Reintentos**
+
+Si no recibo ACK en X segundos, reintentar:
+
+[source,python]
+----
+timeout = 5  # segundos
+retries = 3
+
+for attempt in range(retries):
+    send(message)
+    try:
+        ack = wait_for_ack(timeout=timeout)
+        return  # Éxito
+    except TimeoutError:
+        if attempt < retries - 1:
+            continue  # Reintentar
+        else:
+            raise  # Fallar después de todos los reintentos
+----
+
+**Checksums**
+
+Detectar corrupción:
+
+[source,python]
+----
+import hashlib
+
+def send_with_checksum(data):
+    checksum = hashlib.md5(data).hexdigest()
+    return {'data': data, 'checksum': checksum}
+
+def verify_checksum(message):
+    checksum = hashlib.md5(message['data']).hexdigest()
+    return checksum == message['checksum']
+----
+
+**Cifrado y Autenticación**
+
+Asegurar que mensaje vino de quien dice:
+
+[source,python]
+----
+from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.primitives.asymmetric import padding
+
+# Firmar mensaje
+private_key = ...
+signature = private_key.sign(
+    data,
+    padding.PSS(...),
+    hashes.SHA256()
+)
+
+# Verificar firma
+public_key = ...
+public_key.verify(signature, data, padding.PSS(...), hashes.SHA256())
+----
+
+==== 2.6 Manejo de Latencia
+
+La latencia (delay en comunicación) afecta profundamente la coordinación.
+
+===== Implicaciones
+
+* **Sincronía**: Si latencia es predecible, podemos sincronizar
+* **Asincronía**: Si latencia es variable o alta, más difícil
+
+[source,python]
+----
+# Bajo latency (síncrono posible)
+# LAN: ~1ms, puede esperar
+request_time = send_request()
+response = wait_for_response(timeout=100ms)
+
+# Alto latency (asincrónico necesario)
+# Internet: ~100-500ms, esperar bloquea
+send_request_async()
+continue_working()  # No esperar
+# Respuesta llega después
+on_response_received(callback)
+----
+
+===== Timeout Strategies
+
+**Corto** (agresivo):
+* Ventaja: detecta problemas rápido
+* Desventaja: falsos positivos en red lenta
+
+**Largo** (conservador):
+* Ventaja: tolera variabilidad
+* Desventaja: lentitud en detectar fallos
+
+**Exponencial**:
+* Primer intento: timeout 1s
+* Segundo: 2s
+* Tercero: 4s
+
+[source,python]
+----
+class AdaptiveTimeout:
+    def __init__(self):
+        self.timeout = 1  # segundos
+        self.backoff = 2  # multiplicador
+
+    def wait_with_backoff(self):
+        for attempt in range(5):
+            try:
+                result = wait(timeout=self.timeout)
+                return result
+            except TimeoutError:
+                self.timeout *= self.backoff  # Aumentar timeout
+
+timeout_strategy = AdaptiveTimeout()
+result = timeout_strategy.wait_with_backoff()
+----
+
+===== Optimismo vs Pesimismo
+
+**Optimista**: Asumir que va a funcionar, proceder
+* Rápido pero puede fallar silenciosamente
+
+**Pesimista**: Asumir que puede fallar, prepararse
+* Lento pero robusto
+
+[source,python]
+----
+# Optimista: enviar y olvidar
+send_message(receiver, data)
+continue_working()
+
+# Pesimista: esperar confirmación
+send_message(receiver, data)
+try:
+    ack = wait_for_ack(timeout=5)
+    continue_working()
+except TimeoutError:
+    # Manejar fallo
+    handle_error()
+----
+
+===== Especulación Temprana
+
+Comenzar trabajo basado en predicción antes de confirmar:
+
+[source,python]
+----
+# Especulativo: asumir que request va a resultar en OK
+send_request(receiver)
+
+# Mientras espero respuesta, comenzar trabajo especulativo
+speculative_work = compute_assuming_success()
+
+# Cuando llega respuesta
+result = wait_for_response()
+if result.success:
+    use(speculative_work)  # Fue correcto, usar
+else:
+    undo(speculative_work)  # Fue incorrecto, revertir
+----
+
+===== Pipelining
+
+No esperar a que termine una operación para comenzar la siguiente:
+
+[source]
+----
+Sin pipeline (secuencial):
+Send1 -> Wait -> Send2 -> Wait -> Send3
+|----T1----|      |----T2----|
+
+Con pipeline:
+Send1 -> Send2 -> Send3 -> ... -> Recv1 -> Recv2 -> Recv3
+|---T1---T2---T3---| (todo concurrente)
+----
+
+==== 2.7 Herramientas Prácticas
+
+===== RabbitMQ con Python
+
+[source,python]
+----
+pip install pika
+
+import pika
+
+# Básico
+connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+channel = connection.channel()
+
+# Producción
+channel.queue_declare(queue='hello')
+channel.basic_publish(exchange='', routing_key='hello', body=b'Hello World!')
+
+# Consumo
+def callback(ch, method, properties, body):
+    print(f"Received: {body}")
+
+channel.basic_consume(queue='hello', on_message_callback=callback, auto_ack=True)
+channel.start_consuming()
+----
+
+===== Apache Kafka con Python
+
+[source,python]
+----
+pip install confluent-kafka
+
+from confluent_kafka import Producer, Consumer
+
+# Productor
+producer = Producer({'bootstrap.servers': 'localhost:9092'})
+producer.produce('my-topic', b'my-value')
+producer.flush()
+
+# Consumidor
+consumer = Consumer({
+    'bootstrap.servers': 'localhost:9092',
+    'group.id': 'mygroup',
+    'auto.offset.reset': 'earliest'
+})
+consumer.subscribe(['my-topic'])
+
+msg = consumer.poll(timeout=1.0)
+if msg is not None:
+    print(f"Received message: {msg.value()}")
+----
+
+===== gRPC con Python
+
+[source,python]
+----
+pip install grpcio grpcio-tools
+
+# Definir servicio en .proto
+# message Request { string name = 1; }
+# message Reply { string message = 1; }
+# service Greeter {
+#   rpc SayHello (Request) returns (Reply);
+# }
+
+# Servidor
+class GreeterServicer:
+    def SayHello(self, request, context):
+        return Reply(message=f'Hello {request.name}')
+
+# Ejecutar servidor
+from grpc import aio
+server = aio.Server()
+add_GreeterServicer_to_server(GreeterServicer(), server)
+await server.start()
+
+# Cliente
+async with aio.insecure_channel('localhost:50051') as channel:
+    stub = GreeterStub(channel)
+    response = await stub.SayHello(Request(name='World'))
+    print(response.message)
+----
+
+===== Redis con Python
+
+[source,python]
+----
+pip install redis
+
+import redis
+
+r = redis.Redis(host='localhost', port=6379)
+
+# Pub/Sub
+pubsub = r.pubsub()
+pubsub.subscribe('my-channel')
+
+# Publicar en otro lugar
+r.publish('my-channel', 'Hello')
+
+# Recibir en suscriptor
+for message in pubsub.listen():
+    if message['type'] == 'message':
+        print(message['data'])
+----
+
+===== WebSockets
+
+Para comunicación bidireccional en tiempo real web:
+
+[source,python]
+----
+pip install websockets
+
+# Servidor
+import asyncio
+import websockets
+
+async def echo(websocket, path):
+    async for message in websocket:
+        print(f"Received: {message}")
+        await websocket.send(f"Echo: {message}")
+
+start_server = websockets.serve(echo, "localhost", 8765)
+
+asyncio.get_event_loop().run_until_complete(start_server)
+asyncio.get_event_loop().run_forever()
+
+# Cliente
+import asyncio
+import websockets
+
+async def hello():
+    async with websockets.connect('ws://localhost:8765') as websocket:
+        await websocket.send("Hello server!")
+        response = await websocket.recv()
+        print(response)
+
+asyncio.run(hello())
+----
+
+=== Taller Práctico 1: Comunicación Básica
+
+**Objetivos:**
+* Implementar comunicación punto a punto entre agentes
+* Usar un message broker
+* Manejar timeouts y reintentos
+
+**Ejercicio:**
+Crear dos agentes (A y B) donde:
+. Agente A envía mensajes al Agente B
+. Agente B procesa y responde
+. Implementar retry si no hay respuesta
+. Usar JSON para mensajes
+. Registrar timestamp de envío y recepción
+
+**Tecnología sugerida:**
+* RabbitMQ o Redis como broker
+* Python con bibliotecas apropiadas
+* Logging para auditoría
+
+=== Evaluación
+
+* Quiz: paradigmas y protocolos
+* Implementación: sistema de comunicación robusta
+* Análisis: comparar diferentes brokers para un caso
+
+---
+
+== Módulo 3: Coordinación y Orquestación
+
+=== Objetivos de aprendizaje
+
+* Implementar estrategias de coordinación
+* Evitar condiciones de carrera y deadlocks
+* Sincronizar agentes distribuidos
+* Asignar recursos eficientemente
+
+=== Contenidos
+
+==== 3.1 Estrategias de Coordinación
+
+===== Coordinación Centralizada (Master-Slave)
+
+Un **coordinador maestro** decide las acciones de todos los agentes.
+
+[source,python]
+----
+class CentralCoordinator:
+    """Coordinador que decide todo"""
+
+    def __init__(self, agents):
+        self.agents = agents
+        self.task_queue = []
+
+    def coordinate(self):
+        """Ciclo: recopilar info -> decidir -> asignar"""
+        # 1. Percibir estado de todos
+        states = [agent.get_state() for agent in self.agents]
+
+        # 2. Resolver problema globalmente
+        plan = self.global_optimizer(states)
+
+        # 3. Asignar tareas
+        for agent, task in zip(self.agents, plan):
+            agent.assign_task(task)
+
+        # 4. Ejecutar
+        for agent in self.agents:
+            agent.execute()
+
+    def global_optimizer(self, states):
+        """Encontrar plan óptimo global"""
+        # Usar algoritmo complejo (ej: PLM, branch-and-bound)
+        # Retorna: [task1, task2, task3, ...]
+        return ['task1', 'task2', 'task3']
+
+# Uso
+agents = [Agent(i) for i in range(5)]
+coordinator = CentralCoordinator(agents)
+
+for step in range(100):
+    coordinator.coordinate()
+----
+
+**Ventajas:**
+
+* Decisiones óptimas globales (si el optimizer es bueno)
+* Determinístico, fácil de entender
+* Simple de implementar
+
+**Desventajas:**
+
+
+* **Punto único de fallo**: si coordinador falla, todo se detiene
+* **Escalabilidad**: coordinador se sobrecarga con N agentes
+* **No adaptativo**: reagusta toda la solución cada vez
+* **Cuello de botella**: coordinador es el límite de performance
+
+===== Coordinación Jerárquica
+
+Múltiples niveles de coordinadores crean balance entre centralización y distribución.
+
+[source,python]
+----
+class HierarchicalCoordinator:
+    """Coordinación en árbol: menos centralizado"""
+
+    def __init__(self):
+        # Nivel 1: coordinador global
+        self.top_coordinator = TopLevel()
+
+        # Nivel 2: coordinadores regionales
+        self.region_coords = [
+            RegionalCoordinator('R1', agents=[0, 1, 2]),
+            RegionalCoordinator('R2', agents=[3, 4, 5])
+        ]
+
+    def coordinate(self):
+        # Cada región coordina internamente
+        for region_coord in self.region_coords:
+            region_coord.coordinate()
+
+        # Nivel superior resuelve inter-regional conflicts
+        conflicts = [
+            rc.get_conflicts() for rc in self.region_coords
+        ]
+        if conflicts:
+            self.top_coordinator.resolve_conflicts(conflicts)
+
+class RegionalCoordinator:
+    """Coordinador de región"""
+
+    def __init__(self, name, agents):
+        self.name = name
+        self.agents = agents
+        self.conflicts = []
+
+    def coordinate(self):
+        """Coordinar solo agentes en esta región"""
+        states = [self.agents[i].get_state() for i in self.agents]
+        plan = self.local_optimizer(states)
+        # Asignar y ejecutar
+        ...
+
+    def get_conflicts(self):
+        """Reportar conflictos que no pude resolver"""
+        return self.conflicts
+
+    def local_optimizer(self, states):
+        """Optimizar solo para esta región"""
+        return []
+----
+
+**Ventajas:**
+
+* Balance: local control + coordinación global
+* Escalable: cada región maneja su complejidad
+* Robusto: si una región falla, otras continúan
+* Adaptable: cada nivel puede tomar decisiones rápidamente
+
+**Desventajas:**
+
+* Más complejo de implementar
+* Posibles suboptimalidades (locales vs global)
+* Latencia: comunicación entre niveles
+
+===== Coordinación Distribuida (P2P)
+
+Los agentes **negocian localmente** sin autoridad central. El consenso emerge.
+
+[source,python]
+----
+class DistributedAgent:
+    """Agente que coordina solo con vecinos"""
+
+    def __init__(self, agent_id, all_agents):
+        self.id = agent_id
+        self.neighbors = []  # Solo conozco vecinos
+        self.value = 0
+        self.all_agents = all_agents
+
+    def add_neighbor(self, agent):
+        """Conectar a vecino"""
+        self.neighbors.append(agent)
+
+    def step(self):
+        """Coordinación distribuida: gossip"""
+        # 1. Compartir valor con vecinos
+        for neighbor in self.neighbors:
+            neighbor.receive_value(self.id, self.value)
+
+        # 2. Actualizar a promedio de vecinos
+        neighbor_values = [
+            neighbor.value for neighbor in self.neighbors
+        ]
+        if neighbor_values:
+            self.value = (self.value + sum(neighbor_values)) / \
+                        (1 + len(neighbor_values))
+
+# Red: A-B-C (línea)
+agent_a = DistributedAgent('A', None)
+agent_b = DistributedAgent('B', None)
+agent_c = DistributedAgent('C', None)
+
+agent_a.neighbors = [agent_b]
+agent_b.neighbors = [agent_a, agent_c]
+agent_c.neighbors = [agent_b]
+
+agent_a.value = 100
+agent_b.value = 0
+agent_c.value = 0
+
+# Convergencia a promedio
+for step in range(10):
+    for agent in [agent_a, agent_b, agent_c]:
+        agent.step()
+    print(f"Step {step}: A={agent_a.value:.2f}, "
+          f"B={agent_b.value:.2f}, C={agent_c.value:.2f}")
+
+# Resultado: todos convergen a ~33.33 (promedio)
+----
+
+**Ventajas:**
+
+* Totalmente distribuido: sin punto de fallo
+* Muy escalable: cada agente local
+* Adaptativo: cambios se propagan naturalmente
+* Robusto: tolera fallos
+
+**Desventajas:**
+
+* Convergencia lenta (especialmente en redes grandes)
+* Dificultad para alcanzar óptimo global
+* Puede quedar en equilibrios subóptimos
+* Debugging complejo
+
+===== Coordinación por Mercado
+
+Agentes actúan como compradores/vendedores. **Precios** emergen y coordinan el sistema.
+
+[source,python]
+----
+class AgentInMarket:
+    """Agente que participa en mercado"""
+
+    def __init__(self, agent_id, budget):
+        self.id = agent_id
+        self.budget = budget
+        self.inventory = {}
+        self.market_prices = {}
+
+    def decide_action(self):
+        """Decidir qué comprar/vender basado en precios"""
+        actions = []
+
+        # Si precio es bajo, compro; si alto, vendo
+        for good, price in self.market_prices.items():
+            if price < 50 and self.budget > 0:
+                # Compro
+                qty = min(1, self.budget // price)
+                actions.append(('buy', good, qty, price))
+                self.budget -= qty * price
+            elif price > 100 and good in self.inventory:
+                # Vendo
+                qty = min(1, self.inventory.get(good, 0))
+                actions.append(('sell', good, qty, price))
+                self.budget += qty * price
+
+        return actions
+
+class Market:
+    """Mercado: procesa transacciones, actualiza precios"""
+
+    def __init__(self):
+        self.agents = []
+        self.prices = {'A': 50, 'B': 75}
+        self.supply = {'A': 100, 'B': 50}
+        self.demand = {'A': 0, 'B': 0}
+
+    def round(self):
+        """Una ronda de mercado"""
+        # Agentes deciden acciones
+        all_actions = []
+        for agent in self.agents:
+            agent.market_prices = self.prices
+            actions = agent.decide_action()
+            all_actions.extend(actions)
+
+        # Calcular oferta/demanda
+        for action in all_actions:
+            action_type, good, qty, _ = action
+            if action_type == 'buy':
+                self.demand[good] = self.demand.get(good, 0) + qty
+            else:
+                self.supply[good] = self.supply.get(good, 0) + qty
+
+        # Actualizar precios según oferta/demanda
+        for good in self.prices:
+            ratio = self.demand.get(good, 1) / max(1, self.supply.get(good, 1))
+            self.prices[good] = int(self.prices[good] * ratio)
+
+        # Reset para próxima ronda
+        self.demand = {'A': 0, 'B': 0}
+----
+
+**Ventajas:**
+
+* **Emergencia natural**: precios coordinan sin control
+* Escalable: cada agente solo mira precios
+* Eficiente: incentiva producción eficiente
+* Adaptativo: cambios en demanda → cambios en precios
+
+**Desventajas:**
+
+* Requiere muchas transacciones
+* Lento converger a equilibrio
+* Puede haber bubbles/crashes
+* No garantiza equidad
+
+==== 3.2 Algoritmos de Sincronización
+
+===== Barreras (Barriers)
+
+Todos los agentes se esperan hasta que **todos hayan llegado** a un punto.
+
+[source,python]
+----
+import threading
+
+class Barrier:
+    """Barrera de sincronización"""
+
+    def __init__(self, num_agents):
+        self.num_agents = num_agents
+        self.arrived = 0
+        self.lock = threading.Lock()
+        self.condition = threading.Condition(self.lock)
+
+    def wait(self):
+        """Esperar hasta que todos lleguen"""
+        with self.condition:
+            self.arrived += 1
+
+            if self.arrived == self.num_agents:
+                # Todos llegaron, despertar a todos
+                self.condition.notify_all()
+            else:
+                # Esperar a que otros lleguen
+                self.condition.wait()
+
+# Ejemplo: 3 agentes coordinan
+barrier = Barrier(3)
+
+def agent_work(agent_id):
+    print(f"Agent {agent_id}: haciendo trabajo...")
+    time.sleep(1)
+
+    print(f"Agent {agent_id}: llegó a barrera")
+    barrier.wait()
+
+    print(f"Agent {agent_id}: todos sincronizados, continuando...")
+
+threads = [
+    threading.Thread(target=agent_work, args=(i,))
+    for i in range(3)
+]
+
+for t in threads:
+    t.start()
+
+for t in threads:
+    t.join()
+----
+
+**Problemas:**
+
+* ¿Qué pasa si un agente nunca llega? (deadlock)
+* Solución: timeout
+
+[source,python]
+----
+def wait_with_timeout(self, timeout):
+    """Esperar con timeout"""
+    with self.condition:
+        self.arrived += 1
+
+        if self.arrived == self.num_agents:
+            self.condition.notify_all()
+            return True
+        else:
+            # Esperar con timeout
+            if self.condition.wait(timeout=timeout):
+                return True
+            else:
+                self.arrived -= 1  # Revertir
+                return False  # Timeout
+----
+
+===== Rendezvous
+
+Dos o más agentes se encuentran, intercambian información, continúan.
+
+[source,python]
+----
+class RendezvousPoint:
+    """Punto de encuentro para agentes"""
+
+    def __init__(self):
+        self.waiting_agents = {}
+        self.lock = threading.Lock()
+
+    def rendezvous(self, agent_id, agent_data, partner_id=None):
+        """Esperar a socio"""
+        with self.lock:
+            self.waiting_agents[agent_id] = {
+                'data': agent_data,
+                'event': threading.Event()
+            }
+
+            # Si el socio ya llegó, conectar
+            if partner_id and partner_id in self.waiting_agents:
+                partner_entry = self.waiting_agents[partner_id]
+                exchange = {
+                    'agent_data': agent_data,
+                    'partner_data': partner_entry['data']
+                }
+
+                # Despertar a ambos
+                self.waiting_agents[agent_id]['exchange'] = exchange
+                partner_entry['exchange'] = exchange
+                partner_entry['event'].set()
+
+                return exchange
+            else:
+                # Esperar al socio
+                event = self.waiting_agents[agent_id]['event']
+
+        event.wait()  # Liberar lock mientras esperamos
+
+        with self.lock:
+            exchange = self.waiting_agents[agent_id]['exchange']
+            del self.waiting_agents[agent_id]
+
+        return exchange
+
+# Ejemplo: Agentes A y B se encuentran
+rdv = RendezvousPoint()
+
+def agent_a():
+    data = rdv.rendezvous('A', 'datos_de_A', partner_id='B')
+    print(f"A recibió: {data}")
+
+def agent_b():
+    data = rdv.rendezvous('B', 'datos_de_B', partner_id='A')
+    print(f"B recibió: {data}")
+
+t_a = threading.Thread(target=agent_a)
+t_b = threading.Thread(target=agent_b)
+
+t_a.start()
+t_b.start()
+t_a.join()
+t_b.join()
+----
+
+===== Algoritmo del Token
+
+Un **token** (o mutex) circula. Solo quien lo tiene puede actuar.
+
+[source,python]
+----
+class TokenRing:
+    """Token que circula en anillo"""
+
+    def __init__(self, num_agents):
+        self.num_agents = num_agents
+        self.token_holder = 0  # Agente 0 comienza con token
+
+    def acquire_token(self, agent_id, timeout=5):
+        """Esperar hasta tener token"""
+        start = time.time()
+
+        while self.token_holder != agent_id:
+            if time.time() - start > timeout:
+                return False
+            time.sleep(0.01)  # Polling
+
+        return True
+
+    def release_token(self):
+        """Pasar token al siguiente"""
+        self.token_holder = (self.token_holder + 1) % self.num_agents
+
+# Usar token para acceso exclusivo a recurso
+token_ring = TokenRing(3)
+
+def agent_with_token(agent_id):
+    # Esperar mi turno
+    if token_ring.acquire_token(agent_id):
+        print(f"Agente {agent_id}: tengo token, accediendo recurso")
+        # Usar recurso compartido
+        time.sleep(0.5)
+        print(f"Agente {agent_id}: terminé, liberando token")
+
+        # Pasar token
+        token_ring.release_token()
+    else:
+        print(f"Agente {agent_id}: timeout esperando token")
+----
+
+===== Lease-Based Coordination
+
+Agente obtiene "arrendamiento" temporal sobre un recurso.
+
+[source,python]
+----
+import time
+
+class Lease:
+    """Arrendamiento temporal de recurso"""
+
+    def __init__(self, holder_id, duration):
+        self.holder_id = holder_id
+        self.created_at = time.time()
+        self.duration = duration
+
+    def is_valid(self):
+        """¿Este lease todavía es válido?"""
+        return (time.time() - self.created_at) < self.duration
+
+class LeaseManager:
+    """Gestor de leases"""
+
+    def __init__(self):
+        self.leases = {}  # recurso -> Lease
+
+    def request_lease(self, agent_id, resource, duration=10):
+        """Solicitar arrendamiento"""
+        if resource not in self.leases:
+            # Recurso libre
+            self.leases[resource] = Lease(agent_id, duration)
+            return True
+        else:
+            # Verificar si lease expiró
+            lease = self.leases[resource]
+            if not lease.is_valid():
+                # Expiró, asignar al nuevo
+                self.leases[resource] = Lease(agent_id, duration)
+                return True
+            else:
+                # Recurso en uso
+                return False
+
+    def renew_lease(self, agent_id, resource, duration=10):
+        """Renovar arrendamiento antes de expirar"""
+        if resource in self.leases:
+            lease = self.leases[resource]
+            if lease.holder_id == agent_id and lease.is_valid():
+                lease.duration = (time.time() - lease.created_at) + duration
+                return True
+        return False
+
+# Ejemplo: Agentes compiten por recurso
+manager = LeaseManager()
+
+def agent_with_lease(agent_id):
+    # Obtener lease
+    if manager.request_lease(agent_id, 'database', duration=5):
+        print(f"Agente {agent_id}: obtuve lease")
+
+        time.sleep(2)
+
+        # Renovar antes de expirar
+        if manager.renew_lease(agent_id, 'database', duration=5):
+            print(f"Agente {agent_id}: renové lease")
+
+        time.sleep(2)
+        print(f"Agente {agent_id}: liberando recurso")
+    else:
+        print(f"Agente {agent_id}: no pude obtener lease")
+
+# Crear agentes
+for i in range(2):
+    threading.Thread(target=agent_with_lease, args=(i,)).start()
+----
+
+**Ventajas:**
+
+* Flexible: permite coexistencia
+* No requiere punto central
+* Tolera fallos: lease expira automáticamente
+
+**Desventajas:**
+
+* Periodo no otorgado a nadie durante transición
+* Requiere sincronización de relojes
+* Overhead de renovación
+
+==== 3.3 Planificación Conjunta
+
+Descomponer problema complejo en subtareas y asignarlas a agentes.
+
+[source,python]
+----
+class TaskGraph:
+    """Grafo de dependencias entre tareas"""
+
+    def __init__(self):
+        self.tasks = {}  # task_id -> Task
+        self.dependencies = {}  # task_id -> [task_ids que debe esperar]
+
+    def add_task(self, task_id, duration, agent_id=None):
+        self.tasks[task_id] = {
+            'duration': duration,
+            'agent_id': agent_id,
+            'status': 'pending'
+        }
+        self.dependencies[task_id] = []
+
+    def add_dependency(self, task_id, depends_on):
+        """Tarea A depende de tarea B"""
+        self.dependencies[task_id].append(depends_on)
+
+    def can_start(self, task_id):
+        """¿Puedo comenzar tarea?"""
+        deps = self.dependencies[task_id]
+        return all(self.tasks[dep]['status'] == 'completed' for dep in deps)
+
+    def find_ready_tasks(self):
+        """Encontrar tareas listas para ejecutar"""
+        ready = []
+        for task_id, task in self.tasks.items():
+            if task['status'] == 'pending' and self.can_start(task_id):
+                ready.append(task_id)
+        return ready
+
+# Ejemplo: Proyecto de software (diseño -> implementación -> testing -> deployment)
+graph = TaskGraph()
+graph.add_task('design', 5)
+graph.add_task('implement', 10)
+graph.add_task('test', 7)
+graph.add_task('deploy', 2)
+
+graph.add_dependency('implement', 'design')
+graph.add_dependency('test', 'implement')
+graph.add_dependency('deploy', 'test')
+
+# Planificar agentes
+def plan_tasks(graph, num_agents):
+    """Asignar tareas a agentes respetando dependencias"""
+    assignments = [[] for _ in range(num_agents)]
+    agent_free_at = [0] * num_agents
+
+    ready = graph.find_ready_tasks()
+
+    while ready:
+        # Asignar tarea a agente menos ocupado
+        task_id = ready.pop(0)
+        agent_id = agent_free_at.index(min(agent_free_at))
+
+        assignments[agent_id].append(task_id)
+        agent_free_at[agent_id] += graph.tasks[task_id]['duration']
+        graph.tasks[task_id]['status'] = 'ready'
+
+        # Encontrar nuevas tareas listas
+        ready = graph.find_ready_tasks()
+
+    return assignments, agent_free_at
+
+assignments, times = plan_tasks(graph, 2)
+print(f"Agent 0: {assignments[0]}, tiempo: {times[0]}")
+print(f"Agent 1: {assignments[1]}, tiempo: {times[1]}")
+----
+
+==== 3.4 Asignación de Recursos
+
+Problema: Asignar recursos limitados a agentes para maximizar utilidad.
+
+[source,python]
+----
+from scipy.optimize import linear_sum_assignment
+import numpy as np
+
+class ResourceAllocation:
+    """Resolver asignación óptima de recursos"""
+
+    @staticmethod
+    def hungarian_algorithm(utility_matrix):
+        """Algoritmo Húngaro: asignación óptima
+
+        utility_matrix[i][j] = utilidad de asignar recurso j a agente i
+        """
+        # scipy implementa Hungarian automáticamente
+        agents, resources = linear_sum_assignment(
+            -utility_matrix  # Negativo para maximizar
+        )
+        return list(zip(agents, resources))
+
+    @staticmethod
+    def greedy_allocation(utility_matrix):
+        """Algoritmo avaror: rápido pero subóptimo
+
+        Asignación greedy: seleccionar mejor opción en cada paso
+        """
+        assignments = []
+        remaining_agents = set(range(len(utility_matrix)))
+        remaining_resources = set(range(len(utility_matrix[0])))
+
+        while remaining_agents and remaining_resources:
+            # Encontrar mejor par (agente, recurso)
+            best_agent = None
+            best_resource = None
+            best_utility = -float('inf')
+
+            for agent in remaining_agents:
+                for resource in remaining_resources:
+                    utility = utility_matrix[agent][resource]
+                    if utility > best_utility:
+                        best_utility = utility
+                        best_agent = agent
+                        best_resource = resource
+
+            assignments.append((best_agent, best_resource))
+            remaining_agents.remove(best_agent)
+            remaining_resources.remove(best_resource)
+
+        return assignments
+
+# Ejemplo: Asignar tareas a trabajadores
+# utility[i][j] = qué tan bien worker i hace tarea j
+utility = np.array([
+    [10, 20, 15],  # Worker 0
+    [25, 15, 10],  # Worker 1
+    [15, 10, 20]   # Worker 2
+])
+
+print("Óptimo (Húngaro):", ResourceAllocation.hungarian_algorithm(utility))
+print("Greedy:", ResourceAllocation.greedy_allocation(utility))
+----
+
+==== 3.5 Evitar Condiciones de Carrera
+
+Una **condición de carrera** ocurre cuando múltiples agentes acceden simultáneamente a recurso compartido.
+
+[source,python]
+----
+import threading
+
+class Counter:
+    """Contador compartido (SIN protección)"""
+
+    def __init__(self):
+        self.value = 0
+
+    def increment(self):
+        # Problema: entre leer y escribir, otro thread puede interferir
+        temp = self.value
+        temp += 1
+        self.value = temp  # Posible race condition
+
+class SafeCounter:
+    """Contador compartido (CON protección)"""
+
+    def __init__(self):
+        self.value = 0
+        self.lock = threading.Lock()
+
+    def increment(self):
+        with self.lock:
+            # Solo un thread aquí a la vez
+            self.value += 1
+
+    def get_value(self):
+        with self.lock:
+            return self.value
+
+# Demostración
+unsafe = Counter()
+safe = SafeCounter()
+
+def race_test(counter, name, iterations=1000):
+    threads = []
+    for _ in range(5):
+        t = threading.Thread(
+            target=lambda c=counter: [c.increment() for _ in range(iterations)]
+        )
+        threads.append(t)
+        t.start()
+
+    for t in threads:
+        t.join()
+
+    if hasattr(counter, 'get_value'):
+        print(f"{name}: {counter.get_value()} (esperado: {5*iterations})")
+    else:
+        print(f"{name}: {counter.value} (esperado: {5*iterations})")
+
+race_test(unsafe, "Sin Lock")
+race_test(safe, "Con Lock")
+----
+
+==== 3.6 Evitar Deadlocks
+
+Un **deadlock** es cuando agentes se quedan esperando indefinidamente.
+
+Ejemplo:
+- Agente A: tiene recurso X, espera recurso Y
+- Agente B: tiene recurso Y, espera recurso X
+- Resultado: ambos bloqueados eternamente
+
+**Condiciones necesarias para deadlock:**
+
+1. Mutual Exclusion: solo uno accede a recurso
+2. Hold and Wait: agente mantiene recurso mientras espera otro
+3. No Preemption: nadie puede quitar recurso
+4. Circular Wait: ciclo de esperas
+
+**Prevención: eliminar UNA de las 4 condiciones**
+
+[source,python]
+----
+class OrderedLocking:
+    """Prevenir deadlock con orden de locks"""
+
+    def __init__(self, num_resources):
+        self.locks = [threading.Lock() for _ in range(num_resources)]
+
+    def acquire_resources(self, agent_id, resource_ids):
+        """Adquirir múltiples recursos EN ORDEN para evitar deadlock"""
+        # Ordenar IDs: previene ciclos
+        sorted_ids = sorted(resource_ids)
+
+        for resource_id in sorted_ids:
+            self.locks[resource_id].acquire()
+            print(f"Agent {agent_id}: adquirió recurso {resource_id}")
+
+    def release_resources(self, agent_id, resource_ids):
+        """Liberar en orden inverso"""
+        sorted_ids = sorted(resource_ids, reverse=True)
+
+        for resource_id in sorted_ids:
+            self.locks[resource_id].release()
+
+# Uso seguro
+locker = OrderedLocking(3)
+
+def agent_work(agent_id, resources):
+    try:
+        locker.acquire_resources(agent_id, resources)
+        print(f"Agent {agent_id}: haciendo trabajo...")
+        time.sleep(0.1)
+    finally:
+        locker.release_resources(agent_id, resources)
+
+# Esta configuración NO causará deadlock porque siempre adquieren en orden
+threading.Thread(target=agent_work, args=(0, [0, 1])).start()
+threading.Thread(target=agent_work, args=(1, [0, 2])).start()
+
+class TimeoutApproach:
+    """Prevención con timeouts"""
+
+    def __init__(self):
+        self.lock = threading.Lock()
+
+    def try_acquire(self, timeout=2):
+        """Intentar adquirir con timeout"""
+        return self.lock.acquire(timeout=timeout)
+
+    def release(self):
+        self.lock.release()
+
+# Uso: si timeout, abortar y reintentar
+locker = TimeoutApproach()
+if locker.try_acquire(timeout=2):
+    try:
+        print("Tengo recurso!")
+    finally:
+        locker.release()
+else:
+    print("Timeout: alguien más lo tiene")
+----
+
+==== 3.7 Herramientas Prácticas
+
+**Redis para Locks**
+
+[source,python]
+----
+import redis
+import uuid
+
+r = redis.Redis(host='localhost', port=6379)
+
+def acquire_lock(resource_name, timeout=10):
+    """Adquirir lock con Redis"""
+    lock_id = str(uuid.uuid4())
+    acquired = r.set(
+        f"lock:{resource_name}",
+        lock_id,
+        nx=True,  # Solo si no existe
+        ex=timeout  # Expira automáticamente
+    )
+    return lock_id if acquired else None
+
+def release_lock(resource_name, lock_id):
+    """Liberar lock (si aún nos pertenece)"""
+    current = r.get(f"lock:{resource_name}")
+    if current and current.decode() == lock_id:
+        r.delete(f"lock:{resource_name}")
+        return True
+    return False
+
+# Uso
+lock_id = acquire_lock('database')
+if lock_id:
+    try:
+        print("Tengo acceso exclusivo")
+    finally:
+        release_lock('database', lock_id)
+----
+
+**Zookeeper para Coordinación Distribuida**
+
+[source,python]
+----
+# pip install kazoo
+from kazoo.client import KazooClient
+
+zk = KazooClient(hosts='127.0.0.1:2181')
+zk.start()
+
+# Crear nodo (registrarse)
+zk.create('/agents/agent_0', b'data', ephemeral=True)
+
+# Ver qué agentes están vivos
+children = zk.get_children('/agents')
+print(f"Agentes vivos: {children}")
+
+# Esperar cambios
+def watch_agents(children):
+    print(f"Cambio detectado: {children}")
+
+zk.get_children('/agents', watch=watch_agents)
+
+zk.stop()
+----
+
+=== Taller Práctico 2: Sistema de Coordinación
+
+**Objetivos:**
+
+* Implementar coordinador centralizado
+* Manejar sincronización de agentes
+* Evitar deadlocks
+
+**Ejercicio:**
+
+Crear sistema donde:
+. 3+ agentes necesitan acceso a recurso compartido
+. Un coordinador asigna turnos
+. Implementar timeout para prevenir deadlock
+. Logging de adquisición/liberación de recurso
+. Simular fallo de agente y recuperación
+
+=== Evaluación
+
+* Quiz: estrategias de coordinación
+* Implementación: sistema con sincronización
+* Análisis: deadlock prevención en caso complejo
+
+---
+
+== Módulo 4: Colaboración y Trabajo en Equipo
+
+=== Objetivos de aprendizaje
+
+* Formar grupos y coaliciones de agentes
+* Implementar trabajo colaborativo
+* Alcanzar consenso entre múltiples partes
+* Delegar y supervisar tareas
+
+=== Contenidos
+
+==== 4.1 Formación de Coaliciones
+
+Una **coalición** es un subconjunto de agentes que se unen para lograr un objetivo común.
+
+[source,python]
+----
+class CoalitionFormation:
+    """Gestión de formación dinámica de coaliciones"""
+
+    def __init__(self, agents):
+        self.agents = agents
+        self.coalitions = {}  # coalition_id -> [agent_ids]
+        self.coalition_values = {}  # coalition_id -> valor total
+
+    def evaluate_coalition(self, coalition_members):
+        """Evaluar qué tan valiosa es una coalición"""
+        # Valor: suma de contribuciones individuales + sinergia
+        individual_value = sum(
+            self.agents[agent_id].value for agent_id in coalition_members
+        )
+        synergy = len(coalition_members) * 0.5  # Bonus por equipo
+        return individual_value + synergy
+
+    def should_join(self, agent_id, coalition_id):
+        """¿Debe agente unirse a coalición?"""
+        current_coalition_value = \
+            self.evaluate_coalition(self.coalitions.get(coalition_id, []))
+
+        # Si me uno, ¿mejora el valor?
+        new_members = self.coalitions.get(coalition_id, []) + [agent_id]
+        new_value = self.evaluate_coalition(new_members)
+
+        # Unirse si mejora el valor total
+        return new_value > current_coalition_value
+
+    def shapley_value(self, agent_id, coalition_id):
+        """Calcular contribución justa del agente (Shapley value)"""
+        coalition = self.coalitions[coalition_id]
+        all_permutations = permutations(coalition)
+
+        total_contribution = 0
+        for perm in all_permutations:
+            idx = perm.index(agent_id)
+            # Contribución: diferencia con/sin el agente
+            with_agent = self.evaluate_coalition(list(perm[:idx+1]))
+            without_agent = self.evaluate_coalition(list(perm[:idx]))
+            total_contribution += (with_agent - without_agent)
+
+        return total_contribution / factorial(len(coalition))
+
+# Ejemplo
+class Agent:
+    def __init__(self, agent_id, individual_value):
+        self.id = agent_id
+        self.value = individual_value
+
+agents = {
+    'A': Agent('A', 10),
+    'B': Agent('B', 15),
+    'C': Agent('C', 12)
+}
+
+cf = CoalitionFormation(agents)
+coalition = ['A', 'B']
+cf.coalitions['C1'] = coalition
+print(f"Valor coalición AB: {cf.evaluate_coalition(coalition)}")
+----
+
+**Conceptos clave:**
+
+* **Core**: Asignaciones donde ningún subgrupo quiere desviarse
+* **Valor Shapley**: Distribución justa considerando todas las posibles órdenes
+* **Índice de poder**: Capacidad de un agente para cambiar resultado
+
+==== 4.2 Arquitecturas Cooperativas
+
+**Modelo Servidor:** Agentes especializados (servidores) ofrecen servicios a clientes.
+
+- Service discovery: clientes descubren qué servidor tiene servicio
+- Ejemplo: Base de datos centralizada, servidor web
+
+**Modelo Facilitador:** Un facilitador central orquesta todo.
+
+- Todos contactan al facilitador
+- Facilitador es cuello de botella pero asegura control
+- Ejemplo: Coordinador en arquitectura master-slave
+
+**Modelo Mediador:** Múltiples mediadores, menos centralizado.
+
+- Cada grupo tiene su mediador
+- Mediadores negocian entre sí
+- Más robusto que facilitador único
+
+**Modelo Par (Peer-to-Peer):** Todos equivalentes.
+
+- Negociación directa entre agentes
+- Máxima resiliencia, máxima complejidad
+- Ejemplo: Blockchain, redes P2P
+
+==== 4.3 Consenso y Votación
+
+Alcanzar acuerdo entre múltiples partes, posiblemente con agentes deshonestos.
+
+[source,python]
+----
+class VotingScheme:
+    """Esquemas de votación"""
+
+    def __init__(self, voters, voting_type='majority'):
+        self.voters = voters  # list of agent_ids
+        self.votes = {}
+        self.voting_type = voting_type
+
+    def cast_vote(self, voter_id, vote):
+        """Registrar voto"""
+        self.votes[voter_id] = vote
+
+    def tally_votes(self):
+        """Contar votos según esquema"""
+        if self.voting_type == 'majority':
+            # Mayoría simple: >50%
+            yes_count = sum(1 for v in self.votes.values() if v == 'yes')
+            return yes_count > len(self.voters) / 2
+
+        elif self.voting_type == 'supermajority':
+            # Supermayoría: >66%
+            yes_count = sum(1 for v in self.votes.values() if v == 'yes')
+            return yes_count > (2 * len(self.voters) / 3)
+
+        elif self.voting_type == 'unanimity':
+            # Unanimidad: todos sí
+            return all(v == 'yes' for v in self.votes.values())
+
+        elif self.voting_type == 'weighted':
+            # Votos ponderados (algunos votos valen más)
+            total = sum(self.voter_weights.get(vid, 1)
+                       for vid, v in self.votes.items() if v == 'yes')
+            max_weight = sum(self.voter_weights.values())
+            return total > max_weight / 2
+
+# Algoritmo Raft: consenso con líder tolerante a fallos
+class RaftConsensus:
+    """Consenso distribuido con un líder"""
+
+    def __init__(self, num_agents):
+        self.agents = list(range(num_agents))
+        self.leader = None
+        self.term = 0
+        self.log = []
+
+    def elect_leader(self):
+        """Elegir líder por votación mayoritaria"""
+        votes = {}
+        for agent in self.agents:
+            # Agent vota por candidato
+            candidate = agent  # Simplificado
+            votes[candidate] = votes.get(candidate, 0) + 1
+
+        # Ganador: máximo votes
+        self.leader = max(votes, key=votes.get)
+
+    def replicate_log(self, entry):
+        """Líder replica entrada a otros agentes"""
+        self.log.append(entry)
+        # Enviar a otros
+        for agent in self.agents:
+            if agent != self.leader:
+                # Enviar entry
+                pass
+
+    def commit_entry(self):
+        """Comprometer cuando mayoría confirmó"""
+        if len(self.agents) % 2 == 1:
+            needed = (len(self.agents) // 2) + 1
+        else:
+            needed = (len(self.agents) // 2)
+
+        # Simular confirmaciones
+        if needed <= len(self.agents):
+            return True
+        return False
+----
+
+==== 4.4 Delegación y Supervisión
+
+Supervisor delega tarea a agente subordinado y monitorea progreso.
+
+[source,python]
+----
+class DelegationContract:
+    """Contrato entre supervisor y delegado"""
+
+    def __init__(self, supervisor, delegate, task, deadline, sla):
+        self.supervisor = supervisor
+        self.delegate = delegate
+        self.task = task
+        self.deadline = deadline
+        self.sla = sla  # Service Level Agreement
+        self.status = 'pending'
+        self.result = None
+
+    def is_violated(self):
+        """¿Se violó el SLA?"""
+        return self.status == 'failed' or \
+               (datetime.now() > self.deadline and self.status != 'completed')
+
+class Supervisor:
+    """Supervisor que delega y monitorea"""
+
+    def __init__(self):
+        self.contracts = []
+
+    def delegate_task(self, delegate, task, deadline):
+        """Delegar tarea"""
+        contract = DelegationContract(
+            self, delegate, task, deadline, sla='on-time'
+        )
+        self.contracts.append(contract)
+        delegate.accept_task(contract)
+
+    def monitor_contracts(self):
+        """Verificar progreso periódicamente"""
+        for contract in self.contracts:
+            if contract.is_violated():
+                self.handle_violation(contract)
+            else:
+                # Obtener status
+                status = contract.delegate.get_task_status(contract.task)
+                contract.status = status
+
+    def handle_violation(self, contract):
+        """Actuar cuando SLA se viola"""
+        print(f"SLA violation: {contract.task}")
+        # Opciones: retirar tarea, penalizar, reasignar
+        # ...
+----
+
+==== 4.5 Resolución de Problemas Colaborativos
+
+Agentes trabajan juntos resolviendo problema complejo.
+
+[source,python]
+----
+class CollaborativeProblemSolver:
+    """Agentes colaborando para resolver problema"""
+
+    def __init__(self, agents, problem):
+        self.agents = agents
+        self.problem = problem
+        self.solutions = {}
+        self.verified_solutions = {}
+
+    def brainstorm(self):
+        """Fase 1: cada agente genera soluciones"""
+        for agent in self.agents:
+            solutions = agent.generate_solutions(self.problem)
+            self.solutions[agent.id] = solutions
+
+    def search_collaboratively(self):
+        """Fase 2: búsqueda colaborativa"""
+        # Combinar y refinar soluciones
+        combined = []
+        for solutions in self.solutions.values():
+            combined.extend(solutions)
+
+        # Mejorar iterativamente compartiendo ideas
+        for iteration in range(5):
+            for agent in self.agents:
+                refined = agent.refine_solutions(combined)
+                combined.extend(refined)
+
+    def verify_solutions(self):
+        """Fase 3: verificación mutua"""
+        # Cada solución es verificada por múltiples agentes
+        for solution in combined:
+            verification_votes = []
+            for agent in self.agents:
+                is_valid = agent.verify_solution(solution)
+                verification_votes.append(is_valid)
+
+            # Aceptar si mayoría verifica
+            if sum(verification_votes) > len(self.agents) / 2:
+                self.verified_solutions[id(solution)] = solution
+
+    def handle_free_riding(self):
+        """Detectar agentes que no contribuyen"""
+        contributions = {}
+        for agent in self.agents:
+            contribution_count = len(self.solutions[agent.id])
+            contributions[agent.id] = contribution_count
+
+        avg = sum(contributions.values()) / len(self.agents)
+        free_riders = [aid for aid, count in contributions.items() if count < avg/2]
+
+        return free_riders
+----
+
+==== 4.6 Gestión de Conflictos Internos
+
+Cuando miembros de coalición compiten por recursos.
+
+[source,python]
+----
+class ConflictResolution:
+    """Resolver conflictos dentro de coalición"""
+
+    def __init__(self, coalition_members):
+        self.members = coalition_members
+        self.disputes = []
+
+    def add_dispute(self, disputing_parties, resource, claims):
+        """Registrar disputa"""
+        self.disputes.append({
+            'parties': disputing_parties,
+            'resource': resource,
+            'claims': claims  # {party: claimed_amount}
+        })
+
+    def mediate(self, dispute):
+        """Mediar disputa internamente"""
+        # Método 1: Dividir igualmente
+        total_resource = dispute['resource']
+        share = total_resource / len(dispute['parties'])
+
+        # Método 2: Proporcional a contribución
+        contributions = {p: self.members[p].contribution for p in dispute['parties']}
+        total_contrib = sum(contributions.values())
+
+        allocation = {p: (contributions[p] / total_contrib) * total_resource
+                     for p in dispute['parties']}
+
+        return allocation
+
+    def apply_punishment(self, non_cooperator, punishment_level):
+        """Penalizar a no cooperadores"""
+        if punishment_level == 'warning':
+            non_cooperator.reputation -= 1
+        elif punishment_level == 'fine':
+            non_cooperator.resources -= 10
+        elif punishment_level == 'expulsion':
+            self.members.remove(non_cooperator)
+----
+
+=== Taller Práctico 3: Agentes Colaborativos
+
+**Objetivos:**
+
+* Crear equipo de agentes colaborativo
+* Implementar votación/consenso
+* Delegar y supervisar tareas
+
+**Ejercicio:**
+
+Crear sistema donde:
+. 4-5 agentes trabajan en equipo
+. Cada agente tiene información parcial
+. Deben llegar a consenso sobre decisión
+. Implementar votación mayoritaria
+. Si hay falla, supervisores detectan
+. Re-asignación de tareas
+
+=== Evaluación
+
+* Quiz: coaliciones y consenso
+* Implementación: sistema colaborativo
+* Análisis: mecanismos de confianza en equipo
+
+---
+
+== Módulo 5: Negociación y Resolución de Conflictos
+
+=== Objetivos de aprendizaje
+
+* Diseñar protocolos de negociación
+* Implementar estrategias de negociación
+* Resolver conflictos entre agentes
+* Modelar escenarios multi-tema
+
+=== Contenidos
+
+==== 5.1 Teoría de Negociación
+
+**BATNA**: Best Alternative To Negotiated Agreement. Mi mejor opción si negocia falla.
+
+- Si acuerdo < BATNA, rechazo
+- Ejemplo: vendedor con BATNA=100 rechaza ofertas < 100
+
+**ZOPA** (Zona de Acuerdo Posible): rango donde ambos ganan.
+
+- Si comprador max=150 y vendedor min=100 → ZOPA = [100, 150]
+- Negociación sucede dentro ZOPA
+
+[source,python]
+----
+class NegotiationAgent:
+    """Agente negocia con BATNA y utility function"""
+
+    def __init__(self, agent_id, batna, utility_function):
+        self.id = agent_id
+        self.batna = batna  # Mi mejor alternativa
+        self.utility = utility_function  # Cómo valúo outcomes
+
+    def evaluate_offer(self, offer):
+        """¿Me conviene esta oferta?"""
+        offer_value = self.utility(offer)
+        return offer_value >= self.batna
+
+    def make_counteroffer(self, offer):
+        """Contraoferta: pedir más si offer < espectativa"""
+        current_value = self.utility(offer)
+        if current_value < self.batna * 1.1:  # Espero 10% más
+            return self.batna * 1.1
+        else:
+            return current_value * 1.05  # O 5% más
+
+# Ejemplo: Comprador vs Vendedor
+buyer = NegotiationAgent('Buyer',
+    batna=100,
+    utility_function=lambda x: 200 - x)  # Prefiero precio bajo
+
+seller = NegotiationAgent('Seller',
+    batna=100,
+    utility_function=lambda x: x - 50)   # Prefiero precio alto
+
+print(buyer.evaluate_offer(120))  # ¿Compro a 120?
+print(seller.evaluate_offer(120))  # ¿Vendo a 120?
+----
+
+**Estructuras:**
+- **Bilateral**: 2 agentes (típico)
+- **Multilateral**: 3+ agentes (complejo)
+- **Sequential**: fases (primero A-B, luego C)
+- **Simultánea**: todos a la vez
+
+==== 5.2 Protocolos de Negociación
+
+===== Oferta-Contraoferta
+
+* Agente A propone
+* Agente B acepta, rechaza o contraoferta
+* Iteración hasta acuerdo o ruptura
+* Estrategia: empezar alto/bajo, conceder gradualmente
+
+===== Subasta
+
+* Un bien, múltiples compradores
+* Tipos:
+  - English auction: precio sube, último puja gana
+  - Dutch auction: precio baja, primer puja gana
+  - Sealed-bid: todos pujan simultáneamente
+  - Vickrey: ganador paga segundo precio
+
+===== Mercado
+
+* Múltiples compradores y vendedores
+* Precio emerge de oferta/demanda
+* Transacciones simultáneas
+* Información parcial
+
+===== Protocolo Contract Net
+
+* Anunciante publica necesidad
+* Contratistas envían propuestas
+* Anunciante selecciona
+* Contratista realiza trabajo
+
+==== 5.3 Estrategias de Negociación
+
+===== Competitiva
+
+* Objetivo: maximizar ganancia propia
+* Poco cuidado por otro agente
+* Puede acarrear represalias
+
+===== Colaborativa
+
+* Objetivo: maximizar ganancia conjunta
+* Transparencia
+* Búsqueda de soluciones win-win
+
+===== De Compromiso
+
+* Split the difference: punto medio
+* Cada parte cede algo
+
+===== Evitación
+
+* No negociar
+* Cada quien sigue su camino
+
+===== Acomodación
+
+* Aceptar lo que propone otro
+* Cooperar sin exigencias
+
+==== 5.4 Elementos de Negociación
+
+===== Utility Functions
+
+* Cómo valúa cada agente diferentes outcomes
+* Puede ser lineal o no lineal
+* Permite evaluar propuestas
+
+===== Multi-Tema
+
+* Múltiples atributos a negociar
+* Trade-offs: ceder en un tema para ganar en otro
+* Pareto optimal: no hay mejora sin perjuicio
+
+===== Información Incompleta
+
+* Agentes no conocen utility del otro
+* Necesidad de revelar o inferir
+* Riesgo de engaño
+
+==== 5.5 Resolución de Conflictos
+
+===== Conflicto
+
+* Desacuerdo fundamental
+* Incompatibilidad de objetivos
+
+===== Métodos de Resolución
+
+* Arbitraje: tercero impone solución
+* Mediación: tercero ayuda a encontrar acuerdo
+* Litigación: enfoque adversarial
+* Negociación: directa entre partes
+
+===== Escalation
+
+* Conflict spiral: conflicto se intensifica
+* Tit-for-tat: represalia por represalia
+* De-escalation: técnicas para calmar
+
+==== 5.6 Herramientas Prácticas
+
+* Operadores de negociación en frameworks multi-agente
+* Plantillas de protocolos (Contract Net, English Auction)
+* Motores de búsqueda de consenso
+
+=== Taller Práctico 4: Negociación Entre Agentes
+
+**Objetivos:**
+
+* Implementar protocolo de negociación
+* Modelar múltiples temas
+* Estrategias de negociación
+
+**Ejercicio:**
+
+Crear sistema donde:
+. Agente Vendedor y Agente Comprador
+. Múltiples atributos: precio, cantidad, entrega
+. Cada uno tiene BATNA diferente
+. Protocolo oferta-contraoferta
+. Trazas de progreso hacia acuerdo
+. Detectar impasses
+
+**Variación:**
+
+. Múltiples compradores (subasta)
+. Múltiples vendedores (mercado)
+
+=== Evaluación
+
+* Quiz: conceptos de negociación
+* Implementación: protocolo de negociación
+* Análisis: estrategias óptimas en caso
+
+---
+
+== Módulo 6: Competencia y Juegos
+
+=== Objetivos de aprendizaje
+
+* Aplicar teoría de juegos a agentes
+* Modelar ambientes competitivos
+* Implementar estrategias robustas
+* Analizar equilibrios
+
+=== Contenidos
+
+==== 6.1 Conceptos Fundamentales de Teoría de Juegos
+
+===== Juego
+
+* Conjunto de jugadores
+* Conjunto de estrategias para cada jugador
+* Payoff (ganancia) para cada combinación
+* Supuestos: racionalidad, información
+
+===== Estrategia Pura vs Mixta
+
+* Pura: determinista
+* Mixta: probabilística
+
+===== Información
+
+* Información perfecta: todos conocen historia
+* Información completa: todos conocen payoffs
+* Información perfecta + completa: juego fácil
+* Sin información perfecta o completa: más realista
+
+===== Juego Simultáneo vs Secuencial
+
+* Simultáneo: todos deciden al mismo tiempo
+* Secuencial: turnos
+* Información disponible varía
+
+==== 6.2 Equilibrio de Nash
+
+===== Definición
+
+* Perfil de estrategias donde nadie quiere cambiar
+* Puede haber múltiples equilibrios
+* No necesariamente óptimo globalmente
+
+===== Cálculo
+
+* Mejor respuesta: contra estrategia X, cuál es mi mejor estrategia
+* Intersección de mejores respuestas
+
+===== Tipos
+
+* Puro: estrategias deterministas
+* Mixto: con probabilidades
+
+==== 6.3 Estrategias Dominantes
+
+===== Dominancia Estricta
+
+* Estrategia A domina B si A es mejor contra toda estrategia del otro
+* Estrategia dominada nunca debe usarse
+
+===== Dominancia Débil
+
+* A domina débilmente B si A ≥ B siempre
+
+==== 6.4 Juegos Comunes
+
+===== Dilema del Prisionero
+
+* Dos agentes, cada uno puede cooperar o traicionar
+* Traición es siempre mejor individualmente
+* Pero cooperación es mejor colectivamente
+* Ilustra conflicto individual vs común
+
+===== Batalla de los Sexos
+
+* Pareja quiere ir juntos
+* Desacuerdo sobre dónde
+* Múltiples equilibrios
+
+===== Matching Pennies
+
+* Juego de suma cero
+* Competencia pura
+* Equilibrio en estrategia mixta
+
+===== Chicken/Hawk-Dove
+
+* Dos agentes avanzan uno hacia otro
+* Quien cede es "chicken"
+* Quien no cede es "hawk"
+* Choque es malo para ambos
+
+==== 6.5 Juegos Cooperativos vs No-Cooperativos
+
+===== No-Cooperativos
+
+* Agentes actúan independientemente
+* Binding agreements no posibles
+* Focus en equilibrio Nash
+
+===== Cooperativos
+
+* Agentes pueden hacer acuerdos vinculantes
+* Focus en soluciones conjuntas
+* Ejemplo: formación de coaliciones
+
+==== 6.6 Juegos de Suma Cero vs General
+
+===== Suma Cero
+
+* Ganancia de uno = pérdida del otro
+* Totalmente conflictivo
+* Ejemplo: ajedrez, póker
+
+===== Suma General
+
+* No hay conservación
+* Puede haber ganancias/pérdidas mutuas
+* Más realista
+
+==== 6.7 Algoritmos para Ambientes Competitivos
+
+===== Minimax
+
+* Asumir oponente juega óptimo contra mí
+* Maximizar ganancia mínima posible
+* Usado en ajedrez, juegos de información perfecta
+
+===== Alpha-Beta Pruning
+
+* Optimización de minimax
+* Podar ramas que no afectan resultado
+* Reduce complejidad exponencial
+
+===== Q-Learning en Contexto Multi-Agente
+
+* Cada agente aprende value function
+* Desafío: ambiente no estacionario (otros agentes cambiar)
+* Convergencia no garantizada
+
+===== Nash Equilibrium Learning
+
+* Agentes aprenden hacia equilibrio Nash
+* Algoritmos específicos
+
+==== 6.8 Herramientas
+
+* OpenAI Gym: ambientes para entrenar agentes
+* Nashpy: cálculo de equilibrios Nash
+* PettingZoo: multi-agente RL
+
+=== Taller Práctico 5: Juego Multi-Agente
+
+**Objetivos:**
+
+* Implementar juego simple
+* Entrenar agentes competitivos
+* Analizar equilibrio
+
+**Ejercicio:**
+
+Crear juego donde:
+
+. 2+ agentes compiten
+. Cada turno: decidir acción
+. Payoff según acción propia + ajena
+. Entrenar agentes con Q-learning
+. Analizar comportamiento emergente
+. Graficar convergencia a equilibrio
+
+**Opciones de Juego:**
+
+* Dilema del Prisionero repetido
+* Matching Pennies
+* Juego simple de recursos
+
+=== Evaluación
+
+* Quiz: teoría de juegos
+* Implementación: juego y agentes
+* Análisis: equilibrio y estrategias
+
+---
+
+== Módulo 7: Frameworks Multi-Agente Prácticos
+
+=== Objetivos de aprendizaje
+
+* Usar frameworks industriales
+* Construir sistemas multi-agente
+* Integrar agentes con frameworks
+* Debugging y monitoring
+
+=== Contenidos
+
+==== 7.1 Panorama de Frameworks
+
+===== Jade (Java Agent DEvelopment Framework)
+
+* Estándar FIPA
+* Madurez industrial
+* Comunicación robusta
+* Complejidad de learning curve
+
+===== Mesa (Python)
+
+* Foco educativo
+* Simulaciones basadas en agentes
+* Visualización
+* Comunidad activa
+
+===== AutoGen (Microsoft)
+
+* LLM-centric
+* Conversaciones entre agentes
+* Escalable
+* Moderno
+
+===== CrewAI
+
+* Crews de agentes especializados
+* Tasks y workflows
+* Integración con LLMs
+* Fácil de usar
+
+===== Ray RLlib
+
+* Distributed RL
+* Multi-agente support
+* Escalable a clusters
+
+==== 7.2 Arquitectura Típica de Framework
+
+* Agent Manager: crear, destruir, ejecutar agentes
+* Message Broker: comunicación entre agentes
+* Platform Services: logging, monitoreo
+* Agent Loop: percepto-acción
+
+==== 7.3 Ciclo de Vida de Agente
+
+* Creation: instanciar agente
+* Registration: registrarse en plataforma
+* Execution: loop percepto-acción
+* Termination: limpiar recursos
+
+==== 7.4 Implementación con Framework
+
+===== Pasos Básicos
+
+. Definir clase de agente
+. Definir comportamientos/acciones
+. Registrar agentes en plataforma
+. Ejecutar plataforma
+. Monitorear ejecución
+
+===== Ejemplo Conceptual (pseudocódigo)
+
+[source,python]
+----
+class MiAgente(Agent):
+    def __init__(self, name):
+        self.name = name
+        self.state = {}
+    
+    def step(self):
+        # Percibir
+        percepts = self.sense_environment()
+        
+        # Razonar
+        decision = self.decide(percepts)
+        
+        # Actuar
+        self.act(decision)
+----
+
+==== 7.5 Debugging de Sistemas Multi-Agente
+
+* Logging de eventos: envío/recepción de mensajes
+* Trazas de ejecución: qué hizo cada agente
+* Breakpoints condicionales: romper si cierta condición
+* Replay: re-ejecutar con random seed fijo
+
+===== Herramientas
+
+* Logging framework: logging de Python, log4j
+* Debuggers: debugger estándar + custom
+* Visualización: dashboards en tiempo real
+
+==== 7.6 Testing de Sistemas Multi-Agente
+
+* Unit tests: pruebas de agente individual
+* Integration tests: múltiples agentes
+* Scenario tests: casos específicos
+* Stress tests: muchos agentes
+
+===== Estrategias
+
+* Fijar random seeds para reproducibilidad
+* Mocks de dependencias externas
+* Simulation instead of real time
+
+==== 7.7 Deployment
+
+* Containerización: Docker
+* Orquestación: Kubernetes
+* Escalado: múltiples instancias
+* Monitoreo: Prometheus, Grafana
+
+=== Taller Práctico 6: Sistema Multi-Agente con Framework
+
+**Objetivos:**
+
+* Usar framework profesional
+* Construir sistema completamente funcional
+* Debugging y testing
+
+**Ejercicio:**
+
+Elegir framework (Mesa, AutoGen o CrewAI):
+. Crear 3-5 agentes con roles distintos
+. Comunicación entre ellos
+. Coordinación para objetivo común
+. Suite de tests
+. Logging completo
+. Visualización de ejecución
+
+=== Evaluación
+
+* Quiz: características de frameworks
+* Implementación: sistema con framework
+* Testing: casos de prueba y cobertura
+
+---
+
+== Proyecto Integrador: Sistema Multi-Agente Completo
+
+=== Descripción General
+
+El proyecto final integra todos los módulos:
+
+* Múltiples agentes con roles definidos
+* Comunicación robusta
+* Coordinación centralizada o distribuida
+* Negociación o competencia según roles
+* Handling de fallos
+* Testing y monitoreo
+
+=== Ejemplos de Dominios
+
+* Gestión de Tráfico Inteligente
+  - Agentes: vehículos, semáforos, centrales de control
+  - Objetivo: minimizar congestión
+  - Negociación sobre prioridades
+  
+* Marketplace Distribuido
+  - Agentes: compradores, vendedores, bancos
+  - Objetivo: transacciones justas
+  - Negociación de precios
+  
+* Equipo Robótico Colaborativo
+  - Agentes: robots, coordinator
+  - Objetivo: completar tarea en grupo
+  - Coordinación de movimientos
+  
+* Sistema de Energía Inteligente
+  - Agentes: productores, consumidores, distribuidor
+  - Objetivo: equilibrar oferta/demanda
+  - Negociación de precios
+
+=== Requisitos del Proyecto
+
+* Documentación: arquitectura, decisiones de diseño
+* Código: limpio, bien estructurado, comentado
+* Tests: unitarios e integración
+* Monitoreo: logging de eventos importantes
+* Análisis: resultados, lecciones aprendidas
+
+=== Evaluación
+
+* Funcionalidad: ¿El sistema hace lo propuesto?
+* Robustez: ¿Maneja fallos?
+* Escalabilidad: ¿Funciona con más agentes?
+* Claridad: ¿Código y documentación entendibles?
+* Innovación: ¿Algo interesante/novel?
+
+---
+
+== Referencias y Recursos
+
+=== Libros
+
+* "Multiagent Systems: Algorithmic, Game-Theoretic, and Logical Foundations" - Shoham & Leyton-Brown
+* "An Introduction to Multiagent Systems" - Wooldridge
+* "Game Theory" - Maschler, Solan, Zamir
+
+=== Papers Seminales
+
+* "FIPA Specifications"
+* "The Contract Net Protocol: High-Level Communication and Control in a Heterogeneous Problem Solver"
+* "A Framework for the Development of Multi-agent Systems"
+
+=== Frameworks y Herramientas
+
+* JADE: http://jade.tilab.com/
+* Mesa: https://mesa.readthedocs.io/
+* AutoGen: https://microsoft.github.io/autogen/
+* CrewAI: https://www.crewai.com/
+
+=== Comunidades
+
+* AAMAS: International Conference on Autonomous Agents and Multiagent Systems
+* JAIR: Journal of Artificial Intelligence Research
+
+---
+
+== Apéndice A: Glosario
+
+Agent:: Entidad autónoma que percibe, razona y actúa
+
+Broadcast:: Envío de mensaje a todos los agentes
+
+Coalición:: Grupo de agentes con objetivo común
+
+Consensus:: Acuerdo entre múltiples agentes
+
+Coordinación:: Arreglo de acciones entre agentes
+
+Deadlock:: Ciclo de agentes esperándose indefinidamente
+
+FIPA:: Foundational Agent Communication Language, estándar
+
+Nash Equilibrium:: Perfil de estrategias donde ninguno quiere cambiar
+
+Protocol:: Conjunto de reglas de comunicación
+
+Scalability:: Capacidad de funcionar con muchos agentes
+
+---
+
+== Apéndice B: Configuración del Entorno
+
+=== Requisitos
+
+* Python 3.8+
+* Pip
+* Docker (opcional)
+
+=== Instalación
+
+[source,bash]
+----
+# Crear entorno virtual
+python -m venv venv
+source venv/bin/activate  # En Windows: venv\Scripts\activate
+
+# Instalar dependencias
+pip install mesa autogen crewai pika redis-py grpcio
+
+# Instalar servidor de mensajes (recomendado)
+docker run -d --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:latest
+----
+
+=== Verificación
+
+[source,python]
+----
+import mesa
+import autogen
+print("Entorno listo para desarrollar!")
+----

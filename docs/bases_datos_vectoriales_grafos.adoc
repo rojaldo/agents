@@ -1,0 +1,3348 @@
+= Curso de Bases de Datos Vectoriales y de Grafos
+:doctype: book
+:toc:
+:toclevels: 4
+:sectnums:
+:icons: font
+:source-highlighter: highlight.js
+:highlightjsdir: https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0
+:highlightjs-theme: atom-one-light
+:data-uri:
+
+== Introducción
+
+Este curso cubre la implementación de **sistemas avanzados de almacenamiento** usando bases de datos vectoriales y de grafos con LangChain y Ollama en local. Aprenderás a construir aplicaciones complejas que combinan búsqueda semántica con relaciones entre entidades.
+
+== PARTE I: BASES DE DATOS VECTORIALES
+
+== Módulo 1: Fundamentos de Bases de Datos Vectoriales
+
+=== 1.1 ¿Qué son Vectores en Bases de Datos?
+
+**Concepto Fundamental:**
+- Representación numérica multidimensional de datos
+- Cada elemento es un número en un espacio n-dimensional
+- Típicamente 384 a 1536 dimensiones
+- Basados en embeddings (convertir texto → números)
+
+**Ejemplo Visual:**
+[source, text]
+----
+Texto: "gato"
+Vector: [0.234, -0.156, 0.891, ..., 0.445]  # 1536 dimensiones
+Texto: "felino"
+Vector: [0.241, -0.149, 0.887, ..., 0.452]  # Muy similar al anterior
+----
+
+=== 1.2 Similitud en Espacios Vectoriales
+
+**Similitud Coseno:**
+- Mide el ángulo entre dos vectores
+- Rango: -1 a 1 (1 = idénticos)
+- Usada en búsqueda semántica
+
+[source, text]
+----
+Similitud(v1, v2) = (v1 · v2) / (||v1|| × ||v2||)
+----
+
+**Distancia Euclidiana:**
+- Distancia recta entre dos puntos
+- Rango: 0 a infinito (0 = idénticos)
+
+[source, text]
+----
+Distancia = √((x1-x2)² + (y1-y2)² + ... + (zn-z'n)²)
+----
+
+**Distancia Manhattan:**
+- Suma de diferencias absolutas
+- Más rápida que Euclidiana
+
+=== 1.3 Ventajas de Bases de Datos Vectoriales
+
+* Búsqueda Semántica: No necesita coincidencia exacta
+* Escalabilidad: Millones de vectores en tiempo real
+* Eficiencia: Indexación especializada (HNSW, IVF)
+* Flexibilidad: Cualquier tipo de dato convertible a vector
+* Rapidez: Búsquedas en milisegundos
+* Relevancia: Basada en significado, no keywords
+
+=== 1.4 Casos de Uso
+
+* Recomendadores (películas, productos)
+* Búsqueda semántica en documentos
+* Detección de duplicados
+* Clasificación de textos
+* Análisis de similitud
+* Sistemas de RAG avanzados
+
+== Módulo 2: ChromaDB - Base de Datos Vectorial Local
+
+**ChromaDB** es la base de datos vectorial de código abierto más popular para desarrollo local y prototipos rápidos. Su filosofía es "embeddings made simple" - hacer que trabajar con vectores sea tan fácil como trabajar con SQL.
+
+**¿Por qué ChromaDB?**
+
+* **Zero configuration**: Funciona sin configuración compleja
+* **Python-first**: API diseñada para científicos de datos
+* **Embeddings automáticos**: Genera vectores automáticamente
+* **Persistencia local**: Datos en disco sin servidores
+* **Integración perfecta**: LangChain, LlamaIndex, Haystack
+
+=== 2.1 Instalación y Configuración
+
+[source, bash]
+----
+# Instalación básica
+pip install chromadb
+
+# Con LangChain
+pip install langchain-chroma
+
+# Dependencias opcionales para embeddings
+pip install sentence-transformers  # Para embeddings locales
+pip install openai  # Para embeddings de OpenAI
+----
+
+**Arquitectura de ChromaDB:**
+
+[source, text]
+----
+┌─────────────────────────────────────┐
+│   API Cliente (Python, JS)          │
+└──────────────┬──────────────────────┘
+               │
+┌──────────────▼──────────────────────┐
+│   ChromaDB Core Engine              │
+│   - Gestión de colecciones          │
+│   - Indexación HNSW                 │
+│   - Búsqueda de similitud           │
+└──────────────┬──────────────────────┘
+               │
+┌──────────────▼──────────────────────┐
+│   Capa de Persistencia              │
+│   - DuckDB (metadata)               │
+│   - Parquet (vectores)              │
+│   - SQLite (alternativa)            │
+└─────────────────────────────────────┘
+----
+
+=== 2.2 ChromaDB Básico
+
+[source, python]
+----
+import chromadb
+from chromadb.config import Settings
+
+# Modo en memoria (para desarrollo)
+client = chromadb.Client()
+
+# Modo persistente (recomendado)
+settings = Settings(
+    chroma_db_impl="duckdb+parquet",
+    persist_directory="./chroma_data",
+    anonymized_telemetry=False
+)
+client = chromadb.Client(settings)
+
+# Crear colección
+collection = client.create_collection(name="documentos")
+
+# Agregar documentos con embeddings
+collection.add(
+    ids=["id1", "id2"],
+    documents=["Texto 1", "Texto 2"],
+    metadatas=[{"source": "file1"}, {"source": "file2"}]
+)
+
+# Buscar
+results = collection.query(
+    query_texts=["Buscar este texto"],
+    n_results=3
+)
+print(results)
+----
+
+=== 2.3 ChromaDB con LangChain
+
+[source, python]
+----
+from langchain_chroma import Chroma
+from langchain_ollama import OllamaEmbeddings
+
+# Crear embeddings
+embeddings = OllamaEmbeddings(model="nomic-embed-text")
+
+# Crear vector store
+vector_store = Chroma(
+    collection_name="mi_coleccion",
+    embedding_function=embeddings,
+    persist_directory="./chroma_db"
+)
+
+# Agregar documentos
+from langchain_core.documents import Document
+
+docs = [
+    Document(page_content="Contenido 1", metadata={"source": "doc1"}),
+    Document(page_content="Contenido 2", metadata={"source": "doc2"}),
+]
+
+vector_store.add_documents(docs)
+
+# Buscar
+results = vector_store.similarity_search("búsqueda", k=3)
+for doc in results:
+    print(doc.page_content)
+
+# Buscar con scores
+results_with_scores = vector_store.similarity_search_with_score("búsqueda", k=3)
+for doc, score in results_with_scores:
+    print(f"Score: {score:.4f} - {doc.page_content}")
+----
+
+=== 2.4 Operaciones Avanzadas en ChromaDB
+
+[source, python]
+----
+# Filtrar por metadata
+results = vector_store.similarity_search(
+    "búsqueda",
+    k=3,
+    filter={"source": "doc1"}
+)
+
+# Actualizar documentos
+vector_store.update_document(id="id1", document=new_doc)
+
+# Eliminar documentos
+vector_store.delete(["id1", "id2"])
+
+# Obtener información de la colección
+collection = vector_store._collection
+print(f"Documentos: {collection.count()}")
+
+# Exportar datos
+all_docs = collection.get()
+----
+
+=== 2.5 Configuraciones Avanzadas de ChromaDB
+
+==== Modos de Operación
+
+[source, python]
+----
+import chromadb
+from chromadb.config import Settings
+
+# 1. Modo en memoria (ephemeral) - Para testing
+client = chromadb.Client()
+
+# 2. Modo persistente - Para desarrollo
+client = chromadb.PersistentClient(path="./mi_base_datos")
+
+# 3. Cliente HTTP - Para producción distribuida
+client = chromadb.HttpClient(host="localhost", port=8000)
+
+# 4. Configuración personalizada completa
+settings = Settings(
+    chroma_db_impl="duckdb+parquet",
+    persist_directory="./chroma_storage",
+    anonymized_telemetry=False,
+    allow_reset=True,
+    chroma_api_impl="chromadb.api.segment.SegmentAPI",
+)
+client = chromadb.Client(settings)
+----
+
+==== Funciones de Distancia
+
+[source, python]
+----
+from chromadb.utils import embedding_functions
+
+# Colección con cosine similarity (default)
+collection_cosine = client.create_collection(
+    name="cosine_collection",
+    metadata={"hnsw:space": "cosine"}
+)
+
+# Colección con distancia euclidiana (L2)
+collection_l2 = client.create_collection(
+    name="l2_collection",
+    metadata={"hnsw:space": "l2"}
+)
+
+# Colección con producto interno (inner product)
+collection_ip = client.create_collection(
+    name="ip_collection",
+    metadata={"hnsw:space": "ip"}
+)
+----
+
+==== Embeddings Personalizados
+
+[source, python]
+----
+from chromadb.utils import embedding_functions
+
+# 1. Sentence Transformers (local, gratuito)
+sentence_transformer_ef = embedding_functions.SentenceTransformerEmbeddingFunction(
+    model_name="all-MiniLM-L6-v2"
+)
+
+collection = client.create_collection(
+    name="docs_local",
+    embedding_function=sentence_transformer_ef
+)
+
+# 2. OpenAI Embeddings
+openai_ef = embedding_functions.OpenAIEmbeddingFunction(
+    api_key="tu-api-key",
+    model_name="text-embedding-ada-002"
+)
+
+collection_openai = client.create_collection(
+    name="docs_openai",
+    embedding_function=openai_ef
+)
+
+# 3. Hugging Face Embeddings
+huggingface_ef = embedding_functions.HuggingFaceEmbeddingFunction(
+    api_key="tu-hf-token",
+    model_name="sentence-transformers/all-mpnet-base-v2"
+)
+
+# 4. Función de embedding personalizada
+class CustomEmbeddingFunction:
+    def __call__(self, texts):
+        # Tu lógica personalizada aquí
+        return [[0.1, 0.2, 0.3] for _ in texts]
+
+custom_ef = CustomEmbeddingFunction()
+collection_custom = client.create_collection(
+    name="docs_custom",
+    embedding_function=custom_ef
+)
+----
+
+=== 2.6 Operaciones CRUD Avanzadas
+
+[source, python]
+----
+# Obtener o crear colección
+collection = client.get_or_create_collection(name="mi_coleccion")
+
+# Agregar documentos con metadata rica
+collection.add(
+    documents=[
+        "Python es un lenguaje de programación",
+        "JavaScript es usado en web",
+        "Machine Learning usa Python"
+    ],
+    metadatas=[
+        {"category": "programming", "language": "python", "level": "beginner"},
+        {"category": "web", "language": "javascript", "level": "intermediate"},
+        {"category": "ai", "language": "python", "level": "advanced"}
+    ],
+    ids=["doc1", "doc2", "doc3"]
+)
+
+# Búsqueda con filtros complejos
+results = collection.query(
+    query_texts=["aprender programación"],
+    n_results=10,
+    where={
+        "$and": [
+            {"category": "programming"},
+            {"level": {"$in": ["beginner", "intermediate"]}}
+        ]
+    },
+    where_document={"$contains": "Python"}
+)
+
+# Operadores de filtrado disponibles:
+# $eq, $ne, $gt, $gte, $lt, $lte, $in, $nin, $and, $or, $contains
+
+# Actualizar documentos
+collection.update(
+    ids=["doc1"],
+    documents=["Python es un excelente lenguaje de programación"],
+    metadatas=[{"category": "programming", "language": "python", "level": "all"}]
+)
+
+# Upsert (insertar o actualizar)
+collection.upsert(
+    ids=["doc4"],
+    documents=["Rust es un lenguaje de sistemas"],
+    metadatas=[{"category": "systems", "language": "rust"}]
+)
+
+# Eliminar por IDs
+collection.delete(ids=["doc2"])
+
+# Eliminar por filtro
+collection.delete(where={"category": "web"})
+
+# Contar documentos
+count = collection.count()
+print(f"Total documentos: {count}")
+
+# Peek (ver primeros documentos)
+peek = collection.peek(limit=5)
+print(peek)
+
+# Obtener todos los documentos
+all_items = collection.get(
+    where={"language": "python"},
+    include=["documents", "metadatas", "embeddings"]
+)
+----
+
+=== 2.7 ChromaDB con Ollama (Embeddings Locales)
+
+[source, python]
+----
+from langchain_chroma import Chroma
+from langchain_ollama import OllamaEmbeddings
+from langchain_core.documents import Document
+
+# Configurar embeddings con Ollama
+embeddings = OllamaEmbeddings(
+    model="nomic-embed-text",  # Modelo de embeddings
+    base_url="http://localhost:11434"  # Ollama server
+)
+
+# Crear vector store persistente
+vectorstore = Chroma(
+    collection_name="documentos_ollama",
+    embedding_function=embeddings,
+    persist_directory="./chroma_ollama_db"
+)
+
+# Agregar documentos
+docs = [
+    Document(
+        page_content="ChromaDB es una base de datos vectorial",
+        metadata={"source": "manual", "page": 1}
+    ),
+    Document(
+        page_content="Ollama permite ejecutar LLMs localmente",
+        metadata={"source": "tutorial", "page": 5}
+    ),
+    Document(
+        page_content="LangChain facilita la creación de aplicaciones con LLMs",
+        metadata={"source": "docs", "page": 10}
+    )
+]
+
+vectorstore.add_documents(docs)
+
+# Búsqueda semántica
+query = "¿Qué es una base de datos de vectores?"
+results = vectorstore.similarity_search(query, k=2)
+
+for doc in results:
+    print(f"Contenido: {doc.page_content}")
+    print(f"Metadata: {doc.metadata}\n")
+
+# Búsqueda con scores
+results_with_scores = vectorstore.similarity_search_with_score(query, k=3)
+
+for doc, score in results_with_scores:
+    print(f"Score: {score:.4f}")
+    print(f"Contenido: {doc.page_content}\n")
+
+# Búsqueda con relevancia MMR (Maximum Marginal Relevance)
+# Balancea relevancia con diversidad
+results_mmr = vectorstore.max_marginal_relevance_search(
+    query,
+    k=3,
+    fetch_k=10,  # Obtiene 10 candidatos
+    lambda_mult=0.5  # 0=diversidad, 1=relevancia
+)
+----
+
+=== 2.8 Sistema RAG Completo con ChromaDB
+
+[source, python]
+----
+from langchain_chroma import Chroma
+from langchain_ollama import OllamaEmbeddings, OllamaLLM
+from langchain_community.document_loaders import PyPDFLoader, TextLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.chains import RetrievalQA
+from langchain.prompts import PromptTemplate
+
+class RAGSystemChroma:
+    """Sistema RAG completo usando ChromaDB y Ollama"""
+
+    def __init__(self, persist_dir="./rag_chroma"):
+        # Configurar embeddings
+        self.embeddings = OllamaEmbeddings(model="nomic-embed-text")
+
+        # Configurar LLM
+        self.llm = OllamaLLM(
+            model="mistral",
+            temperature=0.7
+        )
+
+        # Configurar vectorstore
+        self.vectorstore = Chroma(
+            collection_name="rag_docs",
+            embedding_function=self.embeddings,
+            persist_directory=persist_dir
+        )
+
+        # Text splitter
+        self.text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=1000,
+            chunk_overlap=200,
+            length_function=len,
+            separators=["\n\n", "\n", " ", ""]
+        )
+
+    def cargar_documentos(self, file_paths):
+        """Carga documentos desde archivos"""
+        all_docs = []
+
+        for file_path in file_paths:
+            if file_path.endswith('.pdf'):
+                loader = PyPDFLoader(file_path)
+            else:
+                loader = TextLoader(file_path)
+
+            docs = loader.load()
+            all_docs.extend(docs)
+
+        # Dividir en chunks
+        chunks = self.text_splitter.split_documents(all_docs)
+
+        # Agregar a vectorstore
+        self.vectorstore.add_documents(chunks)
+
+        print(f"✓ Cargados {len(chunks)} chunks de {len(file_paths)} documentos")
+
+    def consultar(self, pregunta, k=3):
+        """Realiza una consulta RAG"""
+        # Buscar documentos relevantes
+        docs = self.vectorstore.similarity_search(pregunta, k=k)
+
+        # Construir contexto
+        contexto = "\n\n".join([doc.page_content for doc in docs])
+
+        # Prompt personalizado
+        prompt = f"""Usa el siguiente contexto para responder la pregunta.
+Si no sabes la respuesta, di "No tengo suficiente información".
+
+Contexto:
+{contexto}
+
+Pregunta: {pregunta}
+
+Respuesta detallada:"""
+
+        # Generar respuesta
+        respuesta = self.llm.invoke(prompt)
+
+        return {
+            "pregunta": pregunta,
+            "respuesta": respuesta,
+            "fuentes": [doc.metadata for doc in docs]
+        }
+
+    def consultar_con_chain(self, pregunta):
+        """Usa RetrievalQA chain de LangChain"""
+        # Crear retriever
+        retriever = self.vectorstore.as_retriever(
+            search_type="similarity",
+            search_kwargs={"k": 3}
+        )
+
+        # Prompt personalizado
+        template = """Usa el siguiente contexto para responder la pregunta al final.
+Si no sabes la respuesta, simplemente di que no lo sabes, no inventes una respuesta.
+Usa máximo tres oraciones y mantén la respuesta concisa.
+
+{context}
+
+Pregunta: {question}
+Respuesta útil:"""
+
+        QA_PROMPT = PromptTemplate(
+            template=template,
+            input_variables=["context", "question"]
+        )
+
+        # Crear chain
+        qa_chain = RetrievalQA.from_chain_type(
+            llm=self.llm,
+            chain_type="stuff",
+            retriever=retriever,
+            return_source_documents=True,
+            chain_type_kwargs={"prompt": QA_PROMPT}
+        )
+
+        # Ejecutar
+        result = qa_chain({"query": pregunta})
+
+        return result
+
+# Uso del sistema
+rag = RAGSystemChroma()
+
+# Cargar documentos
+# rag.cargar_documentos(["doc1.pdf", "doc2.txt", "doc3.md"])
+
+# Consultar
+# resultado = rag.consultar("¿Qué es ChromaDB?")
+# print(resultado["respuesta"])
+----
+
+=== 2.9 Casos de Uso Prácticos con ChromaDB
+
+==== Búsqueda Semántica de Código
+
+[source, python]
+----
+from langchain_chroma import Chroma
+from langchain_ollama import OllamaEmbeddings
+from langchain_core.documents import Document
+import os
+import glob
+
+class CodeSearchEngine:
+    """Motor de búsqueda semántica para código fuente"""
+
+    def __init__(self):
+        self.embeddings = OllamaEmbeddings(model="nomic-embed-text")
+        self.vectorstore = Chroma(
+            collection_name="code_search",
+            embedding_function=self.embeddings,
+            persist_directory="./code_db"
+        )
+
+    def indexar_repositorio(self, repo_path, extensions=[".py", ".js", ".java"]):
+        """Indexa archivos de código de un repositorio"""
+        documentos = []
+
+        for ext in extensions:
+            files = glob.glob(f"{repo_path}/**/*{ext}", recursive=True)
+
+            for file_path in files:
+                try:
+                    with open(file_path, 'r', encoding='utf-8') as f:
+                        contenido = f.read()
+
+                    # Crear documento con metadata
+                    doc = Document(
+                        page_content=contenido,
+                        metadata={
+                            "file": file_path,
+                            "extension": ext,
+                            "size": len(contenido)
+                        }
+                    )
+                    documentos.append(doc)
+                except Exception as e:
+                    print(f"Error leyendo {file_path}: {e}")
+
+        # Agregar a vectorstore
+        if documentos:
+            self.vectorstore.add_documents(documentos)
+            print(f"✓ Indexados {len(documentos)} archivos")
+
+    def buscar_codigo(self, query, k=5):
+        """Busca código relevante por descripción natural"""
+        results = self.vectorstore.similarity_search_with_score(query, k=k)
+
+        for doc, score in results:
+            print(f"\n{'='*60}")
+            print(f"Archivo: {doc.metadata['file']}")
+            print(f"Score: {score:.4f}")
+            print(f"Código:\n{doc.page_content[:300]}...")
+
+# Uso
+# code_search = CodeSearchEngine()
+# code_search.indexar_repositorio("./mi_proyecto")
+# code_search.buscar_codigo("función que valida emails")
+----
+
+==== Sistema de Recomendación de Contenido
+
+[source, python]
+----
+class ContentRecommender:
+    """Sistema de recomendación basado en similitud vectorial"""
+
+    def __init__(self):
+        self.embeddings = OllamaEmbeddings(model="nomic-embed-text")
+        self.vectorstore = Chroma(
+            collection_name="content_recommendations",
+            embedding_function=self.embeddings,
+            persist_directory="./recommendations_db"
+        )
+
+    def agregar_contenido(self, items):
+        """
+        items: lista de dict con 'id', 'title', 'description', 'category'
+        """
+        documents = []
+
+        for item in items:
+            # Combinar título y descripción para mejor embedding
+            content = f"{item['title']}. {item['description']}"
+
+            doc = Document(
+                page_content=content,
+                metadata={
+                    "item_id": item['id'],
+                    "title": item['title'],
+                    "category": item.get('category', 'general')
+                }
+            )
+            documents.append(doc)
+
+        self.vectorstore.add_documents(documents)
+
+    def recomendar_similares(self, item_id, k=5):
+        """Encuentra items similares al dado"""
+        # Obtener el item original
+        original = self.vectorstore.get(
+            where={"item_id": item_id},
+            include=["documents", "metadatas"]
+        )
+
+        if not original['documents']:
+            return []
+
+        # Buscar similares
+        results = self.vectorstore.similarity_search(
+            original['documents'][0],
+            k=k+1  # +1 porque incluye el original
+        )
+
+        # Filtrar el original
+        recommendations = [
+            r for r in results
+            if r.metadata['item_id'] != item_id
+        ][:k]
+
+        return recommendations
+
+    def recomendar_por_descripcion(self, description, category=None, k=5):
+        """Recomienda basado en descripción de preferencias"""
+        where_filter = {"category": category} if category else None
+
+        results = self.vectorstore.similarity_search(
+            description,
+            k=k,
+            filter=where_filter
+        )
+
+        return results
+
+# Ejemplo de uso
+# recommender = ContentRecommender()
+#
+# items = [
+#     {
+#         "id": "1",
+#         "title": "Introducción a Python",
+#         "description": "Aprende los fundamentos de programación en Python",
+#         "category": "programming"
+#     },
+#     {
+#         "id": "2",
+#         "title": "Machine Learning con Python",
+#         "description": "Curso avanzado de ML usando scikit-learn y TensorFlow",
+#         "category": "ai"
+#     }
+# ]
+#
+# recommender.agregar_contenido(items)
+# recomendaciones = recommender.recomendar_por_descripcion(
+#     "quiero aprender inteligencia artificial"
+# )
+----
+
+==== Detección de Duplicados y Plagio
+
+[source, python]
+----
+class DuplicateDetector:
+    """Detector de contenido duplicado o similar"""
+
+    def __init__(self, similarity_threshold=0.85):
+        self.embeddings = OllamaEmbeddings(model="nomic-embed-text")
+        self.vectorstore = Chroma(
+            collection_name="duplicate_detection",
+            embedding_function=self.embeddings,
+            persist_directory="./duplicates_db"
+        )
+        self.threshold = similarity_threshold
+
+    def agregar_documento(self, doc_id, contenido, metadata=None):
+        """Agrega un documento y verifica duplicados"""
+        # Buscar similares existentes
+        similares = self.vectorstore.similarity_search_with_score(
+            contenido,
+            k=5
+        )
+
+        duplicados = []
+        for doc, score in similares:
+            # Score más bajo = más similar en ChromaDB con L2
+            # Ajustar según función de distancia
+            if score < (1 - self.threshold):
+                duplicados.append({
+                    "doc_id": doc.metadata.get("doc_id"),
+                    "similarity": 1 - score,
+                    "content": doc.page_content[:100]
+                })
+
+        # Agregar documento nuevo
+        self.vectorstore.add_documents([
+            Document(
+                page_content=contenido,
+                metadata={"doc_id": doc_id, **(metadata or {})}
+            )
+        ])
+
+        return {
+            "agregado": doc_id,
+            "duplicados_encontrados": len(duplicados),
+            "duplicados": duplicados
+        }
+
+    def encontrar_fragmentos_similares(self, texto, min_length=100):
+        """Encuentra fragmentos de texto similar en la base"""
+        # Dividir texto en fragmentos
+        fragmentos = [
+            texto[i:i+min_length]
+            for i in range(0, len(texto), min_length//2)
+            if len(texto[i:i+min_length]) >= min_length
+        ]
+
+        resultados = []
+        for i, fragmento in enumerate(fragmentos):
+            matches = self.vectorstore.similarity_search_with_score(
+                fragmento,
+                k=3
+            )
+
+            for doc, score in matches:
+                if score < (1 - self.threshold):
+                    resultados.append({
+                        "fragmento_num": i,
+                        "fragmento": fragmento[:50] + "...",
+                        "match": doc.page_content[:50] + "...",
+                        "similarity": 1 - score,
+                        "source": doc.metadata
+                    })
+
+        return resultados
+
+# Uso
+# detector = DuplicateDetector(similarity_threshold=0.90)
+# resultado = detector.agregar_documento(
+#     "doc123",
+#     "Este es el contenido del documento..."
+# )
+# if resultado["duplicados_encontrados"] > 0:
+#     print("¡Advertencia! Posibles duplicados encontrados")
+----
+
+=== 2.10 Performance y Optimización en ChromaDB
+
+==== Configuración de HNSW Index
+
+[source, python]
+----
+# HNSW (Hierarchical Navigable Small World) es el algoritmo de indexación
+
+# Configuración para mayor precisión (más lento)
+collection_precision = client.create_collection(
+    name="high_precision",
+    metadata={
+        "hnsw:space": "cosine",
+        "hnsw:construction_ef": 200,  # Default: 100
+        "hnsw:search_ef": 100,        # Default: 10
+        "hnsw:M": 48                  # Default: 16 (más conexiones)
+    }
+)
+
+# Configuración para mayor velocidad (menos preciso)
+collection_speed = client.create_collection(
+    name="high_speed",
+    metadata={
+        "hnsw:space": "cosine",
+        "hnsw:construction_ef": 100,
+        "hnsw:search_ef": 10,
+        "hnsw:M": 16
+    }
+)
+
+# Balance óptimo para la mayoría de casos
+collection_balanced = client.create_collection(
+    name="balanced",
+    metadata={
+        "hnsw:space": "cosine",
+        "hnsw:construction_ef": 150,
+        "hnsw:search_ef": 50,
+        "hnsw:M": 32
+    }
+)
+----
+
+==== Batch Operations
+
+[source, python]
+----
+# Inserción por lotes (mucho más eficiente)
+def insert_large_dataset(collection, documents, batch_size=100):
+    """Inserta documentos en lotes para mejor performance"""
+    total = len(documents)
+
+    for i in range(0, total, batch_size):
+        batch = documents[i:i+batch_size]
+
+        collection.add(
+            documents=[doc['text'] for doc in batch],
+            metadatas=[doc['metadata'] for doc in batch],
+            ids=[doc['id'] for doc in batch]
+        )
+
+        print(f"Procesados {min(i+batch_size, total)}/{total} documentos")
+
+# Ejemplo con 10,000 documentos
+# large_dataset = [
+#     {
+#         "id": f"doc_{i}",
+#         "text": f"Contenido del documento {i}",
+#         "metadata": {"index": i}
+#     }
+#     for i in range(10000)
+# ]
+#
+# insert_large_dataset(collection, large_dataset, batch_size=500)
+----
+
+==== Monitoreo y Estadísticas
+
+[source, python]
+----
+import time
+
+class ChromaDBMonitor:
+    """Monitorea performance de ChromaDB"""
+
+    def __init__(self, vectorstore):
+        self.vectorstore = vectorstore
+        self.collection = vectorstore._collection
+
+    def get_stats(self):
+        """Obtiene estadísticas de la colección"""
+        count = self.collection.count()
+        metadata = self.collection.metadata
+
+        return {
+            "total_documents": count,
+            "metadata": metadata,
+            "name": self.collection.name
+        }
+
+    def benchmark_query(self, query, k=10, iterations=10):
+        """Benchmark de consultas"""
+        times = []
+
+        for _ in range(iterations):
+            start = time.time()
+            results = self.vectorstore.similarity_search(query, k=k)
+            end = time.time()
+            times.append(end - start)
+
+        return {
+            "avg_time": sum(times) / len(times),
+            "min_time": min(times),
+            "max_time": max(times),
+            "total_results": len(results)
+        }
+
+    def analyze_collection(self):
+        """Análisis completo de la colección"""
+        stats = self.get_stats()
+
+        # Sample query para benchmark
+        if stats["total_documents"] > 0:
+            sample = self.collection.peek(1)
+            if sample['documents']:
+                benchmark = self.benchmark_query(sample['documents'][0])
+                stats['performance'] = benchmark
+
+        return stats
+
+# Uso
+# monitor = ChromaDBMonitor(vectorstore)
+# stats = monitor.analyze_collection()
+# print(f"Documentos: {stats['total_documents']}")
+# print(f"Tiempo promedio de búsqueda: {stats['performance']['avg_time']*1000:.2f}ms")
+----
+
+== Módulo 3: Weaviate - Base de Datos Vectorial GraphQL
+
+=== 3.1 Instalación
+
+[source, bash]
+----
+# Docker (recomendado)
+docker run -d -p 8080:8080 semitechnologies/weaviate:latest
+
+# O instalar localmente
+pip install weaviate-client
+----
+
+=== 3.2 Configuración Básica
+
+[source, python]
+----
+import weaviate
+
+# Conectar
+client = weaviate.Client("http://localhost:8080")
+
+# Verificar conexión
+if client.is_ready():
+    print("Weaviate está listo")
+
+# Crear esquema
+schema = {
+    "classes": [
+        {
+            "class": "Documento",
+            "description": "Documentos con texto y metadata",
+            "properties": [
+                {
+                    "name": "contenido",
+                    "dataType": ["text"],
+                    "description": "Contenido del documento"
+                },
+                {
+                    "name": "fuente",
+                    "dataType": ["string"],
+                    "description": "Fuente del documento"
+                }
+            ]
+        }
+    ]
+}
+
+client.schema.create(schema)
+----
+
+=== 3.3 Weaviate con LangChain
+
+[source, python]
+----
+from langchain_weaviate.vectorstores import Weaviate
+from langchain_ollama import OllamaEmbeddings
+
+embeddings = OllamaEmbeddings(model="nomic-embed-text")
+
+# Crear vector store
+weaviate_store = Weaviate(
+    client=client,
+    index_name="Documento",
+    text_key="contenido",
+    embedding=embeddings
+)
+
+# Agregar documentos
+from langchain_core.documents import Document
+
+docs = [Document(page_content="Texto 1")]
+weaviate_store.add_documents(docs)
+
+# Buscar
+results = weaviate_store.similarity_search("búsqueda", k=3)
+
+# Búsqueda con filtros GraphQL
+results = weaviate_store.similarity_search(
+    "búsqueda",
+    k=3,
+    where_filter={"path": ["fuente"], "operator": "Equal", "valueString": "doc1"}
+)
+----
+
+== Módulo 4: Qdrant - Base de Datos Vectorial Rápida
+
+=== 4.1 Instalación
+
+[source, bash]
+----
+# Docker
+docker run -d -p 6333:6333 qdrant/qdrant
+
+# Python
+pip install qdrant-client
+----
+
+=== 4.2 Configuración Básica
+
+[source, python]
+----
+from qdrant_client import QdrantClient
+from qdrant_client.models import Distance, VectorParams
+
+client = QdrantClient("localhost", port=6333)
+
+# Crear colección
+client.recreate_collection(
+    collection_name="documentos",
+    vectors_config=VectorParams(size=1536, distance=Distance.COSINE),
+)
+
+# Agregar puntos
+from qdrant_client.models import PointStruct
+
+points = [
+    PointStruct(
+        id=1,
+        vector=[0.1, 0.2, ..., 0.9],
+        payload={"texto": "Contenido", "fuente": "doc1"}
+    ),
+]
+
+client.upsert(collection_name="documentos", points=points)
+----
+
+=== 4.3 Qdrant con LangChain
+
+[source, python]
+----
+from langchain_qdrant import Qdrant
+from langchain_ollama import OllamaEmbeddings
+
+embeddings = OllamaEmbeddings(model="nomic-embed-text")
+
+qdrant_store = Qdrant.from_documents(
+    docs,
+    embeddings,
+    url="http://localhost:6333",
+    collection_name="documentos"
+)
+
+# Búsquedas
+results = qdrant_store.similarity_search("búsqueda", k=3)
+
+# Con filtros payload
+results = qdrant_store.similarity_search(
+    "búsqueda",
+    k=3,
+    score_threshold=0.7
+)
+----
+
+== Módulo 5: Milvus - Base de Datos Vectorial de Alto Rendimiento
+
+=== 5.1 Instalación
+
+[source, bash]
+----
+# Docker compose
+docker run -d --name milvus -p 19530:19530 milvusdb/milvus:latest
+----
+
+=== 5.2 Configuración Básica
+
+[source, python]
+----
+from pymilvus import connections, Collection, FieldSchema, CollectionSchema, DataType
+
+# Conectar
+connections.connect("default", host="localhost", port=19530)
+
+# Definir esquema
+fields = [
+    FieldSchema(name="id", dtype=DataType.INT64, is_primary=True),
+    FieldSchema(name="embeddings", dtype=DataType.FLOAT_VECTOR, dim=1536),
+    FieldSchema(name="texto", dtype=DataType.VARCHAR, max_length=65535),
+]
+
+schema = CollectionSchema(fields, "Colección de documentos")
+collection = Collection("documentos", schema)
+
+# Crear índice
+collection.create_index("embeddings", {"index_type": "IVF_FLAT", "metric_type": "L2"})
+----
+
+=== 5.3 Milvus con LangChain
+
+[source, python]
+----
+from langchain_milvus import Milvus
+from langchain_ollama import OllamaEmbeddings
+
+embeddings = OllamaEmbeddings(model="nomic-embed-text")
+
+# Crear vector store
+milvus_store = Milvus(
+    embedding_function=embeddings,
+    connection_args={"host": "localhost", "port": 19530},
+    collection_name="documentos"
+)
+
+# Operaciones CRUD
+milvus_store.add_documents(docs)
+results = milvus_store.similarity_search("búsqueda", k=3)
+
+# Búsqueda con filtros
+results = milvus_store.similarity_search(
+    "búsqueda",
+    k=3,
+    expr="texto like '%palabra%'"
+)
+----
+
+== Módulo 6: Comparativa de Bases de Datos Vectoriales
+
+=== 6.1 Matriz Comparativa Completa
+
+|===
+| Aspecto | ChromaDB | Weaviate | Milvus | Qdrant
+| Instalación | Local simple | Docker/Cloud | Docker | Docker
+| Performance | Media | Alta | Muy Alta | Muy Alta
+| Escalabilidad | Limitada | Alta | Muy Alta | Alta
+| API | Python | GraphQL/REST | Python | REST/gRPC
+| Persistencia | Si | Si | Si | Si
+| Metadata Filtering | Si | Si | Si | Si
+| Costo | Gratuito | Gratuito/Pago | Gratuito | Gratuito/Pago
+| Ideal Para | Desarrollo local | Producción media | Gran escala | Producción
+| Memoria RAM | 512MB+ | 2GB+ | 4GB+ | 2GB+
+| Latencia búsqueda | 50-100ms | 10-50ms | 5-20ms | 10-30ms
+| Máx vectores | 1M | 100M+ | 1B+ | 500M+
+| Modelos embedding | Todos | Propios | Propios | Todos
+|===
+
+=== 6.2 Análisis Detallado por Caso de Uso
+
+==== ChromaDB: La Opción Ideal para Desarrollo Local
+
+**Ventajas:**
+- Instalación trivial: `pip install chromadb`
+- Funciona sin servidores externos
+- Excelente integración con LangChain
+- API intuitiva y Python-first
+- Perfecto para prototipos rápidos
+- Manejo automático de embeddings
+
+**Desventajas:**
+- Limitado a 1 millón de vectores
+- Performance degrada con colecciones grandes
+- No ideal para producción multinodo
+- Persistencia local solamente
+
+**Caso Ideal:**
+[source, text]
+----
+Desarrollo de RAG
+Prototipos de aplicaciones IA
+Búsqueda semántica en documentos pequeños
+Aprendizaje y experimentación
+----
+
+==== Weaviate: Balance de Features y Escalabilidad
+
+**Ventajas:**
+- API GraphQL moderna
+- Excelente para búsqueda híbrida
+- Escalabilidad horizontal
+- Búsqueda de texto completo integrada
+- Soporte para métadata avanzada
+- Cloud nativo
+
+**Desventajas:**
+- Complejidad mayor que ChromaDB
+- Requiere manejo de clusters
+- Curva de aprendizaje más pronunciada
+- Consumo de recursos importante
+
+**Caso Ideal:**
+[source, text]
+----
+Sistemas de recomendación medianos
+Búsqueda multimodal (texto + imagen)
+Producción con crecimiento moderado
+Análisis facetado complejo
+----
+
+==== Milvus: El Gigante de Escalabilidad
+
+**Ventajas:**
+- Maneja 1 billón de vectores
+- Performance extrema
+- Arquitectura completamente distribuida
+- Múltiples tipos de índices (HNSW, IVF, Annoy)
+- Soporte para vector sparse
+- Clustering automático
+
+**Desventajas:**
+- Complejidad operacional significativa
+- Requiere conocimiento de infraestructura
+- Overhead importante para datasets pequeños
+- Licencia compleja en algunas versiones
+
+**Caso Ideal:**
+[source, text]
+----
+Búsqueda a escala de billones (e-commerce, redes sociales)
+Aplicaciones de visión por computadora
+Big data de embeddings
+Sistemas de IA en producción crítica
+----
+
+==== Qdrant: El Balance Perfecto para Producción
+
+**Ventajas:**
+- Performance cercana a Milvus
+- Operación más sencilla que Milvus
+- API REST y gRPC
+- Filtrado avanzado por payload
+- Puntuación de características
+- Excelente documentación
+
+**Desventajas:**
+- Comunidad más pequeña
+- Menos ejemplos que otros
+- Curva de aprendizaje moderada
+
+**Caso Ideal:**
+[source, text]
+----
+Producción de mediano a gran volumen
+Sistemas de recomendación avanzados
+Búsqueda con filtrado complejo
+Balance entre features y complejidad
+----
+
+=== 6.3 Decisión: ¿Cuál Elegir?
+
+==== Árbol de Decisión
+
+[source, text]
+----
+¿Es desarrollo/prototipado?
+├─ SÍ: ChromaDB (go!)
+└─ NO: ¿Cuántos vectores?
+   ├─ < 10 millones: Qdrant
+   ├─ 10M - 100M: Weaviate
+   └─ > 100M: Milvus
+----
+
+==== Matriz de Decisión por Equipo
+
+[cols="2,2,2,2,2"]
+|===
+| Tamaño | Experiencia | Volumen | Elección | Por qué
+
+| Startup
+| Inicial
+| < 100K
+| ChromaDB
+| Rápido, gratuito, sin ops
+
+| Startup
+| Media
+| 100K-10M
+| Qdrant
+| Crecimiento controlado
+
+| Empresa Media
+| Alta
+| 10M-100M
+| Weaviate
+| Features avanzados
+
+| Empresa Grande
+| Experta
+| > 100M
+| Milvus
+| Escalabilidad extrema
+
+| Academia
+| Variable
+| Variable
+| ChromaDB
+| Aprendizaje
+|===
+
+=== 6.4 Benchmarks Reales (con Ollama)
+
+**Setup:** Embeddings con `nomic-embed-text`, 1000 vectores de 384 dimensiones
+
+[source, text]
+----
+ChromaDB:
+- Tiempo inserción: ~500ms
+- Tiempo búsqueda (k=10): ~20ms
+- Memoria: ~150MB
+- Recomendación: Excelente
+
+Qdrant (Docker):
+- Tiempo inserción: ~300ms
+- Tiempo búsqueda (k=10): ~15ms
+- Memoria: ~300MB
+- Recomendación: Muy bien
+
+Weaviate (Docker):
+- Tiempo inserción: ~400ms
+- Tiempo búsqueda (k=10): ~25ms
+- Memoria: ~500MB
+- Recomendación: Bien
+----
+
+=== 6.5 Estrategia Híbrida: Múltiples Bases de Datos
+
+En sistemas complejos, usar varias BDD vectoriales:
+
+[source, python]
+----
+class HybridVectorDB:
+    """
+    Estrategia:
+    - ChromaDB: Cache de búsquedas frecuentes
+    - Qdrant: Búsquedas principales (producción)
+    - Redis: Cache en memoria para latencia ultra-baja
+    """
+    def __init__(self):
+        self.cache = ChromaDB()  # Búsquedas recientes
+        self.principal = QdrantDB()  # Fuente de verdad
+
+    def buscar(self, query):
+        # 1. Intentar caché
+        try:
+            return self.cache.search(query)
+        except:
+            # 2. Caer a BD principal
+            resultados = self.principal.search(query)
+            # 3. Cachear para futuro
+            self.cache.add(resultados)
+            return resultados
+----
+
+=== 6.6 Migración Entre Bases de Datos
+
+==== ChromaDB → Qdrant
+
+[source, python]
+----
+from chromadb import Client
+from qdrant_client import QdrantClient
+from qdrant_client.models import PointStruct
+
+# Extraer de ChromaDB
+chroma = Client()
+coleccion = chroma.get_collection("datos")
+todos = coleccion.get()
+
+# Cargar en Qdrant
+qdrant = QdrantClient("localhost", port=6333)
+puntos = [
+    PointStruct(
+        id=int(id_),
+        vector=vector,
+        payload={"texto": doc}
+    )
+    for id_, vector, doc in zip(
+        todos["ids"],
+        todos["embeddings"],
+        todos["documents"]
+    )
+]
+qdrant.upsert(collection_name="datos", points=puntos)
+----
+
+==== Weaviate → Milvus
+
+Procesos similares mediante APIs de exportación/importación.
+
+=== 6.7 Recomendaciones Finales
+
+**Principios de Selección:**
+
+1. **Comienza con ChromaDB**
+   - Prototipa rápido
+   - Sin infraestructura
+   - Sin costo operacional
+
+2. **Migra a Qdrant cuando:**
+   - Superes 1 millón de vectores
+   - Necesites producción real
+   - Requieras filtrado avanzado
+
+3. **Considera Milvus cuando:**
+   - Searhing 100+ millones vectores
+   - Eres una empresa grande
+   - Tienes equipo DevOps dedicado
+
+4. **Weaviate es raramente la mejor opción**
+   - Ni tan simple como Qdrant
+   - Ni tan potente como Milvus
+   - Pero excelente en búsqueda multimodal
+
+== PARTE II: BASES DE DATOS DE GRAFOS
+
+== Módulo 7: Fundamentos de Bases de Datos de Grafos
+
+=== 7.1 Conceptos Básicos: Una Nueva Forma de Pensar
+
+**¿Qué es un Grafo?**
+
+Un grafo es una estructura de datos que modela relaciones:
+- **Nodos:** Entidades (personas, lugares, conceptos)
+- **Relaciones:** Conexiones con tipo y propiedades
+- **Propiedades:** Atributos en nodos y relaciones
+
+**Ejemplo Intuitivo:**
+
+[source, text]
+----
+Redes Sociales:
+(Juan:Persona)--[AMIGO_DE]-->(María:Persona)
+    ↓
+(Trabaja_en)
+    ↓
+(Google:Empresa)
+
+JSON equivalente sería ineficiente:
+{usuario: "Juan", amigos: ["María", ...], trabajo: {...}}
+----
+
+**¿Por qué Grafos y no Tablas?**
+
+[source, sql]
+----
+SQL para "amigos de amigos":
+SELECT DISTINCT f.nombre
+FROM usuarios u
+JOIN amistades a1 ON u.id = a1.usuario1
+JOIN usuarios f ON a1.usuario2 = f.id
+JOIN amistades a2 ON f.id = a2.usuario1
+JOIN usuarios f2 ON a2.usuario2 = f2.id
+WHERE u.nombre = 'Juan'
+AND f2.id != u.id
+----
+
+[source, cypher]
+----
+Cypher (Neo4j) - Mucho más claro:
+MATCH (juan:Persona {nombre: "Juan"})-[:AMIGO_DE*2]-(amigo_amigo)
+RETURN amigo_amigo
+----
+
+=== 7.2 Tipos de Grafos Explicados
+
+==== Grafo Dirigido
+
+Las relaciones tienen dirección explícita:
+
+[source, text]
+----
+(Juan:Persona)-[:SIGUE]->(Tech:Canal)
+(Tech:Canal)-[:PUBLICA]->(Post:Contenido)
+
+Juan SIGUE a Tech
+Tech PUBLICA Posts
+Post es VISTO_POR Juan (relación inversa)
+----
+
+**Uso:** Twitter, YouTube, flujos de procesos
+
+==== Grafo No Dirigido
+
+Las relaciones son bidireccionales:
+
+[source, text]
+----
+(Juan)-[:AMIGO_DE]-(María)
+Equivalente a:
+(Juan)-[:AMIGO_DE]->(María)
+(María)-[:AMIGO_DE]->(Juan)
+----
+
+**Uso:** Redes familiares, colaboraciones
+
+==== Grafo Ponderado
+
+Las relaciones tienen peso/costo:
+
+[source, text]
+----
+(Nueva_York)-[:DISTANCIA {km: 475}]->(Boston)
+(Nueva_York)-[:DISTANCIA {km: 435}]->(Filadelfia)
+
+Usado para:
+- Cálculo de ruta más corta (Dijkstra)
+- Optimización de viajes
+- Recomendación por afinidad
+----
+
+==== Grafo Heterogéneo
+
+Múltiples tipos de nodos y relaciones:
+
+[source, text]
+----
+(Juan:Persona {edad: 30})
+  -[:TRABAJA_EN]->(Google:Empresa)
+  -[:DESARROLLA]->(Producto:Software)
+  -[:COMPRADO_POR]->(Cliente:Persona)
+----
+
+=== 7.3 Conceptos Avanzados
+
+==== Caminos y Recorridos
+
+[source, text]
+----
+Camino simple: secuencia sin nodos repetidos
+Juan → María → Carlos → Diana
+
+Ciclo: camino que regresa al inicio
+Juan → María → Carlos → Juan
+
+Profundidad: número de saltos
+- Juan es amigo de María (profundidad 1)
+- Amigo de amigo (profundidad 2)
+----
+
+==== Centralidad en Grafos
+
+Mide la importancia de un nodo:
+
+[source, text]
+----
+Centralidad de Grado:
+- ¿Cuántas conexiones direc tiene?
+- Juan: 5 amigos (centralidad = 5)
+
+Betweenness:
+- ¿Cuántos caminos más cortos pasan por este nodo?
+- Juan conecta 2 grupos aparentemente separados
+
+Closeness:
+- ¿Qué tan cerca está de todos?
+- Juan conoce a personas muy conectadas
+----
+
+==== Detección de Comunidades
+
+Agrupar nodos relacionados:
+
+[source, text]
+----
+Comunidad 1: {Juan, María, Carlos} - todos amigos
+Comunidad 2: {Diana, Eva, Fernando} - otro grupo
+Puente: {Gisele} - conecta ambas comunidades
+----
+
+=== 7.4 Ventajas de Grafos vs Otras Estructuras
+
+|===
+| Aspecto | SQL | DocumentDB | Grafo | Vectorial
+
+| Relaciones
+| Joins (lento)
+| Anidamiento
+| Nativas (rápido)
+| No
+
+| Profundidad
+| O(n) joins
+| Difícil
+| O(relaciones)
+| No
+
+| Flexibilidad
+| Esquema rígido
+| Semi-flexible
+| Muy flexible
+| No
+
+| Patterns complejos
+| Muy complejo
+| Complejo
+| Natural
+| No
+
+| Similitud semántica
+| No
+| No
+| No
+| Sí (es el punto!)
+
+| Casos pocos frecuentes
+| Raros
+| Raros
+| Excelente
+| No
+|===
+
+=== 7.5 Casos de Uso Prácticos
+
+==== Red Social (Facebook, LinkedIn)
+
+[source, text]
+----
+Nodos: Personas, Empresas, Eventos
+Relaciones:
+- AMIGO_DE: conexión bidireccional
+- TRABAJA_EN: persona → empresa
+- ASISTE_A: persona → evento
+- SIGUE: usuario → página
+
+Queries:
+- "Amigos en común"
+- "Gente que cambió de empresa"
+- "Amigos que asistieron a este evento"
+----
+
+==== Sistema de Recomendación
+
+[source, text]
+----
+Nodos: Usuarios, Productos, Categorías, Marcas
+Relaciones:
+- COMPRO: usuario → producto (peso: rating)
+- PERTENECE: producto → categoría
+- FABRICA: marca → producto
+
+Queries:
+- "Usuarios similares compraron..."
+- "Gente que compró esto también compró..."
+- "Categorías populares en tu región"
+----
+
+==== Base de Conocimiento
+
+[source, text]
+----
+Nodos: Conceptos, Personas, Lugares, Fechas
+Relaciones:
+- DESCUBIERTO_POR
+- INFLUENCIO_EN
+- OCURRIDO_EN
+- ANTERIOR_A
+
+Queries:
+- "¿Quién inventó esto?"
+- "¿Qué pasó antes?"
+- "¿Cuál es la relación entre X e Y?"
+----
+
+==== Detección de Fraude
+
+[source, text]
+----
+Nodos: Usuarios, Transacciones, Direcciones, Tarjetas
+Relaciones:
+- EJECUTO: usuario → transacción
+- USA: usuario → tarjeta
+- EN: transacción → ubicación
+- MISMO: ubicación ← usuario
+
+Pattern malicioso:
+Usuario A → Ubicación A
+Usuario B → Ubicación A
+Usuario C → Ubicación A
+(Múltiples usuarios en misma ubicación = fraude?)
+----
+
+==== Gestión de Dependencias
+
+[source, text]
+----
+Nodos: Módulos, Librerías, Funciones
+Relaciones:
+- IMPORTA
+- USA
+- DEPENDE_DE
+
+Queries:
+- "¿Qué pasa si actualizo esta librería?"
+- "¿Cuál es el impacto mínimo de este cambio?"
+- "¿Hay ciclos de dependencia?"
+----
+
+=== 7.6 Grafos vs Vectores: ¿Cuándo Usar Cada Uno?
+
+[source, text]
+----
+VECTORES:
+✓ "¿Qué es parecido a esto?"
+✓ Búsqueda semántica
+✓ Recomendación por similitud
+✓ Clustering automático
+
+GRAFOS:
+✓ "¿Cuál es la relación entre estos?"
+✓ Análisis de redes
+✓ Recomendación por conexión
+✓ Preguntas "por qué"
+
+MEJOR JUNTOS:
+✓ "Encontrar documentos similares de los mismos autores"
+✓ "Recomendaciones semánticas de gente conectada"
+✓ "Búsqueda multidimensional: contenido + red"
+----
+
+== Módulo 8: Neo4j - Base de Datos de Grafos Líder
+
+**Neo4j** es la base de datos de grafos más popular y robusta del mundo. Su lema es "Connections First" - priorizar las relaciones sobre los datos individuales, lo que revoluciona cómo pensamos sobre el almacenamiento de datos.
+
+**¿Por qué Neo4j?**
+
+* **Modelo nativo de grafos**: Diseñado desde cero para relaciones
+* **Lenguaje Cypher**: Declarativo, intuitivo y potente
+* **Performance excepcional**: Consultas de relaciones en tiempo constante
+* **ACID completo**: Transacciones como bases SQL tradicionales
+* **Escalabilidad**: Soporta miles de millones de nodos y relaciones
+* **Visualización integrada**: Browser interactivo para explorar grafos
+
+**Casos de uso ideales:**
+
+* Redes sociales y recomendaciones
+* Detección de fraude
+* Gestión de identidad y accesos (IAM)
+* Knowledge Graphs
+* Network y IT operations
+* Master Data Management
+
+=== 8.1 Instalación
+
+[source, bash]
+----
+# Docker (recomendado)
+docker run --name neo4j \
+  -p 7687:7687 \
+  -p 7474:7474 \
+  -e NEO4J_AUTH=neo4j/password \
+  neo4j:latest
+
+# Acceder a Neo4j Browser
+# http://localhost:7474
+----
+
+=== 8.2 Lenguaje Cypher Básico
+
+[source, cypher]
+----
+// Crear nodo
+CREATE (p:Persona {nombre: "Juan", edad: 30})
+
+// Crear relación
+CREATE (j:Persona {nombre: "Juan"})-[:AMIGO_DE]->(m:Persona {nombre: "María"})
+
+// Buscar
+MATCH (p:Persona) WHERE p.edad > 25 RETURN p
+
+// Buscar relaciones
+MATCH (p1:Persona)-[:AMIGO_DE]->(p2:Persona)
+RETURN p1.nombre, p2.nombre
+
+// Contar
+MATCH (p:Persona) RETURN COUNT(p) as total_personas
+
+// Actualizar
+MATCH (p:Persona {nombre: "Juan"})
+SET p.edad = 31
+RETURN p
+
+// Eliminar
+MATCH (p:Persona {nombre: "Juan"})
+DELETE p
+----
+
+=== 8.3 Neo4j con Python
+
+[source, python]
+----
+from neo4j import GraphDatabase
+
+# Conexión
+URI = "bolt://localhost:7687"
+AUTH = ("neo4j", "password")
+driver = GraphDatabase.driver(URI, auth=AUTH)
+
+# Crear sesión
+def crear_persona(tx, nombre, edad):
+    tx.run(
+        "CREATE (p:Persona {nombre: $nombre, edad: $edad})",
+        nombre=nombre,
+        edad=edad
+    )
+
+with driver.session() as session:
+    session.execute_write(crear_persona, "Juan", 30)
+
+# Consultar
+def obtener_personas(tx):
+    result = tx.run("MATCH (p:Persona) RETURN p.nombre, p.edad")
+    return [record for record in result]
+
+with driver.session() as session:
+    personas = session.execute_read(obtener_personas)
+    for persona in personas:
+        print(persona)
+
+driver.close()
+----
+
+=== 8.4 Neo4j con LangChain
+
+[source, python]
+----
+from langchain_community.graphs import Neo4jGraph
+from langchain_ollama import OllamaLLM
+
+# Conectar a Neo4j
+graph = Neo4jGraph(
+    url="bolt://localhost:7687",
+    username="neo4j",
+    password="password"
+)
+
+# Usar con LangChain
+from langchain_experimental.graph_transformers import LLMGraphTransformer
+
+llm = OllamaLLM(model="mistral")
+
+# Extraer entidades y relaciones de texto
+transformer = LLMGraphTransformer(llm=llm)
+
+texto = "Juan es amigo de María. Ambos viven en Madrid."
+graph_documents = transformer.convert_to_graph_documents([texto])
+
+# Almacenar en Neo4j
+graph.add_graph_documents(graph_documents)
+
+# Realizar consultas
+resultado = graph.query("MATCH (p:Persona) RETURN p LIMIT 5")
+print(resultado)
+
+# Query directo desde LangChain
+from langchain_community.chains.graph_qa.cypher import GraphCypherQAChain
+
+cypher_chain = GraphCypherQAChain.from_llm(
+    llm=llm,
+    graph=graph,
+    verbose=True
+)
+
+respuesta = cypher_chain.run("¿Quiénes son los amigos de Juan?")
+print(respuesta)
+----
+
+=== 8.5 Modelado de Datos en Grafos
+
+==== Principios de Modelado
+
+**Del Modelo Relacional al Modelo de Grafos:**
+
+[source, text]
+----
+SQL (Relacional):
+Tabla PERSONAS: id, nombre, edad
+Tabla AMISTADES: persona_id, amigo_id, desde
+
+Neo4j (Grafo):
+(:Persona {nombre, edad})-[:AMIGO_DE {desde}]->(:Persona)
+
+¡Las relaciones son entidades de primera clase!
+----
+
+==== Ejemplo Completo: Red Social
+
+[source, cypher]
+----
+// Crear usuarios
+CREATE (juan:Usuario {
+    id: "u001",
+    nombre: "Juan",
+    email: "juan@example.com",
+    edad: 30,
+    ciudad: "Madrid"
+})
+
+CREATE (maria:Usuario {
+    id: "u002",
+    nombre: "María",
+    email: "maria@example.com",
+    edad: 28,
+    ciudad: "Barcelona"
+})
+
+CREATE (carlos:Usuario {
+    id: "u003",
+    nombre: "Carlos",
+    email: "carlos@example.com",
+    edad: 32,
+    ciudad: "Madrid"
+})
+
+// Crear relaciones de amistad
+CREATE (juan)-[:AMIGO_DE {desde: date("2020-01-15")}]->(maria)
+CREATE (juan)-[:AMIGO_DE {desde: date("2019-06-10")}]->(carlos)
+CREATE (maria)-[:AMIGO_DE {desde: date("2021-03-20")}]->(carlos)
+
+// Crear posts
+CREATE (post1:Post {
+    id: "p001",
+    titulo: "Mi primer post",
+    contenido: "Hola mundo desde Neo4j",
+    fecha: datetime("2024-01-10T10:00:00")
+})
+
+CREATE (post2:Post {
+    id: "p002",
+    titulo: "Grafos son geniales",
+    contenido: "Las bases de datos de grafos cambian todo",
+    fecha: datetime("2024-01-11T15:30:00")
+})
+
+// Relaciones con posts
+CREATE (juan)-[:PUBLICO]->(post1)
+CREATE (maria)-[:PUBLICO]->(post2)
+CREATE (carlos)-[:LE_GUSTA]->(post1)
+CREATE (maria)-[:COMENTO {texto: "¡Muy bien!", fecha: datetime()}]->(post1)
+
+// Grupos
+CREATE (grupo1:Grupo {
+    nombre: "Desarrolladores Python",
+    descripcion: "Grupo de entusiastas de Python",
+    creado: date("2023-05-01")
+})
+
+CREATE (juan)-[:MIEMBRO_DE {rol: "admin"}]->(grupo1)
+CREATE (maria)-[:MIEMBRO_DE {rol: "member"}]->(grupo1)
+----
+
+=== 8.6 Patrones de Cypher Avanzados
+
+==== Consultas Complejas
+
+[source, cypher]
+----
+// 1. Amigos de amigos (no directos)
+MATCH (yo:Usuario {nombre: "Juan"})-[:AMIGO_DE*2]-(amigo_amigo:Usuario)
+WHERE NOT (yo)-[:AMIGO_DE]-(amigo_amigo)
+  AND yo <> amigo_amigo
+RETURN DISTINCT amigo_amigo.nombre
+LIMIT 10
+
+// 2. Camino más corto entre dos personas
+MATCH path = shortestPath(
+    (juan:Usuario {nombre: "Juan"})-[:AMIGO_DE*]-(diana:Usuario {nombre: "Diana"})
+)
+RETURN path, length(path) as distancia
+
+// 3. Usuarios más influyentes (más amigos)
+MATCH (u:Usuario)-[r:AMIGO_DE]-()
+RETURN u.nombre, count(r) as num_amigos
+ORDER BY num_amigos DESC
+LIMIT 10
+
+// 4. Posts más populares
+MATCH (post:Post)<-[:LE_GUSTA]-(usuario)
+WITH post, count(usuario) as likes
+MATCH (post)<-[:PUBLICO]-(autor)
+RETURN post.titulo, autor.nombre, likes
+ORDER BY likes DESC
+LIMIT 5
+
+// 5. Recomendación de amigos
+// "Personas con amigos en común pero que no son mis amigos"
+MATCH (yo:Usuario {nombre: "Juan"})-[:AMIGO_DE]-(amigo)-[:AMIGO_DE]-(recomendado:Usuario)
+WHERE NOT (yo)-[:AMIGO_DE]-(recomendado)
+  AND yo <> recomendado
+WITH recomendado, count(DISTINCT amigo) as amigos_comunes
+WHERE amigos_comunes >= 2
+RETURN recomendado.nombre, amigos_comunes
+ORDER BY amigos_comunes DESC
+LIMIT 5
+
+// 6. Timeline de usuario (posts de amigos)
+MATCH (yo:Usuario {nombre: "Juan"})-[:AMIGO_DE]-(amigo)-[:PUBLICO]->(post:Post)
+RETURN post.titulo, post.contenido, post.fecha, amigo.nombre as autor
+ORDER BY post.fecha DESC
+LIMIT 20
+
+// 7. Detección de comunidades (grupos interconectados)
+MATCH (u:Usuario)-[:AMIGO_DE*1..3]-(otros:Usuario)
+WHERE u.ciudad = "Madrid"
+WITH DISTINCT otros
+MATCH (otros)-[:AMIGO_DE]-(amigos)
+RETURN otros.nombre, count(amigos) as conexiones
+ORDER BY conexiones DESC
+
+// 8. Patrón de triángulos (grupos de 3 amigos mutuos)
+MATCH (a:Usuario)-[:AMIGO_DE]-(b:Usuario)-[:AMIGO_DE]-(c:Usuario)-[:AMIGO_DE]-(a)
+WHERE id(a) < id(b) AND id(b) < id(c)
+RETURN a.nombre, b.nombre, c.nombre
+----
+
+==== Agregaciones y Análisis
+
+[source, cypher]
+----
+// Estadísticas de la red
+MATCH (u:Usuario)
+OPTIONAL MATCH (u)-[r:AMIGO_DE]-()
+WITH u, count(r) as num_amistades
+RETURN
+    count(u) as total_usuarios,
+    avg(num_amistades) as promedio_amigos,
+    max(num_amistades) as max_amigos,
+    min(num_amistades) as min_amigos
+
+// Distribución por ciudad
+MATCH (u:Usuario)
+RETURN u.ciudad as ciudad, count(u) as usuarios
+ORDER BY usuarios DESC
+
+// Usuarios activos (que publicaron)
+MATCH (u:Usuario)-[:PUBLICO]->(p:Post)
+WHERE p.fecha > datetime() - duration({days: 30})
+WITH u, count(p) as posts_recientes
+RETURN u.nombre, posts_recientes
+ORDER BY posts_recientes DESC
+LIMIT 10
+
+// Engagement rate
+MATCH (post:Post)<-[:PUBLICO]-(autor)
+OPTIONAL MATCH (post)<-[:LE_GUSTA]-()
+WITH post, autor, count(*) as likes
+OPTIONAL MATCH (post)<-[:COMENTO]-()
+WITH post, autor, likes, count(*) as comentarios
+RETURN
+    post.titulo,
+    autor.nombre,
+    likes,
+    comentarios,
+    (likes + comentarios*2) as engagement_score
+ORDER BY engagement_score DESC
+----
+
+=== 8.7 Casos de Uso Completos
+
+==== Caso 1: Sistema de E-Commerce
+
+[source, python]
+----
+from neo4j import GraphDatabase
+from datetime import datetime
+
+class ECommerceGraph:
+    """Sistema de e-commerce con Neo4j"""
+
+    def __init__(self, uri, user, password):
+        self.driver = GraphDatabase.driver(uri, auth=(user, password))
+
+    def close(self):
+        self.driver.close()
+
+    def crear_esquema(self):
+        """Crea el esquema inicial con índices"""
+        with self.driver.session() as session:
+            # Índices para performance
+            session.run("CREATE INDEX usuario_email IF NOT EXISTS FOR (u:Usuario) ON (u.email)")
+            session.run("CREATE INDEX producto_sku IF NOT EXISTS FOR (p:Producto) ON (p.sku)")
+            session.run("CREATE CONSTRAINT pedido_id IF NOT EXISTS FOR (p:Pedido) REQUIRE p.id IS UNIQUE")
+
+    def crear_catalogo(self):
+        """Crea productos y categorías"""
+        query = """
+        // Categorías
+        CREATE (electronicos:Categoria {nombre: "Electrónicos"})
+        CREATE (computadoras:Categoria {nombre: "Computadoras"})
+        CREATE (accesorios:Categoria {nombre: "Accesorios"})
+
+        // Jerarquía de categorías
+        CREATE (computadoras)-[:SUBCATEGORIA_DE]->(electronicos)
+        CREATE (accesorios)-[:SUBCATEGORIA_DE]->(computadoras)
+
+        // Productos
+        CREATE (laptop:Producto {
+            sku: "LAP001",
+            nombre: "Laptop Pro 15",
+            precio: 1299.99,
+            stock: 25,
+            descripcion: "Laptop profesional de 15 pulgadas"
+        })
+
+        CREATE (mouse:Producto {
+            sku: "MOU001",
+            nombre: "Mouse Inalámbrico",
+            precio: 29.99,
+            stock: 150,
+            descripcion: "Mouse ergonómico inalámbrico"
+        })
+
+        CREATE (teclado:Producto {
+            sku: "TEC001",
+            nombre: "Teclado Mecánico",
+            precio: 89.99,
+            stock: 80,
+            descripcion: "Teclado mecánico RGB"
+        })
+
+        // Relaciones producto-categoría
+        CREATE (laptop)-[:PERTENECE_A]->(computadoras)
+        CREATE (mouse)-[:PERTENECE_A]->(accesorios)
+        CREATE (teclado)-[:PERTENECE_A]->(accesorios)
+
+        // Productos relacionados
+        CREATE (laptop)-[:FRECUENTEMENTE_COMPRADO_CON]->(mouse)
+        CREATE (laptop)-[:FRECUENTEMENTE_COMPRADO_CON]->(teclado)
+        CREATE (mouse)-[:COMPATIBLE_CON]->(laptop)
+        CREATE (teclado)-[:COMPATIBLE_CON]->(laptop)
+
+        RETURN count(*) as elementos_creados
+        """
+
+        with self.driver.session() as session:
+            result = session.run(query)
+            return result.single()[0]
+
+    def crear_usuario(self, email, nombre, direccion):
+        """Crea un nuevo usuario"""
+        query = """
+        CREATE (u:Usuario {
+            email: $email,
+            nombre: $nombre,
+            direccion: $direccion,
+            creado: datetime()
+        })
+        RETURN u
+        """
+
+        with self.driver.session() as session:
+            result = session.run(query, email=email, nombre=nombre, direccion=direccion)
+            return result.single()["u"]
+
+    def crear_pedido(self, email_usuario, productos_cantidades):
+        """
+        Crea un pedido para un usuario
+        productos_cantidades: lista de (sku, cantidad)
+        """
+        query = """
+        MATCH (u:Usuario {email: $email})
+
+        // Crear pedido
+        CREATE (pedido:Pedido {
+            id: randomUUID(),
+            fecha: datetime(),
+            estado: "pendiente"
+        })
+        CREATE (u)-[:REALIZO]->(pedido)
+
+        // Agregar productos al pedido
+        WITH pedido
+        UNWIND $items as item
+        MATCH (p:Producto {sku: item.sku})
+        CREATE (pedido)-[r:CONTIENE {cantidad: item.cantidad, precio_unitario: p.precio}]->(p)
+
+        // Actualizar stock
+        SET p.stock = p.stock - item.cantidad
+
+        // Calcular total
+        WITH pedido, sum(item.cantidad * p.precio) as total
+        SET pedido.total = total
+
+        RETURN pedido
+        """
+
+        items = [{"sku": sku, "cantidad": cant} for sku, cant in productos_cantidades]
+
+        with self.driver.session() as session:
+            result = session.run(query, email=email_usuario, items=items)
+            return result.single()["pedido"]
+
+    def recomendar_productos(self, email_usuario, limite=5):
+        """Recomienda productos basados en historial y comportamiento similar"""
+        query = """
+        MATCH (usuario:Usuario {email: $email})-[:REALIZO]->(:Pedido)-[:CONTIENE]->(comprados:Producto)
+
+        // Encontrar usuarios similares
+        MATCH (otros:Usuario)-[:REALIZO]->(:Pedido)-[:CONTIENE]->(comprados)
+        WHERE otros <> usuario
+
+        // Ver qué más compraron
+        MATCH (otros)-[:REALIZO]->(:Pedido)-[:CONTIENE]->(recomendados:Producto)
+        WHERE NOT (usuario)-[:REALIZO]->(:Pedido)-[:CONTIENE]->(recomendados)
+
+        // Contar frecuencia y calcular score
+        WITH recomendados, count(DISTINCT otros) as usuarios_similares
+
+        // Agregar productos frecuentemente comprados juntos
+        OPTIONAL MATCH (comprados)-[:FRECUENTEMENTE_COMPRADO_CON]->(relacionados:Producto)
+        WHERE NOT (usuario)-[:REALIZO]->(:Pedido)-[:CONTIENE]->(relacionados)
+
+        WITH recomendados, usuarios_similares
+        UNION
+        WITH relacionados as recomendados, 1 as usuarios_similares
+
+        RETURN DISTINCT
+            recomendados.nombre,
+            recomendados.sku,
+            recomendados.precio,
+            usuarios_similares as score
+        ORDER BY score DESC
+        LIMIT $limite
+        """
+
+        with self.driver.session() as session:
+            result = session.run(query, email=email_usuario, limite=limite)
+            return [record.data() for record in result]
+
+    def buscar_productos_por_categoria(self, categoria_nombre):
+        """Busca productos en una categoría (incluyendo subcategorías)"""
+        query = """
+        MATCH (cat:Categoria {nombre: $categoria})
+        MATCH (p:Producto)-[:PERTENECE_A]->(subcat:Categoria)
+        WHERE subcat = cat OR (subcat)-[:SUBCATEGORIA_DE*]->(cat)
+        RETURN p.nombre, p.precio, p.stock, p.sku
+        ORDER BY p.precio
+        """
+
+        with self.driver.session() as session:
+            result = session.run(query, categoria=categoria_nombre)
+            return [record.data() for record in result]
+
+    def obtener_historial_usuario(self, email_usuario):
+        """Obtiene el historial completo de pedidos de un usuario"""
+        query = """
+        MATCH (u:Usuario {email: $email})-[:REALIZO]->(pedido:Pedido)
+        OPTIONAL MATCH (pedido)-[r:CONTIENE]->(producto:Producto)
+
+        WITH pedido, collect({
+            nombre: producto.nombre,
+            cantidad: r.cantidad,
+            precio: r.precio_unitario
+        }) as productos
+
+        RETURN
+            pedido.id,
+            pedido.fecha,
+            pedido.estado,
+            pedido.total,
+            productos
+        ORDER BY pedido.fecha DESC
+        """
+
+        with self.driver.session() as session:
+            result = session.run(query, email=email_usuario)
+            return [record.data() for record in result]
+
+# Uso
+# ecommerce = ECommerceGraph("bolt://localhost:7687", "neo4j", "password")
+# ecommerce.crear_esquema()
+# ecommerce.crear_catalogo()
+# ecommerce.crear_usuario("juan@example.com", "Juan", "Calle 123")
+# ecommerce.crear_pedido("juan@example.com", [("LAP001", 1), ("MOU001", 2)])
+# recomendaciones = ecommerce.recomendar_productos("juan@example.com")
+----
+
+==== Caso 2: Detección de Fraude
+
+[source, python]
+----
+class FraudDetectionGraph:
+    """Sistema de detección de fraude con Neo4j"""
+
+    def __init__(self, uri, user, password):
+        self.driver = GraphDatabase.driver(uri, auth=(user, password))
+
+    def close(self):
+        self.driver.close()
+
+    def registrar_transaccion(self, cuenta_origen, cuenta_destino, monto, timestamp):
+        """Registra una transacción entre cuentas"""
+        query = """
+        MERGE (origen:Cuenta {numero: $origen})
+        MERGE (destino:Cuenta {numero: $destino})
+
+        CREATE (t:Transaccion {
+            id: randomUUID(),
+            monto: $monto,
+            timestamp: datetime($timestamp),
+            estado: "pendiente"
+        })
+
+        CREATE (origen)-[:ENVIO]->(t)-[:RECIBIO]->(destino)
+
+        // Actualizar balances
+        SET origen.ultimo_movimiento = datetime($timestamp)
+        SET destino.ultimo_movimiento = datetime($timestamp)
+
+        RETURN t
+        """
+
+        with self.driver.session() as session:
+            result = session.run(
+                query,
+                origen=cuenta_origen,
+                destino=cuenta_destino,
+                monto=monto,
+                timestamp=timestamp
+            )
+            return result.single()["t"]
+
+    def detectar_ciclos_sospechosos(self, max_saltos=5):
+        """Detecta ciclos de transacciones (posible lavado de dinero)"""
+        query = """
+        // Encontrar ciclos de transacciones
+        MATCH path = (cuenta:Cuenta)-[:ENVIO|RECIBIO*2..{max_saltos}]-(cuenta)
+        WHERE length(path) >= 4
+
+        // Extraer transacciones del path
+        WITH cuenta, path, [r in relationships(path) | r] as rels
+        WHERE all(r in rels WHERE (r)-[:ENVIO|RECIBIO]->(:Transaccion))
+
+        // Calcular monto total del ciclo
+        UNWIND rels as rel
+        MATCH (rel)-[:ENVIO|RECIBIO]-(t:Transaccion)
+
+        WITH cuenta, path, collect(DISTINCT t) as transacciones
+        WITH cuenta, path, transacciones,
+             reduce(total = 0.0, t in transacciones | total + t.monto) as monto_total
+
+        WHERE monto_total > 10000  // Umbral sospechoso
+
+        RETURN
+            cuenta.numero,
+            length(path) as longitud_ciclo,
+            monto_total,
+            size(transacciones) as num_transacciones,
+            transacciones
+        ORDER BY monto_total DESC
+        """
+
+        with self.driver.session() as session:
+            result = session.run(query.format(max_saltos=max_saltos))
+            return [record.data() for record in result]
+
+    def detectar_transferencias_rapidas(self, ventana_minutos=60):
+        """Detecta cuentas con muchas transferencias en poco tiempo"""
+        query = """
+        MATCH (cuenta:Cuenta)-[:ENVIO]->(t:Transaccion)
+        WHERE t.timestamp > datetime() - duration({minutes: $ventana})
+
+        WITH cuenta, collect(t) as transacciones, count(t) as num_transacciones
+        WHERE num_transacciones >= 10  // Umbral de alerta
+
+        RETURN
+            cuenta.numero,
+            num_transacciones,
+            reduce(total = 0.0, t in transacciones | total + t.monto) as monto_total,
+            transacciones[0..5] as muestra_transacciones
+        ORDER BY num_transacciones DESC
+        """
+
+        with self.driver.session() as session:
+            result = session.run(query, ventana=ventana_minutos)
+            return [record.data() for record in result]
+
+    def detectar_redes_sospechosas(self):
+        """Identifica redes densamente conectadas (posible fraude organizado)"""
+        query = """
+        // Encontrar grupos de cuentas altamente interconectadas
+        MATCH (c1:Cuenta)-[:ENVIO|RECIBIO*1..3]-(c2:Cuenta)
+        WHERE id(c1) < id(c2)
+
+        WITH c1, c2, count(*) as conexiones
+        WHERE conexiones >= 5
+
+        // Encontrar todas las cuentas en la red
+        MATCH path = (c1)-[:ENVIO|RECIBIO*1..3]-(otros:Cuenta)
+        WHERE (c1)-[:ENVIO|RECIBIO*1..3]-(c2)
+
+        WITH c1, c2, collect(DISTINCT otros) as red
+        WHERE size(red) >= 5
+
+        RETURN
+            c1.numero as cuenta1,
+            c2.numero as cuenta2,
+            size(red) as tamano_red,
+            [cuenta in red | cuenta.numero] as cuentas_en_red
+        ORDER BY tamano_red DESC
+        LIMIT 10
+        """
+
+        with self.driver.session() as session:
+            result = session.run(query)
+            return [record.data() for record in result]
+
+    def calcular_score_riesgo(self, numero_cuenta):
+        """Calcula un score de riesgo para una cuenta"""
+        query = """
+        MATCH (cuenta:Cuenta {numero: $numero})
+
+        // Factor 1: Número de transacciones
+        OPTIONAL MATCH (cuenta)-[:ENVIO]->(t1:Transaccion)
+        WITH cuenta, count(t1) as transacciones_enviadas
+
+        // Factor 2: Monto total movido
+        OPTIONAL MATCH (cuenta)-[:ENVIO]->(t2:Transaccion)
+        WITH cuenta, transacciones_enviadas, sum(t2.monto) as monto_total
+
+        // Factor 3: Conexiones con cuentas sospechosas
+        OPTIONAL MATCH (cuenta)-[:ENVIO|RECIBIO*1..2]-(sospechosa:Cuenta)
+        WHERE sospechosa.flagged = true
+        WITH cuenta, transacciones_enviadas, monto_total, count(DISTINCT sospechosa) as conexiones_sospechosas
+
+        // Factor 4: Velocidad de transacciones
+        OPTIONAL MATCH (cuenta)-[:ENVIO]->(t3:Transaccion)
+        WHERE t3.timestamp > datetime() - duration({hours: 24})
+        WITH cuenta, transacciones_enviadas, monto_total, conexiones_sospechosas,
+             count(t3) as transacciones_24h
+
+        // Calcular score de riesgo (0-100)
+        WITH cuenta,
+             transacciones_enviadas,
+             monto_total,
+             conexiones_sospechosas,
+             transacciones_24h,
+             CASE
+                 WHEN transacciones_enviadas > 100 THEN 30
+                 WHEN transacciones_enviadas > 50 THEN 20
+                 WHEN transacciones_enviadas > 20 THEN 10
+                 ELSE 0
+             END +
+             CASE
+                 WHEN monto_total > 1000000 THEN 30
+                 WHEN monto_total > 500000 THEN 20
+                 WHEN monto_total > 100000 THEN 10
+                 ELSE 0
+             END +
+             (conexiones_sospechosas * 15) +
+             CASE
+                 WHEN transacciones_24h > 50 THEN 20
+                 WHEN transacciones_24h > 20 THEN 10
+                 ELSE 0
+             END as score_riesgo
+
+        RETURN
+            cuenta.numero,
+            score_riesgo,
+            transacciones_enviadas,
+            monto_total,
+            conexiones_sospechosas,
+            transacciones_24h,
+            CASE
+                WHEN score_riesgo >= 70 THEN "ALTO"
+                WHEN score_riesgo >= 40 THEN "MEDIO"
+                ELSE "BAJO"
+            END as nivel_riesgo
+        """
+
+        with self.driver.session() as session:
+            result = session.run(query, numero=numero_cuenta)
+            record = result.single()
+            return record.data() if record else None
+
+# Uso
+# fraud_detector = FraudDetectionGraph("bolt://localhost:7687", "neo4j", "password")
+# fraud_detector.registrar_transaccion("ACC001", "ACC002", 5000, "2024-01-15T10:30:00")
+# ciclos = fraud_detector.detectar_ciclos_sospechosos()
+# score = fraud_detector.calcular_score_riesgo("ACC001")
+----
+
+=== 8.8 Algoritmos de Grafos en Neo4j
+
+==== Graph Data Science Library (GDS)
+
+[source, cypher]
+----
+// Instalar GDS: https://neo4j.com/docs/graph-data-science/
+
+// 1. PageRank - Encontrar nodos más importantes
+CALL gds.pageRank.stream('mi_grafo')
+YIELD nodeId, score
+RETURN gds.util.asNode(nodeId).nombre AS usuario, score
+ORDER BY score DESC
+LIMIT 10
+
+// 2. Community Detection (Louvain) - Detectar comunidades
+CALL gds.louvain.stream('mi_grafo')
+YIELD nodeId, communityId
+WITH gds.util.asNode(nodeId) AS usuario, communityId
+RETURN communityId, collect(usuario.nombre) AS miembros, count(*) AS tamano
+ORDER BY tamano DESC
+
+// 3. Camino más corto (Dijkstra)
+MATCH (origen:Usuario {nombre: "Juan"}), (destino:Usuario {nombre: "María"})
+CALL gds.shortestPath.dijkstra.stream('mi_grafo', {
+    sourceNode: origen,
+    targetNode: destino
+})
+YIELD path, totalCost
+RETURN path, totalCost
+
+// 4. Similitud de nodos (Node Similarity)
+CALL gds.nodeSimilarity.stream('mi_grafo')
+YIELD node1, node2, similarity
+WHERE similarity > 0.5
+RETURN
+    gds.util.asNode(node1).nombre AS usuario1,
+    gds.util.asNode(node2).nombre AS usuario2,
+    similarity
+ORDER BY similarity DESC
+LIMIT 20
+
+// 5. Centralidad de intermediación (Betweenness Centrality)
+// Identifica "puentes" entre comunidades
+CALL gds.betweenness.stream('mi_grafo')
+YIELD nodeId, score
+RETURN gds.util.asNode(nodeId).nombre AS usuario, score
+ORDER BY score DESC
+LIMIT 10
+----
+
+=== 8.9 Integración Avanzada con LangChain y Ollama
+
+[source, python]
+----
+from langchain_community.graphs import Neo4jGraph
+from langchain_ollama import OllamaLLM
+from langchain_experimental.graph_transformers import LLMGraphTransformer
+from langchain_community.chains.graph_qa.cypher import GraphCypherQAChain
+from langchain.prompts import PromptTemplate
+
+class GraphRAGSystem:
+    """Sistema RAG avanzado usando Neo4j como Knowledge Graph"""
+
+    def __init__(self, neo4j_uri, neo4j_user, neo4j_password):
+        # Configurar Neo4j
+        self.graph = Neo4jGraph(
+            url=neo4j_uri,
+            username=neo4j_user,
+            password=neo4j_password
+        )
+
+        # Configurar LLM
+        self.llm = OllamaLLM(
+            model="mistral",
+            temperature=0.7
+        )
+
+        # Transformer para extraer grafos de texto
+        self.transformer = LLMGraphTransformer(llm=self.llm)
+
+    def construir_grafo_desde_texto(self, textos):
+        """Construye un knowledge graph desde texto no estructurado"""
+        all_graph_docs = []
+
+        for texto in textos:
+            # Extraer entidades y relaciones
+            graph_docs = self.transformer.convert_to_graph_documents([texto])
+            all_graph_docs.extend(graph_docs)
+
+        # Almacenar en Neo4j
+        self.graph.add_graph_documents(all_graph_docs)
+
+        print(f"✓ Procesados {len(textos)} textos")
+        print(f"✓ Creados {len(all_graph_docs)} documentos de grafo")
+
+    def consultar_grafo(self, pregunta):
+        """Consulta el grafo usando lenguaje natural"""
+        # Prompt personalizado para generar Cypher
+        cypher_template = """Genera una consulta Cypher basada en el esquema del grafo y la pregunta del usuario.
+
+Esquema del grafo:
+{schema}
+
+Pregunta: {question}
+
+Genera SOLO la consulta Cypher, sin explicaciones adicionales.
+La consulta debe retornar información relevante para responder la pregunta.
+
+Consulta Cypher:"""
+
+        # Crear chain para QA sobre grafo
+        chain = GraphCypherQAChain.from_llm(
+            llm=self.llm,
+            graph=self.graph,
+            verbose=True,
+            return_intermediate_steps=True
+        )
+
+        # Ejecutar consulta
+        response = chain({"query": pregunta})
+
+        return {
+            "pregunta": pregunta,
+            "cypher_generado": response.get("intermediate_steps", [{}])[0].get("query", ""),
+            "respuesta": response["result"],
+            "contexto_grafo": response.get("intermediate_steps", [])
+        }
+
+    def explorar_entidades_relacionadas(self, entidad_nombre, max_profundidad=2):
+        """Explora entidades relacionadas en el grafo"""
+        query = f"""
+        MATCH (entidad {{nombre: $nombre}})
+        CALL apoc.path.subgraphAll(entidad, {{
+            maxLevel: $max_profundidad
+        }})
+        YIELD nodes, relationships
+
+        UNWIND nodes AS nodo
+        WITH DISTINCT nodo, relationships
+
+        RETURN
+            labels(nodo)[0] AS tipo,
+            nodo.nombre AS nombre,
+            properties(nodo) AS propiedades,
+            [r IN relationships WHERE startNode(r) = nodo OR endNode(r) = nodo |
+                type(r)] AS relaciones
+        """
+
+        result = self.graph.query(
+            query,
+            params={"nombre": entidad_nombre, "max_profundidad": max_profundidad}
+        )
+
+        return result
+
+    def analizar_conexiones(self, entidad1, entidad2):
+        """Analiza las conexiones entre dos entidades"""
+        query = """
+        MATCH (e1 {nombre: $nombre1}), (e2 {nombre: $nombre2})
+        MATCH path = allShortestPaths((e1)-[*..5]-(e2))
+
+        WITH path, relationships(path) AS rels, nodes(path) AS nodos
+
+        RETURN
+            [n IN nodos | {tipo: labels(n)[0], nombre: n.nombre}] AS camino,
+            [r IN rels | type(r)] AS tipos_relaciones,
+            length(path) AS distancia
+        ORDER BY distancia
+        LIMIT 5
+        """
+
+        result = self.graph.query(
+            query,
+            params={"nombre1": entidad1, "nombre2": entidad2}
+        )
+
+        return result
+
+    def generar_resumen_grafo(self):
+        """Genera un resumen estadístico del grafo"""
+        query = """
+        // Contar nodos por tipo
+        MATCH (n)
+        WITH labels(n)[0] AS tipo, count(n) AS cantidad
+        WITH collect({tipo: tipo, cantidad: cantidad}) AS nodos_por_tipo
+
+        // Contar relaciones por tipo
+        MATCH ()-[r]->()
+        WITH nodos_por_tipo, type(r) AS tipo_rel, count(r) AS cantidad_rel
+        WITH nodos_por_tipo, collect({tipo: tipo_rel, cantidad: cantidad_rel}) AS relaciones_por_tipo
+
+        RETURN {
+            nodos: nodos_por_tipo,
+            relaciones: relaciones_por_tipo
+        } AS resumen
+        """
+
+        result = self.graph.query(query)
+        return result[0]["resumen"] if result else {}
+
+# Uso ejemplo
+# graph_rag = GraphRAGSystem("bolt://localhost:7687", "neo4j", "password")
+#
+# textos = [
+#     "Python fue creado por Guido van Rossum en 1991.",
+#     "LangChain es un framework para desarrollar aplicaciones con LLMs.",
+#     "Neo4j es la base de datos de grafos más popular del mundo."
+# ]
+#
+# graph_rag.construir_grafo_desde_texto(textos)
+# resultado = graph_rag.consultar_grafo("¿Quién creó Python?")
+# print(resultado["respuesta"])
+----
+
+=== 8.10 Optimización y Mejores Prácticas
+
+==== Índices y Constraints
+
+[source, cypher]
+----
+// Constraints (también crean índices)
+CREATE CONSTRAINT usuario_email IF NOT EXISTS
+FOR (u:Usuario) REQUIRE u.email IS UNIQUE
+
+CREATE CONSTRAINT producto_sku IF NOT EXISTS
+FOR (p:Producto) REQUIRE p.sku IS UNIQUE
+
+// Índices simples
+CREATE INDEX usuario_nombre IF NOT EXISTS
+FOR (u:Usuario) ON (u.nombre)
+
+CREATE INDEX post_fecha IF NOT EXISTS
+FOR (p:Post) ON (p.fecha)
+
+// Índices compuestos
+CREATE INDEX usuario_ciudad_edad IF NOT EXISTS
+FOR (u:Usuario) ON (u.ciudad, u.edad)
+
+// Full-text search index
+CREATE FULLTEXT INDEX post_contenido IF NOT EXISTS
+FOR (p:Post) ON EACH [p.titulo, p.contenido]
+
+// Usar full-text index
+CALL db.index.fulltext.queryNodes("post_contenido", "grafos bases datos")
+YIELD node, score
+RETURN node.titulo, score
+ORDER BY score DESC
+
+// Ver índices existentes
+SHOW INDEXES
+
+// Ver constraints
+SHOW CONSTRAINTS
+----
+
+==== Optimización de Queries
+
+[source, cypher]
+----
+// ❌ MAL: Scan completo de nodos
+MATCH (u:Usuario)
+WHERE u.nombre = "Juan"
+RETURN u
+
+// ✅ BIEN: Usar el índice directamente
+MATCH (u:Usuario {nombre: "Juan"})
+RETURN u
+
+// ❌ MAL: Profundidad variable sin límite
+MATCH (a)-[*]-(b)
+RETURN a, b
+
+// ✅ BIEN: Limitar profundidad
+MATCH (a)-[*1..3]-(b)
+RETURN a, b
+LIMIT 100
+
+// ❌ MAL: Múltiples OPTIONAL MATCH sin filtros
+MATCH (u:Usuario)
+OPTIONAL MATCH (u)-[:AMIGO_DE]-(a)
+OPTIONAL MATCH (u)-[:PUBLICO]->(p)
+RETURN u, collect(a), collect(p)
+
+// ✅ BIEN: Combinar en un solo patrón cuando sea posible
+MATCH (u:Usuario)
+OPTIONAL MATCH (u)-[:AMIGO_DE]-(a)
+WITH u, collect(a) AS amigos
+OPTIONAL MATCH (u)-[:PUBLICO]->(p)
+RETURN u, amigos, collect(p) AS posts
+
+// Usar EXPLAIN y PROFILE para analizar
+PROFILE
+MATCH (u:Usuario {nombre: "Juan"})-[:AMIGO_DE*2]-(amigo)
+RETURN DISTINCT amigo.nombre
+----
+
+== Módulo 9: ArangoDB - Base de Datos Multi-Modelo
+
+=== 9.1 Características
+
+**Multi-Modelo:**
+- Documentos (JSON)
+- Grafos
+- Búsqueda (full-text)
+- Key-Value
+
+=== 9.2 Instalación
+
+[source, bash]
+----
+docker run -d -p 8529:8529 arangodb/arangodb:latest
+# Usuario: root, sin contraseña
+----
+
+=== 9.3 AQL (ArangoDB Query Language)
+
+[source, aql]
+----
+// Insertar documentos
+INSERT {
+  nombre: "Juan",
+  edad: 30
+} INTO personas
+
+// Insertar relación
+INSERT {
+  _from: "personas/1",
+  _to: "personas/2",
+  tipo: "AMIGO_DE"
+} INTO amistades
+
+// Consultar
+FOR p IN personas
+  FILTER p.edad > 25
+  RETURN p
+
+// Recorrido de grafo
+FOR p IN personas
+  FOR f IN 1..2 OUTBOUND p amistades
+    RETURN {persona: p.nombre, amigo: f.nombre}
+----
+
+== Módulo 10: Knowledge Graphs con LangChain
+
+=== 10.1 Crear Knowledge Graph desde Texto
+
+[source, python]
+----
+from langchain_community.graphs import Neo4jGraph
+from langchain_experimental.graph_transformers import LLMGraphTransformer
+from langchain_ollama import OllamaLLM
+
+llm = OllamaLLM(model="mistral")
+
+# Crear transformador
+transformer = LLMGraphTransformer(llm=llm)
+
+# Textos para procesar
+textos = [
+    "Python es un lenguaje de programación creado por Guido van Rossum.",
+    "LangChain es un framework para aplicaciones con LLMs.",
+    "Neo4j es una base de datos de grafos.",
+    "LangChain se usa para conectar LLMs con datos externos."
+]
+
+# Extraer grafo
+all_docs = []
+for texto in textos:
+    all_docs.extend(transformer.convert_to_graph_documents([texto]))
+
+# Conectar a Neo4j
+graph = Neo4jGraph(
+    url="bolt://localhost:7687",
+    username="neo4j",
+    password="password"
+)
+
+graph.add_graph_documents(all_docs)
+----
+
+=== 10.2 QA sobre Grafo
+
+[source, python]
+----
+from langchain_community.chains.graph_qa.cypher import GraphCypherQAChain
+
+qa_chain = GraphCypherQAChain.from_llm(
+    llm=llm,
+    graph=graph,
+    verbose=True
+)
+
+# Preguntas
+preguntas = [
+    "¿Quién creó Python?",
+    "¿Qué es LangChain?",
+    "¿Qué relaciones hay entre LangChain y Neo4j?",
+    "¿Para qué sirve LangChain?"
+]
+
+for pregunta in preguntas:
+    respuesta = qa_chain.run(pregunta)
+    print(f"\n{pregunta}\n{respuesta}")
+----
+
+== Módulo 11: Búsqueda Híbrida (Vectorial + Grafos)
+
+=== 11.1 Hybrid RAG
+
+Combina vectores con relaciones de grafo:
+
+[source, python]
+----
+from langchain_chroma import Chroma
+from langchain_community.graphs import Neo4jGraph
+from langchain_ollama import OllamaLLM, OllamaEmbeddings
+
+class HybridRAG:
+    def __init__(self):
+        self.llm = OllamaLLM(model="mistral")
+        self.embeddings = OllamaEmbeddings(model="nomic-embed-text")
+
+        # Vector store
+        self.vector_store = Chroma(
+            embedding_function=self.embeddings,
+            persist_directory="./hybrid_db"
+        )
+
+        # Grafo
+        self.graph = Neo4jGraph(
+            url="bolt://localhost:7687",
+            username="neo4j",
+            password="password"
+        )
+
+    def buscar_hibrido(self, pregunta, k=3):
+        # 1. Búsqueda vectorial
+        vector_docs = self.vector_store.similarity_search(pregunta, k=k)
+
+        # 2. Extraer entidades mencionadas
+        entidades_prompt = f"""
+Extrae las entidades principales de esta pregunta como lista Python.
+Solo responde con la lista.
+
+Pregunta: {pregunta}
+"""
+        entidades_text = self.llm.invoke(entidades_prompt)
+
+        # 3. Búsqueda en grafo por entidades
+        grafo_docs = []
+        for entidad in entidades_text.split(','):
+            query = f"""
+            MATCH (n) WHERE n.nombre CONTAINS '{entidad.strip()}'
+            OPTIONAL MATCH (n)-[r]->(m)
+            RETURN n, r, m
+            LIMIT 5
+            """
+            try:
+                resultados = self.graph.query(query)
+                grafo_docs.extend(resultados)
+            except:
+                pass
+
+        # 4. Combinar resultados
+        return {
+            "vectores": vector_docs,
+            "grafo": grafo_docs,
+            "total": len(vector_docs) + len(grafo_docs)
+        }
+
+    def responder(self, pregunta):
+        resultados = self.buscar_hibrido(pregunta)
+
+        # Preparar contexto
+        contexto = "Información de búsqueda vectorial:\n"
+        for doc in resultados["vectores"]:
+            contexto += f"- {doc.page_content}\n"
+
+        contexto += "\nRelaciones encontradas en grafo:\n"
+        for item in resultados["grafo"]:
+            contexto += f"- {item}\n"
+
+        # Generar respuesta
+        prompt = f"""
+Usa la siguiente información para responder:
+
+{contexto}
+
+Pregunta: {pregunta}
+
+Respuesta:
+"""
+
+        return self.llm.invoke(prompt)
+
+# Usar
+hybrid_rag = HybridRAG()
+respuesta = hybrid_rag.responder("¿Cuál es la relación entre LangChain y Python?")
+print(respuesta)
+----
+
+== Módulo 12: Casos de Uso Avanzados
+
+=== 12.1 Sistema de Recomendación
+
+[source, python]
+----
+class SystemOfRecommendation:
+    def __init__(self):
+        self.graph = Neo4jGraph(
+            url="bolt://localhost:7687",
+            username="neo4j",
+            password="password"
+        )
+
+    def crear_datos(self):
+        # Crear usuario, productos y ratings
+        cypher = """
+        CREATE (u1:Usuario {nombre: "Juan", id: "u1"})
+        CREATE (u2:Usuario {nombre: "María", id: "u2"})
+
+        CREATE (p1:Producto {nombre: "Laptop", id: "p1", categoria: "Electrónica"})
+        CREATE (p2:Producto {nombre: "Mouse", id: "p2", categoria: "Accesorios"})
+        CREATE (p3:Producto {nombre: "Libro Python", id: "p3", categoria: "Libros"})
+
+        CREATE (u1)-[:COMPRO {rating: 5}]->(p1)
+        CREATE (u1)-[:COMPRO {rating: 4}]->(p2)
+        CREATE (u2)-[:COMPRO {rating: 5}]->(p2)
+        CREATE (u2)-[:COMPRO {rating: 3}]->(p3)
+        """
+        self.graph.query(cypher)
+
+    def recomendar(self, usuario_id):
+        # Usuarios similares
+        query = """
+        MATCH (u:Usuario {id: $usuario_id})-[:COMPRO]->(p:Producto)
+        <-[:COMPRO]-(similares:Usuario)
+        MATCH (similares)-[:COMPRO]->(recomendado:Producto)
+        WHERE NOT (u)-[:COMPRO]->(recomendado)
+        RETURN recomendado, COUNT(*) as frecuencia
+        ORDER BY frecuencia DESC
+        LIMIT 5
+        """
+
+        return self.graph.query(query, {"usuario_id": usuario_id})
+
+recomendador = SystemOfRecommendation()
+recomendador.crear_datos()
+print(recomendador.recomendar("u1"))
+----
+
+=== 12.2 Detección de Fraude
+
+[source, python]
+----
+class FraudDetector:
+    def __init__(self, graph):
+        self.graph = graph
+
+    def crear_red_transacciones(self):
+        cypher = """
+        CREATE (u1:Usuario {nombre: "Usuario1", id: "u1"})
+        CREATE (u2:Usuario {nombre: "Usuario2", id: "u2"})
+        CREATE (u3:Usuario {nombre: "Usuario3", id: "u3"})
+
+        CREATE (u1)-[:TRANSACCIONO {monto: 100, fecha: "2024-01-01"}]->(u2)
+        CREATE (u2)-[:TRANSACCIONO {monto: 50, fecha: "2024-01-02"}]->(u3)
+        CREATE (u3)-[:TRANSACCIONO {monto: 200, fecha: "2024-01-03"}]->(u1)
+        """
+        self.graph.query(cypher)
+
+    def detectar_ciclos(self):
+        # Detectar ciclos de transacciones (señal de fraude)
+        query = """
+        MATCH (u:Usuario)-[*2..5]->(u)
+        RETURN u, COUNT(*) as ciclos
+        """
+        return self.graph.query(query)
+
+detector = FraudDetector(graph)
+detector.crear_red_transacciones()
+print("Ciclos detectados:", detector.detectar_ciclos())
+----
+
+== Módulo 13: Optimización y Producción
+
+=== 13.1 Índices en Neo4j
+
+[source, python]
+----
+def crear_indices(graph):
+    # Índice en propiedad
+    graph.query("CREATE INDEX ON :Persona(nombre)")
+
+    # Índice en relación
+    graph.query("CREATE INDEX ON :AMIGO_DE(fecha)")
+
+    # Índice compuesto
+    graph.query("CREATE INDEX ON :Persona(nombre, edad)")
+
+    # Ver índices
+    indices = graph.query("SHOW INDEXES")
+    for indice in indices:
+        print(indice)
+
+crear_indices(graph)
+----
+
+=== 13.2 Caché de Consultas
+
+[source, python]
+----
+from functools import lru_cache
+
+class GraphCache:
+    def __init__(self, graph):
+        self.graph = graph
+        self.cache = {}
+
+    @lru_cache(maxsize=100)
+    def consulta_cached(self, query):
+        return self.graph.query(query)
+
+    def limpiar_cache(self):
+        self.cache.clear()
+        self.consulta_cached.cache_clear()
+
+cache = GraphCache(graph)
+----
+
+== Módulo 14: Proyecto Final - Sistema Integral
+
+=== 14.1 Arquitectura del Proyecto
+
+[source, text]
+----
+Sistema de Búsqueda y Recomendación Inteligente:
+
+1. Ingesta de Datos
+   - Documentos → Embeddings → ChromaDB
+   - Entidades → Relaciones → Neo4j
+
+2. Indexación
+   - Vector índices (HNSW)
+   - Grafo índices
+   - Índices híbridos
+
+3. Consultas
+   - Búsqueda vectorial
+   - Recorrido de grafo
+   - Búsqueda híbrida
+
+4. Ranking
+   - Por similitud vectorial
+   - Por centralidad en grafo
+   - Por puntuación combinada
+
+5. Respuesta
+   - Generación LLM
+   - Citas y explicaciones
+   - Relaciones mostradas
+----
+
+=== 14.2 Estructura del Código
+
+[source, python]
+----
+class SistemaIntegral:
+    def __init__(self):
+        # Vector DB
+        self.embeddings = OllamaEmbeddings(model="nomic-embed-text")
+        self.vector_store = Chroma(
+            embedding_function=self.embeddings,
+            persist_directory="./sistema_db"
+        )
+
+        # Graph DB
+        self.graph = Neo4jGraph(
+            url="bolt://localhost:7687",
+            username="neo4j",
+            password="password"
+        )
+
+        # LLM
+        self.llm = OllamaLLM(model="mistral")
+
+    def procesar_documento(self, doc_path):
+        # 1. Cargar
+        from langchain_community.document_loaders import PyPDFLoader
+        loader = PyPDFLoader(doc_path)
+        docs = loader.load()
+
+        # 2. Chunks
+        from langchain.text_splitter import RecursiveCharacterTextSplitter
+        splitter = RecursiveCharacterTextSplitter(chunk_size=512)
+        chunks = splitter.split_documents(docs)
+
+        # 3. Vector store
+        self.vector_store.add_documents(chunks)
+
+        # 4. Extraer entidades
+        from langchain_experimental.graph_transformers import LLMGraphTransformer
+        transformer = LLMGraphTransformer(llm=self.llm)
+
+        graph_docs = transformer.convert_to_graph_documents(chunks)
+        self.graph.add_graph_documents(graph_docs)
+
+    def buscar(self, consulta):
+        # Búsqueda vectorial
+        vectores = self.vector_store.similarity_search(consulta, k=3)
+
+        # Búsqueda en grafo
+        query = """
+        MATCH (n) WHERE any(prop in keys(n)
+               WHERE n[prop] CONTAINS $consulta)
+        OPTIONAL MATCH (n)-[r]->(m)
+        RETURN n, r, m LIMIT 5
+        """
+
+        try:
+            grafo = self.graph.query(query, {"consulta": consulta})
+        except:
+            grafo = []
+
+        return vectores, grafo
+
+    def responder(self, consulta):
+        vectores, grafo = self.buscar(consulta)
+
+        contexto = "De documentos:\n"
+        for doc in vectores:
+            contexto += f"- {doc.page_content}\n"
+
+        contexto += "\nDe relaciones:\n"
+        for item in grafo:
+            contexto += f"- {item}\n"
+
+        prompt = f"""
+Contexto:
+{contexto}
+
+Pregunta: {consulta}
+
+Respuesta detallada en español:
+"""
+
+        return self.llm.invoke(prompt)
+
+# Usar
+sistema = SistemaIntegral()
+respuesta = sistema.responder("¿Cuál es la relación entre RAG y LangChain?")
+print(respuesta)
+----
+
+== Anexo A: Comparativa Vectorial vs Grafo
+
+|===
+| Aspecto | Vectorial | Grafo
+| Mejor Para | Similitud semántica | Relaciones explícitas
+| Velocidad | Muy rápida | Media
+| Memoria | Media | Variable
+| Escalabilidad | Horizontal | Vertical
+| Flexibilidad | Esquema flexible | Requiere estructura
+| Recomendaciones | Por similitud | Por conexiones
+| Análisis de Red | No | Excelente
+|===
+
+== Anexo B: Stack Recomendado
+
+**Desarrollo Local:**
+- ChromaDB (vectores, fácil)
+- Neo4j Community (grafos, gratis)
+- Ollama (LLM local)
+- LangChain (orquestación)
+
+**Producción:**
+- Weaviate o Qdrant (vectores escalables)
+- Neo4j Enterprise (grafos escalables)
+- Milvus (millones de vectores)
+- LangChain + API framework
+
+== Anexo C: Recursos
+
+- Neo4j Documentation: https://neo4j.com/developer/
+- LangChain Graphs: https://python.langchain.com/docs/use_cases/graph_qa
+- ChromaDB Docs: https://docs.trychroma.com/
+- Qdrant Docs: https://qdrant.tech/documentation/

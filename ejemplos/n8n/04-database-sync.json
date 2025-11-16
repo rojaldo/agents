@@ -1,0 +1,205 @@
+{
+  "name": "Sincronizar Base de Datos",
+  "nodes": [
+    {
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        250,
+        300
+      ],
+      "parameters": {
+        "triggerTimes": {
+          "item": [
+            "06:00"
+          ]
+        },
+        "triggerDays": {
+          "item": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "name": "Obtener datos de PostgreSQL",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        450,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "YOUR_POSTGRES_CREDENTIALS",
+          "name": "PostgreSQL"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id, name, email, status, updated_at FROM users WHERE updated_at > NOW() - INTERVAL '24 hours' ORDER BY updated_at DESC"
+      }
+    },
+    {
+      "name": "Procesar Items",
+      "type": "n8n-nodes-base.itemLists",
+      "typeVersion": 3,
+      "position": [
+        650,
+        300
+      ],
+      "parameters": {
+        "mode": "splitOut"
+      }
+    },
+    {
+      "name": "Validar Datos",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        850,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": [
+            {
+              "leftValue": "{{ $json.email }}",
+              "rightValue": null,
+              "condition": "exists"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Guardar Backup",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1050,
+        200
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "YOUR_POSTGRES_CREDENTIALS",
+          "name": "PostgreSQL"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO users_backup (id, name, email, status, synced_at) VALUES ({{ $json.id }}, '{{ $json.name }}', '{{ $json.email }}', '{{ $json.status }}', NOW()) ON CONFLICT (id) DO UPDATE SET name = '{{ $json.name }}', email = '{{ $json.email }}', status = '{{ $json.status }}', synced_at = NOW()"
+      }
+    },
+    {
+      "name": "Log Error",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1050,
+        400
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "YOUR_POSTGRES_CREDENTIALS",
+          "name": "PostgreSQL"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO sync_errors (user_id, error_message, error_date) VALUES ({{ $json.id }}, 'Datos inválidos - email faltante', NOW())"
+      }
+    },
+    {
+      "name": "Guardar Sync Status",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1250,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "YOUR_POSTGRES_CREDENTIALS",
+          "name": "PostgreSQL"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE sync_log SET last_sync = NOW(), status = 'completed', records_synced = records_synced + 1 WHERE table_name = 'users'"
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Obtener datos de PostgreSQL",
+            "branch": 0,
+            "socket": 0
+          }
+        ]
+      ]
+    },
+    "Obtener datos de PostgreSQL": {
+      "main": [
+        [
+          {
+            "node": "Procesar Items",
+            "branch": 0,
+            "socket": 0
+          }
+        ]
+      ]
+    },
+    "Procesar Items": {
+      "main": [
+        [
+          {
+            "node": "Validar Datos",
+            "branch": 0,
+            "socket": 0
+          }
+        ]
+      ]
+    },
+    "Validar Datos": {
+      "main": [
+        [
+          {
+            "node": "Guardar Backup",
+            "branch": 0,
+            "socket": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Error",
+            "branch": 0,
+            "socket": 0
+          }
+        ]
+      ]
+    },
+    "Guardar Backup": {
+      "main": [
+        [
+          {
+            "node": "Guardar Sync Status",
+            "branch": 0,
+            "socket": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false
+}

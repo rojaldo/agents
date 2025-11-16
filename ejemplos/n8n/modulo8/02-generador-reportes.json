@@ -1,0 +1,132 @@
+{
+  "name": "M8.2 - Generador de Reportes Diarios",
+  "description": "Generar reporte diario automático con datos y estadísticas",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "start",
+      "name": "Start",
+      "type": "n8n-nodes-base.start",
+      "typeVersion": 1,
+      "position": [100, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "resource": "query",
+        "query": "SELECT COUNT(*) as total, COUNT(CASE WHEN estado='activo' THEN 1 END) as activos FROM usuarios"
+      },
+      "id": "sqlite-stats-usuarios",
+      "name": "SQLite - Estadísticas Usuarios",
+      "type": "n8n-nodes-base.sqlite",
+      "typeVersion": 1,
+      "position": [300, 200]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "resource": "query",
+        "query": "SELECT COUNT(*) as total_pedidos, SUM(monto) as ingresos FROM pedidos WHERE DATE(fecha) = DATE('now')"
+      },
+      "id": "sqlite-stats-pedidos",
+      "name": "SQLite - Estadísticas Pedidos",
+      "type": "n8n-nodes-base.sqlite",
+      "typeVersion": 1,
+      "position": [300, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Combinar estadísticas\nconst usuarios = $input.all()[0].json;\nconst pedidos = $input.all()[1].json;\n\nconst fecha = new Date().toLocaleDateString('es-ES');\n\nreturn {\n  json: {\n    reporte_diario: {\n      fecha: fecha,\n      usuarios: {\n        total: usuarios[0].total,\n        activos: usuarios[0].activos,\n        inactivos: usuarios[0].total - usuarios[0].activos\n      },\n      pedidos: {\n        total: pedidos[0].total_pedidos || 0,\n        ingresos: pedidos[0].ingresos || 0\n      },\n      resumen: {\n        porcentaje_actividad: ((usuarios[0].activos / usuarios[0].total) * 100).toFixed(2) + '%',\n        ingresos_por_pedido: ((pedidos[0].ingresos || 0) / (pedidos[0].total_pedidos || 1)).toFixed(2)\n      }\n    }\n  }\n};"
+      },
+      "id": "combinar",
+      "name": "Code - Combinar Estadísticas",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "/tmp/reporte_{{ $now.toFormat('yyyy-MM-dd') }}.json",
+        "fileContent": "{{ JSON.stringify($input.first().json, null, 2) }}"
+      },
+      "id": "write-file",
+      "name": "Write File - Guardar Reporte",
+      "type": "n8n-nodes-base.writeFile",
+      "typeVersion": 1,
+      "position": [700, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Simular envío por email\nreturn {\n  json: {\n    email_enviado: true,\n    destinatario: 'admin@empresa.com',\n    asunto: 'Reporte Diario - ' + new Date().toLocaleDateString('es-ES'),\n    contenido: 'Se adjunta el reporte del día con todas las estadísticas',\n    timestamp: new Date().toISOString()\n  }\n};"
+      },
+      "id": "email-envio",
+      "name": "Code - Email Envío (simulado)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 300]
+    }
+  ],
+  "connections": {
+    "start": {
+      "main": [
+        [
+          {
+            "node": "sqlite-stats-usuarios",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "sqlite-stats-pedidos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sqlite-stats-usuarios": {
+      "main": [
+        [
+          {
+            "node": "combinar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sqlite-stats-pedidos": {
+      "main": [
+        [
+          {
+            "node": "combinar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "combinar": {
+      "main": [
+        [
+          {
+            "node": "write-file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "write-file": {
+      "main": [
+        [
+          {
+            "node": "email-envio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

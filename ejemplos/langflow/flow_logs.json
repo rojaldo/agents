@@ -1,0 +1,51 @@
+[
+  {
+    "timestamp": "2025-11-08T10:43:13.331976",
+    "event": "component_start",
+    "component": "ChatInput"
+  },
+  {
+    "timestamp": "2025-11-08T10:43:13.331986",
+    "event": "component_end",
+    "component": "ChatInput",
+    "output": "\u00bfCu\u00e1l es el significado de IA?"
+  },
+  {
+    "timestamp": "2025-11-08T10:43:13.331990",
+    "event": "component_start",
+    "component": "ChatOpenAI"
+  },
+  {
+    "timestamp": "2025-11-08T10:43:13.331993",
+    "event": "component_end",
+    "component": "ChatOpenAI",
+    "output": "La IA es inteligencia artificial..."
+  },
+  {
+    "timestamp": "2025-11-08T10:43:13.331995",
+    "event": "component_start",
+    "component": "TextProcessing"
+  },
+  {
+    "timestamp": "2025-11-08T10:43:13.331998",
+    "event": "warning",
+    "message": "Performance degradada"
+  },
+  {
+    "timestamp": "2025-11-08T10:43:13.332000",
+    "event": "component_end",
+    "component": "TextProcessing",
+    "output": "Texto procesado"
+  },
+  {
+    "timestamp": "2025-11-08T10:43:13.332002",
+    "event": "component_start",
+    "component": "ChatOutput"
+  },
+  {
+    "timestamp": "2025-11-08T10:43:13.332003",
+    "event": "component_end",
+    "component": "ChatOutput",
+    "output": "Respuesta lista para enviar"
+  }
+]

@@ -1,0 +1,81 @@
+{
+  "name": "Notificación Slack",
+  "nodes": [
+    {
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        250,
+        300
+      ],
+      "webhookId": "webhook123",
+      "parameters": {
+        "path": "slack-notification",
+        "httpMethod": "POST"
+      }
+    },
+    {
+      "name": "HTTP Request - Slack",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        450,
+        300
+      ],
+      "parameters": {
+        "url": "https://hooks.slack.com/services/YOUR/WEBHOOK/URL",
+        "method": "POST",
+        "jsonBody": true,
+        "sendHeaders": false,
+        "body": {
+          "text": "Nueva notificación",
+          "blocks": [
+            {
+              "type": "section",
+              "text": {
+                "type": "mrkdwn",
+                "text": "*Mensaje de n8n:*\n{{ $json.message }}"
+              }
+            },
+            {
+              "type": "section",
+              "fields": [
+                {
+                  "type": "mrkdwn",
+                  "text": "*Remitente:*\n{{ $json.sender || \"Desconocido\" }}"
+                },
+                {
+                  "type": "mrkdwn",
+                  "text": "*Hora:*\n{{ $now | dateFormat('HH:mm:ss') }}"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request - Slack",
+            "branch": 0,
+            "socket": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionData": {
+      "prune": {
+        "enabled": true,
+        "maxAge": 168
+      }
+    }
+  }
+}

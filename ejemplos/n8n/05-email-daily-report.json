@@ -1,0 +1,211 @@
+{
+  "name": "Reporte Diario por Email",
+  "nodes": [
+    {
+      "name": "Schedule - Cada Mañana",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        250,
+        300
+      ],
+      "parameters": {
+        "triggerTimes": {
+          "item": [
+            "09:00"
+          ]
+        },
+        "triggerDays": {
+          "item": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        }
+      }
+    },
+    {
+      "name": "Query - Órdenes Hoy",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        450,
+        250
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "YOUR_POSTGRES_CREDENTIALS",
+          "name": "PostgreSQL"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT COUNT(*) as total_orders, SUM(amount) as total_amount FROM orders WHERE DATE(created_at) = CURRENT_DATE"
+      }
+    },
+    {
+      "name": "Query - Usuarios Nuevos",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        450,
+        400
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "YOUR_POSTGRES_CREDENTIALS",
+          "name": "PostgreSQL"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT COUNT(*) as new_users FROM users WHERE DATE(created_at) = CURRENT_DATE"
+      }
+    },
+    {
+      "name": "Combinar Datos",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        650,
+        325
+      ],
+      "parameters": {
+        "mode": "merge",
+        "mergeByFields": {
+          "values": []
+        }
+      }
+    },
+    {
+      "name": "Generar HTML del Reporte",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        850,
+        325
+      ],
+      "parameters": {
+        "functionCode": "const orders = items[0].json;\nconst users = items[1].json;\nconst today = new Date().toLocaleDateString('es-ES');\n\nconst html = `\n  <html>\n    <head>\n      <meta charset=\"utf-8\">\n      <style>\n        body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }\n        .container { background: white; padding: 30px; border-radius: 8px; max-width: 600px; margin: 0 auto; }\n        h1 { color: #333; border-bottom: 3px solid #0066cc; padding-bottom: 10px; }\n        .metric { margin: 20px 0; padding: 15px; background: #f0f7ff; border-left: 4px solid #0066cc; }\n        .metric-label { font-weight: bold; color: #333; }\n        .metric-value { font-size: 24px; color: #0066cc; margin-top: 5px; }\n        .footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; text-align: center; font-size: 12px; color: #666; }\n      </style>\n    </head>\n    <body>\n      <div class=\"container\">\n        <h1>📊 Reporte Diario - ${today}</h1>\n        \n        <div class=\"metric\">\n          <div class=\"metric-label\">Órdenes Procesadas</div>\n          <div class=\"metric-value\">${orders.total_orders[0].total_orders || 0}</div>\n        </div>\n        \n        <div class=\"metric\">\n          <div class=\"metric-label\">Ingresos Totales</div>\n          <div class=\"metric-value\">€${(orders.total_orders[0].total_amount || 0).toFixed(2)}</div>\n        </div>\n        \n        <div class=\"metric\">\n          <div class=\"metric-label\">Usuarios Nuevos</div>\n          <div class=\"metric-value\">${users.new_users[0].new_users || 0}</div>\n        </div>\n        \n        <div class=\"footer\">\n          <p>Este es un reporte automático generado por n8n</p>\n          <p>Generado el: ${new Date().toLocaleString('es-ES')}</p>\n        </div>\n      </div>\n    </body>\n  </html>\n`;\n\nreturn [{ json: { html_report: html } }];"
+      }
+    },
+    {
+      "name": "Enviar Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [
+        1050,
+        325
+      ],
+      "credentials": {
+        "smtp": {
+          "id": "YOUR_EMAIL_CREDENTIALS",
+          "name": "Email Account"
+        }
+      },
+      "parameters": {
+        "fromEmail": "reportes@example.com",
+        "toEmail": "admin@example.com,manager@example.com",
+        "subject": "📊 Reporte Diario - {{ $now | dateFormat('YYYY-MM-DD') }}",
+        "textOnly": false,
+        "html": "{{ $json.html_report }}",
+        "attachments": "[]"
+      }
+    },
+    {
+      "name": "Log Success",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1250,
+        325
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "YOUR_POSTGRES_CREDENTIALS",
+          "name": "PostgreSQL"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO report_logs (report_name, status, sent_at) VALUES ('Daily Report', 'sent', NOW())"
+      }
+    }
+  ],
+  "connections": {
+    "Schedule - Cada Mañana": {
+      "main": [
+        [
+          {
+            "node": "Query - Órdenes Hoy",
+            "branch": 0,
+            "socket": 0
+          },
+          {
+            "node": "Query - Usuarios Nuevos",
+            "branch": 0,
+            "socket": 0
+          }
+        ]
+      ]
+    },
+    "Query - Órdenes Hoy": {
+      "main": [
+        [
+          {
+            "node": "Combinar Datos",
+            "branch": 0,
+            "socket": 0
+          }
+        ]
+      ]
+    },
+    "Query - Usuarios Nuevos": {
+      "main": [
+        [
+          {
+            "node": "Combinar Datos",
+            "branch": 0,
+            "socket": 1
+          }
+        ]
+      ]
+    },
+    "Combinar Datos": {
+      "main": [
+        [
+          {
+            "node": "Generar HTML del Reporte",
+            "branch": 0,
+            "socket": 0
+          }
+        ]
+      ]
+    },
+    "Generar HTML del Reporte": {
+      "main": [
+        [
+          {
+            "node": "Enviar Email",
+            "branch": 0,
+            "socket": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Email": {
+      "main": [
+        [
+          {
+            "node": "Log Success",
+            "branch": 0,
+            "socket": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false
+}

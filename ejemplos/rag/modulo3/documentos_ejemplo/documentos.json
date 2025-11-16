@@ -1,0 +1,17 @@
+[
+  {
+    "titulo": "Python Basics",
+    "contenido": "Python es un lenguaje de programación versátil. Fue creado por Guido van Rossum en 1989. Se conoce por su sintaxis simple y legible.",
+    "categoria": "programacion"
+  },
+  {
+    "titulo": "Machine Learning Intro",
+    "contenido": "El aprendizaje automático es un subcampo de la inteligencia artificial. Los algoritmos de ML aprenden de los datos sin ser explícitamente programados.",
+    "categoria": "ia"
+  },
+  {
+    "titulo": "RAG Systems",
+    "contenido": "Los sistemas RAG combinan recuperación de documentos con generación de texto. Son útiles para QA sobre bases de conocimiento específicas.",
+    "categoria": "nlp"
+  }
+]

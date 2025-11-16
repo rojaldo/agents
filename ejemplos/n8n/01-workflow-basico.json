@@ -1,0 +1,100 @@
+{
+  "name": "Workflow Básico - Llamada HTTP Simple",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "0c8e6a18-3c1e-4b4b-9b3a-6d5e8f2a1b4c",
+      "name": "Start",
+      "type": "n8n-nodes-base.start",
+      "typeVersion": 1,
+      "position": [
+        250,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://jsonplaceholder.typicode.com/users/1",
+        "method": "GET",
+        "options": {}
+      },
+      "id": "1d9f7b29-4d2f-5c5c-0c4b-7e6f9g3b2c5d",
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        450,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "userName",
+              "value": "={{ $json.name }}"
+            },
+            {
+              "name": "userEmail",
+              "value": "={{ $json.email }}"
+            },
+            {
+              "name": "userCity",
+              "value": "={{ $json.address.city }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2e0g8c30-5e3g-6d6d-1d5c-8f7g0h4c3d6e",
+      "name": "Set",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [
+        650,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Set",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1",
+  "meta": {
+    "instanceId": "ejemplo"
+  },
+  "tags": [
+    {
+      "createdAt": "2025-01-15T10:00:00.000Z",
+      "updatedAt": "2025-01-15T10:00:00.000Z",
+      "id": "1",
+      "name": "Tutorial"
+    }
+  ]
+}

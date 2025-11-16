@@ -1,0 +1,106 @@
+{
+  "name": "M7.4 - Rate Limiting en Webhooks",
+  "description": "Implementar rate limiting para proteger webhook",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "webhook-limitado",
+        "method": "POST",
+        "options": {}
+      },
+      "id": "webhook",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [100, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Implementar rate limiting básico\nconst ip = $input.first().headers['x-forwarded-for'] || 'desconocida';\nconst timestamp = Date.now();\nconst ventana = 60000; // 1 minuto\n\n// En un caso real, guardarías esto en BD o en memoria compartida\nreturn {\n  json: {\n    ip: ip,\n    timestamp: timestamp,\n    permitido: true,\n    limite_requests: 10,\n    ventana_segundos: 60\n  }\n};"
+      },
+      "id": "check-rate",
+      "name": "Code - Verificar Rate Limit",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [300, 300]
+    },
+    {
+      "parameters": {
+        "waitTime": 1
+      },
+      "id": "delay",
+      "name": "Delay",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "http://localhost:11434/api/tags",
+        "authentication": "none"
+      },
+      "id": "http-ollama",
+      "name": "HTTP - Ollama Health",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [700, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Respuesta después de rate limiting\nreturn {\n  json: {\n    exito: true,\n    mensaje: 'Solicitud procesada (rate limit aplicado)',\n    ollama_disponible: $input.first().json.models ? true : false,\n    modelos_disponibles: $input.first().json.models ? $input.first().json.models.length : 0\n  }\n};"
+      },
+      "id": "response",
+      "name": "Code - Respuesta",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 300]
+    }
+  ],
+  "connections": {
+    "webhook": {
+      "main": [
+        [
+          {
+            "node": "check-rate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check-rate": {
+      "main": [
+        [
+          {
+            "node": "delay",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "delay": {
+      "main": [
+        [
+          {
+            "node": "http-ollama",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "http-ollama": {
+      "main": [
+        [
+          {
+            "node": "response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

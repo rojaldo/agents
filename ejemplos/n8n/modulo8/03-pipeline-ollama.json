@@ -1,0 +1,93 @@
+{
+  "name": "M8.3 - Pipeline ETL con Ollama",
+  "description": "Pipeline de análisis con Ollama",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "start",
+      "name": "Start",
+      "type": "n8n-nodes-base.start",
+      "typeVersion": 1,
+      "position": [100, 300]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "textos_input",
+              "value": "[\"Excelente trabajo\", \"Muy malo\", \"Satisfecho completamente\", \"Decepcionante\"]"
+            }
+          ]
+        }
+      },
+      "id": "set-datos",
+      "name": "Set - Datos",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [300, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const textos = JSON.parse($input.first().json.textos_input); return textos.map((texto, idx) => ({ id: idx + 1, texto: texto }));"
+      },
+      "id": "extract",
+      "name": "Code - Extraer",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:11434/api/generate",
+        "authentication": "none",
+        "sendBody": true,
+        "bodyContentType": "application/json",
+        "body": "{\"model\": \"llama2\", \"prompt\": \"Clasifica: POSITIVO, NEGATIVO o NEUTRO. Texto: {{$input.item.json.texto}}\", \"stream\": false}"
+      },
+      "id": "ollama-analyze",
+      "name": "HTTP - Ollama",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [700, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = $input.first().json.response || ''; const sentimiento = response.includes('POSITIVO') ? 'POSITIVO' : response.includes('NEGATIVO') ? 'NEGATIVO' : 'NEUTRO'; return { json: { id: $input.first().json.id, texto: $input.first().json.texto, sentimiento: sentimiento } };"
+      },
+      "id": "transform",
+      "name": "Code - Transformar",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all(); const positivos = items.filter(i => i.json.sentimiento === 'POSITIVO').length; const negativos = items.filter(i => i.json.sentimiento === 'NEGATIVO').length; const neutros = items.filter(i => i.json.sentimiento === 'NEUTRO').length; return { json: { total_textos: items.length, positivos: positivos, negativos: negativos, neutros: neutros } };"
+      },
+      "id": "report",
+      "name": "Code - Reporte",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 300]
+    }
+  ],
+  "connections": {
+    "start": {
+      "main": [[{"node": "set-datos", "type": "main", "index": 0}]]
+    },
+    "set-datos": {
+      "main": [[{"node": "extract", "type": "main", "index": 0}]]
+    },
+    "extract": {
+      "main": [[{"node": "ollama-analyze", "type": "main", "index": 0}]]
+    },
+    "ollama-analyze": {
+      "main": [[{"node": "transform", "type": "main", "index": 0}]]
+    },
+    "transform": {
+      "main": [[{"node": "report", "type": "main", "index": 0}]]
+    }
+  }
+}

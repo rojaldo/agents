@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoGen: Framework de Agentes Inteligentes</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/theme/white.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-light.min.css">
+
+    <style>
+        .reveal { text-align: left; color: #555555; }
+        .reveal section { text-align: left; padding: 40px; display: flex; flex-direction: column; justify-content: flex-start; }
+        .reveal h1, .reveal h2, .reveal h3 { text-transform: none; text-align: left; color: #555555; }
+
+        /* Encabezados */
+        .reveal h1 { font-size: 1.05em; margin-bottom: 0.5em; }
+        .reveal h2 { font-size: 1em; margin-bottom: 0.5em; }
+        .reveal h3 { font-size: 0.75em; margin-bottom: 0.3em; }
+
+        /* Párrafos y énfasis */
+        .reveal p { font-size: 0.6em; margin: 0.3em 0; color: #555555; }
+        .reveal strong { font-size: 1em; font-weight: bold; }
+
+        /* Código */
+        .reveal pre { background: #f8f8f8; border: 1px solid #ddd; width: 100%; padding: 0.5em; margin: 0.5em 0; }
+        .reveal pre code { font-size: 0.7em; color: #555555; }
+
+        /* Listas y elementos */
+        .reveal ul { font-size: 0.55em; text-align: left; margin-left: 0.5em; color: #555555; }
+        .reveal li { margin: 0.3em 0; color: #555555; }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- Diapositiva 1: Portada -->
+            <section>
+                <h1>AutoGen</h1>
+                <h2>Framework de Agentes Inteligentes</h2>
+                <p>Simplificando la creación de aplicaciones multi-agente con Modelos de Lenguaje</p>
+            </section>
+
+            <!-- Diapositiva 2: ¿Qué es AutoGen? -->
+            <section>
+                <h2>¿Qué es AutoGen?</h2>
+                <p><strong>Definición:</strong> Framework de código abierto desarrollado por Microsoft que simplifica la creación de aplicaciones con Modelos de Lenguaje de Gran Escala (LLMs).</p>
+                <p><strong>Propósito:</strong> Abstracción de alto nivel para sistemas multi-agente donde los agentes pueden mantener conversaciones naturales, compartir información, ejecutar código y acceder a herramientas externas.</p>
+            </section>
+
+            <!-- Diapositiva 3: Capacidades Principales -->
+            <section>
+                <h2>Capacidades Principales</h2>
+                <ul>
+                    <li>Mantener conversaciones naturales entre agentes</li>
+                    <li>Compartir información y conocimiento</li>
+                    <li>Ejecutar código de forma segura</li>
+                    <li>Acceder a herramientas y APIs externas</li>
+                    <li>Automatizar flujos de trabajo complejos</li>
+                    <li>Tomar decisiones basadas en contexto</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 4: Filosofía de AutoGen -->
+            <section>
+                <h2>Filosofía de AutoGen (3 Principios)</h2>
+                <p><strong>Simplicidad:</strong> Abstraer la complejidad de sistemas multi-agente en APIs intuitivas</p>
+                <p><strong>Flexibilidad:</strong> Soportar múltiples patrones de interacción sin imponer estructuras rígidas</p>
+                <p><strong>Extensibilidad:</strong> Permitir crear agentes personalizados y comportamientos específicos del dominio</p>
+            </section>
+
+            <!-- Diapositiva 5: Abstracción Multi-Agente -->
+            <section>
+                <h2>Ventaja 1: Abstracción Multi-Agente</h2>
+                <p><strong>Sin AutoGen:</strong> Escribir manualmente lógica de routing, gestionar historial, implementar mecanismos de término</p>
+                <p><strong>Con AutoGen:</strong> Todo manejado automáticamente con APIs Pythónicas</p>
+                <p><strong>Resultado:</strong> Menos código boilerplate, mejor mantenibilidad, declarativo en lugar de imperativo</p>
+            </section>
+
+            <!-- Diapositiva 6: Flexibilidad en Proveedores -->
+            <section>
+                <h2>Ventaja 2: Flexibilidad en Proveedores</h2>
+                <pre><code>config_list = [
+    {"model": "gpt-4", "api_key": "..."},
+    {"model": "claude-3", "api_key": "..."},
+    {"model": "mistral", "api_base": "http://localhost:11434"}
+]
+assistant = AssistantAgent(llm_config={"config_list": config_list})</code></pre>
+                <p>Cambiar de proveedores sin reescribir código. Fallback automático si un modelo falla.</p>
+            </section>
+
+            <!-- Diapositiva 7: Ejecución de Código -->
+            <section>
+                <h2>Ventaja 3: Ejecución de Código Nativa</h2>
+                <ul>
+                    <li>El agente genera código automáticamente</li>
+                    <li>AutoGen lo ejecuta y captura errores</li>
+                    <li>Crea un loop automático prueba-error</li>
+                    <li>El agente ve los errores y puede iterar</li>
+                </ul>
+                <p><strong>Ciclo:</strong> Generar → Ejecutar → Analizar → Corregir</p>
+            </section>
+
+            <!-- Diapositiva 8: Documentación y Comunidad -->
+            <section>
+                <h2>Ventaja 4: Documentación y Comunidad</h2>
+                <ul>
+                    <li>Documentación oficial: 5000+ páginas</li>
+                    <li>+150 ejemplos en GitHub</li>
+                    <li>Comunidad Discord: ~5000 miembros</li>
+                    <li>Papers académicos (Microsoft Research)</li>
+                    <li>Updates semanales</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 9: Escalabilidad -->
+            <section>
+                <h2>Ventaja 5: Escalabilidad</h2>
+                <p><strong>Pequeño (1-2 agentes):</strong> Conversación simple usuario-asistente, overhead mínimo</p>
+                <p><strong>Medio (3-10 agentes):</strong> GroupChat coordinado, complejidad media</p>
+                <p><strong>Grande (50-500 agentes):</strong> Hierarchical chats anidados, overhead significativo</p>
+                <p><strong>Masivo (100+):</strong> Message queue, load balancing, persistencia</p>
+            </section>
+
+            <!-- Diapositiva 10: Limitación - Costos -->
+            <section>
+                <h2>Limitación 1: Costos de API</h2>
+                <p><strong>OpenAI GPT-4:</strong> $0.03/1K entrada, $0.06/1K salida</p>
+                <p><strong>Costos mensuales:</strong></p>
+                <ul>
+                    <li>Uso casual (1h/día): $10-30</li>
+                    <li>Uso profesional (8h/día): $200-500</li>
+                    <li>Producción alto volumen: $1000-5000+</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 11: Optimización de Costos -->
+            <section>
+                <h2>Estrategias de Optimización de Costos</h2>
+                <p><strong>Fase exploración:</strong> Ollama local o GPT-3.5-turbo</p>
+                <p><strong>Fase prototipo:</strong> GPT-3.5-turbo con fallback a GPT-4</p>
+                <p><strong>Producción:</strong> GPT-4 pero límite llamadas</p>
+                <p><strong>Técnicas:</strong> Caché, limitar max_tokens, batching, rate limiting</p>
+            </section>
+
+            <!-- Diapositiva 12: Limitación - Control de Flujo -->
+            <section>
+                <h2>Limitación 2: Control de Flujo</h2>
+                <p><strong>Problema:</strong> Agentes usan LLMs que son estocásticos por naturaleza</p>
+                <p><strong>En sistemas simples:</strong> No es problema</p>
+                <p><strong>En sistemas complejos (10+ agentes):</strong> Impacto exponencial</p>
+                <p><strong>Mitigación:</strong> Prompt Engineering, validación, reintentos, structured output (JSON)</p>
+            </section>
+
+            <!-- Diapositiva 13: Limitación - Latencia -->
+            <section>
+                <h2>Limitación 3: Latencia y Rendimiento</h2>
+                <p><strong>OpenAI GPT-4:</strong> 2-10 segundos por llamada</p>
+                <p><strong>Ollama Local:</strong> 5-15 segundos</p>
+                <p><strong>Conversación grupal (5 agentes, 10 turnos):</strong> 5-10 minutos</p>
+                <p><strong>Optimizaciones:</strong> Paralelización, caché, async/await</p>
+            </section>
+
+            <!-- Diapositiva 14: Arquitectura Fundamental -->
+            <section>
+                <h2>Arquitectura Fundamental</h2>
+                <p><strong>Agentes:</strong> AssistantAgent, UserProxyAgent, GroupChatManager, CustomAgent</p>
+                <p><strong>Mensajes:</strong> role, content, name, function_call, tool_use</p>
+                <p><strong>Funciones:</strong> Herramientas que los agentes pueden invocar</p>
+                <p><strong>Modelos:</strong> Backends LLM que procesan mensajes</p>
+            </section>
+
+            <!-- Diapositiva 15: Proveedores Principales -->
+            <section>
+                <h2>Modelos Soportados</h2>
+                <ul>
+                    <li><strong>OpenAI:</strong> GPT-4, GPT-3.5-turbo</li>
+                    <li><strong>Azure OpenAI:</strong> Modelos Azure con API propietaria</li>
+                    <li><strong>Anthropic Claude:</strong> Claude-3 (Opus, Sonnet, Haiku)</li>
+                    <li><strong>Ollama Local:</strong> Mistral, Llama2, etc.</li>
+                    <li><strong>Custom Local:</strong> Cualquier servidor compatible</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 16: Instalación Requisitos -->
+            <section>
+                <h2>Instalación - Requisitos Previos</h2>
+                <p><strong>Hardware:</strong> CPU i5+, RAM 8GB (16GB recomendado), GPU opcional</p>
+                <p><strong>Software:</strong> Python 3.8-3.11, pip, git</p>
+                <pre><code>python3 -m venv autogen_env
+source autogen_env/bin/activate
+pip install pyautogen</code></pre>
+            </section>
+
+            <!-- Diapositiva 17: AssistantAgent Básico -->
+            <section>
+                <h2>AssistantAgent - Qué es</h2>
+                <p><strong>Definición:</strong> Agente que utiliza un LLM para generar respuestas inteligentes.</p>
+                <pre><code>assistant = AssistantAgent(
+    name="Asistente",
+    llm_config={
+        "config_list": [{"model": "gpt-4", "api_key": "..."}],
+        "temperature": 0.7,
+        "max_tokens": 2000
+    }
+)</code></pre>
+            </section>
+
+            <!-- Diapositiva 18: AssistantAgent Parámetros -->
+            <section>
+                <h2>AssistantAgent - Parámetros Clave</h2>
+                <ul>
+                    <li><strong>name:</strong> Identificador único</li>
+                    <li><strong>system_message:</strong> Instrucciones de comportamiento</li>
+                    <li><strong>llm_config:</strong> Configuración del modelo</li>
+                    <li><strong>temperature:</strong> Creatividad (0.0-2.0)</li>
+                    <li><strong>max_tokens:</strong> Máximo de salida</li>
+                    <li><strong>human_input_mode:</strong> NEVER, ALWAYS, TERMINATE</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 19: UserProxyAgent -->
+            <section>
+                <h2>UserProxyAgent - Rol</h2>
+                <p><strong>Definición:</strong> Representa al usuario en la conversación. Puede ejecutar código y proporcionar feedback.</p>
+                <p><strong>Modos:</strong></p>
+                <ul>
+                    <li><strong>ALWAYS:</strong> Pide confirmación después de cada respuesta</li>
+                    <li><strong>NEVER:</strong> Automatización completa (riesgoso)</li>
+                    <li><strong>TERMINATE:</strong> Balance - solo pide si debe terminar</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 20: Conversación Simple -->
+            <section>
+                <h2>Conversación Simple (Dos Agentes)</h2>
+                <pre><code>user_proxy.initiate_chat(
+    assistant,
+    message="¿Cuál es la diferencia entre map y filter?",
+    max_consecutive_auto_reply=3
+)</code></pre>
+                <p><strong>Flujo:</strong> Usuario → Assistant → Usuario (iterativo)</p>
+            </section>
+
+            <!-- Diapositiva 21: GroupChat Introducción -->
+            <section>
+                <h2>GroupChat - Múltiples Agentes</h2>
+                <pre><code>from autogen import GroupChat, GroupChatManager
+
+groupchat = GroupChat(
+    agents=[coder, reviewer, tester, user_proxy],
+    max_round=10,
+    speaker_selection_method="auto"
+)
+manager = GroupChatManager(groupchat=groupchat, llm_config=llm_config)</code></pre>
+            </section>
+
+            <!-- Diapositiva 22: GroupChat Estrategias -->
+            <section>
+                <h2>GroupChat - Estrategias de Turno</h2>
+                <p><strong>Round Robin:</strong> Determinista, todos participan, menos eficiente</p>
+                <p><strong>Automático:</strong> LLM decide basado en contexto, más natural</p>
+                <p><strong>Manual:</strong> Lógica custom para seleccionar siguiente speaker</p>
+            </section>
+
+            <!-- Diapositiva 23: Code Execution Opciones -->
+            <section>
+                <h2>Code Execution - Opciones de Seguridad</h2>
+                <p><strong>Local (use_docker=False):</strong> Rápido pero RIESGOSO ⚠️</p>
+                <p><strong>Docker (use_docker=True):</strong> Seguro, aislado, RECOMENDADO ✅</p>
+                <p><strong>Sin Ejecución:</strong> Máxima seguridad, solo análisis</p>
+            </section>
+
+            <!-- Diapositiva 24: Docker Configuración -->
+            <section>
+                <h2>Code Execution - Docker RECOMENDADO</h2>
+                <pre><code>user_proxy = UserProxyAgent(
+    code_execution_config={
+        "work_dir": "./workspace",
+        "use_docker": True,
+        "docker_image": "python:3.11-slim",
+        "timeout": 60,
+        "docker_memory": "2g"
+    }
+)</code></pre>
+            </section>
+
+            <!-- Diapositiva 25: Agentes Personalizados -->
+            <section>
+                <h2>Agentes Personalizados - Creación</h2>
+                <pre><code>class CodeReviewAgent(AssistantAgent):
+    def __init__(self, name="CodeReviewer", **kwargs):
+        system_message = """Eres experto revisor.
+        1. Identificar bugs
+        2. Evaluar calidad
+        3. Sugerir mejoras"""
+        super().__init__(name=name, system_message=system_message, **kwargs)</code></pre>
+            </section>
+
+            <!-- Diapositiva 26: Patrones de Diseño -->
+            <section>
+                <h2>Patrones de Diseño</h2>
+                <p><strong>Herencia Simple:</strong> Extender AssistantAgent para especialización</p>
+                <p><strong>Composición:</strong> Combinar múltiples agentes en pipeline</p>
+                <p><strong>Decoradores:</strong> Agregar funcionalidad (logging, métricas)</p>
+            </section>
+
+            <!-- Diapositiva 27: Multi-Modalidad -->
+            <section>
+                <h2>Agentes Multi-Modalidad</h2>
+                <p><strong>Concepto:</strong> Agentes que procesan múltiples tipos de entrada (texto, imagen, audio)</p>
+                <p><strong>Capacidades:</strong> Vision API, transcripción audio, análisis de documentos</p>
+                <p><strong>Casos de uso:</strong> Análisis de imágenes, transcripción, documentos escaneados</p>
+            </section>
+
+            <!-- Diapositiva 28: Memoria Extendida -->
+            <section>
+                <h2>Agentes de Memoria Extendida</h2>
+                <p><strong>Concepto:</strong> Mantienen contexto histórico sofisticado a largo plazo</p>
+                <p><strong>Características:</strong> Persistencia, categorización, relevancia temporal, recuperación contextual</p>
+                <p><strong>Beneficios:</strong> Mejor comprensión del usuario, mejores decisiones</p>
+            </section>
+
+            <!-- Diapositiva 29: Coordinación Multi-Agente -->
+            <section>
+                <h2>Coordinación Multi-Agente</h2>
+                <p><strong>Centralizada:</strong> Un coordinador toma decisiones</p>
+                <p><strong>Descentralizada:</strong> Agentes negocian entre sí</p>
+                <p><strong>Híbrida:</strong> Combinación de ambas</p>
+                <p><strong>Resolución de conflictos:</strong> Consenso, votación, arbitraje</p>
+            </section>
+
+            <!-- Diapositiva 30: Gestión de Tokens -->
+            <section>
+                <h2>Gestión de Tokens - Monitoreo</h2>
+                <pre><code>class TokenManager:
+    def calculate_cost(self, tokens):
+        cost = (tokens / 1000) * self.pricing_per_1k
+        self.cost_accumulated += cost
+        return cost
+
+    def count_tokens(self, text):
+        return len(text) // 4  # ~4 chars = 1 token</code></pre>
+            </section>
+
+            <!-- Diapositiva 31: Optimización de Prompts -->
+            <section>
+                <h2>Optimización de Prompts</h2>
+                <p><strong>Eliminar espacios:</strong> Reduce tokens innecesarios</p>
+                <p><strong>Truncado inteligente:</strong> Mantener contexto clave</p>
+                <p><strong>Few-shot examples:</strong> Mejorar calidad sin más tokens</p>
+                <p><strong>Estructuración:</strong> Formato específico para procesamiento</p>
+            </section>
+
+            <!-- Diapositiva 32: Caché en Memoria -->
+            <section>
+                <h2>Caché - Reutilización de Respuestas</h2>
+                <pre><code>class SimpleMemoryCache:
+    def get(self, prompt):
+        key = hashlib.md5(prompt.encode()).hexdigest()
+        if key in self.cache:
+            self.hits += 1
+            return self.cache[key]
+        self.misses += 1
+        return None</code></pre>
+            </section>
+
+            <!-- Diapositiva 33: Caché Persistente -->
+            <section>
+                <h2>Caché - Opciones Avanzadas</h2>
+                <p><strong>Redis:</strong> Distributed, TTL configurable, escalable</p>
+                <p><strong>Semántico:</strong> Busca por similaridad, no solo coincidencia exacta</p>
+                <p><strong>Beneficios:</strong> Reducción de costos 90%, mejor latencia, determinismo</p>
+            </section>
+
+            <!-- Diapositiva 34: Caso de Uso - Asistente Programación -->
+            <section>
+                <h2>Caso de Uso 1: Asistente de Programación</h2>
+                <p><strong>Stack:</strong> GeneratorAgent, ReviewerAgent, TesterAgent</p>
+                <pre><code>class ProgrammingTeam:
+    def develop_feature(self, feature_spec):
+        code = self.generator.generate_function(feature_spec)
+        review = self.reviewer.review_code(code)
+        tests = self.tester.generate_tests(code)
+        return {"code": code, "review": review, "tests": tests}</code></pre>
+            </section>
+
+            <!-- Diapositiva 35: Programación - IDE Inteligente -->
+            <section>
+                <h2>Caso de Uso 1: IDE Inteligente</h2>
+                <ul>
+                    <li>Completación de código contextual</li>
+                    <li>Explicación de código automática</li>
+                    <li>Refactorización inteligente</li>
+                    <li>Debugging colaborativo</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 36: Caso de Uso - Análisis de Datos -->
+            <section>
+                <h2>Caso de Uso 2: Análisis de Datos</h2>
+                <pre><code>class DataAnalystAgent(AssistantAgent):
+    def answer_question(self, question):
+        prompt = f"""Pregunta: {question}
+        Datos: {self.data.head()}
+        Genera respuesta analítica y visualización"""
+        return self.generate_response(prompt)</code></pre>
+            </section>
+
+            <!-- Diapositiva 37: Análisis de Datos - Pipeline -->
+            <section>
+                <h2>Caso de Uso 2: Pipeline de Análisis</h2>
+                <ul>
+                    <li>Resumen ejecutivo automático</li>
+                    <li>Visualizaciones sugeridas</li>
+                    <li>Detección de anomalías</li>
+                    <li>Benchmarking comparativo</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 38: Caso de Uso - Automatización -->
+            <section>
+                <h2>Caso de Uso 3: Automatización de Tareas</h2>
+                <ul>
+                    <li>Agente lector: Extrae información de documentos</li>
+                    <li>Agente procesador: Valida y transforma datos</li>
+                    <li>Agente integrador: Comunica con sistemas legacy</li>
+                    <li>Agente reportero: Notifica cambios</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 39: Automatización - Ejemplo -->
+            <section>
+                <h2>Caso de Uso 3: Procesamiento de Facturas</h2>
+                <ul>
+                    <li>ReceiverAgent: Detecta factura nueva</li>
+                    <li>ExtractorAgent: Extrae proveedor, monto, fecha</li>
+                    <li>ValidatorAgent: Verifica contra PO</li>
+                    <li>IntegratorAgent: Registra en contable</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 40: Caso de Uso - Investigación -->
+            <section>
+                <h2>Caso de Uso 4: Investigación y Síntesis</h2>
+                <ul>
+                    <li>ResearcherAgent: Busca en múltiples fuentes</li>
+                    <li>EvaluatorAgent: Verifica credibilidad</li>
+                    <li>SynthesisAgent: Integra hallazgos</li>
+                    <li>CriticAgent: Cuestiona conclusiones</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 41: Testing - Desafíos -->
+            <section>
+                <h2>Testing de Agentes - Desafíos Únicos</h2>
+                <p><strong>No determinista:</strong> Misma entrada, diferentes salidas</p>
+                <p><strong>Costoso:</strong> Cada test cuesta tokens</p>
+                <p><strong>Lento:</strong> Llamadas a API pueden tardar 10+ segundos</p>
+                <p><strong>Dependencias externas:</strong> OpenAI, Ollama, APIs</p>
+            </section>
+
+            <!-- Diapositiva 42: Unit Tests -->
+            <section>
+                <h2>Testing - Unit Tests</h2>
+                <pre><code>class TestCodeGenerator(unittest.TestCase):
+    def test_generates_valid_python(self):
+        code = self.agent.generate("Función que suma")
+        compile(code, '<string>', 'exec')
+
+    def test_handles_error_gracefully(self):
+        response = self.agent.generate("Código inválido")
+        self.assertIn("error", response.lower())</code></pre>
+            </section>
+
+            <!-- Diapositiva 43: Integration Tests -->
+            <section>
+                <h2>Testing - Integration Tests</h2>
+                <pre><code>def test_code_generation_workflow():
+    generator = CodeGeneratorAgent(config)
+    tester = CodeTestAgent(config)
+
+    code = generator.generate("Función min")
+    result = tester.test(code)
+
+    assert result.success == True
+    assert result.coverage > 80</code></pre>
+            </section>
+
+            <!-- Diapositiva 44: Mocking de Llamadas -->
+            <section>
+                <h2>Testing - Mocking de Llamadas LLM</h2>
+                <pre><code>@patch('autogen.AssistantAgent.generate_reply')
+def test_agent_with_mock(mock_generate):
+    mock_generate.return_value = "Respuesta mockeada"
+
+    agent = AssistantAgent(name="Test")
+    response = agent.generate_reply("Test prompt")
+
+    assert response == "Respuesta mockeada"</code></pre>
+            </section>
+
+            <!-- Diapositiva 45: Evaluación de Calidad -->
+            <section>
+                <h2>Evaluación de Calidad - Métricas</h2>
+                <ul>
+                    <li><strong>Exactitud:</strong> % de respuestas correctas</li>
+                    <li><strong>Relevancia:</strong> ¿Responde la pregunta?</li>
+                    <li><strong>Completitud:</strong> ¿Falta información?</li>
+                    <li><strong>Coherencia:</strong> ¿Tiene sentido?</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 46: Logging -->
+            <section>
+                <h2>Debugging - Sistema de Logging</h2>
+                <pre><code>logger = logging.getLogger(__name__)
+
+logger.info(f"Agent: {agent.name}, Action: generate")
+logger.debug(f"Prompt enviado: {prompt}")
+logger.warning(f"Costo elevado: ${cost}")
+logger.error(f"Error en ejecución: {error}")</code></pre>
+            </section>
+
+            <!-- Diapositiva 47: Historial de Conversación -->
+            <section>
+                <h2>Debugging - Historial de Conversación</h2>
+                <pre><code>def save_conversation(agent, filename):
+    with open(filename, 'w') as f:
+        for msg in agent.chat_messages:
+            f.write(f"{msg['sender']}: {msg['content']}\n")
+
+# Analizar conversación posterior para entender desvíos</code></pre>
+            </section>
+
+            <!-- Diapositiva 48: Monitoreo Producción -->
+            <section>
+                <h2>Monitoreo en Producción</h2>
+                <ul>
+                    <li>Latencia de respuestas (p50, p95, p99)</li>
+                    <li>Tasa de error (cuántos fallan)</li>
+                    <li>Costo total por día/mes</li>
+                    <li>Feedback del usuario (like/dislike)</li>
+                    <li>Alertas si latencia o error sube</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 49: Despliegue FastAPI -->
+            <section>
+                <h2>Despliegue - FastAPI REST</h2>
+                <pre><code>from fastapi import FastAPI
+
+@app.post("/query")
+async def query(request: AgentRequest):
+    response = self.agent.generate_response(request.prompt)
+    return {"response": response}
+
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy"}</code></pre>
+            </section>
+
+            <!-- Diapositiva 50: Docker Deployment -->
+            <section>
+                <h2>Despliegue - Docker Container</h2>
+                <pre><code>FROM python:3.11
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+COPY . .
+EXPOSE 8000
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0"]</code></pre>
+            </section>
+
+            <!-- Diapositiva 51: Kubernetes Deployment -->
+            <section>
+                <h2>Despliegue - Kubernetes</h2>
+                <pre><code>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: autogen-agent
+spec:
+  replicas: 3
+  containers:
+  - name: agent
+    image: my-autogen-agent:latest
+    ports:
+    - containerPort: 8000</code></pre>
+            </section>
+
+            <!-- Diapositiva 52: Load Balancing -->
+            <section>
+                <h2>Despliegue - Load Balancing</h2>
+                <ul>
+                    <li>Round-robin entre 3+ réplicas</li>
+                    <li>Health checks automáticos</li>
+                    <li>Failover transparente</li>
+                    <li>SSL/TLS termination</li>
+                    <li>Soporta 1000+ solicitudes/segundo</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 53: Persistencia de Estado -->
+            <section>
+                <h2>Despliegue - Persistencia de Estado</h2>
+                <p><strong>PostgreSQL:</strong> Datos estructurados (sesiones, usuarios)</p>
+                <p><strong>MongoDB:</strong> Documentos (conversaciones completas)</p>
+                <p><strong>Redis:</strong> Caché de sesiones</p>
+                <p><strong>Vector DB:</strong> Embeddings para búsqueda semántica</p>
+            </section>
+
+            <!-- Diapositiva 54: Guardar Conversaciones -->
+            <section>
+                <h2>Despliegue - Guardar Conversaciones</h2>
+                <pre><code>class ConversationStore(Base):
+    __tablename__ = "conversations"
+    session_id = Column(String, primary_key=True)
+    messages = Column(JSON)
+    created_at = Column(DateTime, default=datetime.now)
+
+db.add(ConversationStore(
+    session_id=session_id,
+    messages=chat_history
+))</code></pre>
+            </section>
+
+            <!-- Diapositiva 55: Recuperación de Errores -->
+            <section>
+                <h2>Despliegue - Recuperación de Errores</h2>
+                <pre><code>from tenacity import retry, stop_after_attempt
+
+@retry(
+    stop=stop_after_attempt(3),
+    wait=wait_exponential(multiplier=1, min=2, max=10)
+)
+def call_llm_with_retry(prompt):
+    return agent.generate_reply(prompt)</code></pre>
+            </section>
+
+            <!-- Diapositiva 56: Seguridad - Autenticación -->
+            <section>
+                <h2>Seguridad - Autenticación y Autorización</h2>
+                <pre><code>from fastapi.security import HTTPBearer
+
+@app.post("/query")
+async def query(request: QueryRequest, credentials = Depends(security)):
+    user = verify_jwt_token(credentials.credentials)
+    if not user.has_permission("query"):
+        raise HTTPException(status_code=403, detail="No permitido")</code></pre>
+            </section>
+
+            <!-- Diapositiva 57: Seguridad - Inyección de Prompts -->
+            <section>
+                <h2>Seguridad - Inyección de Prompts</h2>
+                <p><strong>Problema:</strong> Usuario malicioso puede manipular el sistema</p>
+                <p><strong>Solución:</strong> Validación de entrada</p>
+                <ul>
+                    <li>Límite de caracteres (max 2000)</li>
+                    <li>Detectar patrones sospechosos</li>
+                    <li>Rate limiting (max 10 req/min por usuario)</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 58: Monitoreo Métricas -->
+            <section>
+                <h2>Monitoreo - Métricas Clave</h2>
+                <ul>
+                    <li><strong>Latencia:</strong> Tiempo de respuesta (p50, p95, p99)</li>
+                    <li><strong>Throughput:</strong> Solicitudes/segundo</li>
+                    <li><strong>Error rate:</strong> % de fallos</li>
+                    <li><strong>Token consumption:</strong> Gasto diario</li>
+                    <li><strong>Uptime:</strong> Disponibilidad del sistema</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 59: Stack de Monitoreo -->
+            <section>
+                <h2>Monitoreo - Stack Típico</h2>
+                <ul>
+                    <li><strong>Prometheus:</strong> Recolectar métricas</li>
+                    <li><strong>Grafana:</strong> Visualizar en dashboards</li>
+                    <li><strong>ELK:</strong> Logging centralizado</li>
+                    <li><strong>AlertManager:</strong> Alertas automáticas</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 60: CI/CD Pipeline -->
+            <section>
+                <h2>CI/CD - Deployment Pipeline</h2>
+                <ol style="font-size: 0.55em;">
+                    <li>Push a main</li>
+                    <li>Ejecutar tests automáticos</li>
+                    <li>Build Docker image</li>
+                    <li>Push a Docker registry</li>
+                    <li>Deploy a Kubernetes</li>
+                    <li>Health checks</li>
+                    <li>Slack notification</li>
+                </ol>
+            </section>
+
+            <!-- Diapositiva 61: Escalabilidad High Load -->
+            <section>
+                <h2>Escalabilidad - Handling High Load</h2>
+                <ul>
+                    <li>Queue messages (RabbitMQ, Kafka)</li>
+                    <li>Workers en paralelo (Celery)</li>
+                    <li>Auto-scaling (Kubernetes HPA)</li>
+                    <li>Caché agresivo (Redis)</li>
+                    <li>Rate limiting inteligente</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 62: LangChain Integración -->
+            <section>
+                <h2>Integraciones - LangChain</h2>
+                <p><strong>Qué complementa:</strong> Chains, Memory, Retrievers, Callbacks</p>
+                <pre><code>from langchain.llms import OpenAI
+
+llm = OpenAI(temperature=0.7)
+agent = AssistantAgent(name="Assistant", llm_config={"llm": llm})</code></pre>
+            </section>
+
+            <!-- Diapositiva 63: LlamaIndex Integración -->
+            <section>
+                <h2>Integraciones - LlamaIndex</h2>
+                <p><strong>Especialización:</strong> Indexación de documentos, búsqueda semántica</p>
+                <pre><code>from llama_index import GPTVectorStoreIndex
+
+documents = load_data("./docs")
+index = GPTVectorStoreIndex.from_documents(documents)
+
+class KnowledgeAgent(AssistantAgent):
+    def search(self, query):
+        return self.index.query(query)</code></pre>
+            </section>
+
+            <!-- Diapositiva 64: APIs Externas -->
+            <section>
+                <h2>Integraciones - APIs Externas</h2>
+                <pre><code>def fetch_weather(city: str) -> str:
+    """Obtiene el clima de una ciudad"""
+    response = requests.get(
+        f"https://api.openweathermap.org/data/2.5/weather",
+        params={"q": city, "appid": API_KEY}
+    )
+    return response.json()
+
+agent.register_function(func=fetch_weather)</code></pre>
+            </section>
+
+            <!-- Diapositiva 65: Bases de Datos -->
+            <section>
+                <h2>Integraciones - Bases de Datos</h2>
+                <ul>
+                    <li><strong>SQL (PostgreSQL):</strong> Datos estructurados</li>
+                    <li><strong>NoSQL (MongoDB):</strong> Documentos flexibles</li>
+                    <li><strong>Vector DB (Pinecone):</strong> Búsqueda semántica</li>
+                    <li><strong>Time Series (InfluxDB):</strong> Datos temporales</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 66: Multi-Framework Arquitectura -->
+            <section>
+                <h2>Arquitectura Multi-Framework</h2>
+                <ul>
+                    <li>AutoGen: Orquestación de agentes</li>
+                    <li>LangChain: Chains y memory</li>
+                    <li>LlamaIndex: Indexación de documentos</li>
+                    <li>APIs: Datos externos</li>
+                    <li>Databases: Persistencia</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 67: Flujo Multi-Framework -->
+            <section>
+                <h2>Flujo Multi-Framework</h2>
+                <ul style="font-size: 0.55em;">
+                    <li>Request → API (FastAPI)</li>
+                    <li>AutoGen coordina agentes</li>
+                    <li>LangChain maneja chains y memory</li>
+                    <li>LlamaIndex busca en documentos</li>
+                    <li>Agente llama APIs externas</li>
+                    <li>Resultados se guardan en DB</li>
+                    <li>Response se devuelve al usuario</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 68: Mejores Prácticas - Prompts -->
+            <section>
+                <h2>Mejores Prácticas - Diseño de Prompts</h2>
+                <ul>
+                    <li>Ser específico y detallado</li>
+                    <li>Proporcionar contexto claro</li>
+                    <li>Usar ejemplos (few-shot)</li>
+                    <li>Especificar formato de salida</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 69: Mejores Prácticas - Errores -->
+            <section>
+                <h2>Mejores Prácticas - Manejo de Errores</h2>
+                <ul>
+                    <li>Try-catch en conversaciones</li>
+                    <li>Reintentos con backoff exponencial</li>
+                    <li>Logging detallado</li>
+                    <li>Alertas para humanos</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 70: Mejores Prácticas - Costos -->
+            <section>
+                <h2>Mejores Prácticas - Optimización de Costos</h2>
+                <ul>
+                    <li>Usar modelos más baratos para tareas simples</li>
+                    <li>Implementar caché agresivamente</li>
+                    <li>Limitar max_tokens</li>
+                    <li>Batching de operaciones</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 71: Mejores Prácticas - Escalabilidad -->
+            <section>
+                <h2>Mejores Prácticas - Escalabilidad</h2>
+                <ul>
+                    <li>Usar async/await</li>
+                    <li>Paralelizar donde sea posible</li>
+                    <li>Implementar connection pooling</li>
+                    <li>Monitorear performance</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 72: Mejores Prácticas - Seguridad -->
+            <section>
+                <h2>Mejores Prácticas - Seguridad</h2>
+                <ul>
+                    <li>NUNCA ejecutar código sin Docker en producción</li>
+                    <li>Validar todas las entradas</li>
+                    <li>Usar variables de entorno para secrets</li>
+                    <li>Logging sin datos sensibles</li>
+                    <li>Actualizar dependencias regularmente</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 73: Troubleshooting - Latencia -->
+            <section>
+                <h2>Troubleshooting - Problemas de Latencia</h2>
+                <ul>
+                    <li>Verificar red y API limits</li>
+                    <li>Reducir max_tokens</li>
+                    <li>Usar modelos más rápidos</li>
+                    <li>Paralelizar agentes</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 74: Troubleshooting - Costos Altos -->
+            <section>
+                <h2>Troubleshooting - Costos Altos</h2>
+                <ul>
+                    <li>Implementar caché</li>
+                    <li>Usar modelos más baratos</li>
+                    <li>Limitar llamadas innecesarias</li>
+                    <li>Monitorear por agente</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 75: Troubleshooting - Inconsistencia -->
+            <section>
+                <h2>Troubleshooting - Respuestas Inconsistentes</h2>
+                <ul>
+                    <li>Reducir temperature</li>
+                    <li>Usar system_message más específico</li>
+                    <li>Implementar validación</li>
+                    <li>Usar structured output (JSON)</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 76: Troubleshooting - Descontrol -->
+            <section>
+                <h2>Troubleshooting - Agentes Descontrolados</h2>
+                <ul>
+                    <li>Implementar max_consecutive_auto_reply</li>
+                    <li>Usar is_termination_msg</li>
+                    <li>Validar respuestas antes de ejecutar</li>
+                    <li>Supervisión humana</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 77: Comparativa vs Alternativas -->
+            <section>
+                <h2>Comparativa - AutoGen vs Alternativas</h2>
+                <p><strong>vs LangChain:</strong> AutoGen enfoque multi-agente, LangChain cadena de prompts</p>
+                <p><strong>vs n8n/Zapier:</strong> AutoGen código, n8n visual</p>
+                <p><strong>vs Custom:</strong> AutoGen framework listo, custom control total</p>
+            </section>
+
+            <!-- Diapositiva 78: Ejemplo 1 - Chatbot de Soporte -->
+            <section>
+                <h2>Ejemplo 1: Chatbot de Soporte</h2>
+                <ol style="font-size: 0.55em;">
+                    <li>Usuario envía pregunta</li>
+                    <li>Agente clasificador entiende problema</li>
+                    <li>Agente diagnosticador recolecta info</li>
+                    <li>Agente solucionador propone soluciones</li>
+                    <li>Agente escalación involucra expertos si necesario</li>
+                </ol>
+            </section>
+
+            <!-- Diapositiva 79: Ejemplo 2 - Code Review System -->
+            <section>
+                <h2>Ejemplo 2: Code Review System</h2>
+                <ol style="font-size: 0.55em;">
+                    <li>Desarrollador pushea código</li>
+                    <li>Agente coder revisa cambios</li>
+                    <li>Agente reviewer evalúa calidad</li>
+                    <li>Agente tester verifica funcionamiento</li>
+                    <li>Merge automático si todo pasa</li>
+                </ol>
+            </section>
+
+            <!-- Diapositiva 80: Ejemplo 3 - Data Processing -->
+            <section>
+                <h2>Ejemplo 3: Data Processing Pipeline</h2>
+                <ol style="font-size: 0.55em;">
+                    <li>Usuario carga dataset</li>
+                    <li>Agente explorador examina estructura</li>
+                    <li>Agente limpiador valida datos</li>
+                    <li>Agente analista calcula métricas</li>
+                    <li>Agente reportero genera visualizaciones</li>
+                </ol>
+            </section>
+
+            <!-- Diapositiva 81: Documentación Oficial -->
+            <section>
+                <h2>Recursos - Documentación</h2>
+                <ul>
+                    <li><strong>Docs oficiales:</strong> autogen.readthedocs.io</li>
+                    <li><strong>GitHub:</strong> microsoft/autogen (20k+ stars)</li>
+                    <li><strong>Ejemplos:</strong> +150 en repositorio oficial</li>
+                    <li><strong>Papers:</strong> Microsoft Research publications</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 82: Comunidad -->
+            <section>
+                <h2>Recursos - Comunidad</h2>
+                <ul>
+                    <li><strong>Discord:</strong> ~5000 miembros activos</li>
+                    <li><strong>GitHub Issues:</strong> Soporte rápido</li>
+                    <li><strong>Stack Overflow:</strong> Tag "autogen"</li>
+                    <li><strong>Contribuciones:</strong> Semanales</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 83: Recursos Adicionales -->
+            <section>
+                <h2>Recursos - Adicionales</h2>
+                <ul>
+                    <li>Tutorials en YouTube</li>
+                    <li>Blog posts de la comunidad</li>
+                    <li>Cursos online</li>
+                    <li>Conferencias técnicas</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 84: Roadmap Futuro -->
+            <section>
+                <h2>Futuro - Roadmap</h2>
+                <ul>
+                    <li>Mejoras en performance</li>
+                    <li>Nuevos proveedores de modelos</li>
+                    <li>Mejor soporte multimodal</li>
+                    <li>Mejoras en debugging</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 85: Tendencias Futuras -->
+            <section>
+                <h2>Futuro - Tendencias</h2>
+                <ul>
+                    <li>Agentes más autónomos</li>
+                    <li>Integración con más sistemas</li>
+                    <li>Mejor seguridad</li>
+                    <li>Optimizaciones de costo</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 86: Oportunidades -->
+            <section>
+                <h2>Futuro - Oportunidades</h2>
+                <ul>
+                    <li>Nuevos casos de uso</li>
+                    <li>Industrias no exploradas</li>
+                    <li>Automatización más compleja</li>
+                    <li>Sistemas más inteligentes</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 87: Conclusiones Clave -->
+            <section>
+                <h2>Conclusiones Clave</h2>
+                <ul>
+                    <li>AutoGen simplifica creación de sistemas multi-agente</li>
+                    <li>Agentes especializados colaboran para problemas complejos</li>
+                    <li>Code execution y function calling amplían capacidades</li>
+                    <li>Optimización de costos es crítico</li>
+                    <li>Testing y monitoreo aseguran calidad</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 88: Resumen de Ventajas -->
+            <section>
+                <h2>Resumen - Ventajas de AutoGen</h2>
+                <ul>
+                    <li>Abstracción multi-agente simplificada</li>
+                    <li>Flexibilidad en proveedores LLM</li>
+                    <li>Ejecución de código nativa</li>
+                    <li>Excelente documentación y comunidad</li>
+                    <li>Escalabilidad demostrada</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 89: Resumen de Limitaciones -->
+            <section>
+                <h2>Resumen - Limitaciones a Considerar</h2>
+                <ul>
+                    <li>Costos de API pueden ser altos</li>
+                    <li>LLMs no son deterministas</li>
+                    <li>Latencia puede ser problemática</li>
+                    <li>Dependencia de APIs externas</li>
+                    <li>Curva de aprendizaje inicial</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 90: Cuándo Usar AutoGen -->
+            <section>
+                <h2>Cuándo Usar AutoGen</h2>
+                <p><strong>Ideal para:</strong> Sistemas multi-agente, automatización compleja, colaboración de IA</p>
+                <p><strong>No ideal para:</strong> Sistemas simples, baja latencia crítica, presupuesto muy limitado</p>
+                <p><strong>Mejor cuando:</strong> Necesitas coordinación de múltiples agentes especializados</p>
+            </section>
+
+            <!-- Diapositiva 91: Próximos Pasos -->
+            <section>
+                <h2>Próximos Pasos</h2>
+                <ol style="font-size: 0.6em;">
+                    <li><strong>Instalación:</strong> pip install pyautogen</li>
+                    <li><strong>Configuración:</strong> Obtener API key (OpenAI, Anthropic, etc)</li>
+                    <li><strong>Primer agente:</strong> Crear AssistantAgent simple</li>
+                    <li><strong>Testing:</strong> Probar conversación básica</li>
+                    <li><strong>Iteración:</strong> Agregar capacidades avanzadas</li>
+                    <li><strong>Escala:</strong> Múltiples agentes con GroupChat</li>
+                </ol>
+            </section>
+
+            <!-- Diapositiva 92: Recomendaciones Finales -->
+            <section>
+                <h2>Recomendaciones Finales</h2>
+                <ul>
+                    <li>Comienza pequeño (2-3 agentes)</li>
+                    <li>Monitorea costos desde el inicio</li>
+                    <li>Valida todo (no confíes ciegamente en LLM)</li>
+                    <li>Sé explícito en prompts</li>
+                    <li>Aprende del feedback del usuario</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 93: Recurso de Aprendizaje -->
+            <section>
+                <h2>Plan de Aprendizaje Recomendado</h2>
+                <ol style="font-size: 0.6em;">
+                    <li>Documentación oficial: Primeros 2-3 temas</li>
+                    <li>Ejemplos GitHub: Básicos y intermedios</li>
+                    <li>Proyecto pequeño: Chatbot o asistente simple</li>
+                    <li>Proyecto complejo: Sistema multi-agente</li>
+                    <li>Despliegue: Producción con mejores prácticas</li>
+                </ol>
+            </section>
+
+            <!-- Diapositiva 94: Comunidad y Soporte -->
+            <section>
+                <h2>Comunidad y Soporte</h2>
+                <p><strong>Cualquier pregunta:</strong> Discord de AutoGen, GitHub Issues</p>
+                <p><strong>Documentación:</strong> Excelente y actualizada regularmente</p>
+                <p><strong>Contribuciones:</strong> Bienvenidas, comunidad muy activa</p>
+                <p><strong>Certificación:</strong> No oficial, pero experiencia práctica es valiosa</p>
+            </section>
+
+            <!-- Diapositiva 95: Caso de Éxito Potencial -->
+            <section>
+                <h2>Caso de Éxito Potencial</h2>
+                <p><strong>Sistema de automatización empresarial:</strong></p>
+                <ul style="font-size: 0.55em;">
+                    <li>5 agentes especializados</li>
+                    <li>Reducción de tiempo manual 80%</li>
+                    <li>Costo mensual: ~$500</li>
+                    <li>ROI positivo en 2-3 meses</li>
+                    <li>Escalabilidad a 50+ agentes en el futuro</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 96: Preguntas Comunes -->
+            <section>
+                <h2>Preguntas Comunes - 1</h2>
+                <p><strong>¿Cuánto cuesta?</strong> Varía: $0-5000+/mes según uso</p>
+                <p><strong>¿Es seguro?</strong> Sí, con configuración apropiada (Docker, validación)</p>
+                <p><strong>¿Qué experencia necesito?</strong> Python básico es suficiente</p>
+            </section>
+
+            <!-- Diapositiva 97: Preguntas Comunes - 2 -->
+            <section>
+                <h2>Preguntas Comunes - 2</h2>
+                <p><strong>¿Funciona offline?</strong> Sí, con Ollama local</p>
+                <p><strong>¿Qué modelos soporta?</strong> OpenAI, Claude, Ollama, Azure, custom</p>
+                <p><strong>¿Puedo usar en producción?</strong> Sí, con mejores prácticas</p>
+            </section>
+
+            <!-- Diapositiva 98: Preguntas Comunes - 3 -->
+            <section>
+                <h2>Preguntas Comunes - 3</h2>
+                <p><strong>¿Requiere GPU?</strong> No es necesario, pero ayuda con Ollama</p>
+                <p><strong>¿Hay versión sin código?</strong> No, requiere Python</p>
+                <p><strong>¿Qué soporte hay?</strong> Comunidad activa, documentación excelente</p>
+            </section>
+
+            <!-- Diapositiva 99: Comparativa Final -->
+            <section>
+                <h2>Comparativa Final - AutoGen vs Alternativas</h2>
+                <table style="font-size: 0.5em;">
+                    <tr>
+                        <th>Criterio</th>
+                        <th>AutoGen</th>
+                        <th>LangChain</th>
+                        <th>n8n</th>
+                    </tr>
+                    <tr>
+                        <td>Multi-agente</td>
+                        <td>✓ Excelente</td>
+                        <td>○ Básico</td>
+                        <td>○ Limitado</td>
+                    </tr>
+                    <tr>
+                        <td>Curva aprendizaje</td>
+                        <td>○ Media</td>
+                        <td>○ Media</td>
+                        <td>✓ Baja</td>
+                    </tr>
+                    <tr>
+                        <td>Flexibilidad</td>
+                        <td>✓ Alta</td>
+                        <td>✓ Muy Alta</td>
+                        <td>○ Media</td>
+                    </tr>
+                </table>
+            </section>
+
+            <!-- Diapositiva 100: Reflexión Final -->
+            <section>
+                <h2>Reflexión Final</h2>
+                <p><strong>AutoGen representa el futuro de la automatización empresarial.</strong></p>
+                <p>Permite crear sistemas inteligentes que colaboran automáticamente, resolviendo problemas complejos sin intervención humana constante.</p>
+                <p>La curva de aprendizaje es razonable, y el retorno de inversión es rápido para casos de uso apropiados.</p>
+            </section>
+
+            <!-- Diapositiva 101: Inspiración -->
+            <section>
+                <h2>Inspiración - Qué es Posible</h2>
+                <p><strong>Hoy:</strong> Chatbots, análisis de datos, asistentes de programación</p>
+                <p><strong>Mañana:</strong> Sistemas completamente autónomos que se mejoran a sí mismos</p>
+                <p><strong>Tu rol:</strong> Diseñador de estos sistemas inteligentes</p>
+            </section>
+
+            <!-- Diapositiva 102: Primer Paso Concreto -->
+            <section>
+                <h2>Primer Paso Concreto</h2>
+                <p><strong>Esta misma semana:</strong></p>
+                <ol style="font-size: 0.6em;">
+                    <li>Instala AutoGen en tu máquina</li>
+                    <li>Ejecuta el ejemplo Hello World</li>
+                    <li>Crea tu primer AssistantAgent personalizado</li>
+                    <li>Experimenta con diferentes prompts</li>
+                </ol>
+            </section>
+
+            <!-- Diapositiva 103: Motivación -->
+            <section>
+                <h2>Motivación - Por Qué Importa</h2>
+                <p><strong>Automatización:</strong> Reduce trabajo repetitivo masivamente</p>
+                <p><strong>Amplificación:</strong> Potencia a equipos pequeños</p>
+                <p><strong>Innovación:</strong> Abre posibilidades nunca vistas</p>
+                <p><strong>Oportunidad:</strong> Ahora es el mejor momento para aprender</p>
+            </section>
+
+            <!-- Diapositiva 104: Créditos -->
+            <section>
+                <h2>Créditos y Fuentes</h2>
+                <ul>
+                    <li><strong>Framework:</strong> Microsoft AutoGen</li>
+                    <li><strong>Documentación:</strong> autogen.readthedocs.io</li>
+                    <li><strong>Comunidad:</strong> github.com/microsoft/autogen</li>
+                    <li><strong>Investigación:</strong> Microsoft Research</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 105: Contacto y Recursos -->
+            <section>
+                <h2>Recursos de Contacto</h2>
+                <ul>
+                    <li><strong>GitHub:</strong> microsoft/autogen</li>
+                    <li><strong>Discord:</strong> Comunidad oficial de AutoGen</li>
+                    <li><strong>Docs:</strong> autogen.readthedocs.io</li>
+                    <li><strong>Issues:</strong> Para preguntas y bugs</li>
+                </ul>
+            </section>
+
+            <!-- Diapositiva 106: Gracias -->
+            <section>
+                <h2>¡Gracias!</h2>
+                <p><strong>AutoGen: Construye el futuro de la automatización inteligente</strong></p>
+                <p>Preguntas, comentarios e ideas son bienvenidas</p>
+                <p style="margin-top: 2em;">Comienza tu viaje hoy mismo 🚀</p>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/plugin/highlight.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: true,
+            transition: 'slide',
+            backgroundTransition: 'fade'
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,4237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.26">
+<title>Curso de Agentes de IA: Memoria y Contexto</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<style>
+/*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
+/* Uncomment the following line when using as a custom stylesheet */
+/* @import "https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"; */
+html{font-family:sans-serif;-webkit-text-size-adjust:100%}
+a{background:none}
+a:focus{outline:thin dotted}
+a:active,a:hover{outline:0}
+h1{font-size:2em;margin:.67em 0}
+b,strong{font-weight:bold}
+abbr{font-size:.9em}
+abbr[title]{cursor:help;border-bottom:1px dotted #dddddf;text-decoration:none}
+dfn{font-style:italic}
+hr{height:0}
+mark{background:#ff0;color:#000}
+code,kbd,pre,samp{font-family:monospace;font-size:1em}
+pre{white-space:pre-wrap}
+q{quotes:"\201C" "\201D" "\2018" "\2019"}
+small{font-size:80%}
+sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}
+sup{top:-.5em}
+sub{bottom:-.25em}
+img{border:0}
+svg:not(:root){overflow:hidden}
+figure{margin:0}
+audio,video{display:inline-block}
+audio:not([controls]){display:none;height:0}
+fieldset{border:1px solid silver;margin:0 2px;padding:.35em .625em .75em}
+legend{border:0;padding:0}
+button,input,select,textarea{font-family:inherit;font-size:100%;margin:0}
+button,input{line-height:normal}
+button,select{text-transform:none}
+button,html input[type=button],input[type=reset],input[type=submit]{-webkit-appearance:button;cursor:pointer}
+button[disabled],html input[disabled]{cursor:default}
+input[type=checkbox],input[type=radio]{padding:0}
+button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0}
+textarea{overflow:auto;vertical-align:top}
+table{border-collapse:collapse;border-spacing:0}
+*,::before,::after{box-sizing:border-box}
+html,body{font-size:100%}
+body{background:#fff;color:rgba(0,0,0,.8);padding:0;margin:0;font-family:"Noto Serif","DejaVu Serif",serif;line-height:1;position:relative;cursor:auto;-moz-tab-size:4;-o-tab-size:4;tab-size:4;word-wrap:anywhere;-moz-osx-font-smoothing:grayscale;-webkit-font-smoothing:antialiased}
+a:hover{cursor:pointer}
+img,object,embed{max-width:100%;height:auto}
+object,embed{height:100%}
+img{-ms-interpolation-mode:bicubic}
+.left{float:left!important}
+.right{float:right!important}
+.text-left{text-align:left!important}
+.text-right{text-align:right!important}
+.text-center{text-align:center!important}
+.text-justify{text-align:justify!important}
+.hide{display:none}
+img,object,svg{display:inline-block;vertical-align:middle}
+textarea{height:auto;min-height:50px}
+select{width:100%}
+.subheader,.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{line-height:1.45;color:#7a2518;font-weight:400;margin-top:0;margin-bottom:.25em}
+div,dl,dt,dd,ul,ol,li,h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6,pre,form,p,blockquote,th,td{margin:0;padding:0}
+a{color:#2156a5;text-decoration:underline;line-height:inherit}
+a:hover,a:focus{color:#1d4b8f}
+a img{border:0}
+p{line-height:1.6;margin-bottom:1.25em;text-rendering:optimizeLegibility}
+p aside{font-size:.875em;line-height:1.35;font-style:italic}
+h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{font-family:"Open Sans","DejaVu Sans",sans-serif;font-weight:300;font-style:normal;color:#ba3925;text-rendering:optimizeLegibility;margin-top:1em;margin-bottom:.5em;line-height:1.0125em}
+h1 small,h2 small,h3 small,#toctitle small,.sidebarblock>.content>.title small,h4 small,h5 small,h6 small{font-size:60%;color:#e99b8f;line-height:0}
+h1{font-size:2.125em}
+h2{font-size:1.6875em}
+h3,#toctitle,.sidebarblock>.content>.title{font-size:1.375em}
+h4,h5{font-size:1.125em}
+h6{font-size:1em}
+hr{border:solid #dddddf;border-width:1px 0 0;clear:both;margin:1.25em 0 1.1875em}
+em,i{font-style:italic;line-height:inherit}
+strong,b{font-weight:bold;line-height:inherit}
+small{font-size:60%;line-height:inherit}
+code{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;font-weight:400;color:rgba(0,0,0,.9)}
+ul,ol,dl{line-height:1.6;margin-bottom:1.25em;list-style-position:outside;font-family:inherit}
+ul,ol{margin-left:1.5em}
+ul li ul,ul li ol{margin-left:1.25em;margin-bottom:0}
+ul.circle{list-style-type:circle}
+ul.disc{list-style-type:disc}
+ul.square{list-style-type:square}
+ul.circle ul:not([class]),ul.disc ul:not([class]),ul.square ul:not([class]){list-style:inherit}
+ol li ul,ol li ol{margin-left:1.25em;margin-bottom:0}
+dl dt{margin-bottom:.3125em;font-weight:bold}
+dl dd{margin-bottom:1.25em}
+blockquote{margin:0 0 1.25em;padding:.5625em 1.25em 0 1.1875em;border-left:1px solid #ddd}
+blockquote,blockquote p{line-height:1.6;color:rgba(0,0,0,.85)}
+@media screen and (min-width:768px){h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2}
+h1{font-size:2.75em}
+h2{font-size:2.3125em}
+h3,#toctitle,.sidebarblock>.content>.title{font-size:1.6875em}
+h4{font-size:1.4375em}}
+table{background:#fff;margin-bottom:1.25em;border:1px solid #dedede;word-wrap:normal}
+table thead,table tfoot{background:#f7f8f7}
+table thead tr th,table thead tr td,table tfoot tr th,table tfoot tr td{padding:.5em .625em .625em;font-size:inherit;color:rgba(0,0,0,.8);text-align:left}
+table tr th,table tr td{padding:.5625em .625em;font-size:inherit;color:rgba(0,0,0,.8)}
+table tr.even,table tr.alt{background:#f8f8f7}
+table thead tr th,table tfoot tr th,table tbody tr td,table tr td,table tfoot tr td{line-height:1.6}
+h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2;word-spacing:-.05em}
+h1 strong,h2 strong,h3 strong,#toctitle strong,.sidebarblock>.content>.title strong,h4 strong,h5 strong,h6 strong{font-weight:400}
+.center{margin-left:auto;margin-right:auto}
+.stretch{width:100%}
+.clearfix::before,.clearfix::after,.float-group::before,.float-group::after{content:" ";display:table}
+.clearfix::after,.float-group::after{clear:both}
+:not(pre).nobreak{word-wrap:normal}
+:not(pre).nowrap{white-space:nowrap}
+:not(pre).pre-wrap{white-space:pre-wrap}
+:not(pre):not([class^=L])>code{font-size:.9375em;font-style:normal!important;letter-spacing:0;padding:.1em .5ex;word-spacing:-.15em;background:#f7f7f8;border-radius:4px;line-height:1.45;text-rendering:optimizeSpeed}
+pre{color:rgba(0,0,0,.9);font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;line-height:1.45;text-rendering:optimizeSpeed}
+pre code,pre pre{color:inherit;font-size:inherit;line-height:inherit}
+pre.nowrap,pre.nowrap pre{white-space:pre;word-wrap:normal}
+em em{font-style:normal}
+strong strong{font-weight:400}
+.keyseq{color:rgba(51,51,51,.8)}
+kbd{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;display:inline-block;color:rgba(0,0,0,.8);font-size:.65em;line-height:1.45;background:#f7f7f7;border:1px solid #ccc;border-radius:3px;box-shadow:0 1px 0 rgba(0,0,0,.2),inset 0 0 0 .1em #fff;margin:0 .15em;padding:.2em .5em;vertical-align:middle;position:relative;top:-.1em;white-space:nowrap}
+.keyseq kbd:first-child{margin-left:0}
+.keyseq kbd:last-child{margin-right:0}
+.menuseq,.menuref{color:#000}
+.menuseq b:not(.caret),.menuref{font-weight:inherit}
+.menuseq{word-spacing:-.02em}
+.menuseq b.caret{font-size:1.25em;line-height:.8}
+.menuseq i.caret{font-weight:bold;text-align:center;width:.45em}
+b.button::before,b.button::after{position:relative;top:-1px;font-weight:400}
+b.button::before{content:"[";padding:0 3px 0 2px}
+b.button::after{content:"]";padding:0 2px 0 3px}
+p a>code:hover{color:rgba(0,0,0,.9)}
+#header,#content,#footnotes,#footer{width:100%;margin:0 auto;max-width:62.5em;*zoom:1;position:relative;padding-left:.9375em;padding-right:.9375em}
+#header::before,#header::after,#content::before,#content::after,#footnotes::before,#footnotes::after,#footer::before,#footer::after{content:" ";display:table}
+#header::after,#content::after,#footnotes::after,#footer::after{clear:both}
+#content{margin-top:1.25em}
+#content::before{content:none}
+#header>h1:first-child{color:rgba(0,0,0,.85);margin-top:2.25rem;margin-bottom:0}
+#header>h1:first-child+#toc{margin-top:8px;border-top:1px solid #dddddf}
+#header>h1:only-child{border-bottom:1px solid #dddddf;padding-bottom:8px}
+#header .details{border-bottom:1px solid #dddddf;line-height:1.45;padding-top:.25em;padding-bottom:.25em;padding-left:.25em;color:rgba(0,0,0,.6);display:flex;flex-flow:row wrap}
+#header .details span:first-child{margin-left:-.125em}
+#header .details span.email a{color:rgba(0,0,0,.85)}
+#header .details br{display:none}
+#header .details br+span::before{content:"\00a0\2013\00a0"}
+#header .details br+span.author::before{content:"\00a0\22c5\00a0";color:rgba(0,0,0,.85)}
+#header .details br+span#revremark::before{content:"\00a0|\00a0"}
+#header #revnumber{text-transform:capitalize}
+#header #revnumber::after{content:"\00a0"}
+#content>h1:first-child:not([class]){color:rgba(0,0,0,.85);border-bottom:1px solid #dddddf;padding-bottom:8px;margin-top:0;padding-top:1rem;margin-bottom:1.25rem}
+#toc{border-bottom:1px solid #e7e7e9;padding-bottom:.5em}
+#toc>ul{margin-left:.125em}
+#toc ul.sectlevel0>li>a{font-style:italic}
+#toc ul.sectlevel0 ul.sectlevel1{margin:.5em 0}
+#toc ul{font-family:"Open Sans","DejaVu Sans",sans-serif;list-style-type:none}
+#toc li{line-height:1.3334;margin-top:.3334em}
+#toc a{text-decoration:none}
+#toc a:active{text-decoration:underline}
+#toctitle{color:#7a2518;font-size:1.2em}
+@media screen and (min-width:768px){#toctitle{font-size:1.375em}
+body.toc2{padding-left:15em;padding-right:0}
+body.toc2 #header>h1:nth-last-child(2){border-bottom:1px solid #dddddf;padding-bottom:8px}
+#toc.toc2{margin-top:0!important;background:#f8f8f7;position:fixed;width:15em;left:0;top:0;border-right:1px solid #e7e7e9;border-top-width:0!important;border-bottom-width:0!important;z-index:1000;padding:1.25em 1em;height:100%;overflow:auto}
+#toc.toc2 #toctitle{margin-top:0;margin-bottom:.8rem;font-size:1.2em}
+#toc.toc2>ul{font-size:.9em;margin-bottom:0}
+#toc.toc2 ul ul{margin-left:0;padding-left:1em}
+#toc.toc2 ul.sectlevel0 ul.sectlevel1{padding-left:0;margin-top:.5em;margin-bottom:.5em}
+body.toc2.toc-right{padding-left:0;padding-right:15em}
+body.toc2.toc-right #toc.toc2{border-right-width:0;border-left:1px solid #e7e7e9;left:auto;right:0}}
+@media screen and (min-width:1280px){body.toc2{padding-left:20em;padding-right:0}
+#toc.toc2{width:20em}
+#toc.toc2 #toctitle{font-size:1.375em}
+#toc.toc2>ul{font-size:.95em}
+#toc.toc2 ul ul{padding-left:1.25em}
+body.toc2.toc-right{padding-left:0;padding-right:20em}}
+#content #toc{border:1px solid #e0e0dc;margin-bottom:1.25em;padding:1.25em;background:#f8f8f7;border-radius:4px}
+#content #toc>:first-child{margin-top:0}
+#content #toc>:last-child{margin-bottom:0}
+#footer{max-width:none;background:rgba(0,0,0,.8);padding:1.25em}
+#footer-text{color:hsla(0,0%,100%,.8);line-height:1.44}
+#content{margin-bottom:.625em}
+.sect1{padding-bottom:.625em}
+@media screen and (min-width:768px){#content{margin-bottom:1.25em}
+.sect1{padding-bottom:1.25em}}
+.sect1:last-child{padding-bottom:0}
+.sect1+.sect1{border-top:1px solid #e7e7e9}
+#content h1>a.anchor,h2>a.anchor,h3>a.anchor,#toctitle>a.anchor,.sidebarblock>.content>.title>a.anchor,h4>a.anchor,h5>a.anchor,h6>a.anchor{position:absolute;z-index:1001;width:1.5ex;margin-left:-1.5ex;display:block;text-decoration:none!important;visibility:hidden;text-align:center;font-weight:400}
+#content h1>a.anchor::before,h2>a.anchor::before,h3>a.anchor::before,#toctitle>a.anchor::before,.sidebarblock>.content>.title>a.anchor::before,h4>a.anchor::before,h5>a.anchor::before,h6>a.anchor::before{content:"\00A7";font-size:.85em;display:block;padding-top:.1em}
+#content h1:hover>a.anchor,#content h1>a.anchor:hover,h2:hover>a.anchor,h2>a.anchor:hover,h3:hover>a.anchor,#toctitle:hover>a.anchor,.sidebarblock>.content>.title:hover>a.anchor,h3>a.anchor:hover,#toctitle>a.anchor:hover,.sidebarblock>.content>.title>a.anchor:hover,h4:hover>a.anchor,h4>a.anchor:hover,h5:hover>a.anchor,h5>a.anchor:hover,h6:hover>a.anchor,h6>a.anchor:hover{visibility:visible}
+#content h1>a.link,h2>a.link,h3>a.link,#toctitle>a.link,.sidebarblock>.content>.title>a.link,h4>a.link,h5>a.link,h6>a.link{color:#ba3925;text-decoration:none}
+#content h1>a.link:hover,h2>a.link:hover,h3>a.link:hover,#toctitle>a.link:hover,.sidebarblock>.content>.title>a.link:hover,h4>a.link:hover,h5>a.link:hover,h6>a.link:hover{color:#a53221}
+details,.audioblock,.imageblock,.literalblock,.listingblock,.stemblock,.videoblock{margin-bottom:1.25em}
+details{margin-left:1.25rem}
+details>summary{cursor:pointer;display:block;position:relative;line-height:1.6;margin-bottom:.625rem;outline:none;-webkit-tap-highlight-color:transparent}
+details>summary::-webkit-details-marker{display:none}
+details>summary::before{content:"";border:solid transparent;border-left:solid;border-width:.3em 0 .3em .5em;position:absolute;top:.5em;left:-1.25rem;transform:translateX(15%)}
+details[open]>summary::before{border:solid transparent;border-top:solid;border-width:.5em .3em 0;transform:translateY(15%)}
+details>summary::after{content:"";width:1.25rem;height:1em;position:absolute;top:.3em;left:-1.25rem}
+.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{text-rendering:optimizeLegibility;text-align:left;font-family:"Noto Serif","DejaVu Serif",serif;font-size:1rem;font-style:italic}
+table.tableblock.fit-content>caption.title{white-space:nowrap;width:0}
+.paragraph.lead>p,#preamble>.sectionbody>[class=paragraph]:first-of-type p{font-size:1.21875em;line-height:1.6;color:rgba(0,0,0,.85)}
+.admonitionblock>table{border-collapse:separate;border:0;background:none;width:100%}
+.admonitionblock>table td.icon{text-align:center;width:80px}
+.admonitionblock>table td.icon img{max-width:none}
+.admonitionblock>table td.icon .title{font-weight:bold;font-family:"Open Sans","DejaVu Sans",sans-serif;text-transform:uppercase}
+.admonitionblock>table td.content{padding-left:1.125em;padding-right:1.25em;border-left:1px solid #dddddf;color:rgba(0,0,0,.6);word-wrap:anywhere}
+.admonitionblock>table td.content>:last-child>:last-child{margin-bottom:0}
+.exampleblock>.content{border:1px solid #e6e6e6;margin-bottom:1.25em;padding:1.25em;background:#fff;border-radius:4px}
+.sidebarblock{border:1px solid #dbdbd6;margin-bottom:1.25em;padding:1.25em;background:#f3f3f2;border-radius:4px}
+.sidebarblock>.content>.title{color:#7a2518;margin-top:0;text-align:center}
+.exampleblock>.content>:first-child,.sidebarblock>.content>:first-child{margin-top:0}
+.exampleblock>.content>:last-child,.exampleblock>.content>:last-child>:last-child,.exampleblock>.content .olist>ol>li:last-child>:last-child,.exampleblock>.content .ulist>ul>li:last-child>:last-child,.exampleblock>.content .qlist>ol>li:last-child>:last-child,.sidebarblock>.content>:last-child,.sidebarblock>.content>:last-child>:last-child,.sidebarblock>.content .olist>ol>li:last-child>:last-child,.sidebarblock>.content .ulist>ul>li:last-child>:last-child,.sidebarblock>.content .qlist>ol>li:last-child>:last-child{margin-bottom:0}
+.literalblock pre,.listingblock>.content>pre{border-radius:4px;overflow-x:auto;padding:1em;font-size:.8125em}
+@media screen and (min-width:768px){.literalblock pre,.listingblock>.content>pre{font-size:.90625em}}
+@media screen and (min-width:1280px){.literalblock pre,.listingblock>.content>pre{font-size:1em}}
+.literalblock pre,.listingblock>.content>pre:not(.highlight),.listingblock>.content>pre[class=highlight],.listingblock>.content>pre[class^="highlight "]{background:#f7f7f8}
+.literalblock.output pre{color:#f7f7f8;background:rgba(0,0,0,.9)}
+.listingblock>.content{position:relative}
+.listingblock pre>code{display:block}
+.listingblock code[data-lang]::before{display:none;content:attr(data-lang);position:absolute;font-size:.75em;top:.425rem;right:.5rem;line-height:1;text-transform:uppercase;color:inherit;opacity:.5}
+.listingblock:hover code[data-lang]::before{display:block}
+.listingblock.terminal pre .command::before{content:attr(data-prompt);padding-right:.5em;color:inherit;opacity:.5}
+.listingblock.terminal pre .command:not([data-prompt])::before{content:"$"}
+.listingblock pre.highlightjs{padding:0}
+.listingblock pre.highlightjs>code{padding:1em;border-radius:4px}
+.listingblock pre.prettyprint{border-width:0}
+.prettyprint{background:#f7f7f8}
+pre.prettyprint .linenums{line-height:1.45;margin-left:2em}
+pre.prettyprint li{background:none;list-style-type:inherit;padding-left:0}
+pre.prettyprint li code[data-lang]::before{opacity:1}
+pre.prettyprint li:not(:first-child) code[data-lang]::before{display:none}
+table.linenotable{border-collapse:separate;border:0;margin-bottom:0;background:none}
+table.linenotable td[class]{color:inherit;vertical-align:top;padding:0;line-height:inherit;white-space:normal}
+table.linenotable td.code{padding-left:.75em}
+table.linenotable td.linenos,pre.pygments .linenos{border-right:1px solid;opacity:.35;padding-right:.5em;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
+pre.pygments span.linenos{display:inline-block;margin-right:.75em}
+.quoteblock{margin:0 1em 1.25em 1.5em;display:table}
+.quoteblock:not(.excerpt)>.title{margin-left:-1.5em;margin-bottom:.75em}
+.quoteblock blockquote,.quoteblock p{color:rgba(0,0,0,.85);font-size:1.15rem;line-height:1.75;word-spacing:.1em;letter-spacing:0;font-style:italic;text-align:justify}
+.quoteblock blockquote{margin:0;padding:0;border:0}
+.quoteblock blockquote::before{content:"\201c";float:left;font-size:2.75em;font-weight:bold;line-height:.6em;margin-left:-.6em;color:#7a2518;text-shadow:0 1px 2px rgba(0,0,0,.1)}
+.quoteblock blockquote>.paragraph:last-child p{margin-bottom:0}
+.quoteblock .attribution{margin-top:.75em;margin-right:.5ex;text-align:right}
+.verseblock{margin:0 1em 1.25em}
+.verseblock pre{font-family:"Open Sans","DejaVu Sans",sans-serif;font-size:1.15rem;color:rgba(0,0,0,.85);font-weight:300;text-rendering:optimizeLegibility}
+.verseblock pre strong{font-weight:400}
+.verseblock .attribution{margin-top:1.25rem;margin-left:.5ex}
+.quoteblock .attribution,.verseblock .attribution{font-size:.9375em;line-height:1.45;font-style:italic}
+.quoteblock .attribution br,.verseblock .attribution br{display:none}
+.quoteblock .attribution cite,.verseblock .attribution cite{display:block;letter-spacing:-.025em;color:rgba(0,0,0,.6)}
+.quoteblock.abstract blockquote::before,.quoteblock.excerpt blockquote::before,.quoteblock .quoteblock blockquote::before{display:none}
+.quoteblock.abstract blockquote,.quoteblock.abstract p,.quoteblock.excerpt blockquote,.quoteblock.excerpt p,.quoteblock .quoteblock blockquote,.quoteblock .quoteblock p{line-height:1.6;word-spacing:0}
+.quoteblock.abstract{margin:0 1em 1.25em;display:block}
+.quoteblock.abstract>.title{margin:0 0 .375em;font-size:1.15em;text-align:center}
+.quoteblock.excerpt>blockquote,.quoteblock .quoteblock{padding:0 0 .25em 1em;border-left:.25em solid #dddddf}
+.quoteblock.excerpt,.quoteblock .quoteblock{margin-left:0}
+.quoteblock.excerpt blockquote,.quoteblock.excerpt p,.quoteblock .quoteblock blockquote,.quoteblock .quoteblock p{color:inherit;font-size:1.0625rem}
+.quoteblock.excerpt .attribution,.quoteblock .quoteblock .attribution{color:inherit;font-size:.85rem;text-align:left;margin-right:0}
+p.tableblock:last-child{margin-bottom:0}
+td.tableblock>.content{margin-bottom:1.25em;word-wrap:anywhere}
+td.tableblock>.content>:last-child{margin-bottom:-1.25em}
+table.tableblock,th.tableblock,td.tableblock{border:0 solid #dedede}
+table.grid-all>*>tr>*{border-width:1px}
+table.grid-cols>*>tr>*{border-width:0 1px}
+table.grid-rows>*>tr>*{border-width:1px 0}
+table.frame-all{border-width:1px}
+table.frame-ends{border-width:1px 0}
+table.frame-sides{border-width:0 1px}
+table.frame-none>colgroup+*>:first-child>*,table.frame-sides>colgroup+*>:first-child>*{border-top-width:0}
+table.frame-none>:last-child>:last-child>*,table.frame-sides>:last-child>:last-child>*{border-bottom-width:0}
+table.frame-none>*>tr>:first-child,table.frame-ends>*>tr>:first-child{border-left-width:0}
+table.frame-none>*>tr>:last-child,table.frame-ends>*>tr>:last-child{border-right-width:0}
+table.stripes-all>*>tr,table.stripes-odd>*>tr:nth-of-type(odd),table.stripes-even>*>tr:nth-of-type(even),table.stripes-hover>*>tr:hover{background:#f8f8f7}
+th.halign-left,td.halign-left{text-align:left}
+th.halign-right,td.halign-right{text-align:right}
+th.halign-center,td.halign-center{text-align:center}
+th.valign-top,td.valign-top{vertical-align:top}
+th.valign-bottom,td.valign-bottom{vertical-align:bottom}
+th.valign-middle,td.valign-middle{vertical-align:middle}
+table thead th,table tfoot th{font-weight:bold}
+tbody tr th{background:#f7f8f7}
+tbody tr th,tbody tr th p,tfoot tr th,tfoot tr th p{color:rgba(0,0,0,.8);font-weight:bold}
+p.tableblock>code:only-child{background:none;padding:0}
+p.tableblock{font-size:1em}
+ol{margin-left:1.75em}
+ul li ol{margin-left:1.5em}
+dl dd{margin-left:1.125em}
+dl dd:last-child,dl dd:last-child>:last-child{margin-bottom:0}
+li p,ul dd,ol dd,.olist .olist,.ulist .ulist,.ulist .olist,.olist .ulist{margin-bottom:.625em}
+ul.checklist,ul.none,ol.none,ul.no-bullet,ol.no-bullet,ol.unnumbered,ul.unstyled,ol.unstyled{list-style-type:none}
+ul.no-bullet,ol.no-bullet,ol.unnumbered{margin-left:.625em}
+ul.unstyled,ol.unstyled{margin-left:0}
+li>p:empty:only-child::before{content:"";display:inline-block}
+ul.checklist>li>p:first-child{margin-left:-1em}
+ul.checklist>li>p:first-child>.fa-square-o:first-child,ul.checklist>li>p:first-child>.fa-check-square-o:first-child{width:1.25em;font-size:.8em;position:relative;bottom:.125em}
+ul.checklist>li>p:first-child>input[type=checkbox]:first-child{margin-right:.25em}
+ul.inline{display:flex;flex-flow:row wrap;list-style:none;margin:0 0 .625em -1.25em}
+ul.inline>li{margin-left:1.25em}
+.unstyled dl dt{font-weight:400;font-style:normal}
+ol.arabic{list-style-type:decimal}
+ol.decimal{list-style-type:decimal-leading-zero}
+ol.loweralpha{list-style-type:lower-alpha}
+ol.upperalpha{list-style-type:upper-alpha}
+ol.lowerroman{list-style-type:lower-roman}
+ol.upperroman{list-style-type:upper-roman}
+ol.lowergreek{list-style-type:lower-greek}
+.hdlist>table,.colist>table{border:0;background:none}
+.hdlist>table>tbody>tr,.colist>table>tbody>tr{background:none}
+td.hdlist1,td.hdlist2{vertical-align:top;padding:0 .625em}
+td.hdlist1{font-weight:bold;padding-bottom:1.25em}
+td.hdlist2{word-wrap:anywhere}
+.literalblock+.colist,.listingblock+.colist{margin-top:-.5em}
+.colist td:not([class]):first-child{padding:.4em .75em 0;line-height:1;vertical-align:top}
+.colist td:not([class]):first-child img{max-width:none}
+.colist td:not([class]):last-child{padding:.25em 0}
+.thumb,.th{line-height:0;display:inline-block;border:4px solid #fff;box-shadow:0 0 0 1px #ddd}
+.imageblock.left{margin:.25em .625em 1.25em 0}
+.imageblock.right{margin:.25em 0 1.25em .625em}
+.imageblock>.title{margin-bottom:0}
+.imageblock.thumb,.imageblock.th{border-width:6px}
+.imageblock.thumb>.title,.imageblock.th>.title{padding:0 .125em}
+.image.left,.image.right{margin-top:.25em;margin-bottom:.25em;display:inline-block;line-height:0}
+.image.left{margin-right:.625em}
+.image.right{margin-left:.625em}
+a.image{text-decoration:none;display:inline-block}
+a.image object{pointer-events:none}
+sup.footnote,sup.footnoteref{font-size:.875em;position:static;vertical-align:super}
+sup.footnote a,sup.footnoteref a{text-decoration:none}
+sup.footnote a:active,sup.footnoteref a:active,#footnotes .footnote a:first-of-type:active{text-decoration:underline}
+#footnotes{padding-top:.75em;padding-bottom:.75em;margin-bottom:.625em}
+#footnotes hr{width:20%;min-width:6.25em;margin:-.25em 0 .75em;border-width:1px 0 0}
+#footnotes .footnote{padding:0 .375em 0 .225em;line-height:1.3334;font-size:.875em;margin-left:1.2em;margin-bottom:.2em}
+#footnotes .footnote a:first-of-type{font-weight:bold;text-decoration:none;margin-left:-1.05em}
+#footnotes .footnote:last-of-type{margin-bottom:0}
+#content #footnotes{margin-top:-.625em;margin-bottom:0;padding:.75em 0}
+div.unbreakable{page-break-inside:avoid}
+.big{font-size:larger}
+.small{font-size:smaller}
+.underline{text-decoration:underline}
+.overline{text-decoration:overline}
+.line-through{text-decoration:line-through}
+.aqua{color:#00bfbf}
+.aqua-background{background:#00fafa}
+.black{color:#000}
+.black-background{background:#000}
+.blue{color:#0000bf}
+.blue-background{background:#0000fa}
+.fuchsia{color:#bf00bf}
+.fuchsia-background{background:#fa00fa}
+.gray{color:#606060}
+.gray-background{background:#7d7d7d}
+.green{color:#006000}
+.green-background{background:#007d00}
+.lime{color:#00bf00}
+.lime-background{background:#00fa00}
+.maroon{color:#600000}
+.maroon-background{background:#7d0000}
+.navy{color:#000060}
+.navy-background{background:#00007d}
+.olive{color:#606000}
+.olive-background{background:#7d7d00}
+.purple{color:#600060}
+.purple-background{background:#7d007d}
+.red{color:#bf0000}
+.red-background{background:#fa0000}
+.silver{color:#909090}
+.silver-background{background:#bcbcbc}
+.teal{color:#006060}
+.teal-background{background:#007d7d}
+.white{color:#bfbfbf}
+.white-background{background:#fafafa}
+.yellow{color:#bfbf00}
+.yellow-background{background:#fafa00}
+span.icon>.fa{cursor:default}
+a span.icon>.fa{cursor:inherit}
+.admonitionblock td.icon [class^="fa icon-"]{font-size:2.5em;text-shadow:1px 1px 2px rgba(0,0,0,.5);cursor:default}
+.admonitionblock td.icon .icon-note::before{content:"\f05a";color:#19407c}
+.admonitionblock td.icon .icon-tip::before{content:"\f0eb";text-shadow:1px 1px 2px rgba(155,155,0,.8);color:#111}
+.admonitionblock td.icon .icon-warning::before{content:"\f071";color:#bf6900}
+.admonitionblock td.icon .icon-caution::before{content:"\f06d";color:#bf3400}
+.admonitionblock td.icon .icon-important::before{content:"\f06a";color:#bf0000}
+.conum[data-value]{display:inline-block;color:#fff!important;background:rgba(0,0,0,.8);border-radius:50%;text-align:center;font-size:.75em;width:1.67em;height:1.67em;line-height:1.67em;font-family:"Open Sans","DejaVu Sans",sans-serif;font-style:normal;font-weight:bold}
+.conum[data-value] *{color:#fff!important}
+.conum[data-value]+b{display:none}
+.conum[data-value]::after{content:attr(data-value)}
+pre .conum[data-value]{position:relative;top:-.125em}
+b.conum *{color:inherit!important}
+.conum:not([data-value]):empty{display:none}
+dt,th.tableblock,td.content,div.footnote{text-rendering:optimizeLegibility}
+h1,h2,p,td.content,span.alt,summary{letter-spacing:-.01em}
+p strong,td.content strong,div.footnote strong{letter-spacing:-.005em}
+p,blockquote,dt,td.content,td.hdlist1,span.alt,summary{font-size:1.0625rem}
+p{margin-bottom:1.25rem}
+.sidebarblock p,.sidebarblock dt,.sidebarblock td.content,p.tableblock{font-size:1em}
+.exampleblock>.content{background:#fffef7;border-color:#e0e0dc;box-shadow:0 1px 4px #e0e0dc}
+.print-only{display:none!important}
+@page{margin:1.25cm .75cm}
+@media print{*{box-shadow:none!important;text-shadow:none!important}
+html{font-size:80%}
+a{color:inherit!important;text-decoration:underline!important}
+a.bare,a[href^="#"],a[href^="mailto:"]{text-decoration:none!important}
+a[href^="http:"]:not(.bare)::after,a[href^="https:"]:not(.bare)::after{content:"(" attr(href) ")";display:inline-block;font-size:.875em;padding-left:.25em}
+abbr[title]{border-bottom:1px dotted}
+abbr[title]::after{content:" (" attr(title) ")"}
+pre,blockquote,tr,img,object,svg{page-break-inside:avoid}
+thead{display:table-header-group}
+svg{max-width:100%}
+p,blockquote,dt,td.content{font-size:1em;orphans:3;widows:3}
+h2,h3,#toctitle,.sidebarblock>.content>.title{page-break-after:avoid}
+#header,#content,#footnotes,#footer{max-width:none}
+#toc,.sidebarblock,.exampleblock>.content{background:none!important}
+#toc{border-bottom:1px solid #dddddf!important;padding-bottom:0!important}
+body.book #header{text-align:center}
+body.book #header>h1:first-child{border:0!important;margin:2.5em 0 1em}
+body.book #header .details{border:0!important;display:block;padding:0!important}
+body.book #header .details span:first-child{margin-left:0!important}
+body.book #header .details br{display:block}
+body.book #header .details br+span::before{content:none!important}
+body.book #toc{border:0!important;text-align:left!important;padding:0!important;margin:0!important}
+body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-break-before:always}
+.listingblock code[data-lang]::before{display:block}
+#footer{padding:0 .9375em}
+.hide-on-print{display:none!important}
+.print-only{display:block!important}
+.hide-for-print{display:none!important}
+.show-for-print{display:inherit!important}}
+@media amzn-kf8,print{#header>h1:first-child{margin-top:1.25rem}
+.sect1{padding:0!important}
+.sect1+.sect1{border:0}
+#footer{background:none}
+#footer-text{color:rgba(0,0,0,.6);font-size:.9em}}
+@media amzn-kf8{#header,#content,#footnotes,#footer{padding:0}}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-light.min.css">
+</head>
+<body class="book">
+<div id="header">
+<h1>Curso de Agentes de IA: Memoria y Contexto</h1>
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_introducción">1. Introducción</a></li>
+<li><a href="#_módulo_1_tipos_de_memoria_en_agentes">2. Módulo 1: Tipos de Memoria en Agentes</a>
+<ul class="sectlevel2">
+<li><a href="#_objetivos_de_aprendizaje">2.1. Objetivos de aprendizaje</a></li>
+<li><a href="#_contenidos">2.2. Contenidos</a>
+<ul class="sectlevel3">
+<li><a href="#_1_1_inspiración_neurobiológica">2.2.1. 1.1 Inspiración Neurobiológica</a>
+<ul class="sectlevel4">
+<li><a href="#_sistema_de_memoria_humana">Sistema de Memoria Humana</a></li>
+<li><a href="#_1_2_memoria_sensorial_input_buffer">1.2 Memoria Sensorial (Input Buffer)</a></li>
+<li><a href="#_1_3_memoria_de_trabajo_active_memory">1.3 Memoria de Trabajo (Active Memory)</a></li>
+<li><a href="#_1_4_memoria_episódica_event_log">1.4 Memoria Episódica (Event Log)</a></li>
+<li><a href="#_1_5_memoria_semántica_knowledge_base">1.5 Memoria Semántica (Knowledge Base)</a></li>
+<li><a href="#_1_6_memoria_procedural_skills">1.6 Memoria Procedural (Skills)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_módulo_2_gestión_de_estado_en_agentes">3. Módulo 2: Gestión de Estado en Agentes</a>
+<ul class="sectlevel2">
+<li><a href="#_objetivos_de_aprendizaje_2">3.1. Objetivos de aprendizaje</a></li>
+<li><a href="#_contenidos_2">3.2. Contenidos</a>
+<ul class="sectlevel3">
+<li><a href="#_2_1_representación_de_estado">3.2.1. 2.1 Representación de Estado</a>
+<ul class="sectlevel4">
+<li><a href="#_componentes_básicos">Componentes Básicos</a></li>
+</ul>
+</li>
+<li><a href="#_2_2_estado_local_vs_compartido">3.2.2. 2.2 Estado Local vs Compartido</a>
+<ul class="sectlevel4">
+<li><a href="#_estado_local">Estado Local</a></li>
+<li><a href="#_estado_compartido">Estado Compartido</a></li>
+</ul>
+</li>
+<li><a href="#_2_3_persistencia_de_estado">3.2.3. 2.3 Persistencia de Estado</a></li>
+<li><a href="#_2_4_serialización_y_versionado">3.2.4. 2.4 Serialización y Versionado</a></li>
+<li><a href="#_2_5_historial_y_event_sourcing">3.2.5. 2.5 Historial y Event Sourcing</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_módulo_3_memoria_a_corto_plazo_y_contexto">4. Módulo 3: Memoria a Corto Plazo y Contexto</a>
+<ul class="sectlevel2">
+<li><a href="#_objetivos_de_aprendizaje_3">4.1. Objetivos de aprendizaje</a></li>
+<li><a href="#_contenidos_3">4.2. Contenidos</a>
+<ul class="sectlevel3">
+<li><a href="#_3_1_buffer_de_contexto">4.2.1. 3.1 Buffer de Contexto</a></li>
+<li><a href="#_3_2_límites_de_contexto_en_llms">4.2.2. 3.2 Límites de Contexto en LLMs</a></li>
+<li><a href="#_3_3_selección_de_información_relevante">4.2.3. 3.3 Selección de Información Relevante</a>
+<ul class="sectlevel4">
+<li><a href="#_criterios_de_relevancia">Criterios de Relevancia</a></li>
+</ul>
+</li>
+<li><a href="#_3_4_resumen_y_compresión">4.2.4. 3.4 Resumen y Compresión</a></li>
+<li><a href="#_3_5_olvido_selectivo">4.2.5. 3.5 Olvido Selectivo</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_módulo_4_memoria_a_largo_plazo">5. Módulo 4: Memoria a Largo Plazo</a>
+<ul class="sectlevel2">
+<li><a href="#_objetivos_de_aprendizaje_4">5.1. Objetivos de aprendizaje</a></li>
+<li><a href="#_contenidos_4">5.2. Contenidos</a>
+<ul class="sectlevel3">
+<li><a href="#_4_1_sistemas_de_almacenamiento">5.2.1. 4.1 Sistemas de Almacenamiento</a>
+<ul class="sectlevel4">
+<li><a href="#_bases_de_datos_vectoriales">Bases de Datos Vectoriales</a></li>
+</ul>
+</li>
+<li><a href="#_4_2_indexación_y_recuperación">5.2.2. 4.2 Indexación y Recuperación</a></li>
+<li><a href="#_4_3_embeddings_y_búsqueda_semántica">5.2.3. 4.3 Embeddings y Búsqueda Semántica</a></li>
+<li><a href="#_4_4_rag_retrieval_augmented_generation">5.2.4. 4.4 RAG (Retrieval-Augmented Generation)</a></li>
+<li><a href="#_4_5_actualización_de_memoria">5.2.5. 4.5 Actualización de Memoria</a></li>
+<li><a href="#_4_6_herramientas_prácticas">5.2.6. 4.6 Herramientas Prácticas</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_módulo_5_recuperación_de_información_relevante">6. Módulo 5: Recuperación de Información Relevante</a>
+<ul class="sectlevel2">
+<li><a href="#_objetivos_de_aprendizaje_5">6.1. Objetivos de aprendizaje</a></li>
+<li><a href="#_contenidos_5">6.2. Contenidos</a>
+<ul class="sectlevel3">
+<li><a href="#_5_1_algoritmos_de_búsqueda">6.2.1. 5.1 Algoritmos de Búsqueda</a>
+<ul class="sectlevel4">
+<li><a href="#_tf_idf">TF-IDF</a></li>
+<li><a href="#_bm25">BM25</a></li>
+</ul>
+</li>
+<li><a href="#_5_2_ranking_de_relevancia_multi_factor">6.2.2. 5.2 Ranking de Relevancia Multi-Factor</a></li>
+<li><a href="#_5_3_precisión_vs_recall">6.2.3. 5.3 Precisión vs Recall</a></li>
+<li><a href="#_5_4_privacidad_en_recuperación">6.2.4. 5.4 Privacidad en Recuperación</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_módulo_6_memoria_en_agentes_conversacionales">7. Módulo 6: Memoria en Agentes Conversacionales</a>
+<ul class="sectlevel2">
+<li><a href="#_objetivos_de_aprendizaje_6">7.1. Objetivos de aprendizaje</a></li>
+<li><a href="#_contenidos_6">7.2. Contenidos</a>
+<ul class="sectlevel3">
+<li><a href="#_6_1_historial_de_conversación_inteligente">7.2.1. 6.1 Historial de Conversación Inteligente</a></li>
+<li><a href="#_6_2_seguimiento_de_entidades">7.2.2. 6.2 Seguimiento de Entidades</a></li>
+<li><a href="#_6_3_perfil_de_usuario">7.2.3. 6.3 Perfil de Usuario</a></li>
+<li><a href="#_6_4_privacidad_en_conversaciones">7.2.4. 6.4 Privacidad en Conversaciones</a></li>
+<li><a href="#_6_5_derecho_al_olvido_gdpr">7.2.5. 6.5 Derecho al Olvido (GDPR)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_módulo_7_arquitecturas_de_memoria_avanzadas">8. Módulo 7: Arquitecturas de Memoria Avanzadas</a>
+<ul class="sectlevel2">
+<li><a href="#_objetivos_de_aprendizaje_7">8.1. Objetivos de aprendizaje</a></li>
+<li><a href="#_contenidos_7">8.2. Contenidos</a>
+<ul class="sectlevel3">
+<li><a href="#_7_1_memoria_jerárquica">8.2.1. 7.1 Memoria Jerárquica</a></li>
+<li><a href="#_7_2_consolidación_de_memoria">8.2.2. 7.2 Consolidación de Memoria</a></li>
+<li><a href="#_7_3_olvido_adaptativo">8.2.3. 7.3 Olvido Adaptativo</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_módulo_8_herramientas_y_tecnologías">9. Módulo 8: Herramientas y Tecnologías</a>
+<ul class="sectlevel2">
+<li><a href="#_objetivos_de_aprendizaje_8">9.1. Objetivos de aprendizaje</a></li>
+<li><a href="#_contenidos_8">9.2. Contenidos</a>
+<ul class="sectlevel3">
+<li><a href="#_8_1_bases_de_datos_vectoriales">9.2.1. 8.1 Bases de Datos Vectoriales</a></li>
+<li><a href="#_8_2_caching_inteligente">9.2.2. 8.2 Caching Inteligente</a></li>
+<li><a href="#_8_3_integración_de_múltiples_capas">9.2.3. 8.3 Integración de Múltiples Capas</a></li>
+<li><a href="#_8_4_monitoreo_de_performance">9.2.4. 8.4 Monitoreo de Performance</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_proyecto_integrador_sistema_de_memoria_completo">10. Proyecto Integrador: Sistema de Memoria Completo</a>
+<ul class="sectlevel2">
+<li><a href="#_descripción">10.1. Descripción</a></li>
+<li><a href="#_requisitos">10.2. Requisitos</a></li>
+<li><a href="#_opciones_de_dominio">10.3. Opciones de Dominio</a></li>
+<li><a href="#_evaluación">10.4. Evaluación</a></li>
+</ul>
+</li>
+<li><a href="#_referencias">11. Referencias</a>
+<ul class="sectlevel2">
+<li><a href="#_libros">11.1. Libros</a></li>
+<li><a href="#_papers">11.2. Papers</a></li>
+<li><a href="#_librerías_python">11.3. Librerías Python</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_introducción">1. Introducción</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>La memoria es fundamental para que un agente inteligente pueda aprender de experiencias previas, mantener coherencia en sus acciones y proporcionar respuestas contextualizadas. Este módulo explora cómo los agentes modernas mantienen, recuperan y utilizan información para crear comportamientos adaptativos y conversaciones naturales.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_módulo_1_tipos_de_memoria_en_agentes">2. Módulo 1: Tipos de Memoria en Agentes</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_objetivos_de_aprendizaje">2.1. Objetivos de aprendizaje</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Entender la taxonomía de tipos de memoria</p>
+</li>
+<li>
+<p>Distinguir entre memoria explícita e implícita</p>
+</li>
+<li>
+<p>Modelar sistemas de memoria en agentes</p>
+</li>
+<li>
+<p>Diseñar arquitecturas de memoria apropiadas</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_contenidos">2.2. Contenidos</h3>
+<div class="sect3">
+<h4 id="_1_1_inspiración_neurobiológica">2.2.1. 1.1 Inspiración Neurobiológica</h4>
+<div class="paragraph">
+<p>La memoria humana tiene una estructura jerárquica bien estudiada. Los agentes de IA pueden aprender de esta organización:</p>
+</div>
+<div class="sect4">
+<h5 id="_sistema_de_memoria_humana">Sistema de Memoria Humana</h5>
+<div class="paragraph">
+<p>Diagrama de flujo:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>ENTRADA SENSORIAL
+       │
+       ▼
+┌──────────────────┐
+│ Memoria Sensorial│  (milisegundos)
+│  (búfer visual)  │  "veo algo rojo"
+└────────┬─────────┘
+         │
+         ▼
+┌──────────────────────┐
+│ Memoria de Trabajo   │  (segundos-minutos)
+│  (7±2 items, 60s)    │  "estoy analizando esto"
+└────────┬─────────────┘
+         │
+    ┌────┴────┐
+    │          │
+    ▼          ▼
+┌────────┐ ┌──────────┐ ┌─────────────┐
+│Episódica│ │Semántica │ │ Procedural  │
+│         │ │          │ │             │
+│Eventos  │ │Hechos    │ │ Habilidades │
+│+Tiempo  │ │sin tiempo│ │ automáticas │
+└────────┘ └──────────┘ └─────────────┘</pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_1_2_memoria_sensorial_input_buffer">1.2 Memoria Sensorial (Input Buffer)</h5>
+<div class="paragraph">
+<p>La <strong>memoria sensorial</strong> es el primer paso: capturar toda la información del entorno en milisegundos.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from collections import deque
+import time
+
+class SensoryMemory:
+    """Buffer sensorial: captura breve de percepciones"""
+
+    def __init__(self, capacity=1000, ttl=0.5):  # 500 ms
+        self.buffer = deque(maxlen=capacity)
+        self.ttl = ttl  # Time to live
+
+    def store(self, percept):
+        """Guardar una percepción"""
+        item = {
+            'data': percept,
+            'timestamp': time.time()
+        }
+        self.buffer.append(item)
+
+    def get_recent(self):
+        """Obtener percepciones recientes (no expiradas)"""
+        now = time.time()
+        recent = []
+
+        for item in self.buffer:
+            age = now - item['timestamp']
+            if age &lt; self.ttl:
+                recent.append(item['data'])
+            # Items más antiguos se descartan
+
+        return recent
+
+# Ejemplo
+sensory = SensoryMemory()
+
+# Simular percepciones
+sensory.store({'color': 'rojo', 'size': 'grande'})
+sensory.store({'sound': 'ruido_fuerte'})
+sensory.store({'temperature': 35})
+
+print("Percepciones recientes:")
+print(sensory.get_recent())  # Todo visible ahora
+
+time.sleep(0.6)  # Esperar a que expire TTL
+
+print("Percepciones después de TTL:")
+print(sensory.get_recent())  # Lista vacía</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Características:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Duración: milisegundos a segundos</p>
+</li>
+<li>
+<p>Capacidad: muy grande (buffer completo)</p>
+</li>
+<li>
+<p>Contenido: datos brutos sin procesamiento</p>
+</li>
+<li>
+<p>Automático (inconsciente)</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_1_3_memoria_de_trabajo_active_memory">1.3 Memoria de Trabajo (Active Memory)</h5>
+<div class="paragraph">
+<p>La <strong>memoria de trabajo</strong> mantiene información actualmente procesada. Capacidad limitada.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from collections import OrderedDict
+
+class WorkingMemory:
+    """Memoria de trabajo: información activa (7±2 items)"""
+
+    def __init__(self, capacity=7, ttl_seconds=60):
+        self.capacity = capacity
+        self.ttl = ttl_seconds
+        self.items = OrderedDict()  # Mantiene orden (LRU)
+
+    def store(self, key, value):
+        """Guardar item. Si se llena, elimina el más antiguo"""
+
+        if len(self.items) &gt;= self.capacity:
+            # LRU: eliminar el más antiguo
+            oldest_key = next(iter(self.items))
+            del self.items[oldest_key]
+            print(f"Memoria llena: olvidé '{oldest_key}'")
+
+        self.items[key] = {
+            'value': value,
+            'timestamp': time.time()
+        }
+        print(f"Memoria de trabajo: guardé '{key}'")
+
+    def retrieve(self, key):
+        """Obtener item de memoria de trabajo"""
+        if key in self.items:
+            item = self.items[key]
+            # Refrescar timestamp (acceso reciente)
+            item['timestamp'] = time.time()
+            return item['value']
+        return None
+
+    def get_active(self):
+        """Obtener todos items activos"""
+        return {k: v['value'] for k, v in self.items.items()}
+
+# Ejemplo
+working = WorkingMemory(capacity=5)
+
+# Simular procesamiento de información
+for i in range(7):
+    working.store(f'fact_{i}', f'información_{i}')
+
+print("Memoria activa:")
+print(working.get_active())
+# fact_2 y fact_3 fueron olvidados (hechos más viejos)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Características:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Duración: segundos a minutos</p>
+</li>
+<li>
+<p>Capacidad: limitada (4-7 items típicamente)</p>
+</li>
+<li>
+<p>Contenido: información bajo procesamiento</p>
+</li>
+<li>
+<p>Consciente (accesible)</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_1_4_memoria_episódica_event_log">1.4 Memoria Episódica (Event Log)</h5>
+<div class="paragraph">
+<p><strong>Episódica</strong> registra eventos con contexto temporal exacto.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from datetime import datetime
+
+class EpisodicMemory:
+    """Memoria episódica: registra eventos específicos con contexto"""
+
+    def __init__(self, max_episodes=1000):
+        self.episodes = []  # Lista de eventos
+        self.max_episodes = max_episodes
+
+    def record_episode(self, description, context=None):
+        """Registrar un evento con timestamp exacto"""
+        episode = {
+            'description': description,
+            'context': context,
+            'timestamp': datetime.now(),
+            'episode_id': len(self.episodes)
+        }
+        self.episodes.append(episode)
+
+    def recall_by_time(self, days_ago=0):
+        """Recordar eventos de cierto período"""
+        if days_ago == 0:
+            return self.episodes  # Todos
+        else:
+            target_date = datetime.now() - timedelta(days=days_ago)
+            return [e for e in self.episodes
+                   if e['timestamp'].date() == target_date.date()]
+
+    def recall_by_context(self, context_key):
+        """Recordar eventos de cierto tipo"""
+        return [e for e in self.episodes
+               if e.get('context', {}).get('type') == context_key]
+
+# Ejemplo
+episodic = EpisodicMemory()
+
+# Registrar eventos
+episodic.record_episode(
+    "Conocí a otro agente",
+    context={'type': 'social', 'agent': 'AgentB'}
+)
+
+episodic.record_episode(
+    "Encontré error en código",
+    context={'type': 'technical', 'severity': 'high'}
+)
+
+print("Todos los episodios:")
+for ep in episodic.episodes:
+    print(f"  [{ep['timestamp']}] {ep['description']}")
+
+print("\nEpisodios técnicos:")
+for ep in episodic.recall_by_context('technical'):
+    print(f"  {ep['description']}")</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Características:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Duración: años (larga duración)</p>
+</li>
+<li>
+<p>Capacidad: grande (muchos eventos)</p>
+</li>
+<li>
+<p>Contenido: eventos datados con contexto</p>
+</li>
+<li>
+<p>Útil para aprendizaje experiencial</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_1_5_memoria_semántica_knowledge_base">1.5 Memoria Semántica (Knowledge Base)</h5>
+<div class="paragraph">
+<p><strong>Semántica</strong> almacena hechos abstractos, generalizaciones, sin referencia temporal.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">class SemanticMemory:
+    """Memoria semántica: hechos y conocimiento abstracto"""
+
+    def __init__(self):
+        self.facts = {}  # key -&gt; fact
+        self.relations = {}  # (entity1, relation, entity2)
+
+    def store_fact(self, fact_id, content):
+        """Guardar un hecho"""
+        self.facts[fact_id] = {
+            'content': content,
+            'learned_at': datetime.now(),
+            'usefulness': 0  # Se incrementa con uso
+        }
+
+    def store_relation(self, entity1, relation, entity2):
+        """Guardar relación entre entidades"""
+        key = (entity1, relation, entity2)
+        self.relations[key] = True
+
+    def query_fact(self, fact_id):
+        """Recuperar un hecho"""
+        if fact_id in self.facts:
+            self.facts[fact_id]['usefulness'] += 1
+            return self.facts[fact_id]['content']
+        return None
+
+    def query_related(self, entity):
+        """Encontrar todo relacionado a entidad"""
+        related = []
+        for (e1, rel, e2) in self.relations:
+            if e1 == entity or e2 == entity:
+                related.append((e1, rel, e2))
+        return related
+
+# Ejemplo
+semantic = SemanticMemory()
+
+# Guardar hechos
+semantic.store_fact('fact_001', 'Los agentes perciben el ambiente')
+semantic.store_fact('fact_002', 'La coordinación mejora eficiencia')
+
+# Guardar relaciones
+semantic.store_relation('agente', 'tiene', 'memoria')
+semantic.store_relation('memoria', 'tipos', 'episódica')
+
+# Consultar
+print("Hecho:", semantic.query_fact('fact_001'))
+print("Relaciones de 'memoria':")
+for rel in semantic.query_related('memoria'):
+    print(f"  {rel}")</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Características:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Duración: años (larga)</p>
+</li>
+<li>
+<p>Capacidad: muy grande (base de conocimiento)</p>
+</li>
+<li>
+<p>Contenido: hechos generalizados, sin tiempo</p>
+</li>
+<li>
+<p>Compartible entre agentes</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_1_6_memoria_procedural_skills">1.6 Memoria Procedural (Skills)</h5>
+<div class="paragraph">
+<p><strong>Procedural</strong> almacena cómo hacer cosas: habilidades, scripts, políticas.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">class ProceduralMemory:
+    """Memoria procedural: habilidades y cómo hacer cosas"""
+
+    def __init__(self):
+        self.procedures = {}  # name -&gt; procedure
+        self.skill_level = {}  # name -&gt; level (0-1)
+
+    def learn_procedure(self, name, steps):
+        """Aprender nuevo procedimiento"""
+        self.procedures[name] = steps
+        self.skill_level[name] = 0.0  # Novato
+
+    def execute_procedure(self, name, context=None):
+        """Ejecutar procedimiento aprendido"""
+        if name not in self.procedures:
+            return None
+
+        steps = self.procedures[name]
+        results = []
+
+        for step in steps:
+            result = self._execute_step(step, context)
+            results.append(result)
+
+        # Mejorar skill con práctica
+        self.skill_level[name] = min(1.0,
+                self.skill_level[name] + 0.01)
+
+        return results
+
+    def _execute_step(self, step, context):
+        print(f"  Ejecutando: {step}")
+        return f"Resultado de {step}"
+
+    def get_skill_level(self, name):
+        """Obtener nivel de habilidad (0-1)"""
+        return self.skill_level.get(name, 0)
+
+# Ejemplo
+procedural = ProceduralMemory()
+
+# Aprender procedimiento
+procedural.learn_procedure('make_decision', [
+    'recopilar información',
+    'evaluar opciones',
+    'seleccionar mejor'
+])
+
+# Ejecutar múltiples veces (práctica)
+for i in range(5):
+    print(f"\nIntento {i+1}:")
+    procedural.execute_procedure('make_decision')
+    skill = procedural.get_skill_level('make_decision')
+    print(f"Nivel de habilidad: {skill:.2f}")</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Características:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Duración: años (larga)</p>
+</li>
+<li>
+<p>Capacidad: muchos procedimientos</p>
+</li>
+<li>
+<p>Contenido: secuencias aprendidas</p>
+</li>
+<li>
+<p>Automático con práctica (inconsciente con experiencia)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_módulo_2_gestión_de_estado_en_agentes">3. Módulo 2: Gestión de Estado en Agentes</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_objetivos_de_aprendizaje_2">3.1. Objetivos de aprendizaje</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Representar estado de agente de forma clara y eficiente</p>
+</li>
+<li>
+<p>Persistir y recuperar estado entre sesiones</p>
+</li>
+<li>
+<p>Manejar estado compartido entre múltiples agentes</p>
+</li>
+<li>
+<p>Versionar y auditar cambios para debugging y compliance</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_contenidos_2">3.2. Contenidos</h3>
+<div class="sect3">
+<h4 id="_2_1_representación_de_estado">3.2.1. 2.1 Representación de Estado</h4>
+<div class="paragraph">
+<p>El <strong>estado de un agente</strong> es la representación completa de su situación actual. Es como una fotografía del agente en un momento específico.</p>
+</div>
+<div class="sect4">
+<h5 id="_componentes_básicos">Componentes Básicos</h5>
+<div class="paragraph">
+<p>Los agentes necesitan mantener múltiples aspectos de su estado:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Identidad</strong>: quién es el agente (ID único, nombre, tipo)</p>
+</li>
+<li>
+<p><strong>Posición</strong>: ubicación en ambiente (coordenadas, zona, contexto)</p>
+</li>
+<li>
+<p><strong>Recursos</strong>: qué posee (dinero, energía, herramientas, datos)</p>
+</li>
+<li>
+<p><strong>Relaciones</strong>: vínculos con otros agentes (alianzas, conflictos, deudas)</p>
+</li>
+<li>
+<p><strong>Objetivos</strong>: qué intenta lograr (lista de metas, prioridades)</p>
+</li>
+<li>
+<p><strong>Creencias</strong>: qué cree del mundo (conocimiento, suposiciones, modelos mentales)</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import json
+from dataclasses import dataclass, asdict
+from typing import Dict, List, Any
+from enum import Enum
+
+class AgentStatus(Enum):
+    IDLE = "idle"
+    WORKING = "working"
+    BLOCKED = "blocked"
+    ERROR = "error"
+
+@dataclass
+class AgentState:
+    """Representación completa del estado de un agente"""
+
+    # Identidad
+    agent_id: str
+    agent_name: str
+    agent_type: str
+
+    # Estado físico
+    status: AgentStatus
+    position: Dict[str, float]  # {'x': 10.5, 'y': 20.3}
+    energy: float  # 0-100
+
+    # Recursos
+    resources: Dict[str, float]  # {'dinero': 1000, 'items': 5}
+
+    # Relaciones
+    relationships: Dict[str, str]  # {agent_id: 'amigo'|'enemigo'|'neutral'}
+
+    # Objetivos
+    goals: List[Dict[str, Any]]  # [{'name': 'goal1', 'priority': 1, 'progress': 0.5}]
+
+    # Creencias sobre el mundo
+    beliefs: Dict[str, Any]  # {'enemy_location': (10, 20), 'resources_available': True}
+
+    # Metadata
+    last_update: str
+    decision_history: List[str]  # Últimas 10 decisiones
+
+    def update_position(self, x: float, y: float) -&gt; None:
+        """Actualizar posición del agente"""
+        self.position = {'x': x, 'y': y}
+        self.last_update = str(__import__('datetime').datetime.now())
+
+    def change_energy(self, delta: float) -&gt; bool:
+        """Cambiar nivel de energía. Retorna False si es insuficiente"""
+        new_energy = self.energy + delta
+        if new_energy &lt; 0:
+            return False
+        self.energy = max(0, min(100, new_energy))
+        return True
+
+    def update_belief(self, key: str, value: Any) -&gt; None:
+        """Actualizar creencia sobre el mundo"""
+        self.beliefs[key] = value
+
+    def to_dict(self) -&gt; Dict:
+        """Convertir estado a diccionario (para serialización)"""
+        state_dict = asdict(self)
+        state_dict['status'] = self.status.value
+        return state_dict
+
+# Ejemplo: crear agente
+agent_state = AgentState(
+    agent_id="ag_001",
+    agent_name="Explorer_Alpha",
+    agent_type="scout",
+    status=AgentStatus.IDLE,
+    position={'x': 0.0, 'y': 0.0},
+    energy=100.0,
+    resources={'dinero': 1000, 'items': 0},
+    relationships={'ag_002': 'amigo', 'ag_003': 'neutral'},
+    goals=[
+        {'name': 'explore_zone_a', 'priority': 1, 'progress': 0.3},
+        {'name': 'gather_resources', 'priority': 2, 'progress': 0.0}
+    ],
+    beliefs={'zone_a_size': 50, 'enemy_present': False},
+    last_update="2024-01-10T10:00:00",
+    decision_history=[]
+)
+
+# Usar métodos
+agent_state.update_position(5.0, 10.0)
+agent_state.change_energy(-25)  # Consume 25% de energía
+agent_state.update_belief('enemy_present', True)
+
+print("Estado actual del agente:")
+print(f"  Posición: {agent_state.position}")
+print(f"  Energía: {agent_state.energy}")
+print(f"  Creencias: {agent_state.beliefs}")</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_2_2_estado_local_vs_compartido">3.2.2. 2.2 Estado Local vs Compartido</h4>
+<div class="paragraph">
+<p>Hay dos tipos de estado que los agentes manejan:</p>
+</div>
+<div class="sect4">
+<h5 id="_estado_local">Estado Local</h5>
+<div class="paragraph">
+<p>Es información privada y única de cada agente:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">class LocalAgentState:
+    """Estado privado de un agente - no visible a otros"""
+
+    def __init__(self, agent_id: str):
+        self.agent_id = agent_id
+
+        # Información privada
+        self.internal_energy = 100.0  # Nivel real de energía
+        self.actual_skill_level = {'combat': 0.8, 'stealth': 0.5}
+        self.true_intentions = []  # Lo que realmente quiere
+        self.decision_process_log = []  # Cómo toma decisiones
+
+    def get_private_info(self, key: str) -&gt; Any:
+        """Acceso a información privada"""
+        private_attrs = {
+            'internal_energy': self.internal_energy,
+            'true_skills': self.actual_skill_level,
+            'intentions': self.true_intentions
+        }
+        return private_attrs.get(key)
+
+local_state = LocalAgentState("agent_1")
+print("Energía real:", local_state.get_private_info('internal_energy'))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_estado_compartido">Estado Compartido</h5>
+<div class="paragraph">
+<p>Es información visible a otros agentes y debe sincronizarse:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from threading import Lock
+from datetime import datetime
+
+class SharedAgentState:
+    """Estado compartido entre múltiples agentes"""
+
+    def __init__(self):
+        self.shared_data = {
+            'public_position': {'x': 0, 'y': 0},
+            'visible_health': 100,
+            'announced_goals': [],
+            'team_affiliation': 'none'
+        }
+        self.lock = Lock()  # Sincronización para threads
+        self.last_sync = datetime.now()
+
+    def update_shared(self, key: str, value: Any) -&gt; None:
+        """Actualizar estado compartido de forma thread-safe"""
+        with self.lock:
+            self.shared_data[key] = value
+            self.last_sync = datetime.now()
+
+    def get_shared(self, key: str) -&gt; Any:
+        """Leer estado compartido de forma thread-safe"""
+        with self.lock:
+            return self.shared_data.get(key)
+
+    def sync_to_peers(self, peers: List['Agent']) -&gt; None:
+        """Enviar estado a otros agentes"""
+        with self.lock:
+            for peer in peers:
+                peer.receive_update(self.shared_data.copy())
+
+shared = SharedAgentState()
+shared.update_shared('public_position', {'x': 10, 'y': 20})
+print("Posición visible:", shared.get_shared('public_position'))</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_2_3_persistencia_de_estado">3.2.3. 2.3 Persistencia de Estado</h4>
+<div class="paragraph">
+<p>Los agentes necesitan guardar su estado para recuperarse ante fallos:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import json
+import pickle
+from pathlib import Path
+from datetime import datetime
+
+class PersistentAgentState:
+    """Guardar y recuperar estado de disco"""
+
+    def __init__(self, agent_id: str, storage_dir: str = "./agent_states"):
+        self.agent_id = agent_id
+        self.storage_dir = Path(storage_dir)
+        self.storage_dir.mkdir(exist_ok=True)
+
+        self.state = {}
+        self.checkpoint_dir = self.storage_dir / agent_id / "checkpoints"
+        self.checkpoint_dir.mkdir(parents=True, exist_ok=True)
+
+    def save_checkpoint(self, state: Dict, checkpoint_name: str = None) -&gt; str:
+        """Guardar snapshot del estado actual"""
+        if checkpoint_name is None:
+            checkpoint_name = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+        checkpoint_path = self.checkpoint_dir / f"{checkpoint_name}.json"
+
+        # Añadir metadata
+        state_with_meta = {
+            'agent_id': self.agent_id,
+            'timestamp': datetime.now().isoformat(),
+            'checkpoint_name': checkpoint_name,
+            'data': state
+        }
+
+        with open(checkpoint_path, 'w') as f:
+            json.dump(state_with_meta, f, indent=2, default=str)
+
+        print(f"✓ Checkpoint guardado: {checkpoint_path}")
+        return str(checkpoint_path)
+
+    def load_checkpoint(self, checkpoint_name: str) -&gt; Dict:
+        """Recuperar estado desde checkpoint"""
+        checkpoint_path = self.checkpoint_dir / f"{checkpoint_name}.json"
+
+        if not checkpoint_path.exists():
+            raise FileNotFoundError(f"Checkpoint no encontrado: {checkpoint_path}")
+
+        with open(checkpoint_path, 'r') as f:
+            data = json.load(f)
+
+        print(f"✓ Checkpoint cargado desde: {checkpoint_path}")
+        return data['data']
+
+    def get_latest_checkpoint(self) -&gt; Dict:
+        """Obtener el checkpoint más reciente"""
+        checkpoints = list(self.checkpoint_dir.glob("*.json"))
+        if not checkpoints:
+            raise FileNotFoundError("No hay checkpoints guardados")
+
+        latest = max(checkpoints, key=lambda p: p.stat().st_mtime)
+        return self.load_checkpoint(latest.stem)
+
+# Uso
+persistent = PersistentAgentState("agent_001")
+
+# Simular estado del agente
+agent_state = {
+    'position': {'x': 15.5, 'y': 20.3},
+    'energy': 85.0,
+    'resources': {'dinero': 1500, 'items': 3},
+    'goals': [{'name': 'explore', 'progress': 0.5}]
+}
+
+# Guardar checkpoints
+persistent.save_checkpoint(agent_state, "inicio")
+persistent.save_checkpoint({**agent_state, 'energy': 60.0}, "despues_accion")
+
+# Recuperar último checkpoint
+recovered = persistent.get_latest_checkpoint()
+print("Estado recuperado:")
+print(json.dumps(recovered, indent=2))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_2_4_serialización_y_versionado">3.2.4. 2.4 Serialización y Versionado</h4>
+<div class="paragraph">
+<p>Convertir estado a formatos portables es crucial para compatibilidad:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import json
+import yaml
+
+class StateSerializer:
+    """Serializadores para diferentes formatos"""
+
+    @staticmethod
+    def to_json(state: Dict, pretty: bool = True) -&gt; str:
+        """Convertir a JSON"""
+        return json.dumps(state, indent=2 if pretty else None, default=str)
+
+    @staticmethod
+    def to_yaml(state: Dict) -&gt; str:
+        """Convertir a YAML (más legible)"""
+        return yaml.dump(state, default_flow_style=False, allow_unicode=True)
+
+    @staticmethod
+    def from_json(json_str: str) -&gt; Dict:
+        """Parsear desde JSON"""
+        return json.loads(json_str)
+
+    @staticmethod
+    def from_yaml(yaml_str: str) -&gt; Dict:
+        """Parsear desde YAML"""
+        return yaml.safe_load(yaml_str)
+
+class VersionedState:
+    """Manejar múltiples versiones de estado"""
+
+    CURRENT_VERSION = "2.1"
+
+    def __init__(self):
+        self.version = self.CURRENT_VERSION
+        self.state = {}
+        self.migration_rules = {
+            "1.0": self._migrate_from_1_0,
+            "1.5": self._migrate_from_1_5,
+            "2.0": self._migrate_from_2_0,
+        }
+
+    def load_state(self, json_str: str) -&gt; None:
+        """Cargar estado y migrar si es necesario"""
+        data = json.loads(json_str)
+        old_version = data.get('version', '1.0')
+
+        if old_version != self.CURRENT_VERSION:
+            print(f"Migrando de v{old_version} a v{self.CURRENT_VERSION}")
+            data = self._migrate(data, old_version)
+
+        self.state = data.get('state', {})
+
+    def _migrate(self, data: Dict, from_version: str) -&gt; Dict:
+        """Migrar estado entre versiones"""
+        current = data
+
+        # Migrar paso a paso
+        for version, migrator in sorted(self.migration_rules.items()):
+            if from_version &lt;= version &lt; self.CURRENT_VERSION:
+                current = migrator(current)
+
+        current['version'] = self.CURRENT_VERSION
+        return current
+
+    def _migrate_from_1_0(self, data: Dict) -&gt; Dict:
+        """Migración 1.0 → 1.5: Agregar posición"""
+        if 'position' not in data.get('state', {}):
+            data['state']['position'] = {'x': 0, 'y': 0}
+        return data
+
+    def _migrate_from_1_5(self, data: Dict) -&gt; Dict:
+        """Migración 1.5 → 2.0: Reestructurar recursos"""
+        state = data.get('state', {})
+        if 'inventory' in state:
+            state['resources'] = state.pop('inventory')
+        return data
+
+    def _migrate_from_2_0(self, data: Dict) -&gt; Dict:
+        """Migración 2.0 → 2.1: Agregar metadata"""
+        data['state']['metadata'] = {
+            'created_at': '2024-01-10',
+            'last_updated': '2024-01-10'
+        }
+        return data
+
+    def export(self) -&gt; str:
+        """Exportar estado versionado"""
+        return json.dumps({
+            'version': self.CURRENT_VERSION,
+            'state': self.state
+        }, indent=2, default=str)
+
+# Uso
+versioned = VersionedState()
+old_state_v1 = json.dumps({
+    'version': '1.0',
+    'state': {'agent_id': 'ag_001', 'energy': 100}
+})
+
+versioned.load_state(old_state_v1)
+print("Estado migrado:")
+print(versioned.export())</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_2_5_historial_y_event_sourcing">3.2.5. 2.5 Historial y Event Sourcing</h4>
+<div class="paragraph">
+<p>En lugar de guardar solo el estado actual, guardamos todos los eventos que lo generaron:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from typing import List, Callable
+from dataclasses import dataclass
+from datetime import datetime
+
+@dataclass
+class Event:
+    """Evento que modifica el estado"""
+    event_type: str
+    agent_id: str
+    timestamp: datetime
+    data: Dict[str, Any]
+
+    def to_dict(self) -&gt; Dict:
+        return {
+            'event_type': self.event_type,
+            'agent_id': self.agent_id,
+            'timestamp': self.timestamp.isoformat(),
+            'data': self.data
+        }
+
+class EventSourcingStore:
+    """Almacén de eventos - fuente única de verdad"""
+
+    def __init__(self, agent_id: str):
+        self.agent_id = agent_id
+        self.events: List[Event] = []
+        self.current_state = {}
+        self.observers: List[Callable] = []
+
+    def append_event(self, event_type: str, data: Dict) -&gt; None:
+        """Registrar nuevo evento"""
+        event = Event(
+            event_type=event_type,
+            agent_id=self.agent_id,
+            timestamp=datetime.now(),
+            data=data
+        )
+
+        self.events.append(event)
+        self._apply_event(event)
+        self._notify_observers(event)
+
+        print(f"[EVENT] {event_type}: {data}")
+
+    def _apply_event(self, event: Event) -&gt; None:
+        """Aplicar evento al estado actual"""
+        if event.event_type == "INITIALIZED":
+            self.current_state = event.data.copy()
+
+        elif event.event_type == "POSITION_CHANGED":
+            self.current_state['position'] = event.data['position']
+
+        elif event.event_type == "ENERGY_CONSUMED":
+            self.current_state['energy'] = event.data['energy']
+
+        elif event.event_type == "GOAL_ACHIEVED":
+            self.current_state['goals'] = event.data['goals']
+
+    def _notify_observers(self, event: Event) -&gt; None:
+        """Notificar a observadores del evento"""
+        for observer in self.observers:
+            observer(event)
+
+    def subscribe(self, callback: Callable) -&gt; None:
+        """Suscribirse a cambios"""
+        self.observers.append(callback)
+
+    def get_state_at_time(self, timestamp: datetime) -&gt; Dict:
+        """Reproducir estado en un momento específico"""
+        state = {}
+
+        for event in self.events:
+            if event.timestamp &lt;= timestamp:
+                if event.event_type == "INITIALIZED":
+                    state = event.data.copy()
+                elif event.event_type == "POSITION_CHANGED":
+                    state['position'] = event.data['position']
+                elif event.event_type == "ENERGY_CONSUMED":
+                    state['energy'] = event.data['energy']
+
+        return state
+
+    def get_timeline(self) -&gt; List[Dict]:
+        """Obtener timeline completo de eventos"""
+        return [event.to_dict() for event in self.events]
+
+    def audit_log(self) -&gt; str:
+        """Generar log de auditoría"""
+        lines = [f"AUDIT LOG - Agent {self.agent_id}\n"]
+        lines.append("=" * 50)
+
+        for event in self.events:
+            lines.append(f"[{event.timestamp.strftime('%H:%M:%S')}] "
+                        f"{event.event_type}: {event.data}")
+
+        return "\n".join(lines)
+
+# Uso
+store = EventSourcingStore("agent_001")
+
+# Observador para auditoría
+def audit_observer(event: Event):
+    print(f"  → Auditado: {event.event_type} en {event.timestamp}")
+
+store.subscribe(audit_observer)
+
+# Simular eventos
+store.append_event("INITIALIZED", {
+    'position': {'x': 0, 'y': 0},
+    'energy': 100,
+    'goals': []
+})
+
+store.append_event("POSITION_CHANGED", {
+    'position': {'x': 10, 'y': 15}
+})
+
+store.append_event("ENERGY_CONSUMED", {
+    'energy': 80
+})
+
+print("\nEstado actual:", store.current_state)
+print("\nTimeline:")
+for event in store.get_timeline():
+    print(f"  {event}")
+
+print("\n" + store.audit_log())</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Ventajas de Event Sourcing:</strong>
+- Auditoría completa: saber exactamente qué pasó y cuándo
+- Reproducibilidad: recrear estado en cualquier momento
+- Debugging: entender cómo se llegó a un estado
+- Escalabilidad: eventos desacoplados de almacenamiento
+- Time travel: analizar estado en momentos anteriores</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_módulo_3_memoria_a_corto_plazo_y_contexto">4. Módulo 3: Memoria a Corto Plazo y Contexto</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_objetivos_de_aprendizaje_3">4.1. Objetivos de aprendizaje</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Diseñar buffers de contexto eficientes y dinámicos</p>
+</li>
+<li>
+<p>Manejar límites de contexto en LLMs sin perder información crítica</p>
+</li>
+<li>
+<p>Seleccionar información relevante según múltiples criterios</p>
+</li>
+<li>
+<p>Implementar compresión inteligente de contexto</p>
+</li>
+<li>
+<p>Balancear información disponible vs costo computacional</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_contenidos_3">4.2. Contenidos</h3>
+<div class="sect3">
+<h4 id="_3_1_buffer_de_contexto">4.2.1. 3.1 Buffer de Contexto</h4>
+<div class="paragraph">
+<p>El <strong>buffer de contexto</strong> es una ventana deslizante que mantiene la información más reciente y accesible sin búsqueda lenta.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from collections import deque
+from datetime import datetime, timedelta
+from typing import List, Dict, Any
+
+class ContextBuffer:
+    """Buffer de contexto FIFO con límite de tamaño"""
+
+    def __init__(self, max_items: int = 10, max_age_seconds: int = 3600):
+        self.max_items = max_items
+        self.max_age = timedelta(seconds=max_age_seconds)
+        self.buffer = deque(maxlen=max_items)
+
+    def add_context(self, text: str, metadata: Dict = None) -&gt; None:
+        """Agregar información al buffer"""
+        item = {
+            'text': text,
+            'timestamp': datetime.now(),
+            'metadata': metadata or {},
+            'importance': 0.5  # Escala 0-1
+        }
+        self.buffer.append(item)
+
+    def get_current_context(self) -&gt; str:
+        """Obtener contexto actual (sin expirados)"""
+        now = datetime.now()
+        valid_items = [
+            item for item in self.buffer
+            if now - item['timestamp'] &lt; self.max_age
+        ]
+        # Ordenar por importancia y recencia
+        valid_items.sort(
+            key=lambda x: (x['importance'], -x['timestamp'].timestamp()),
+            reverse=True
+        )
+        return "\n".join([item['text'] for item in valid_items])
+
+    def mark_important(self, index: int) -&gt; None:
+        """Marcar item como importante (aumenta permanencia)"""
+        if 0 &lt;= index &lt; len(self.buffer):
+            item = list(self.buffer)[index]
+            item['importance'] = 0.95
+
+    def get_buffer_stats(self) -&gt; Dict:
+        """Estadísticas del buffer"""
+        return {
+            'items': len(self.buffer),
+            'capacity': self.max_items,
+            'usage': len(self.buffer) / self.max_items,
+            'avg_importance': sum(i['importance'] for i in self.buffer) / max(1, len(self.buffer))
+        }
+
+# Ejemplo: conversación en buffer
+ctx = ContextBuffer(max_items=5)
+
+ctx.add_context("Usuario pregunta: ¿cuál es tu nombre?")
+ctx.add_context("Respuesta: Soy Claude, asistente de IA")
+ctx.add_context("Usuario: ¿puedes ayudarme con Python?")
+ctx.add_context("Respuesta: Por supuesto, tengo experiencia en Python")
+ctx.add_context("Usuario: Escribe una función de ordenamiento")
+
+print("=== CONTEXTO ACTUAL ===")
+print(ctx.get_current_context())
+print("\n=== ESTADÍSTICAS ===")
+print(ctx.get_buffer_stats())</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_3_2_límites_de_contexto_en_llms">4.2.2. 3.2 Límites de Contexto en LLMs</h4>
+<div class="paragraph">
+<p>Los <strong>transformers</strong> tienen complejidad O(n²), lo que limita el contexto que pueden procesar.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import tiktoken  # Para contar tokens
+
+class ContextWindowManager:
+    """Manejar límites de contexto en LLMs"""
+
+    def __init__(self, model: str = "gpt-3.5-turbo", max_tokens: int = 4096):
+        self.model = model
+        self.max_tokens = max_tokens
+        self.reserve_tokens = 500  # Espacios para respuesta
+
+        # Inicializar tokenizer
+        try:
+            self.encoding = tiktoken.encoding_for_model(model)
+        except:
+            self.encoding = tiktoken.get_encoding("cl100k_base")
+
+    def count_tokens(self, text: str) -&gt; int:
+        """Contar tokens en texto"""
+        return len(self.encoding.encode(text))
+
+    def available_tokens(self) -&gt; int:
+        """Tokens disponibles para contexto"""
+        return self.max_tokens - self.reserve_tokens
+
+    def truncate_context(self, messages: List[Dict], priority_keep: List[int] = None) -&gt; List[Dict]:
+        """Truncar contexto manteniendo mensajes prioritarios"""
+        if priority_keep is None:
+            priority_keep = []
+
+        total_tokens = sum(self.count_tokens(msg.get('content', '')) for msg in messages)
+
+        if total_tokens &lt;= self.available_tokens():
+            return messages
+
+        # Mantener mensajes prioritarios y últimos mensajes
+        kept_messages = []
+        total = 0
+
+        # Primero: mensajes prioritarios
+        for idx in priority_keep:
+            if idx &lt; len(messages):
+                msg_tokens = self.count_tokens(messages[idx].get('content', ''))
+                kept_messages.append((idx, messages[idx], msg_tokens))
+                total += msg_tokens
+
+        # Luego: últimos mensajes (más recientes)
+        for idx in range(len(messages) - 1, -1, -1):
+            if idx not in priority_keep and total &lt; self.available_tokens():
+                msg_tokens = self.count_tokens(messages[idx].get('content', ''))
+                if total + msg_tokens &lt;= self.available_tokens():
+                    kept_messages.insert(0, (idx, messages[idx], msg_tokens))
+                    total += msg_tokens
+
+        return [msg for _, msg, _ in kept_messages]
+
+    def analyze_context_usage(self, messages: List[Dict]) -&gt; Dict:
+        """Analizar uso de contexto"""
+        total = sum(self.count_tokens(m.get('content', '')) for m in messages)
+        return {
+            'total_tokens': total,
+            'available_tokens': self.available_tokens(),
+            'usage_percentage': (total / self.max_tokens) * 100,
+            'messages': len(messages),
+            'avg_tokens_per_message': total // max(1, len(messages))
+        }
+
+# Ejemplo
+manager = ContextWindowManager("gpt-3.5-turbo", max_tokens=4096)
+
+messages = [
+    {'role': 'system', 'content': 'Eres un asistente helpful.'},
+    {'role': 'user', 'content': 'Explícame qué es machine learning'},
+    {'role': 'assistant', 'content': 'Machine learning es...'},
+    {'role': 'user', 'content': 'Dame un ejemplo en Python'},
+    {'role': 'assistant', 'content': 'Aquí hay un ejemplo...'},
+]
+
+print("=== ANÁLISIS DE CONTEXTO ===")
+stats = manager.analyze_context_usage(messages)
+for key, value in stats.items():
+    print(f"{key}: {value}")
+
+print(f"\nTotal tokens en conversación: {manager.count_tokens(str(messages))}")</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_3_3_selección_de_información_relevante">4.2.3. 3.3 Selección de Información Relevante</h4>
+<div class="paragraph">
+<p>¿Cómo decidir qué información es importante para el agente?</p>
+</div>
+<div class="sect4">
+<h5 id="_criterios_de_relevancia">Criterios de Relevancia</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Frecuencia</strong>: mencionado múltiples veces → probablemente importante</p>
+</li>
+<li>
+<p><strong>Recency</strong>: información reciente → más aplicable ahora</p>
+</li>
+<li>
+<p><strong>Similaridad</strong>: relacionado con consulta actual → directamente aplicable</p>
+</li>
+<li>
+<p><strong>Importancia</strong>: marcado explícitamente como importante</p>
+</li>
+<li>
+<p><strong>Impacto</strong>: afectó decisiones previas → tiene consecuencias</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from math import log
+
+class RelevanceScorer:
+    """Calcular relevancia de información"""
+
+    def __init__(self):
+        self.frequency_weight = 0.2
+        self.recency_weight = 0.3
+        self.importance_weight = 0.3
+        self.impact_weight = 0.2
+
+    def score_relevance(self, item: Dict, context_query: str = None) -&gt; float:
+        """Calcular score de relevancia (0-1)"""
+        score = 0.0
+
+        # Factor 1: Frecuencia
+        frequency = min(item.get('frequency', 1) / 10, 1.0)  # Normalizar a 0-1
+        score += frequency * self.frequency_weight
+
+        # Factor 2: Recencia (más reciente = más relevante)
+        age_hours = item.get('age_hours', 0)
+        recency = max(0, 1 - (age_hours / 168))  # Decae en 1 semana
+        score += recency * self.recency_weight
+
+        # Factor 3: Importancia explícita
+        importance = item.get('importance', 0.5)
+        score += importance * self.importance_weight
+
+        # Factor 4: Impacto en decisiones
+        impact = item.get('decision_impact', 0.0)
+        score += impact * self.impact_weight
+
+        return min(score, 1.0)
+
+    def rank_by_relevance(self, items: List[Dict]) -&gt; List[tuple]:
+        """Ordenar items por relevancia"""
+        scored = [
+            (item, self.score_relevance(item))
+            for item in items
+        ]
+        scored.sort(key=lambda x: x[1], reverse=True)
+        return scored
+
+# Ejemplo
+scorer = RelevanceScorer()
+
+items = [
+    {'text': 'Usuario es ingeniero', 'frequency': 5, 'age_hours': 2, 'importance': 0.9, 'decision_impact': 0.8},
+    {'text': 'Hoy hace calor', 'frequency': 1, 'age_hours': 1, 'importance': 0.3, 'decision_impact': 0.1},
+    {'text': 'Usuario quiere aprender Python', 'frequency': 3, 'age_hours': 5, 'importance': 0.8, 'decision_impact': 0.7},
+    {'text': 'Lluvia posible mañana', 'frequency': 1, 'age_hours': 24, 'importance': 0.2, 'decision_impact': 0.0},
+]
+
+print("=== RANKING POR RELEVANCIA ===")
+ranked = scorer.rank_by_relevance(items)
+for i, (item, score) in enumerate(ranked, 1):
+    print(f"{i}. [{score:.2f}] {item['text']}")</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_3_4_resumen_y_compresión">4.2.4. 3.4 Resumen y Compresión</h4>
+<div class="paragraph">
+<p>Cuando el contexto es muy largo, necesitamos comprimirlo inteligentemente:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">class ContextCompressor:
+    """Comprimir contexto manteniendo información clave"""
+
+    @staticmethod
+    def extractive_summary(messages: List[str], num_keep: int = 3) -&gt; List[str]:
+        """Extractive: seleccionar los N mensajes más importantes"""
+        # Ordenar por longitud y términos clave
+        scored = [
+            (msg, len(msg.split()), msg.count('importante') + msg.count('crítico'))
+            for msg in messages
+        ]
+        scored.sort(key=lambda x: (x[2], x[1]), reverse=True)
+        return [msg for msg, _, _ in scored[:num_keep]]
+
+    @staticmethod
+    def hierarchical_compression(messages: List[str]) -&gt; Dict:
+        """Agrupar mensajes similares"""
+        groups = {
+            'greeting': [],
+            'question': [],
+            'statement': [],
+            'action': []
+        }
+
+        for msg in messages:
+            if any(word in msg.lower() for word in ['hola', 'hi', 'hey', 'buenos']):
+                groups['greeting'].append(msg)
+            elif msg.endswith('?'):
+                groups['question'].append(msg)
+            elif any(verb in msg.lower() for verb in ['hacer', 'ejecutar', 'correr', 'llamar']):
+                groups['action'].append(msg)
+            else:
+                groups['statement'].append(msg)
+
+        # Comprimir cada grupo
+        compressed = {}
+        for group_type, msgs in groups.items():
+            if msgs:
+                compressed[group_type] = {
+                    'count': len(msgs),
+                    'examples': msgs[:2],
+                    'summary': f"{len(msgs)} {group_type}(s) encontrado(s)"
+                }
+
+        return compressed
+
+# Ejemplo
+messages = [
+    "Hola, ¿cómo estás?",
+    "¿Cuál es tu nombre?",
+    "Soy un agente inteligente",
+    "Necesito ejecutar una tarea",
+    "¿Puedes ayudarme?",
+    "Voy a realizar una acción ahora"
+]
+
+print("=== COMPRESIÓN JERÁRQUICA ===")
+compression = ContextCompressor.hierarchical_compression(messages)
+for group_type, info in compression.items():
+    print(f"\n{group_type.upper()}:")
+    print(f"  Cantidad: {info['count']}")
+    print(f"  Ejemplo: {info['examples'][0]}")</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_3_5_olvido_selectivo">4.2.5. 3.5 Olvido Selectivo</h4>
+<div class="paragraph">
+<p>No todo debe recordarse para siempre. El olvido inteligente mejora eficiencia y privacidad:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from datetime import datetime, timedelta
+import hashlib
+
+class SelectiveForgetfulness:
+    """Olvidar información de forma inteligente"""
+
+    SENSITIVE_KEYWORDS = ['contraseña', 'ssn', 'token', 'api_key', 'email', 'phone']
+
+    def __init__(self):
+        self.memory = []
+        self.forget_policy = 'ttl'  # ttl, threshold, sensitivity
+
+    def add_memory(self, content: str, importance: float = 0.5, sensitive: bool = False) -&gt; str:
+        """Agregar memoria con política de olvido"""
+        memory_id = hashlib.md5(f"{content}{datetime.now()}".encode()).hexdigest()[:8]
+
+        item = {
+            'id': memory_id,
+            'content': content,
+            'importance': importance,
+            'sensitive': sensitive or self._is_sensitive(content),
+            'created_at': datetime.now(),
+            'access_count': 0,
+            'last_accessed': datetime.now()
+        }
+
+        self.memory.append(item)
+        return memory_id
+
+    def _is_sensitive(self, content: str) -&gt; bool:
+        """Detectar si contenido es sensible"""
+        return any(keyword in content.lower() for keyword in self.SENSITIVE_KEYWORDS)
+
+    def apply_ttl_policy(self, ttl_days: int = 30) -&gt; int:
+        """Eliminar información expirada por TTL"""
+        cutoff = datetime.now() - timedelta(days=ttl_days)
+        initial_count = len(self.memory)
+
+        self.memory = [
+            m for m in self.memory
+            if m['created_at'] &gt; cutoff or m['importance'] &gt; 0.8
+        ]
+
+        forgotten = initial_count - len(self.memory)
+        print(f"✓ {forgotten} memorias olvidadas por TTL")
+        return forgotten
+
+    def apply_threshold_policy(self, min_importance: float = 0.3, min_access: int = 2) -&gt; int:
+        """Eliminar información poco importante y sin uso"""
+        initial_count = len(self.memory)
+
+        self.memory = [
+            m for m in self.memory
+            if m['importance'] &gt;= min_importance or m['access_count'] &gt;= min_access
+        ]
+
+        forgotten = initial_count - len(self.memory)
+        print(f"✓ {forgotten} memorias olvidadas por umbral")
+        return forgotten
+
+    def forget_sensitive(self) -&gt; int:
+        """Olvidar datos sensibles (compliance GDPR/HIPAA)"""
+        initial_count = len(self.memory)
+
+        self.memory = [
+            m for m in self.memory
+            if not m['sensitive']
+        ]
+
+        forgotten = initial_count - len(self.memory)
+        print(f"✓ {forgotten} memorias sensibles olvidadas (GDPR compliance)")
+        return forgotten
+
+    def access_memory(self, memory_id: str) -&gt; str:
+        """Acceder memoria (incrementa contador)"""
+        for item in self.memory:
+            if item['id'] == memory_id:
+                item['access_count'] += 1
+                item['last_accessed'] = datetime.now()
+                return item['content']
+        return None
+
+    def get_memory_status(self) -&gt; Dict:
+        """Estado actual de memorias"""
+        return {
+            'total': len(self.memory),
+            'sensitive': sum(1 for m in self.memory if m['sensitive']),
+            'avg_importance': sum(m['importance'] for m in self.memory) / max(1, len(self.memory)),
+            'total_accesses': sum(m['access_count'] for m in self.memory)
+        }
+
+# Ejemplo
+forgetful = SelectiveForgetfulness()
+
+forgetful.add_memory("Mi nombre es Juan", importance=0.9)
+forgetful.add_memory("Mi contraseña es secret123", importance=0.5, sensitive=True)
+forgetful.add_memory("Me gusta el fútbol", importance=0.6)
+forgetful.add_memory("Mi teléfono es 555-1234", importance=0.4, sensitive=True)
+
+print("=== ESTADO INICIAL ===")
+print(forgetful.get_memory_status())
+
+print("\n=== OLVIDO SELECTIVO ===")
+forgetful.forget_sensitive()
+print(forgetful.get_memory_status())</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_módulo_4_memoria_a_largo_plazo">5. Módulo 4: Memoria a Largo Plazo</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_objetivos_de_aprendizaje_4">5.1. Objetivos de aprendizaje</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Almacenar información masiva de forma escalable</p>
+</li>
+<li>
+<p>Recuperar información relevante eficientemente</p>
+</li>
+<li>
+<p>Implementar RAG (Retrieval-Augmented Generation)</p>
+</li>
+<li>
+<p>Optimizar búsqueda semántica con embeddings</p>
+</li>
+<li>
+<p>Mantener y actualizar bases de conocimiento</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_contenidos_4">5.2. Contenidos</h3>
+<div class="sect3">
+<h4 id="_4_1_sistemas_de_almacenamiento">5.2.1. 4.1 Sistemas de Almacenamiento</h4>
+<div class="paragraph">
+<p>La <strong>memoria a largo plazo</strong> se implementa con diferentes tipos de base de datos:</p>
+</div>
+<div class="sect4">
+<h5 id="_bases_de_datos_vectoriales">Bases de Datos Vectoriales</h5>
+<div class="paragraph">
+<p>Para búsqueda semántica rápida:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import numpy as np
+from typing import List, Tuple
+
+class SimpleVectorStore:
+    """Base de datos vectorial simple (prototipo educativo)"""
+
+    def __init__(self, embedding_dim: int = 768):
+        self.embedding_dim = embedding_dim
+        self.documents = []  # Textos originales
+        self.embeddings = []  # Vectores asociados
+        self.metadata = []    # Info adicional
+
+    def add_document(self, text: str, embedding: np.ndarray, metadata: dict = None) -&gt; int:
+        """Agregar documento con su embedding"""
+        if len(embedding) != self.embedding_dim:
+            raise ValueError(f"Embedding debe tener dimensión {self.embedding_dim}")
+
+        doc_id = len(self.documents)
+        self.documents.append(text)
+        self.embeddings.append(embedding)
+        self.metadata.append(metadata or {'source': 'unknown', 'timestamp': str(__import__('datetime').datetime.now())})
+
+        return doc_id
+
+    def cosine_similarity(self, vec1: np.ndarray, vec2: np.ndarray) -&gt; float:
+        """Calcular similitud coseno entre dos vectores"""
+        norm1 = np.linalg.norm(vec1)
+        norm2 = np.linalg.norm(vec2)
+
+        if norm1 == 0 or norm2 == 0:
+            return 0.0
+
+        return np.dot(vec1, vec2) / (norm1 * norm2)
+
+    def search(self, query_embedding: np.ndarray, top_k: int = 5) -&gt; List[Tuple[int, str, float]]:
+        """Buscar documentos similares"""
+        scores = []
+
+        for idx, doc_embedding in enumerate(self.embeddings):
+            similarity = self.cosine_similarity(query_embedding, doc_embedding)
+            scores.append((idx, self.documents[idx], similarity))
+
+        # Ordenar por similitud descendente
+        scores.sort(key=lambda x: x[2], reverse=True)
+        return scores[:top_k]
+
+    def get_stats(self) -&gt; dict:
+        """Estadísticas del almacén"""
+        return {
+            'total_documents': len(self.documents),
+            'embedding_dim': self.embedding_dim,
+            'memory_usage_mb': (len(self.embeddings) * self.embedding_dim * 8) / (1024 ** 2)
+        }
+
+# Ejemplo: crear almacén y agregar documentos
+vectorstore = SimpleVectorStore(embedding_dim=10)  # Pequeño para demostración
+
+# Simular embeddings (en realidad vendrían de un modelo como Sentence-Transformers)
+doc1_embedding = np.array([0.9, 0.1, 0.2, 0.3, 0.1, 0.2, 0.3, 0.1, 0.2, 0.3])
+doc2_embedding = np.array([0.1, 0.9, 0.1, 0.2, 0.3, 0.2, 0.1, 0.3, 0.2, 0.1])
+doc3_embedding = np.array([0.8, 0.2, 0.3, 0.2, 0.1, 0.3, 0.2, 0.1, 0.3, 0.2])
+
+vectorstore.add_document("Python es un lenguaje de programación", doc1_embedding, {'category': 'programación'})
+vectorstore.add_document("Los gatos son animales domésticos", doc2_embedding, {'category': 'animales'})
+vectorstore.add_document("Python es usado para ciencia de datos", doc3_embedding, {'category': 'programación'})
+
+print("=== ESTADÍSTICAS DEL ALMACÉN ===")
+print(vectorstore.get_stats())
+
+# Buscar documentos similares
+query_emb = np.array([0.85, 0.15, 0.25, 0.25, 0.15, 0.25, 0.25, 0.15, 0.25, 0.25])
+print("\n=== BÚSQUEDA SEMÁNTICA ===")
+results = vectorstore.search(query_emb, top_k=3)
+for idx, doc, score in results:
+    print(f"[{score:.2f}] {doc}")</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_4_2_indexación_y_recuperación">5.2.2. 4.2 Indexación y Recuperación</h4>
+<div class="paragraph">
+<p>Diferentes estrategias de búsqueda para diferentes casos:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from collections import defaultdict
+import re
+
+class HybridSearch:
+    """Búsqueda híbrida: full-text + semántica"""
+
+    def __init__(self):
+        self.documents = {}  # id -&gt; document
+        self.fulltext_index = defaultdict(list)  # palabra -&gt; [doc_ids]
+        self.vector_index = []  # (doc_id, embedding)
+
+    def add_document(self, doc_id: str, text: str, embedding: np.ndarray) -&gt; None:
+        """Agregar documento con indexación full-text y vectorial"""
+        self.documents[doc_id] = text
+
+        # Indexación full-text: tokenizar y indexar
+        tokens = re.findall(r'\w+', text.lower())
+        for token in set(tokens):  # set para evitar duplicados
+            self.fulltext_index[token].append(doc_id)
+
+        # Indexación vectorial
+        self.vector_index.append((doc_id, embedding))
+
+    def fulltext_search(self, query: str) -&gt; List[Tuple[str, float]]:
+        """Búsqueda por palabras clave exactas"""
+        query_tokens = set(re.findall(r'\w+', query.lower()))
+        doc_scores = defaultdict(float)
+
+        for token in query_tokens:
+            matching_docs = self.fulltext_index.get(token, [])
+            for doc_id in matching_docs:
+                doc_scores[doc_id] += 1
+
+        # Ordenar por número de matches
+        ranked = sorted(doc_scores.items(), key=lambda x: x[1], reverse=True)
+        return [(self.documents[doc_id], score) for doc_id, score in ranked]
+
+    def vector_search(self, query_embedding: np.ndarray, top_k: int = 5) -&gt; List[Tuple[str, float]]:
+        """Búsqueda semántica por embeddings"""
+        scores = []
+
+        for doc_id, doc_embedding in self.vector_index:
+            norm1 = np.linalg.norm(query_embedding)
+            norm2 = np.linalg.norm(doc_embedding)
+
+            if norm1 &gt; 0 and norm2 &gt; 0:
+                similarity = np.dot(query_embedding, doc_embedding) / (norm1 * norm2)
+                scores.append((self.documents[doc_id], similarity))
+
+        scores.sort(key=lambda x: x[1], reverse=True)
+        return scores[:top_k]
+
+    def hybrid_search(self, query: str, query_embedding: np.ndarray, alpha: float = 0.5) -&gt; List[str]:
+        """Combinar búsqueda full-text + vectorial"""
+        # Búsqueda full-text
+        ft_results = self.fulltext_search(query)
+        ft_docs = set(doc for doc, _ in ft_results)
+
+        # Búsqueda vectorial
+        vec_results = self.vector_search(query_embedding, top_k=10)
+        vec_docs = set(doc for doc, _ in vec_results)
+
+        # Fusionar resultados
+        combined = ft_docs | vec_docs
+        return list(combined)
+
+# Ejemplo
+hybrid = HybridSearch()
+
+docs = [
+    ("doc1", "Machine learning es una rama de IA", np.random.randn(10)),
+    ("doc2", "Deep learning usa redes neuronales", np.random.randn(10)),
+    ("doc3", "Python es ideal para machine learning", np.random.randn(10)),
+]
+
+for doc_id, text, emb in docs:
+    hybrid.add_document(doc_id, text, emb)
+
+print("=== BÚSQUEDA FULL-TEXT ===")
+ft_results = hybrid.fulltext_search("machine learning")
+for doc, score in ft_results:
+    print(f"[{score}] {doc}")
+
+print("\n=== BÚSQUEDA VECTORIAL ===")
+query_emb = np.random.randn(10)
+vec_results = hybrid.vector_search(query_emb, top_k=2)
+for doc, score in vec_results:
+    print(f"[{score:.2f}] {doc}")</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_4_3_embeddings_y_búsqueda_semántica">5.2.3. 4.3 Embeddings y Búsqueda Semántica</h4>
+<div class="paragraph">
+<p>Los <strong>embeddings</strong> convierten texto en vectores que capturan significado semántico:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">class EmbeddingManager:
+    """Gestionar embeddings (simulado para demostración)"""
+
+    @staticmethod
+    def simple_embedding(text: str, dim: int = 8) -&gt; np.ndarray:
+        """Embedding muy simple basado en hash (SOLO para demostración)"""
+        # En producción usar: sentence-transformers, OpenAI, etc.
+        np.random.seed(hash(text) % (2**32))
+        return np.random.randn(dim)
+
+    @staticmethod
+    def similarity(text1: str, text2: str) -&gt; float:
+        """Calcular similitud entre textos"""
+        emb1 = EmbeddingManager.simple_embedding(text1)
+        emb2 = EmbeddingManager.simple_embedding(text2)
+
+        norm1 = np.linalg.norm(emb1)
+        norm2 = np.linalg.norm(emb2)
+
+        if norm1 == 0 or norm2 == 0:
+            return 0.0
+
+        return np.dot(emb1, emb2) / (norm1 * norm2)
+
+    @staticmethod
+    def find_similar_texts(query: str, texts: List[str], top_k: int = 3) -&gt; List[Tuple[str, float]]:
+        """Encontrar textos similares"""
+        scores = [
+            (text, EmbeddingManager.similarity(query, text))
+            for text in texts
+        ]
+        scores.sort(key=lambda x: x[1], reverse=True)
+        return scores[:top_k]
+
+# Ejemplo
+texts = [
+    "El gato salta sobre la cerca",
+    "Los perros ladran en la noche",
+    "El felino brinca sobre el muro",
+    "Las aves vuelan en el cielo"
+]
+
+print("=== BÚSQUEDA SEMÁNTICA ===")
+query = "Un gato saltando"
+results = EmbeddingManager.find_similar_texts(query, texts, top_k=2)
+
+print(f"Query: '{query}'")
+for text, score in results:
+    print(f"  [{score:.2f}] {text}")</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_4_4_rag_retrieval_augmented_generation">5.2.4. 4.4 RAG (Retrieval-Augmented Generation)</h4>
+<div class="paragraph">
+<p>El <strong>RAG</strong> combina recuperación de documentos + generación con LLM:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">class RAGPipeline:
+    """Pipeline RAG simplificado"""
+
+    def __init__(self, document_store: SimpleVectorStore):
+        self.document_store = document_store
+        self.conversation_history = []
+
+    def retrieve(self, query: str, top_k: int = 3) -&gt; List[str]:
+        """1. Recuperar documentos relevantes"""
+        # Simular embedding de query
+        query_embedding = np.random.randn(self.document_store.embedding_dim)
+
+        results = self.document_store.search(query_embedding, top_k=top_k)
+        return [doc for _, doc, _ in results]
+
+    def augment_prompt(self, query: str, retrieved_docs: List[str]) -&gt; str:
+        """2. Aumentar el prompt con contexto"""
+        context = "\n".join([f"- {doc}" for doc in retrieved_docs])
+
+        augmented_prompt = f"""
+Contexto relevante:
+{context}
+
+Pregunta: {query}
+
+Basándote en el contexto anterior, responde la pregunta.
+"""
+        return augmented_prompt
+
+    def generate(self, prompt: str) -&gt; str:
+        """3. Generar respuesta (simulado)"""
+        # En producción: llamar a un LLM real
+        return f"Respuesta generada basada en: {prompt[:50]}..."
+
+    def query(self, user_query: str) -&gt; dict:
+        """Pipeline completo"""
+        # Paso 1: Recuperar
+        retrieved = self.retrieve(user_query, top_k=3)
+
+        # Paso 2: Aumentar
+        augmented = self.augment_prompt(user_query, retrieved)
+
+        # Paso 3: Generar
+        response = self.generate(augmented)
+
+        # Guardar en historial
+        self.conversation_history.append({
+            'query': user_query,
+            'retrieved_docs': retrieved,
+            'response': response
+        })
+
+        return {
+            'query': user_query,
+            'sources': retrieved,
+            'response': response
+        }
+
+# Ejemplo
+store = SimpleVectorStore()
+# (agregar documentos como antes...)
+
+rag = RAGPipeline(store)
+# result = rag.query("¿Qué es el machine learning?")
+# print(result)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_4_5_actualización_de_memoria">5.2.5. 4.5 Actualización de Memoria</h4>
+<div class="paragraph">
+<p>La memoria debe evolucionar con nueva información:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">class UpdatableMemory:
+    """Memoria de largo plazo con capacidad de aprendizaje"""
+
+    def __init__(self):
+        self.facts = {}  # id -&gt; {content, confidence, created_at, updated_at}
+        self.relations = defaultdict(list)  # source -&gt; [(target, relation_type)]
+
+    def learn_fact(self, fact_id: str, content: str, confidence: float = 0.8) -&gt; None:
+        """Aprender nuevo hecho"""
+        self.facts[fact_id] = {
+            'content': content,
+            'confidence': confidence,
+            'created_at': str(__import__('datetime').datetime.now()),
+            'updated_at': str(__import__('datetime').datetime.now()),
+            'uses': 0
+        }
+
+    def correct_fact(self, fact_id: str, new_content: str, confidence: float = 0.9) -&gt; bool:
+        """Corregir información incorrecta"""
+        if fact_id not in self.facts:
+            return False
+
+        old_content = self.facts[fact_id]['content']
+        self.facts[fact_id]['content'] = new_content
+        self.facts[fact_id]['confidence'] = confidence
+        self.facts[fact_id]['updated_at'] = str(__import__('datetime').datetime.now())
+
+        print(f"✓ Hecho corregido:")
+        print(f"  Antes: {old_content}")
+        print(f"  Ahora: {new_content}")
+        return True
+
+    def use_fact(self, fact_id: str) -&gt; str:
+        """Usar hecho (incrementa contador de uso)"""
+        if fact_id in self.facts:
+            self.facts[fact_id]['uses'] += 1
+            return self.facts[fact_id]['content']
+        return None
+
+    def get_memory_health(self) -&gt; dict:
+        """Evaluar salud de la memoria"""
+        total_facts = len(self.facts)
+        high_confidence = sum(1 for f in self.facts.values() if f['confidence'] &gt;= 0.8)
+        avg_uses = sum(f['uses'] for f in self.facts.values()) / max(1, total_facts)
+
+        return {
+            'total_facts': total_facts,
+            'high_confidence': high_confidence,
+            'avg_uses': avg_uses,
+            'utilization': (high_confidence / total_facts * 100) if total_facts &gt; 0 else 0
+        }
+
+# Ejemplo
+memory = UpdatableMemory()
+
+memory.learn_fact("fact_001", "Python versión 3.11 fue lanzada en 2022")
+memory.learn_fact("fact_002", "Los transformers revolucionaron NLP en 2017")
+
+print("=== ESTADO INICIAL ===")
+print(memory.get_memory_health())
+
+# Usar hechos
+memory.use_fact("fact_001")
+memory.use_fact("fact_001")
+
+# Corregir información incorrecta
+memory.correct_fact("fact_001", "Python versión 3.11 fue lanzada en 2022 con mejoras de rendimiento")
+
+print("\n=== DESPUÉS DE ACTUALIZACIÓN ===")
+print(memory.get_memory_health())</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_4_6_herramientas_prácticas">5.2.6. 4.6 Herramientas Prácticas</h4>
+<div class="paragraph">
+<p>Las herramientas profesionales para memoria a largo plazo incluyen:</p>
+</div>
+<div class="paragraph">
+<p><strong>Bases de datos vectoriales:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Pinecone</strong>: Servicio managed, escalable a millones de vectores</p>
+</li>
+<li>
+<p><strong>Weaviate</strong>: Open-source, GraphQL, soporte multi-modal</p>
+</li>
+<li>
+<p><strong>Chroma</strong>: Local y simple, perfecta para desarrollo</p>
+</li>
+<li>
+<p><strong>Qdrant</strong>: Alto rendimiento, filtrado avanzado</p>
+</li>
+<li>
+<p><strong>Milvus</strong>: Open-source, optimizado para producción</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Frameworks de orquestación:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>LangChain</strong>: Chains, memory, tool use</p>
+</li>
+<li>
+<p><strong>LlamaIndex</strong>: Document indexing, query engines</p>
+</li>
+<li>
+<p><strong>Haystack</strong>: NLP pipelines, retrieval + QA</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Modelos de embedding:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Sentence-Transformers</strong>: Open-source, múltiples idiomas</p>
+</li>
+<li>
+<p><strong>OpenAI Embeddings</strong>: Alta calidad, API</p>
+</li>
+<li>
+<p><strong>Cohere</strong>: API con soporte comercial</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_módulo_5_recuperación_de_información_relevante">6. Módulo 5: Recuperación de Información Relevante</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_objetivos_de_aprendizaje_5">6.1. Objetivos de aprendizaje</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Implementar algoritmos de ranking avanzados</p>
+</li>
+<li>
+<p>Optimizar búsqueda multi-criterio</p>
+</li>
+<li>
+<p>Balancear precisión y recall</p>
+</li>
+<li>
+<p>Asegurar privacidad en recuperación</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_contenidos_5">6.2. Contenidos</h3>
+<div class="sect3">
+<h4 id="_5_1_algoritmos_de_búsqueda">6.2.1. 5.1 Algoritmos de Búsqueda</h4>
+<div class="sect4">
+<h5 id="_tf_idf">TF-IDF</h5>
+<div class="paragraph">
+<p>El algoritmo clásico para encontrar términos importantes:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from collections import Counter
+import math
+
+class TFIDFSearch:
+    """Implementar TF-IDF desde cero"""
+
+    def __init__(self):
+        self.documents = []
+        self.vocabulary = set()
+        self.idf = {}
+
+    def add_document(self, text: str) -&gt; None:
+        """Agregar documento al corpus"""
+        tokens = text.lower().split()
+        self.documents.append(tokens)
+        self.vocabulary.update(tokens)
+
+        # Recalcular IDF
+        self._calculate_idf()
+
+    def _calculate_idf(self) -&gt; None:
+        """Calcular Inverse Document Frequency"""
+        num_docs = len(self.documents)
+
+        for word in self.vocabulary:
+            # Contar cuántos documentos contienen esta palabra
+            docs_with_word = sum(1 for doc in self.documents if word in doc)
+
+            # IDF = log(total_docs / docs_with_word)
+            if docs_with_word &gt; 0:
+                self.idf[word] = math.log(num_docs / docs_with_word)
+
+    def _get_tf(self, tokens: List[str], word: str) -&gt; float:
+        """Calcular Term Frequency"""
+        return tokens.count(word) / len(tokens) if tokens else 0
+
+    def score_document(self, query: str, doc_idx: int) -&gt; float:
+        """Calcular score TF-IDF para un documento"""
+        if doc_idx &gt;= len(self.documents):
+            return 0.0
+
+        query_tokens = query.lower().split()
+        doc_tokens = self.documents[doc_idx]
+        score = 0.0
+
+        for word in query_tokens:
+            if word in self.vocabulary:
+                tf = self._get_tf(doc_tokens, word)
+                idf = self.idf.get(word, 0)
+                score += tf * idf
+
+        return score
+
+    def search(self, query: str, top_k: int = 3) -&gt; List[Tuple[str, float]]:
+        """Buscar documentos usando TF-IDF"""
+        scores = [
+            (i, self.score_document(query, i))
+            for i in range(len(self.documents))
+        ]
+        scores.sort(key=lambda x: x[1], reverse=True)
+
+        results = []
+        for idx, score in scores[:top_k]:
+            doc_text = " ".join(self.documents[idx])
+            results.append((doc_text, score))
+
+        return results
+
+# Ejemplo
+tfidf = TFIDFSearch()
+tfidf.add_document("Python es un lenguaje de programación")
+tfidf.add_document("Los gatos son animales domésticos")
+tfidf.add_document("Python es perfecto para data science")
+
+print("=== BÚSQUEDA TF-IDF ===")
+results = tfidf.search("Python programming", top_k=2)
+for doc, score in results:
+    print(f"[{score:.2f}] {doc}")</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_bm25">BM25</h5>
+<div class="paragraph">
+<p>Algoritmo probabilístico mejorado para full-text search:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">class BM25Search:
+    """Implementar BM25 - mejor que TF-IDF"""
+
+    def __init__(self, k1: float = 1.5, b: float = 0.75):
+        self.k1 = k1  # Control de saturación
+        self.b = b    # Control de longitud de documento
+        self.documents = []
+        self.vocabulary = set()
+        self.idf = {}
+        self.avgdl = 0  # Longitud promedio de documento
+
+    def add_document(self, text: str) -&gt; None:
+        """Agregar documento"""
+        tokens = text.lower().split()
+        self.documents.append(tokens)
+        self.vocabulary.update(tokens)
+        self._calculate_idf()
+
+    def _calculate_idf(self) -&gt; None:
+        """Calcular IDF con BM25"""
+        num_docs = len(self.documents)
+        self.avgdl = sum(len(doc) for doc in self.documents) / max(1, num_docs)
+
+        for word in self.vocabulary:
+            docs_with_word = sum(1 for doc in self.documents if word in doc)
+            # BM25 IDF
+            self.idf[word] = math.log(
+                (num_docs - docs_with_word + 0.5) /
+                (docs_with_word + 0.5) + 1
+            )
+
+    def score_document(self, query: str, doc_idx: int) -&gt; float:
+        """Calcular BM25 score"""
+        if doc_idx &gt;= len(self.documents):
+            return 0.0
+
+        query_tokens = query.lower().split()
+        doc_tokens = self.documents[doc_idx]
+        doc_len = len(doc_tokens)
+        score = 0.0
+
+        for word in query_tokens:
+            if word not in self.vocabulary:
+                continue
+
+            # Frecuencia del término en el documento
+            freq = doc_tokens.count(word)
+
+            # BM25 formula
+            numerator = freq * (self.k1 + 1)
+            denominator = (
+                freq +
+                self.k1 * (1 - self.b + self.b * (doc_len / self.avgdl))
+            )
+
+            score += self.idf[word] * (numerator / denominator)
+
+        return score
+
+    def search(self, query: str, top_k: int = 3) -&gt; List[Tuple[str, float]]:
+        """Buscar con BM25"""
+        scores = [
+            (i, self.score_document(query, i))
+            for i in range(len(self.documents))
+        ]
+        scores.sort(key=lambda x: x[1], reverse=True)
+
+        results = []
+        for idx, score in scores[:top_k]:
+            doc_text = " ".join(self.documents[idx])
+            results.append((doc_text, score))
+
+        return results
+
+# Ejemplo
+bm25 = BM25Search()
+bm25.add_document("machine learning is a subset of artificial intelligence")
+bm25.add_document("deep learning uses neural networks")
+bm25.add_document("machine learning powers recommendation systems")
+
+print("=== BÚSQUEDA BM25 ===")
+results = bm25.search("machine learning", top_k=2)
+for doc, score in results:
+    print(f"[{score:.2f}] {doc}")</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_5_2_ranking_de_relevancia_multi_factor">6.2.2. 5.2 Ranking de Relevancia Multi-Factor</h4>
+<div class="paragraph">
+<p>Combinar múltiples señales para mejor ranking:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">class MultiFactorRanker:
+    """Ranking basado en múltiples factores"""
+
+    def __init__(self):
+        self.documents = []  # {text, popularity, recency_score, quality}
+        self.factors = {
+            'text_relevance': 0.4,
+            'popularity': 0.2,
+            'recency': 0.2,
+            'quality': 0.2
+        }
+
+    def add_document(self, text: str, popularity: float = 0.5, quality: float = 0.5) -&gt; None:
+        """Agregar documento con metadata"""
+        from datetime import datetime
+        self.documents.append({
+            'text': text,
+            'popularity': popularity,  # 0-1
+            'quality': quality,  # 0-1
+            'timestamp': datetime.now(),
+            'tokens': set(text.lower().split())
+        })
+
+    def _text_relevance(self, query: str, doc: dict) -&gt; float:
+        """Calcular relevancia textual"""
+        query_tokens = set(query.lower().split())
+        matches = len(query_tokens &amp; doc['tokens'])
+        return min(matches / max(len(query_tokens), 1), 1.0)
+
+    def _recency_score(self, doc: dict) -&gt; float:
+        """Documentos recientes más relevantes"""
+        from datetime import datetime, timedelta
+        age_hours = (datetime.now() - doc['timestamp']).total_seconds() / 3600
+        # Decae en una semana
+        return max(0, 1 - (age_hours / (7 * 24)))
+
+    def rank(self, query: str, top_k: int = 5) -&gt; List[Tuple[str, float]]:
+        """Ranking multi-factor"""
+        scores = []
+
+        for doc in self.documents:
+            score = (
+                self.factors['text_relevance'] * self._text_relevance(query, doc) +
+                self.factors['popularity'] * doc['popularity'] +
+                self.factors['recency'] * self._recency_score(doc) +
+                self.factors['quality'] * doc['quality']
+            )
+            scores.append((doc['text'], score))
+
+        scores.sort(key=lambda x: x[1], reverse=True)
+        return scores[:top_k]
+
+# Ejemplo
+ranker = MultiFactorRanker()
+ranker.add_document("Python tutorial for beginners", popularity=0.9, quality=0.8)
+ranker.add_document("Advanced C++ programming", popularity=0.7, quality=0.9)
+ranker.add_document("Python for data science", popularity=0.95, quality=0.85)
+
+print("=== RANKING MULTI-FACTOR ===")
+results = ranker.rank("Python", top_k=3)
+for text, score in results:
+    print(f"[{score:.2f}] {text}")</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_5_3_precisión_vs_recall">6.2.3. 5.3 Precisión vs Recall</h4>
+<div class="paragraph">
+<p>Balancear entre encontrar todo relevante (recall) vs solo lo relevante (precision):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">class RankingEvaluator:
+    """Evaluar calidad de ranking"""
+
+    @staticmethod
+    def precision_at_k(retrieved: List[bool], k: int) -&gt; float:
+        """Porcentaje de documentos relevantes en top-k"""
+        if k == 0:
+            return 0.0
+        relevant = sum(retrieved[:k])
+        return relevant / k
+
+    @staticmethod
+    def recall_at_k(retrieved: List[bool], k: int, total_relevant: int) -&gt; float:
+        """Qué porcentaje de documentos relevantes recuperamos"""
+        if total_relevant == 0:
+            return 0.0
+        relevant = sum(retrieved[:k])
+        return relevant / total_relevant
+
+    @staticmethod
+    def f1_score(precision: float, recall: float) -&gt; float:
+        """Media armónica de precision y recall"""
+        if precision + recall == 0:
+            return 0.0
+        return 2 * (precision * recall) / (precision + recall)
+
+    @staticmethod
+    def evaluate_ranking(retrieved: List[bool], k: int, total_relevant: int) -&gt; dict:
+        """Evaluación completa"""
+        p = RankingEvaluator.precision_at_k(retrieved, k)
+        r = RankingEvaluator.recall_at_k(retrieved, k, total_relevant)
+        f1 = RankingEvaluator.f1_score(p, r)
+
+        return {
+            'precision@k': p,
+            'recall@k': r,
+            'f1_score': f1,
+            'relevant_retrieved': sum(retrieved[:k])
+        }
+
+# Ejemplo: simular ranking
+retrieved = [True, True, False, True, False, True, False, False, True, False]
+total_relevant = 6  # Total de documentos relevantes en corpus
+
+results = RankingEvaluator.evaluate_ranking(retrieved, k=5, total_relevant=total_relevant)
+print("=== EVALUACIÓN DE RANKING ===")
+for metric, value in results.items():
+    print(f"{metric}: {value:.2f}")</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_5_4_privacidad_en_recuperación">6.2.4. 5.4 Privacidad en Recuperación</h4>
+<div class="paragraph">
+<p>Proteger datos sensibles durante búsqueda:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import hashlib
+
+class PrivacyPreservingSearch:
+    """Búsqueda con privacidad diferencial"""
+
+    def __init__(self):
+        self.hashed_docs = {}  # hash -&gt; documento
+        self.query_log = []
+
+    def add_document_secure(self, text: str) -&gt; str:
+        """Guardar documento con hash de privacidad"""
+        doc_hash = hashlib.sha256(text.encode()).hexdigest()[:16]
+        self.hashed_docs[doc_hash] = text
+        return doc_hash
+
+    def search_with_noise(self, query: str, epsilon: float = 0.5) -&gt; List[str]:
+        """Búsqueda con ruido diferencial"""
+        import random
+
+        # Búsqueda base
+        results = [
+            doc for doc in self.hashed_docs.values()
+            if query.lower() in doc.lower()
+        ]
+
+        # Agregar ruido diferencial (Laplace noise)
+        noise = random.laplace(0, 1/epsilon)
+        num_results = max(0, int(len(results) + noise))
+
+        # Log de queries sin información sensible
+        self.query_log.append({
+            'query_hash': hashlib.sha256(query.encode()).hexdigest()[:8],
+            'num_results': num_results
+        })
+
+        return results[:num_results]
+
+    def get_audit_log(self) -&gt; List[dict]:
+        """Log de auditoría (sin queries sensibles)"""
+        return self.query_log
+
+# Ejemplo
+secure_search = PrivacyPreservingSearch()
+
+doc_id_1 = secure_search.add_document_secure("Usuario: john@example.com, saldo: $1000")
+doc_id_2 = secure_search.add_document_secure("Usuario: jane@example.com, saldo: $5000")
+
+print("=== BÚSQUEDA CON PRIVACIDAD ===")
+# Búsqueda que no expone el query exacto
+results = secure_search.search_with_noise("example", epsilon=0.3)
+print(f"Resultados encontrados: {len(results)}")
+print(f"Log de auditoría: {secure_search.get_audit_log()}")</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_módulo_6_memoria_en_agentes_conversacionales">7. Módulo 6: Memoria en Agentes Conversacionales</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_objetivos_de_aprendizaje_6">7.1. Objetivos de aprendizaje</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Mantener contexto conversacional coherente</p>
+</li>
+<li>
+<p>Resolver referencias anafóricas (pronombres)</p>
+</li>
+<li>
+<p>Personalización basada en memoria de usuario</p>
+</li>
+<li>
+<p>Cumplimiento de regulaciones de privacidad</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_contenidos_6">7.2. Contenidos</h3>
+<div class="sect3">
+<h4 id="_6_1_historial_de_conversación_inteligente">7.2.1. 6.1 Historial de Conversación Inteligente</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from typing import List
+from datetime import datetime
+
+class ConversationMemory:
+    """Gestionar historial de conversación con compresión"""
+
+    def __init__(self, max_turns: int = 20):
+        self.turns = []  # Lista de turnos
+        self.max_turns = max_turns
+        self.user_context = {}  # Contexto del usuario
+        self.entities = {}  # Entidades mencionadas
+
+    def add_turn(self, user_msg: str, agent_msg: str) -&gt; None:
+        """Agregar turno de conversación"""
+        turn = {
+            'timestamp': datetime.now(),
+            'user': user_msg,
+            'agent': agent_msg,
+            'tokens': len(user_msg.split()) + len(agent_msg.split())
+        }
+
+        self.turns.append(turn)
+
+        # Mantener límite de turnos
+        if len(self.turns) &gt; self.max_turns:
+            self.turns.pop(0)
+
+    def get_context_window(self, last_n_turns: int = 5) -&gt; str:
+        """Obtener ventana de contexto reciente"""
+        context = []
+        for turn in self.turns[-last_n_turns:]:
+            context.append(f"Usuario: {turn['user']}")
+            context.append(f"Agente: {turn['agent']}")
+
+        return "\n".join(context)
+
+    def get_summary(self) -&gt; str:
+        """Generar resumen de la conversación"""
+        if not self.turns:
+            return "Sin historial"
+
+        topics = set()
+        for turn in self.turns:
+            # Extraer palabras clave simplemente
+            words = turn['user'].lower().split()
+            topics.update(words[:3])
+
+        return f"Conversación sobre: {', '.join(list(topics)[:5])}"
+
+    def get_conversation_stats(self) -&gt; dict:
+        """Estadísticas de la conversación"""
+        total_turns = len(self.turns)
+        total_tokens = sum(t['tokens'] for t in self.turns)
+
+        return {
+            'total_turns': total_turns,
+            'total_tokens': total_tokens,
+            'avg_tokens_per_turn': total_tokens / max(1, total_turns),
+            'duration': (self.turns[-1]['timestamp'] - self.turns[0]['timestamp']).total_seconds() if self.turns else 0
+        }
+
+# Ejemplo
+conv = ConversationMemory(max_turns=10)
+
+conv.add_turn("¿Cuál es tu nombre?", "Soy Claude, asistente de IA")
+conv.add_turn("¿Puedes ayudarme con Python?", "Por supuesto, tengo experiencia en Python")
+conv.add_turn("Escribe una función recursiva", "Aquí está la función recursiva...")
+
+print("=== CONTEXTO RECIENTE ===")
+print(conv.get_context_window(last_n_turns=2))
+
+print("\n=== RESUMEN ===")
+print(conv.get_summary())
+
+print("\n=== ESTADÍSTICAS ===")
+stats = conv.get_conversation_stats()
+for key, value in stats.items():
+    print(f"{key}: {value}")</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_6_2_seguimiento_de_entidades">7.2.2. 6.2 Seguimiento de Entidades</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import re
+from collections import defaultdict
+
+class EntityTracker:
+    """Rastrear entidades mencionadas en conversación"""
+
+    def __init__(self):
+        self.entities = defaultdict(list)  # type -&gt; [names]
+        self.entity_properties = {}  # entity -&gt; {property: value}
+        self.coreferences = {}  # pronoun_in_context -&gt; actual_entity
+
+    def extract_entities(self, text: str) -&gt; dict:
+        """Extraer entidades mencionadas (NER simplificado)"""
+        entities = {
+            'person': [],
+            'location': [],
+            'organization': [],
+            'other': []
+        }
+
+        # Patrones simples para demostración
+        # En producción usar spaCy, NLTK, etc.
+        person_pattern = r'\b[A-Z][a-z]+ [A-Z][a-z]+\b'
+        org_pattern = r'\b(?:Google|Microsoft|Apple|Amazon|Meta)\b'
+
+        for match in re.finditer(person_pattern, text):
+            entities['person'].append(match.group())
+
+        for match in re.finditer(org_pattern, text):
+            entities['organization'].append(match.group())
+
+        return entities
+
+    def track_entity(self, entity_name: str, entity_type: str, properties: dict = None) -&gt; None:
+        """Rastrear una entidad"""
+        self.entities[entity_type].append(entity_name)
+
+        if properties:
+            self.entity_properties[entity_name] = properties
+
+    def resolve_pronoun(self, pronoun: str, context: str) -&gt; str:
+        """Resolver pronombre a entidad (anáfora)"""
+        pronouns = {
+            'él': 'masculine',
+            'ella': 'feminine',
+            'lo': 'masculine',
+            'la': 'feminine',
+            'ellos': 'masculine_plural'
+        }
+
+        # Búsqueda simple del último sustantivo del tipo correcto
+        if pronoun.lower() in pronouns:
+            # En producción: usar modelo de resolución de coreferences
+            people = self.entities.get('person', [])
+            if people:
+                return people[-1]  # Retornar la última persona mencionada
+
+        return pronoun
+
+    def get_entity_summary(self) -&gt; dict:
+        """Resumen de entidades conocidas"""
+        summary = {}
+        for entity_type, names in self.entities.items():
+            if names:
+                summary[entity_type] = list(set(names))
+
+        return summary
+
+# Ejemplo
+tracker = EntityTracker()
+
+text = "John Smith trabaja en Google. Él es ingeniero."
+entities = tracker.extract_entities(text)
+
+for entity_type, names in entities.items():
+    for name in names:
+        tracker.track_entity(name, entity_type)
+
+print("=== ENTIDADES EXTRAÍDAS ===")
+print(tracker.get_entity_summary())
+
+print("\n=== RESOLUCIÓN DE REFERENCIAS ===")
+print(f"'Él' se refiere a: {tracker.resolve_pronoun('él', text)}")</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_6_3_perfil_de_usuario">7.2.3. 6.3 Perfil de Usuario</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">class UserProfile:
+    """Perfil de usuario con preferencias y características"""
+
+    def __init__(self, user_id: str):
+        self.user_id = user_id
+        self.preferences = {}  # key -&gt; value
+        self.interests = set()
+        self.interaction_history = []
+        self.sensitivity_level = 'normal'  # normal, sensitive, private
+
+    def add_preference(self, key: str, value: str) -&gt; None:
+        """Agregar preferencia de usuario"""
+        self.preferences[key] = value
+        print(f"✓ Preferencia guardada: {key} = {value}")
+
+    def add_interest(self, interest: str) -&gt; None:
+        """Agregar interés"""
+        self.interests.add(interest.lower())
+
+    def log_interaction(self, interaction: str) -&gt; None:
+        """Registrar interacción"""
+        self.interaction_history.append({
+            'timestamp': datetime.now(),
+            'interaction': interaction
+        })
+
+    def get_personalized_greeting(self) -&gt; str:
+        """Saludo personalizado"""
+        name = self.preferences.get('name', 'Usuario')
+        if self.preferences.get('language') == 'es':
+            return f"¡Hola {name}! Bienvenido de vuelta."
+        return f"Hello {name}! Welcome back."
+
+    def should_ask_permission(self) -&gt; bool:
+        """Verificar si debe solicitar permiso para datos sensibles"""
+        return self.sensitivity_level in ['sensitive', 'private']
+
+    def get_profile_summary(self) -&gt; dict:
+        """Resumen del perfil"""
+        return {
+            'user_id': self.user_id,
+            'preferences': self.preferences,
+            'interests': list(self.interests),
+            'interactions': len(self.interaction_history),
+            'sensitivity': self.sensitivity_level
+        }
+
+# Ejemplo
+user = UserProfile("user_123")
+user.add_preference('name', 'Juan')
+user.add_preference('language', 'es')
+user.add_preference('timezone', 'UTC-3')
+user.add_interest('machine learning')
+user.add_interest('python')
+
+print("=== PERFIL DE USUARIO ===")
+print(user.get_personalized_greeting())
+print("\nResumen:")
+for key, value in user.get_profile_summary().items():
+    print(f"  {key}: {value}")</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_6_4_privacidad_en_conversaciones">7.2.4. 6.4 Privacidad en Conversaciones</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">class PrivacyManager:
+    """Gestionar privacidad en conversaciones"""
+
+    SENSITIVE_PATTERNS = {
+        'email': r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b',
+        'phone': r'\b(\+?1[-.\s]?)?\(?[0-9]{3}\)?[-.\s]?[0-9]{3}[-.\s]?[0-9]{4}\b',
+        'ssn': r'\b\d{3}-\d{2}-\d{4}\b',
+        'credit_card': r'\b\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}\b'
+    }
+
+    def __init__(self):
+        self.redacted_items = {}  # token -&gt; original_value
+        self.data_retention_days = 30
+
+    def detect_sensitive_data(self, text: str) -&gt; dict:
+        """Detectar datos sensibles en texto"""
+        found = {}
+
+        for data_type, pattern in self.SENSITIVE_PATTERNS.items():
+            matches = re.findall(pattern, text)
+            if matches:
+                found[data_type] = matches
+
+        return found
+
+    def redact_text(self, text: str) -&gt; str:
+        """Reemplazar datos sensibles con tokens"""
+        redacted = text
+        counter = 0
+
+        for data_type, pattern in self.SENSITIVE_PATTERNS.items():
+            for match in re.finditer(pattern, text):
+                token = f"[{data_type.upper()}_{counter}]"
+                self.redacted_items[token] = match.group()
+                redacted = redacted.replace(match.group(), token, 1)
+                counter += 1
+
+        return redacted
+
+    def restore_text(self, text: str) -&gt; str:
+        """Restaurar datos originales (solo para autorizado)"""
+        restored = text
+        for token, value in self.redacted_items.items():
+            restored = restored.replace(token, value)
+        return restored
+
+    def get_privacy_report(self, text: str) -&gt; dict:
+        """Reporte de privacidad del texto"""
+        sensitive = self.detect_sensitive_data(text)
+
+        return {
+            'original_length': len(text),
+            'sensitive_items_found': sum(len(v) for v in sensitive.values()),
+            'data_types': list(sensitive.keys()),
+            'recommendation': 'Redact before storing' if sensitive else 'Safe to store'
+        }
+
+# Ejemplo
+privacy = PrivacyManager()
+
+message = "Mi email es juan@example.com y mi teléfono es 555-123-4567"
+
+print("=== ANÁLISIS DE PRIVACIDAD ===")
+report = privacy.get_privacy_report(message)
+for key, value in report.items():
+    print(f"{key}: {value}")
+
+print("\n=== TEXTO REDACTADO ===")
+redacted = privacy.redact_text(message)
+print(redacted)
+
+print("\n=== DATOS ALMACENADOS (SOLO ADMIN) ===")
+print(privacy.redacted_items)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_6_5_derecho_al_olvido_gdpr">7.2.5. 6.5 Derecho al Olvido (GDPR)</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">class RightToForgetManager:
+    """Implementar derecho al olvido (GDPR Art. 17)"""
+
+    def __init__(self):
+        self.user_data = {}  # user_id -&gt; {conversations, profile, actions}
+        self.deletion_requests = []
+        self.audit_log = []
+
+    def store_user_data(self, user_id: str, data: dict) -&gt; None:
+        """Almacenar datos de usuario"""
+        self.user_data[user_id] = data
+
+    def request_deletion(self, user_id: str, reason: str = None) -&gt; bool:
+        """Solicitar eliminación de datos"""
+        if user_id not in self.user_data:
+            return False
+
+        request = {
+            'user_id': user_id,
+            'timestamp': datetime.now(),
+            'reason': reason,
+            'status': 'pending'
+        }
+
+        self.deletion_requests.append(request)
+
+        # Log de auditoría
+        self._audit_log('DELETION_REQUESTED', user_id, reason)
+
+        print(f"✓ Solicitud de eliminación registrada para {user_id}")
+        return True
+
+    def approve_deletion(self, user_id: str) -&gt; bool:
+        """Aprobar solicitud de eliminación"""
+        if user_id in self.user_data:
+            del self.user_data[user_id]
+            self._audit_log('DATA_DELETED', user_id, 'Approved')
+            print(f"✓ Datos de {user_id} eliminados completamente")
+            return True
+
+        return False
+
+    def _audit_log(self, action: str, user_id: str, details: str = None) -&gt; None:
+        """Registrar acción para auditoría"""
+        self.audit_log.append({
+            'action': action,
+            'user_id_hash': hashlib.sha256(user_id.encode()).hexdigest()[:8],
+            'timestamp': datetime.now(),
+            'details': details
+        })
+
+    def get_compliance_report(self) -&gt; dict:
+        """Reporte de cumplimiento GDPR"""
+        return {
+            'total_users': len(self.user_data),
+            'deletion_requests': len(self.deletion_requests),
+            'deleted_users': len([r for r in self.deletion_requests if r['status'] == 'completed']),
+            'audit_entries': len(self.audit_log)
+        }
+
+    def get_audit_log(self) -&gt; List[dict]:
+        """Historial de auditoría (con hashes)"""
+        return self.audit_log
+
+# Ejemplo
+gdpr = RightToForgetManager()
+
+gdpr.store_user_data('user_123', {'name': 'Juan', 'email': 'juan@example.com'})
+gdpr.store_user_data('user_456', {'name': 'María', 'email': 'maria@example.com'})
+
+print("=== DERECHO AL OLVIDO (GDPR) ===")
+print("\nEstado inicial:")
+print(gdpr.get_compliance_report())
+
+print("\nSolicitando eliminación...")
+gdpr.request_deletion('user_123', 'Usuario solicitó derecho al olvido')
+
+print("\nAprobando eliminación...")
+gdpr.approve_deletion('user_123')
+
+print("\nEstado final:")
+print(gdpr.get_compliance_report())</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_módulo_7_arquitecturas_de_memoria_avanzadas">8. Módulo 7: Arquitecturas de Memoria Avanzadas</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_objetivos_de_aprendizaje_7">8.1. Objetivos de aprendizaje</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Diseñar sistemas de memoria jerárquicos</p>
+</li>
+<li>
+<p>Implementar consolidación de memoria</p>
+</li>
+<li>
+<p>Manejar interferencia entre memorias</p>
+</li>
+<li>
+<p>Optimizar memoria para casos específicos</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_contenidos_7">8.2. Contenidos</h3>
+<div class="sect3">
+<h4 id="_7_1_memoria_jerárquica">8.2.1. 7.1 Memoria Jerárquica</h4>
+<div class="paragraph">
+<p>La memoria se organiza en niveles: detalles → patrones → abstracciones:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">class HierarchicalMemory:
+    """Memoria jerárquica: detalles → patrones → reglas"""
+
+    def __init__(self):
+        self.episodic = []  # Nivel 1: Eventos específicos
+        self.semantic = {}  # Nivel 2: Patrones generalizados
+        self.rules = []  # Nivel 3: Reglas abstractas
+
+    def record_episode(self, event: str, details: dict) -&gt; None:
+        """Nivel 1: Registrar evento específico"""
+        self.episodic.append({
+            'event': event,
+            'details': details,
+            'timestamp': __import__('datetime').datetime.now()
+        })
+
+    def extract_pattern(self, pattern_name: str, freq: float, context: str) -&gt; None:
+        """Nivel 2: Generalizar patrón recurrente"""
+        self.semantic[pattern_name] = {
+            'frequency': freq,  # 0-1: qué tan frecuente
+            'context': context,
+            'importance': freq  # Importancia basada en frecuencia
+        }
+
+    def abstract_rule(self, rule: str, confidence: float) -&gt; None:
+        """Nivel 3: Crear regla abstracta"""
+        self.rules.append({
+            'rule': rule,
+            'confidence': confidence,  # 0-1
+            'source_patterns': len(self.semantic)
+        })
+
+    def compress_hierarchy(self) -&gt; None:
+        """Comprimir: descartar episodios detallados si patrón existe"""
+        # Mantener solo N episodios recientes
+        if len(self.episodic) &gt; 10:
+            self.episodic = self.episodic[-10:]
+
+    def get_summary(self) -&gt; dict:
+        """Resumen de la jerarquía"""
+        return {
+            'episodes': len(self.episodic),
+            'patterns': len(self.semantic),
+            'rules': len(self.rules),
+            'compression_ratio': len(self.episodic) / max(1, len(self.episodic) + len(self.semantic))
+        }
+
+# Ejemplo
+hierarchy = HierarchicalMemory()
+
+# Nivel 1: Episodios
+hierarchy.record_episode("visitó tienda", {'tipo': 'compra', 'monto': 50})
+hierarchy.record_episode("visitó tienda", {'tipo': 'compra', 'monto': 75})
+hierarchy.record_episode("visitó tienda", {'tipo': 'compra', 'monto': 60})
+
+# Nivel 2: Patrones (después de ver múltiples episodios)
+hierarchy.extract_pattern("cliente_comprador", freq=0.9, context="tienda física")
+
+# Nivel 3: Reglas (generalización máxima)
+hierarchy.abstract_rule("Los clientes que compran en tienda tienden a repetir", confidence=0.85)
+
+print("=== MEMORIA JERÁRQUICA ===")
+print(hierarchy.get_summary())</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_7_2_consolidación_de_memoria">8.2.2. 7.2 Consolidación de Memoria</h4>
+<div class="paragraph">
+<p>Proceso de transferir información de corto a largo plazo:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from datetime import datetime, timedelta
+
+class MemoryConsolidation:
+    """Consolidar memoria corta → larga mediante repetición"""
+
+    def __init__(self):
+        self.short_term = []  # Reciente
+        self.long_term = []  # Consolidado
+        self.consolidation_threshold = 3  # Cuántas veces antes de consolidar
+
+    def encounter_information(self, info: str, type_: str = 'fact') -&gt; None:
+        """Encontrar información (añade a corto plazo)"""
+        self.short_term.append({
+            'info': info,
+            'type': type_,
+            'encounters': 1,
+            'first_seen': datetime.now(),
+            'last_seen': datetime.now()
+        })
+
+    def review_information(self, info: str) -&gt; None:
+        """Revisar información (repetición distribuida)"""
+        for item in self.short_term:
+            if item['info'] == info:
+                item['encounters'] += 1
+                item['last_seen'] = datetime.now()
+
+    def consolidate(self) -&gt; int:
+        """Mover a largo plazo si fue encontrado suficientemente"""
+        consolidated = 0
+
+        for item in self.short_term[:]:
+            if item['encounters'] &gt;= self.consolidation_threshold:
+                # Mover a largo plazo
+                self.long_term.append({
+                    'info': item['info'],
+                    'type': item['type'],
+                    'strength': min(item['encounters'] / 10, 1.0),
+                    'consolidated_at': datetime.now()
+                })
+                self.short_term.remove(item)
+                consolidated += 1
+
+        return consolidated
+
+    def get_memory_health(self) -&gt; dict:
+        """Estado de la memoria"""
+        return {
+            'short_term_items': len(self.short_term),
+            'long_term_items': len(self.long_term),
+            'consolidation_ratio': len(self.long_term) / max(1, len(self.long_term) + len(self.short_term)),
+            'total_strength': sum(m['strength'] for m in self.long_term)
+        }
+
+# Ejemplo
+consolidation = MemoryConsolidation()
+
+# Aprender información
+consolidation.encounter_information("Python es un lenguaje interpretado", 'fact')
+consolidation.review_information("Python es un lenguaje interpretado")
+consolidation.review_information("Python es un lenguaje interpretado")
+
+print("=== CONSOLIDACIÓN DE MEMORIA ===")
+print(f"Antes: {consolidation.get_memory_health()}")
+
+consolidated = consolidation.consolidate()
+print(f"Consolidados: {consolidated}")
+print(f"Después: {consolidation.get_memory_health()}")</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_7_3_olvido_adaptativo">8.2.3. 7.3 Olvido Adaptativo</h4>
+<div class="paragraph">
+<p>No todos los recuerdos merecen la misma permanencia:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">class AdaptiveForgetfulness:
+    """Olvidar adaptativamente basado en utilidad"""
+
+    def __init__(self, memory_limit: int = 1000):
+        self.memories = []
+        self.memory_limit = memory_limit
+
+    def store_memory(self, content: str, importance: float = 0.5, usefulness: float = 0.5) -&gt; None:
+        """Guardar memoria con scores"""
+        memory = {
+            'content': content,
+            'importance': importance,  # Qué tan importante inherentemente
+            'usefulness': usefulness,  # Qué tan útil ha sido
+            'recency': 1.0,  # Recién creado
+            'access_count': 0
+        }
+        self.memories.append(memory)
+
+    def access_memory(self, idx: int) -&gt; str:
+        """Acceder memoria (incrementa usefulness)"""
+        if idx &lt; len(self.memories):
+            self.memories[idx]['access_count'] += 1
+            self.memories[idx]['usefulness'] = min(1.0, self.memories[idx]['usefulness'] + 0.1)
+            return self.memories[idx]['content']
+        return None
+
+    def decay_memories(self) -&gt; None:
+        """Decaimiento temporal: recencia disminuye"""
+        for memory in self.memories:
+            memory['recency'] *= 0.95  # Decae exponencialmente
+
+    def compute_retention_score(self, memory: dict) -&gt; float:
+        """Calcular probabilidad de retención"""
+        return (
+            0.3 * memory['importance'] +
+            0.3 * memory['usefulness'] +
+            0.3 * memory['recency'] +
+            0.1 * (memory['access_count'] / 100)
+        )
+
+    def prune_memories(self) -&gt; int:
+        """Eliminar memorias menos valiosas si se alcanza límite"""
+        if len(self.memories) &gt; self.memory_limit:
+            # Calcular scores
+            scored = [
+                (i, self.compute_retention_score(mem))
+                for i, mem in enumerate(self.memories)
+            ]
+            scored.sort(key=lambda x: x[1], reverse=True)
+
+            # Mantener top-N
+            to_keep = [i for i, _ in scored[:self.memory_limit]]
+            forgotten = len(self.memories) - len(to_keep)
+
+            self.memories = [self.memories[i] for i in sorted(to_keep)]
+
+            return forgotten
+
+        return 0
+
+# Ejemplo
+forgetful = AdaptiveForgetfulness(memory_limit=5)
+
+for i in range(8):
+    forgetful.store_memory(f"Fact {i}", importance=0.5 + i*0.1, usefulness=0.5)
+
+print("=== OLVIDO ADAPTATIVO ===")
+print(f"Memorias antes: {len(forgetful.memories)}")
+
+# Acceder algunas memorias (aumentar usefulness)
+forgetful.access_memory(0)
+forgetful.access_memory(0)
+
+# Decaimiento temporal
+forgetful.decay_memories()
+
+# Poda
+forgotten = forgetful.prune_memories()
+print(f"Memorias olvidadas: {forgotten}")
+print(f"Memorias después: {len(forgetful.memories)}")</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_módulo_8_herramientas_y_tecnologías">9. Módulo 8: Herramientas y Tecnologías</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_objetivos_de_aprendizaje_8">9.1. Objetivos de aprendizaje</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Usar herramientas profesionales de memoria</p>
+</li>
+<li>
+<p>Integrar múltiples tipos de bases de datos</p>
+</li>
+<li>
+<p>Implementar pipelines completos</p>
+</li>
+<li>
+<p>Monitorear y optimizar performance</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_contenidos_8">9.2. Contenidos</h3>
+<div class="sect3">
+<h4 id="_8_1_bases_de_datos_vectoriales">9.2.1. 8.1 Bases de Datos Vectoriales</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python"># Comparativa de opciones
+
+class VectorDatabaseComparison:
+    """Guía de comparativa de bases vectoriales"""
+
+    @staticmethod
+    def get_recommendations() -&gt; dict:
+        return {
+            'pinecone': {
+                'pros': ['Managed', 'Escalable', 'API simple', 'Búsqueda híbrida'],
+                'cons': ['Costo por vector', 'Vendor lock-in'],
+                'best_for': 'Producción con gran escala',
+                'pricing': 'Por vector',
+                'setup_time': '5 minutos'
+            },
+            'weaviate': {
+                'pros': ['Open-source', 'GraphQL', 'Multi-modal', 'Auto-indexing'],
+                'cons': ['Curva aprendizaje', 'Menos maduro'],
+                'best_for': 'Casos complejos, flexibilidad',
+                'pricing': 'Free + Self-hosted',
+                'setup_time': '30 minutos'
+            },
+            'chroma': {
+                'pros': ['Local', 'Simple', 'Python API', 'Privacy'],
+                'cons': ['No distribuido', 'Limitado en escala'],
+                'best_for': 'Desarrollo, MVPs, aplicaciones locales',
+                'pricing': 'Free (Open-source)',
+                'setup_time': '1 minuto'
+            },
+            'qdrant': {
+                'pros': ['Alto rendimiento', 'Filtrado avanzado', 'Open-source'],
+                'cons': ['Menos documentación', 'Comunidad pequeña'],
+                'best_for': 'Aplicaciones que requieren baja latencia',
+                'pricing': 'Free + Cloud',
+                'setup_time': '15 minutos'
+            }
+        }
+
+    @staticmethod
+    def select_database(scale: str, latency: str, budget: str) -&gt; str:
+        """Seleccionar DB según requisitos"""
+        if scale == 'large' and budget == 'high':
+            return 'Pinecone (managed enterprise)'
+        elif scale == 'large' and budget == 'medium':
+            return 'Qdrant (open-source production)'
+        elif scale == 'medium' and latency == 'low':
+            return 'Qdrant'
+        elif scale == 'small' or budget == 'zero':
+            return 'Chroma (local development)'
+        else:
+            return 'Weaviate (flexible, open-source)'
+
+comparison = VectorDatabaseComparison()
+print("=== VECTOR DB COMPARISON ===")
+for db, info in comparison.get_recommendations().items():
+    print(f"\n{db.upper()}:")
+    for key, value in info.items():
+        print(f"  {key}: {value}")
+
+print(f"\nRecomendación para (large scale, low latency, medium budget):")
+print(f"  → {comparison.select_database('large', 'low', 'medium')}")</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_8_2_caching_inteligente">9.2.2. 8.2 Caching Inteligente</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from datetime import datetime, timedelta
+
+class IntelligentCache:
+    """Cache LRU con TTL inteligente"""
+
+    def __init__(self, max_size: int = 100, default_ttl_seconds: int = 3600):
+        self.cache = {}  # key -&gt; {value, timestamp, access_count, ttl}
+        self.max_size = max_size
+        self.default_ttl = default_ttl_seconds
+        self.hits = 0
+        self.misses = 0
+
+    def set(self, key: str, value, ttl_seconds: int = None) -&gt; None:
+        """Guardar en cache"""
+        if len(self.cache) &gt;= self.max_size:
+            # LRU: eliminar menos recientemente usado
+            lru_key = min(self.cache.keys(),
+                         key=lambda k: self.cache[k]['last_access'])
+            del self.cache[lru_key]
+
+        self.cache[key] = {
+            'value': value,
+            'created': datetime.now(),
+            'last_access': datetime.now(),
+            'access_count': 0,
+            'ttl': ttl_seconds or self.default_ttl
+        }
+
+    def get(self, key: str):
+        """Obtener del cache"""
+        if key not in self.cache:
+            self.misses += 1
+            return None
+
+        item = self.cache[key]
+        age = (datetime.now() - item['created']).total_seconds()
+
+        # Verificar TTL
+        if age &gt; item['ttl']:
+            del self.cache[key]
+            self.misses += 1
+            return None
+
+        # Actualizar acceso
+        item['last_access'] = datetime.now()
+        item['access_count'] += 1
+        self.hits += 1
+
+        return item['value']
+
+    def get_stats(self) -&gt; dict:
+        """Estadísticas de cache"""
+        total_requests = self.hits + self.misses
+        hit_rate = (self.hits / total_requests * 100) if total_requests &gt; 0 else 0
+
+        return {
+            'hits': self.hits,
+            'misses': self.misses,
+            'hit_rate': f"{hit_rate:.1f}%",
+            'cached_items': len(self.cache),
+            'capacity_used': f"{len(self.cache) / self.max_size * 100:.1f}%"
+        }
+
+# Ejemplo
+cache = IntelligentCache(max_size=5)
+
+cache.set('user_profile_123', {'name': 'Juan', 'role': 'admin'})
+cache.set('user_settings_123', {'theme': 'dark', 'lang': 'es'})
+
+# Accesos
+cache.get('user_profile_123')
+cache.get('user_profile_123')
+cache.get('nonexistent')
+
+print("=== CACHE PERFORMANCE ===")
+stats = cache.get_stats()
+for key, value in stats.items():
+    print(f"{key}: {value}")</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_8_3_integración_de_múltiples_capas">9.2.3. 8.3 Integración de Múltiples Capas</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">class MemoryLayerIntegration:
+    """Integrar: caché L1 + BD L2 + searchvector L3"""
+
+    def __init__(self):
+        self.l1_cache = {}  # En memoria, rápido
+        self.l2_database = {}  # Persistente
+        self.l3_vector_search = []  # Para búsqueda semántica
+
+    def store(self, key: str, value, searchable: bool = False) -&gt; None:
+        """Guardar en capas apropiadas"""
+        # L1: Cache (acceso rápido)
+        self.l1_cache[key] = value
+
+        # L2: Database (persistencia)
+        self.l2_database[key] = value
+
+        # L3: Vector search (si es searchable)
+        if searchable:
+            self.l3_vector_search.append({
+                'key': key,
+                'value': value,
+                'embedding': self._hash_to_vector(value)
+            })
+
+    def retrieve(self, key: str):
+        """Recuperar con fallback automático"""
+        # Intentar L1
+        if key in self.l1_cache:
+            return self.l1_cache[key], 'L1_CACHE'
+
+        # Fallback a L2
+        if key in self.l2_database:
+            # Volver a llenar L1
+            self.l1_cache[key] = self.l2_database[key]
+            return self.l2_database[key], 'L2_DATABASE'
+
+        return None, 'MISS'
+
+    def semantic_search(self, query: str, top_k: int = 3) -&gt; list:
+        """Búsqueda semántica en L3"""
+        query_embedding = self._hash_to_vector(query)
+
+        scores = [
+            (item['key'], self._similarity(query_embedding, item['embedding']))
+            for item in self.l3_vector_search
+        ]
+        scores.sort(key=lambda x: x[1], reverse=True)
+
+        return [key for key, _ in scores[:top_k]]
+
+    def _hash_to_vector(self, text: str) -&gt; list:
+        """Convertir texto a vector (demo)"""
+        import hashlib
+        h = hashlib.md5(str(text).encode()).hexdigest()
+        return [int(h[i:i+2], 16) / 255 for i in range(0, 16, 2)]
+
+    def _similarity(self, v1: list, v2: list) -&gt; float:
+        """Similitud coseno simple"""
+        dot = sum(a*b for a, b in zip(v1, v2))
+        mag1 = sum(a**2 for a in v1) ** 0.5
+        mag2 = sum(b**2 for b in v2) ** 0.5
+        return dot / (mag1 * mag2 + 1e-10)
+
+    def get_layer_stats(self) -&gt; dict:
+        """Estadísticas por capa"""
+        return {
+            'L1_cache_items': len(self.l1_cache),
+            'L2_database_items': len(self.l2_database),
+            'L3_searchable_items': len(self.l3_vector_search)
+        }
+
+# Ejemplo
+memory = MemoryLayerIntegration()
+
+memory.store('doc_001', 'Machine learning basics', searchable=True)
+memory.store('doc_002', 'Python tutorial', searchable=True)
+memory.store('session_token', 'abc123xyz', searchable=False)
+
+print("=== INTEGRACIÓN MULTI-CAPA ===")
+print(f"Stats: {memory.get_layer_stats()}")
+
+value, source = memory.retrieve('doc_001')
+print(f"Recuperado de {source}: {value}")
+
+results = memory.semantic_search('learning', top_k=2)
+print(f"Búsqueda semántica: {results}")</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_8_4_monitoreo_de_performance">9.2.4. 8.4 Monitoreo de Performance</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import time
+
+class MemoryPerformanceMonitor:
+    """Monitorear métricas de memoria y performance"""
+
+    def __init__(self):
+        self.metrics = {
+            'latencies': [],
+            'throughput': 0,
+            'hit_misses': {'hits': 0, 'misses': 0},
+            'memory_usage_mb': 0,
+            'query_times': []
+        }
+        self.start_time = time.time()
+
+    def record_latency(self, operation: str, duration_ms: float) -&gt; None:
+        """Registrar latencia de operación"""
+        self.metrics['latencies'].append({
+            'operation': operation,
+            'duration_ms': duration_ms,
+            'timestamp': time.time()
+        })
+
+    def record_query_time(self, query: str, duration_ms: float) -&gt; None:
+        """Registrar tiempo de query"""
+        self.metrics['query_times'].append({
+            'query': query[:50],
+            'duration_ms': duration_ms
+        })
+
+    def record_cache_event(self, hit: bool) -&gt; None:
+        """Registrar hit/miss de cache"""
+        if hit:
+            self.metrics['hit_misses']['hits'] += 1
+        else:
+            self.metrics['hit_misses']['misses'] += 1
+
+    def get_performance_report(self) -&gt; dict:
+        """Generar reporte de performance"""
+        total_requests = (self.metrics['hit_misses']['hits'] +
+                         self.metrics['hit_misses']['misses'])
+
+        avg_latency = (sum(l['duration_ms'] for l in self.metrics['latencies']) /
+                      len(self.metrics['latencies'])
+                      if self.metrics['latencies'] else 0)
+
+        avg_query_time = (sum(q['duration_ms'] for q in self.metrics['query_times']) /
+                         len(self.metrics['query_times'])
+                         if self.metrics['query_times'] else 0)
+
+        return {
+            'uptime_seconds': time.time() - self.start_time,
+            'avg_latency_ms': f"{avg_latency:.2f}",
+            'avg_query_time_ms': f"{avg_query_time:.2f}",
+            'cache_hit_rate': f"{self.metrics['hit_misses']['hits'] / max(1, total_requests) * 100:.1f}%",
+            'total_queries': len(self.metrics['query_times']),
+            'total_requests': total_requests
+        }
+
+# Ejemplo
+monitor = MemoryPerformanceMonitor()
+
+# Simular operaciones
+for i in range(5):
+    monitor.record_latency(f"query_{i}", 45.5 + i*2)
+    monitor.record_query_time(f"SELECT * FROM memories WHERE id={i}", 42.3)
+    monitor.record_cache_event(hit=(i % 2 == 0))
+
+print("=== PERFORMANCE REPORT ===")
+report = monitor.get_performance_report()
+for metric, value in report.items():
+    print(f"{metric}: {value}")</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_proyecto_integrador_sistema_de_memoria_completo">10. Proyecto Integrador: Sistema de Memoria Completo</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_descripción">10.1. Descripción</h3>
+<div class="paragraph">
+<p>Crear agente conversacional con sistema de memoria robusto:
+* Contextual short-term memory
+* Long-term knowledge base
+* Entity tracking
+* Personalization
+* Privacy compliance</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_requisitos">10.2. Requisitos</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Mínimo 5 tipos de memoria funcionando</p>
+</li>
+<li>
+<p>50+ horas de conversación simulada</p>
+</li>
+<li>
+<p>Suite de tests</p>
+</li>
+<li>
+<p>Documentación</p>
+</li>
+<li>
+<p>Performance benchmarks</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_opciones_de_dominio">10.3. Opciones de Dominio</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Asistente personal</p>
+</li>
+<li>
+<p>Customer support bot</p>
+</li>
+<li>
+<p>Tutor educativo</p>
+</li>
+<li>
+<p>Investigador académico</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_evaluación">10.4. Evaluación</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Funcionalidad: todos los tipos de memoria</p>
+</li>
+<li>
+<p>Robustez: manejo de errores</p>
+</li>
+<li>
+<p>Escalabilidad: performance con crecimiento</p>
+</li>
+<li>
+<p>Calidad: coherencia y personalización</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_referencias">11. Referencias</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_libros">11.1. Libros</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>"Artificial Intelligence: A Modern Approach" - Russell, Norvig</p>
+</li>
+<li>
+<p>"Deep Learning" - Goodfellow, Bengio, Courville</p>
+</li>
+<li>
+<p>"Working Memory and Thinking" - Baddeley</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_papers">11.2. Papers</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>"Attention is All You Need" - Transformers</p>
+</li>
+<li>
+<p>"Dense Passage Retrieval for Open-Domain QA" - RAG</p>
+</li>
+<li>
+<p>"Memory Networks" - Weston et al.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_librerías_python">11.3. Librerías Python</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>sentence-transformers</p>
+</li>
+<li>
+<p>pinecone-client</p>
+</li>
+<li>
+<p>langchain</p>
+</li>
+<li>
+<p>redis</p>
+</li>
+<li>
+<p>neo4j</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2025-11-16 22:43:28 +0100
+</div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>
+if (!hljs.initHighlighting.called) {
+  hljs.initHighlighting.called = true
+  ;[].slice.call(document.querySelectorAll('pre.highlight > code[data-lang]')).forEach(function (el) { hljs.highlightBlock(el) })
+}
+</script>
+</body>
+</html>

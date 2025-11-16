@@ -1,0 +1,48 @@
+{
+  "name": "M9.1 - Code Node Avanzado",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "start",
+      "name": "Start",
+      "type": "n8n-nodes-base.start",
+      "typeVersion": 1,
+      "position": [100, 300]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "datos_json",
+              "value": "[{\"nombre\":\"Juan\",\"edad\":28,\"salario\":35000},{\"nombre\":\"María\",\"edad\":32,\"salario\":42000},{\"nombre\":\"Carlos\",\"edad\":25,\"salario\":30000}]"
+            }
+          ]
+        }
+      },
+      "id": "set-data",
+      "name": "Set - Datos",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [300, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const dataString = $input.first().json.datos_json; const data = JSON.parse(dataString); const usuarios = data.map(u => ({ ...u, categoria_edad: u.edad < 30 ? 'Junior' : 'Senior' })).filter(u => u.salario > 25000).sort((a, b) => b.salario - a.salario); const salarios = usuarios.map(u => u.salario); const promedio = salarios.reduce((a, b) => a + b, 0) / salarios.length; return { json: { usuarios: usuarios, estadisticas: { total: usuarios.length, salario_promedio: promedio.toFixed(2), salario_maximo: Math.max(...salarios), salario_minimo: Math.min(...salarios) } } };"
+      },
+      "id": "code-transform",
+      "name": "Code - Transformación",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [500, 300]
+    }
+  ],
+  "connections": {
+    "start": {
+      "main": [[{"node": "set-data", "type": "main", "index": 0}]]
+    },
+    "set-data": {
+      "main": [[{"node": "code-transform", "type": "main", "index": 0}]]
+    }
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "name": "M9.2 - Schedule con Expresiones CRON",
+  "description": "Ejecutar workflows programados con CRON",
+  "nodes": [
+    {
+      "parameters": {
+        "triggerTimes": {
+          "item": [
+            {
+              "hour": 8,
+              "minute": 0
+            },
+            {
+              "hour": 12,
+              "minute": 0
+            },
+            {
+              "hour": 18,
+              "minute": 0
+            }
+          ]
+        }
+      },
+      "id": "schedule",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [100, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obtener información del horario\nconst ahora = new Date();\nconst hora = ahora.getHours();\n\nlet accion = '';\nif (hora < 12) accion = 'Reporte matutino';\nelse if (hora < 18) accion = 'Actualización mediodía';\nelse accion = 'Resumen vespertino';\n\nreturn {\n  json: {\n    ejecucion_programada: true,\n    timestamp: ahora.toISOString(),\n    hora_ejecucion: hora,\n    accion: accion,\n    descripcion: `Ejecutado automáticamente a las ${ahora.getHours()}:${String(ahora.getMinutes()).padStart(2, '0')}`\n  }\n};"
+      },
+      "id": "code-info",
+      "name": "Code - Información Ejecución",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [300, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Simular tarea automática\nreturn {\n  json: {\n    tarea_completada: true,\n    tipo: $input.first().json.accion,\n    datos_procesados: Math.floor(Math.random() * 1000),\n    errores: 0,\n    duracion_segundos: Math.random() * 30,\n    siguiente_ejecucion: new Date(Date.now() + 4 * 3600000).toISOString()\n  }\n};"
+      },
+      "id": "code-tarea",
+      "name": "Code - Ejecutar Tarea",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [500, 300]
+    }
+  ],
+  "connections": {
+    "schedule": {
+      "main": [
+        [
+          {
+            "node": "code-info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "code-info": {
+      "main": [
+        [
+          {
+            "node": "code-tarea",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
