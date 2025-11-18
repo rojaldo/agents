@@ -1,0 +1,28 @@
+TITANIC DATASET ANALYSIS REPORT
+==================================================
+
+Dataset Shape:
+- Total Records: 891
+- Total Columns: 15
+
+Survival Statistics:
+- Survival Rate: 38.4%
+- Survived: 342 passengers (38.4%)
+- Did not survive: 549 passengers (61.6%)
+
+Gender Distribution:
+- male: 577 (64.8%)
+- female: 314 (35.2%)
+
+Passenger Class Distribution:
+- Class 1: 216 passengers (24.2%)
+- Class 2: 184 passengers (20.7%)
+- Class 3: 491 passengers (55.1%)
+
+Age Statistics:
+- Mean: 29.7 years
+- Median: 28.0 years
+- Std Dev: 14.5 years
+- Min: 0.4 years
+- Max: 80.0 years
+

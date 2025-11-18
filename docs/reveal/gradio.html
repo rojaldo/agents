@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gradio - Interfaz de Usuario para Modelos ML</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/theme/white.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-light.min.css">
+
+    <style>
+        .reveal { text-align: left; color: #555555; }
+        .reveal section { text-align: left; padding: 40px; display: flex; flex-direction: column; justify-content: flex-start; }
+        .reveal h1, .reveal h2, .reveal h3 { text-transform: none; text-align: left; color: #555555; }
+
+        /* Encabezados */
+        .reveal h1 { font-size: 1.05em; margin-bottom: 0.5em; }
+        .reveal h2 { font-size: 1em; margin-bottom: 0.5em; }
+        .reveal h3 { font-size: 0.75em; margin-bottom: 0.3em; }
+
+        /* Párrafos y énfasis */
+        .reveal p { font-size: 0.6em; margin: 0.3em 0; color: #555555; }
+        .reveal strong { font-size: 1em; font-weight: bold; }
+
+        /* Código */
+        .reveal pre { background: #f8f8f8; border: 1px solid #ddd; width: 100%; padding: 0.5em; margin: 0.5em 0; }
+        .reveal pre code { font-size: 0.65em; color: #555555; line-height: 1.3; }
+
+        /* Listas y elementos */
+        .reveal ul { font-size: 0.55em; text-align: left; margin-left: 0.5em; color: #555555; }
+        .reveal li { margin: 0.3em 0; color: #555555; }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+<!-- Slide 1: Portada -->
+<section>
+    <h1>Gradio</h1>
+    <p><strong>Interfaz de Usuario para Modelos de Machine Learning</strong></p>
+    <p>Crea interfaces de chat e interactivas sin experiencia en frontend</p>
+</section>
+
+<!-- Slide 2: ¿Qué es Gradio? -->
+<section>
+    <h2>¿Qué es Gradio?</h2>
+    <ul>
+        <li><strong>Librería Python</strong> para crear interfaces web rápidamente</li>
+        <li>Diseñada específicamente para modelos de <strong>Machine Learning</strong> e IA</li>
+        <li>No requiere experiencia en <strong>frontend</strong> o <strong>web development</strong></li>
+        <li>Genera una <strong>URL compartible</strong> para mostrar el modelo</li>
+        <li>Perfecto para <strong>chatbots</strong>, agentes IA y aplicaciones conversacionales</li>
+    </ul>
+</section>
+
+<!-- Slide 3: Características principales -->
+<section>
+    <h2>Características Principales</h2>
+    <ul>
+        <li><strong>Fácil de usar:</strong> Solo necesitas Python, sin HTML/CSS/JavaScript</li>
+        <li><strong>Chatbot nativo:</strong> Componente gr.Chatbot para interfaces conversacionales</li>
+        <li><strong>Múltiples entrada/salida:</strong> Texto, imágenes, audio, video, datos</li>
+        <li><strong>Compartible:</strong> Genera links públicos temporales o permanentes</li>
+        <li><strong>Autenticación:</strong> Protege con contraseña si es necesario</li>
+        <li><strong>Deploy en HF Spaces:</strong> Un click para publicar</li>
+    </ul>
+</section>
+
+<!-- Slide 4: Historia y Contexto -->
+<section>
+    <h2>Historia y Contexto</h2>
+    <ul>
+        <li>Creado por <strong>Abubakar Abid</strong> en 2020</li>
+        <li>Parte del ecosistema de <strong>Hugging Face</strong></li>
+        <li>Más de <strong>1 millón de usuarios</strong> activos</li>
+        <li>Utilizado por investigadores, empresas y startups</li>
+        <li>Open source bajo licencia Apache 2.0</li>
+    </ul>
+</section>
+
+<!-- Slide 5: Comparativa con alternativas -->
+<section>
+    <h2>Gradio vs Streamlit vs Panel</h2>
+    <ul>
+        <li><strong>Gradio:</strong> Optimizado para ML, chatbots, muy simple</li>
+        <li><strong>Streamlit:</strong> Más flexible, mejor para dashboards, código más complejo</li>
+        <li><strong>Panel:</strong> Muy poderoso, pero curva de aprendizaje mayor</li>
+        <li><strong>Conclusión:</strong> Gradio es ideal para prototipar rápidamente</li>
+    </ul>
+</section>
+
+<!-- Slide 6: Instalación y Setup -->
+<section>
+    <h2>Instalación</h2>
+    <pre><code class="language-bash">pip install gradio</code></pre>
+    <p><strong>Verificar instalación:</strong></p>
+    <pre><code class="language-python">import gradio as gr
+print(gr.__version__)</code></pre>
+    <p><strong>Requisitos:</strong> Python 3.8+, pip</p>
+    <p><strong>Opcional - Para Ollama:</strong> requests library</p>
+    <pre><code class="language-bash">pip install gradio requests</code></pre>
+</section>
+
+<!-- Slide 7: Flujo básico -->
+<section>
+    <h2>Flujo Básico de Gradio</h2>
+    <ul>
+        <li><strong>1. Definir función:</strong> Una función Python que procesa inputs</li>
+        <li><strong>2. Crear interfaz:</strong> Usar gr.Blocks() para layouts complejos</li>
+        <li><strong>3. Agregar componentes:</strong> Inputs y outputs (Textbox, Image, etc.)</li>
+        <li><strong>4. Conectar eventos:</strong> Vincular función a botones/eventos</li>
+        <li><strong>5. Lanzar:</strong> Llamar a .launch() para iniciar servidor</li>
+    </ul>
+</section>
+
+<!-- Slide 8: Interface vs Blocks -->
+<section>
+    <h2>gr.Interface vs gr.Blocks</h2>
+    <ul>
+        <li><strong>gr.Interface:</strong> Simple y rápido, para casos básicos</li>
+        <li><strong>gr.Blocks:</strong> Control total, layouts complejos, múltiples funciones</li>
+        <li>Interface es muy limitado: una función, inputs/outputs lineales</li>
+        <li>Blocks permite: Row, Column, Tab, lógica condicional, estado</li>
+        <li>Para chatbots: <strong>SIEMPRE usar Blocks</strong></li>
+    </ul>
+</section>
+
+<!-- Slide 9: Componente Textbox -->
+<section>
+    <h2>Componente 1: Textbox</h2>
+    <p><strong>Campo de texto para entrada de usuario</strong></p>
+    <pre><code class="language-python">import gradio as gr
+
+def procesar_texto(texto):
+    return f"Has escrito: {texto.upper()}"
+
+with gr.Blocks() as demo:
+    entrada = gr.Textbox(
+        label="Mensaje",
+        placeholder="Escribe aquí...",
+        lines=3,
+        max_length=500
+    )
+    salida = gr.Textbox(label="Respuesta", interactive=False)
+    btn = gr.Button("Procesar")
+    btn.click(procesar_texto, inputs=entrada, outputs=salida)
+
+demo.launch()</code></pre>
+</section>
+
+<!-- Slide 10: Componente Image -->
+<section>
+    <h2>Componente 2: Image</h2>
+    <p><strong>Carga y procesamiento de imágenes</strong></p>
+    <pre><code class="language-python">import gradio as gr
+import numpy as np
+
+def analizar_imagen(imagen):
+    if imagen is None:
+        return "Por favor, sube una imagen"
+    return f"Imagen procesada: {imagen.shape}"
+
+with gr.Blocks() as demo:
+    img_entrada = gr.Image(
+        label="Sube una imagen",
+        type="numpy",
+        sources=["upload", "webcam"]
+    )
+    resultado = gr.Textbox(label="Análisis")
+    btn = gr.Button("Analizar")
+    btn.click(analizar_imagen, inputs=img_entrada, outputs=resultado)
+
+demo.launch()</code></pre>
+</section>
+
+<!-- Slide 11: Componente Audio -->
+<section>
+    <h2>Componente 3: Audio</h2>
+    <p><strong>Captura y procesamiento de audio</strong></p>
+    <pre><code class="language-python">import gradio as gr
+
+def transcribir_audio(audio):
+    if audio is None:
+        return "No hay audio"
+    return "Audio procesado exitosamente"
+
+with gr.Blocks() as demo:
+    audio_entrada = gr.Audio(
+        label="Grabación de audio",
+        sources=["microphone", "upload"],
+        type="filepath"
+    )
+    resultado = gr.Textbox(label="Transcripción")
+    btn = gr.Button("Transcribir")
+    btn.click(transcribir_audio, inputs=audio_entrada, outputs=resultado)
+
+demo.launch()</code></pre>
+</section>
+
+<!-- Slide 12: Componente Dropdown -->
+<section>
+    <h2>Componente 4: Dropdown</h2>
+    <p><strong>Selector de opciones predefinidas</strong></p>
+    <pre><code class="language-python">import gradio as gr
+
+def seleccionar_idioma(idioma, texto):
+    return f"Traduciendo a {idioma}: {texto}"
+
+with gr.Blocks() as demo:
+    texto = gr.Textbox(label="Texto")
+    idioma = gr.Dropdown(
+        label="Idioma destino",
+        choices=["Español", "Inglés", "Francés", "Alemán"],
+        value="Inglés"
+    )
+    resultado = gr.Textbox(label="Resultado")
+    btn = gr.Button("Traducir")
+    btn.click(seleccionar_idioma, inputs=[idioma, texto], outputs=resultado)
+
+demo.launch()</code></pre>
+</section>
+
+<!-- Slide 13: Componente Slider -->
+<section>
+    <h2>Componente 5: Slider</h2>
+    <p><strong>Control numérico con valores continuo/discretos</strong></p>
+    <pre><code class="language-python">import gradio as gr
+
+def ajustar_temperatura(temperatura, prompt):
+    return f"Generando con T={temperatura}: {prompt}"
+
+with gr.Blocks() as demo:
+    prompt = gr.Textbox(label="Prompt")
+    temperatura = gr.Slider(
+        label="Temperatura (creatividad)",
+        minimum=0,
+        maximum=2,
+        value=0.7,
+        step=0.1
+    )
+    resultado = gr.Textbox(label="Resultado")
+    btn = gr.Button("Generar")
+    btn.click(ajustar_temperatura, inputs=[temperatura, prompt], outputs=resultado)
+
+demo.launch()</code></pre>
+</section>
+
+<!-- Slide 14: Componente Checkbox -->
+<section>
+    <h2>Componente 6: Checkbox</h2>
+    <p><strong>Casillas de selección booleana</strong></p>
+    <pre><code class="language-python">import gradio as gr
+
+def procesar_con_opciones(texto, agregar_puntuacion, convertir_mayus):
+    resultado = texto
+    if agregar_puntuacion:
+        resultado += "."
+    if convertir_mayus:
+        resultado = resultado.upper()
+    return resultado
+
+with gr.Blocks() as demo:
+    texto = gr.Textbox(label="Texto")
+    check_punc = gr.Checkbox(label="Agregar puntuación", value=False)
+    check_mayus = gr.Checkbox(label="Convertir a mayúsculas", value=False)
+    resultado = gr.Textbox(label="Resultado")
+    btn = gr.Button("Procesar")
+    btn.click(procesar_con_opciones, inputs=[texto, check_punc, check_mayus], outputs=resultado)
+
+demo.launch()</code></pre>
+</section>
+
+<!-- Slide 15: Componente File -->
+<section>
+    <h2>Componente 7: File</h2>
+    <p><strong>Carga de archivos (PDF, TXT, CSV, etc.)</strong></p>
+    <pre><code class="language-python">import gradio as gr
+
+def procesar_archivo(archivo):
+    if archivo is None:
+        return "No hay archivo"
+    nombre = archivo.name
+    return f"Archivo procesado: {nombre}"
+
+with gr.Blocks() as demo:
+    archivo = gr.File(
+        label="Sube un archivo",
+        file_count="single",
+        file_types=[".pdf", ".txt", ".csv"]
+    )
+    resultado = gr.Textbox(label="Resultado")
+    btn = gr.Button("Procesar")
+    btn.click(procesar_archivo, inputs=archivo, outputs=resultado)
+
+demo.launch()</code></pre>
+</section>
+
+<!-- Slide 16: Componente Chatbot -->
+<section>
+    <h2>Componente 8: Chatbot (Principal)</h2>
+    <p><strong>Interfaz conversacional nativa de Gradio</strong></p>
+    <pre><code class="language-python">import gradio as gr
+
+def responder(mensaje, historial):
+    historial = historial or []
+    respuesta = f"Echo: {mensaje}"
+    historial.append([mensaje, respuesta])
+    return historial, ""
+
+with gr.Blocks() as demo:
+    gr.Markdown("# Chatbot de IA")
+    chatbot = gr.Chatbot(label="Conversación", height=400)
+    entrada = gr.Textbox(placeholder="Escribe tu pregunta...", label="Tu mensaje")
+    btn = gr.Button("Enviar")
+
+    btn.click(responder, inputs=[entrada, chatbot], outputs=[chatbot, entrada])
+    entrada.submit(responder, inputs=[entrada, chatbot], outputs=[chatbot, entrada])
+
+demo.launch()</code></pre>
+</section>
+
+<!-- Slide 17: Componentes de Salida -->
+<section>
+    <h2>Componentes de Salida</h2>
+    <ul>
+        <li><strong>gr.Textbox():</strong> Texto resultado</li>
+        <li><strong>gr.Image():</strong> Mostrar/descargar imagen</li>
+        <li><strong>gr.Plot():</strong> Gráficos Matplotlib/Plotly</li>
+        <li><strong>gr.Dataframe():</strong> Tablas interactivas</li>
+        <li><strong>gr.JSON():</strong> Visualizar JSON</li>
+        <li><strong>gr.HTML():</strong> Contenido HTML personalizado</li>
+        <li><strong>gr.Video():</strong> Reproducción de video</li>
+        <li><strong>gr.Markdown():</strong> Contenido markdown formateado</li>
+    </ul>
+</section>
+
+<!-- Slide 18: Blocks - Layout -->
+<section>
+    <h2>Blocks: Organizando Componentes</h2>
+    <p><strong>Usa Row, Column y Tab para organizar tu interfaz</strong></p>
+    <pre><code class="language-python">with gr.Blocks() as demo:
+    gr.Markdown("# Mi Aplicación")
+
+    with gr.Row():
+        with gr.Column(scale=1):
+            entrada = gr.Textbox(label="Input")
+        with gr.Column(scale=2):
+            salida = gr.Textbox(label="Output")
+
+    with gr.Tabs():
+        with gr.TabItem("Chat"):
+            chatbot = gr.Chatbot()
+        with gr.TabItem("Análisis"):
+            grafico = gr.Plot()
+
+    btn = gr.Button("Procesar")
+    btn.click(funcion, inputs=entrada, outputs=salida)
+
+demo.launch()</code></pre>
+</section>
+
+<!-- Slide 19: Chat Básico -->
+<section>
+    <h2>Ejemplo: Chatbot Básico</h2>
+    <pre><code class="language-python">import gradio as gr
+
+def chat_basico(mensaje, historial):
+    historial = historial or []
+    if not mensaje:
+        raise gr.Error("Escribe un mensaje")
+
+    respuesta = f"Recibido: {mensaje}"
+    historial.append([mensaje, respuesta])
+    return historial, ""
+
+with gr.Blocks(title="Chat Básico") as demo:
+    gr.Markdown("# Chatbot Simple")
+    chatbot = gr.Chatbot(label="Chat")
+    entrada = gr.Textbox(label="Tu mensaje", lines=2)
+    enviar = gr.Button("Enviar")
+
+    enviar.click(chat_basico, inputs=[entrada, chatbot], outputs=[chatbot, entrada])
+    entrada.submit(chat_basico, inputs=[entrada, chatbot], outputs=[chatbot, entrada])
+
+demo.launch()</code></pre>
+</section>
+
+<!-- Slide 20: Chat Avanzado con Estado -->
+<section>
+    <h2>Chat Avanzado con Control de Parámetros</h2>
+    <pre><code class="language-python">import gradio as gr
+
+def chat_avanzado(mensaje, historial, temperatura, top_p):
+    historial = historial or []
+    if not mensaje:
+        raise gr.Error("Escribe un mensaje")
+
+    respuesta = f"[T={temperatura}, P={top_p}] {mensaje}"
+    historial.append([mensaje, respuesta])
+    return historial, ""
+
+with gr.Blocks(title="Chat Avanzado") as demo:
+    gr.Markdown("# Chatbot Inteligente")
+
+    with gr.Row():
+        with gr.Column(scale=3):
+            chatbot = gr.Chatbot(label="Chat")
+        with gr.Column(scale=1):
+            temp = gr.Slider(0, 1, value=0.7, label="Temperatura")
+            top_p = gr.Slider(0, 1, value=0.9, label="Top P")
+
+    entrada = gr.Textbox(label="Mensaje", lines=2)
+    enviar = gr.Button("Enviar")
+
+    entrada.submit(chat_avanzado, inputs=[entrada, chatbot, temp, top_p], outputs=[chatbot, entrada])
+    enviar.click(chat_avanzado, inputs=[entrada, chatbot, temp, top_p], outputs=[chatbot, entrada])
+
+demo.launch()</code></pre>
+</section>
+
+<!-- Slide 21: Validación de entrada -->
+<section>
+    <h2>Validación de Entrada en Chat</h2>
+    <pre><code class="language-python">import gradio as gr
+
+def chat_validado(mensaje, historial):
+    historial = historial or []
+
+    # Validaciones
+    if not mensaje or len(mensaje.strip()) == 0:
+        raise gr.Error("El mensaje no puede estar vacío")
+
+    if len(mensaje) > 2000:
+        raise gr.Error("El mensaje es demasiado largo (max 2000)")
+
+    if len(mensaje) < 3:
+        raise gr.Error("El mensaje es muy corto")
+
+    respuesta = f"Procesado: {mensaje}"
+    historial.append([mensaje, respuesta])
+    return historial, ""
+
+with gr.Blocks() as demo:
+    chatbot = gr.Chatbot()
+    entrada = gr.Textbox(label="Mensaje", lines=2)
+    enviar = gr.Button("Enviar")
+
+    enviar.click(chat_validado, inputs=[entrada, chatbot], outputs=[chatbot, entrada])
+
+demo.launch()</code></pre>
+</section>
+
+<!-- Slide 22: Chat Multimodal -->
+<section>
+    <h2>Chat con Múltiples Inputs (Multimodal)</h2>
+    <pre><code class="language-python">import gradio as gr
+
+def chat_multimodal(mensaje, imagen, audio, idioma, historial):
+    historial = historial or []
+
+    entrada_desc = f"Mensaje: {mensaje}"
+    if imagen is not None:
+        entrada_desc += " + Imagen"
+    if audio is not None:
+        entrada_desc += " + Audio"
+
+    respuesta = f"Procesado en {idioma}: {entrada_desc}"
+    historial.append([mensaje, respuesta])
+    return historial, "", None, None, "Español"
+
+with gr.Blocks() as demo:
+    with gr.Row():
+        with gr.Column(scale=2):
+            chatbot = gr.Chatbot(label="Chat")
+        with gr.Column(scale=1):
+            imagen = gr.Image(label="Imagen")
+            audio = gr.Audio(label="Audio")
+
+    mensaje = gr.Textbox(label="Mensaje")
+    idioma = gr.Dropdown(["Español", "Inglés", "Francés"], value="Español", label="Idioma")
+    enviar = gr.Button("Enviar")
+
+    enviar.click(chat_multimodal, inputs=[mensaje, imagen, audio, idioma, chatbot], outputs=[chatbot, mensaje, imagen, audio, idioma])
+
+demo.launch()</code></pre>
+</section>
+
+<!-- Slide 23: Markdown y HTML -->
+<section>
+    <h2>Componentes de Salida: Markdown y HTML</h2>
+    <pre><code class="language-python">import gradio as gr
+
+def generar_respuesta_formateada(prompt):
+    html = f"""
+    <div style="background: #f0f0f0; padding: 10px; border-radius: 5px;">
+        <h3>Respuesta a:</h3>
+        <p>{prompt}</p>
+    </div>
+    """
+    markdown = f"## Procesando\n\n**Texto:** {prompt}"
+    return html, markdown
+
+with gr.Blocks() as demo:
+    entrada = gr.Textbox(label="Prompt")
+    salida_html = gr.HTML(label="HTML")
+    salida_md = gr.Markdown(label="Markdown")
+    btn = gr.Button("Generar")
+
+    btn.click(generar_respuesta_formateada, inputs=entrada, outputs=[salida_html, salida_md])
+
+demo.launch()</code></pre>
+</section>
+
+<!-- Slide 24: Ejemplo Completo - Chat con Ollama Mistral -->
+<section>
+    <h2>Ejemplo Completo: Chat con Ollama Mistral</h2>
+    <pre><code class="language-python">import gradio as gr
+import requests
+
+def chat_ollama(mensaje, historial, temperatura):
+    historial = historial or []
+
+    if not mensaje:
+        raise gr.Error("Escribe un mensaje")
+
+    try:
+        response = requests.post(
+            "http://localhost:11434/api/generate",
+            json={
+                "model": "mistral",
+                "prompt": mensaje,
+                "temperature": temperatura,
+                "stream": False
+            },
+            timeout=60
+        )
+        respuesta = response.json()["response"]
+    except Exception as e:
+        respuesta = f"Error: {str(e)}"
+
+    historial.append([mensaje, respuesta])
+    return historial, ""
+
+with gr.Blocks(title="Chat Mistral") as demo:
+    gr.Markdown("# Chat con Ollama Mistral")
+    gr.Markdown("Ejecuta: `ollama run mistral`")
+
+    with gr.Row():
+        with gr.Column(scale=4):
+            chatbot = gr.Chatbot(label="Conversación")
+        with gr.Column(scale=1):
+            temp = gr.Slider(0, 1, value=0.7, label="Temperatura")
+
+    entrada = gr.Textbox(placeholder="Escribe aquí...", label="Tu mensaje", lines=2)
+    enviar = gr.Button("Enviar", variant="primary")
+
+    entrada.submit(chat_ollama, inputs=[entrada, chatbot, temp], outputs=[chatbot, entrada])
+    enviar.click(chat_ollama, inputs=[entrada, chatbot, temp], outputs=[chatbot, entrada])
+
+demo.launch(share=True)</code></pre>
+</section>
+
+<!-- Slide 25: Ollama - Instalación y Setup -->
+<section>
+    <h2>Ollama: Instalación y Configuración</h2>
+    <ul>
+        <li><strong>Descargar Ollama:</strong> https://ollama.ai</li>
+        <li><strong>Instalar:</strong> Ejecutar instalador para tu SO</li>
+        <li><strong>Ejecutar Mistral:</strong> <code>ollama run mistral</code></li>
+        <li><strong>API por defecto:</strong> http://localhost:11434</li>
+        <li><strong>Modelos disponibles:</strong> mistral, llama2, neural-chat, etc.</li>
+    </ul>
+    <p><strong>Verificar que funciona:</strong></p>
+    <pre><code class="language-bash">curl http://localhost:11434/api/generate -d '{"model":"mistral","prompt":"Hola"}'</code></pre>
+</section>
+
+<!-- Slide 26: Eventos y callbacks -->
+<section>
+    <h2>Eventos Útiles para Chat</h2>
+    <ul>
+        <li><strong>.click():</strong> Al presionar un botón</li>
+        <li><strong>.submit():</strong> Al enviar formulario (Enter en textbox)</li>
+        <li><strong>.change():</strong> Al cambiar valor en un componente</li>
+        <li><strong>.focus():</strong> Al enfocar un campo</li>
+        <li><strong>.blur():</strong> Al desenfocarse de un campo</li>
+    </ul>
+    <pre><code class="language-python"># Combinar eventos para mejor UX
+entrada.submit(chat, inputs=[entrada, chatbot], outputs=[chatbot, entrada])
+enviar.click(chat, inputs=[entrada, chatbot], outputs=[chatbot, entrada])
+
+# Limpiar después de enviar
+entrada.submit(lambda: "", outputs=entrada)</code></pre>
+</section>
+
+<!-- Slide 27: Estado y Contexto -->
+<section>
+    <h2>Manejo de Estado en Gradio</h2>
+    <p><strong>gr.State() para mantener datos entre llamadas</strong></p>
+    <pre><code class="language-python">import gradio as gr
+
+def procesar_con_contexto(mensaje, contexto_state):
+    contexto = contexto_state or {}
+    contexto['ultimo_mensaje'] = mensaje
+    contexto['contador'] = contexto.get('contador', 0) + 1
+
+    respuesta = f"Mensaje {contexto['contador']}: {mensaje}"
+    return respuesta, contexto
+
+with gr.Blocks() as demo:
+    contexto = gr.State({})
+
+    entrada = gr.Textbox(label="Mensaje")
+    salida = gr.Textbox(label="Respuesta", interactive=False)
+    btn = gr.Button("Procesar")
+
+    btn.click(procesar_con_contexto, inputs=[entrada, contexto], outputs=[salida, contexto])
+
+demo.launch()</code></pre>
+</section>
+
+<!-- Slide 28: Deploy en Hugging Face Spaces -->
+<section>
+    <h2>Deploy en Hugging Face Spaces</h2>
+    <ul>
+        <li>Crear repositorio en <strong>Hugging Face Spaces</strong></li>
+        <li>Seleccionar <strong>Gradio</strong> como SDK</li>
+        <li>Subir archivo <strong>app.py</strong> con código Gradio</li>
+        <li>Incluir <strong>requirements.txt</strong> con dependencias</li>
+        <li>Espacios se actualiza automáticamente en cada push</li>
+        <li>URL pública permanente para compartir</li>
+    </ul>
+</section>
+
+<!-- Slide 29: Estructura para HF Spaces -->
+<section>
+    <h2>Estructura para Hugging Face Spaces</h2>
+    <pre><code class="language-text">app.py
+requirements.txt
+README.md</code></pre>
+    <p><strong>app.py:</strong> Tu código Gradio</p>
+    <p><strong>requirements.txt:</strong></p>
+    <pre><code class="language-text">gradio==4.20.0
+requests==2.31.0
+transformers==4.35.0</code></pre>
+    <p><strong>README.md:</strong> Descripción del proyecto</p>
+</section>
+
+<!-- Slide 30: Seguridad en Gradio -->
+<section>
+    <h2>Seguridad y Autenticación</h2>
+    <ul>
+        <li><strong>Protección con contraseña:</strong> demo.launch(auth=("usuario", "password"))</li>
+        <li><strong>Usuarios múltiples:</strong> auth=[("user1", "pass1"), ("user2", "pass2")]</li>
+        <li><strong>Validación de entrada:</strong> Siempre validar datos del usuario</li>
+        <li><strong>Manejo de errores:</strong> Usar gr.Error() para mensajes claros</li>
+        <li><strong>No guardes datos sensibles:</strong> En Spaces públicos</li>
+    </ul>
+</section>
+
+<!-- Slide 31: Protección con Contraseña -->
+<section>
+    <h2>Ejemplo: Chat Protegido</h2>
+    <pre><code class="language-python">import gradio as gr
+
+def chat_seguro(mensaje, historial):
+    historial = historial or []
+    respuesta = f"Procesado: {mensaje}"
+    historial.append([mensaje, respuesta])
+    return historial, ""
+
+with gr.Blocks(title="Chat Seguro") as demo:
+    gr.Markdown("# Chat Privado con Autenticación")
+    chatbot = gr.Chatbot(label="Chat")
+    entrada = gr.Textbox(label="Mensaje", lines=2)
+    enviar = gr.Button("Enviar")
+
+    enviar.click(chat_seguro, inputs=[entrada, chatbot], outputs=[chatbot, entrada])
+    entrada.submit(chat_seguro, inputs=[entrada, chatbot], outputs=[chatbot, entrada])
+
+# Proteger con usuario y contraseña
+demo.launch(auth=("admin", "password123"))</code></pre>
+</section>
+
+<!-- Slide 32: Temas y Personalización -->
+<section>
+    <h2>Temas Personalizados</h2>
+    <pre><code class="language-python">from gradio.themes import Soft, Monochrome
+
+with gr.Blocks(theme=Soft()) as demo:
+    # Tu código aquí
+    pass
+
+# O crear tema personalizado
+custom_theme = gr.themes.Base().set(
+    primary_hue=gr.themes.colors.blue,
+    secondary_hue=gr.themes.colors.cyan,
+    neutral_hue=gr.themes.colors.gray
+)</code></pre>
+    <p><strong>Temas predefinidos:</strong> Default, Soft, Monochrome, Glass, Ocean</p>
+</section>
+
+<!-- Slide 33: CSS Personalizado -->
+<section>
+    <h2>CSS Personalizado en Gradio</h2>
+    <pre><code class="language-python">import gradio as gr
+
+css = """
+.chatbot-container { border-radius: 10px; }
+.custom-button { background-color: #ff6b6b; }
+"""
+
+with gr.Blocks(css=css, title="Chat Personalizado") as demo:
+    gr.Markdown("# Chat Personalizado")
+    chatbot = gr.Chatbot(elem_classes="chatbot-container")
+    entrada = gr.Textbox(label="Mensaje")
+    enviar = gr.Button("Enviar", elem_classes="custom-button")
+
+demo.launch()</code></pre>
+</section>
+
+<!-- Slide 34: Mejores prácticas -->
+<section>
+    <h2>Mejores Prácticas para Chat</h2>
+    <ul>
+        <li><strong>Validar entrada:</strong> Largo máximo, caracteres especiales</li>
+        <li><strong>Manejar errores:</strong> Usar gr.Error() para mensajes claros</li>
+        <li><strong>Cargar modelos una sola vez:</strong> Fuera de la función (global)</li>
+        <li><strong>Mantener contexto:</strong> Guardar historial en estado o base de datos</li>
+        <li><strong>Documentar interfaz:</strong> Usar gr.Markdown con instrucciones</li>
+        <li><strong>Probar localmente:</strong> Antes de deployr en Spaces</li>
+        <li><strong>Logs y monitoreo:</strong> Registrar uso para debugging</li>
+    </ul>
+</section>
+
+<!-- Slide 35: Patrones comunes -->
+<section>
+    <h2>Patrones Comunes en Chat</h2>
+    <ul>
+        <li><strong>Limpiar entrada después de enviar:</strong> Mejorar UX</li>
+        <li><strong>Deshabilitar botón durante procesamiento:</strong> Evitar múltiples envíos</li>
+        <li><strong>Mostrar indicador de carga:</strong> Mejorar experiencia</li>
+        <li><strong>Guardar historial en archivo:</strong> Para auditoría</li>
+        <li><strong>Exportar conversación:</strong> JSON, TXT, PDF</li>
+    </ul>
+</section>
+
+<!-- Slide 36: Debugging y Testing -->
+<section>
+    <h2>Debugging en Gradio</h2>
+    <ul>
+        <li>Ejecutar en modo debug: <code>python app.py</code></li>
+        <li>Ver logs en la consola</li>
+        <li>Usar print() para debuggear funciones</li>
+        <li>Validar inputs antes de procesar</li>
+        <li>Testear localmente antes de Spaces</li>
+        <li>Ver errores en la interfaz con gr.Error()</li>
+    </ul>
+    <pre><code class="language-python">import logging
+logging.basicConfig(level=logging.DEBUG)</code></pre>
+</section>
+
+<!-- Slide 37: Performance y Optimización -->
+<section>
+    <h2>Optimización de Performance</h2>
+    <ul>
+        <li><strong>Cargar modelos una sola vez:</strong> Global scope</li>
+        <li><strong>Usar cache:</strong> Para resultados computacionalmente costosos</li>
+        <li><strong>Procesar en background:</strong> Para tareas largas</li>
+        <li><strong>Limitar tamaño de historial:</strong> Para evitar memory leaks</li>
+        <li><strong>Usar GPU si disponible:</strong> Para modelos grandes</li>
+    </ul>
+</section>
+
+<!-- Slide 38: Casos de Uso Reales -->
+<section>
+    <h2>Casos de Uso Reales</h2>
+    <ul>
+        <li><strong>Chatbots de soporte:</strong> Atención al cliente con IA</li>
+        <li><strong>Asistentes personales:</strong> Búsqueda RAG integrada</li>
+        <li><strong>Herramientas de análisis:</strong> Análisis de sentimientos, NER</li>
+        <li><strong>Generadores de contenido:</strong> Prompts, resúmenes, códigos</li>
+        <li><strong>Clasificadores:</strong> Spam, categorización, etc.</li>
+        <li><strong>Herramientas creativas:</strong> Generación de imágenes, audio</li>
+    </ul>
+</section>
+
+<!-- Slide 39: Limitaciones y Cuándo NO Usar Gradio -->
+<section>
+    <h2>Limitaciones a Considerar</h2>
+    <ul>
+        <li><strong>No es para producción a escala:</strong> Usa FastAPI/Flask para apps empresariales</li>
+        <li><strong>Customización limitada:</strong> No tan flexible como React/Vue</li>
+        <li><strong>Performance:</strong> No optimizado para miles de usuarios simultáneos</li>
+        <li><strong>Base de datos:</strong> No incluida, necesitas SQL/MongoDB</li>
+        <li><strong>Pero:</strong> Perfecto para prototipos, demos y herramientas internas</li>
+    </ul>
+</section>
+
+<!-- Slide 40: Alternativas y Comparación -->
+<section>
+    <h2>Alternativas a Gradio</h2>
+    <ul>
+        <li><strong>Streamlit:</strong> Más flexible, mejor para dashboards</li>
+        <li><strong>Panel (Bokeh):</strong> Muy poderoso pero curva de aprendizaje</li>
+        <li><strong>FastAPI + React:</strong> Máximo control, máxima complejidad</li>
+        <li><strong>Flask/Django:</strong> Backend tradicional con templates</li>
+    </ul>
+    <p><strong>Conclusión:</strong> Elige Gradio para rapidez, otros para control</p>
+</section>
+
+<!-- Slide 41: Recursos Útiles -->
+<section>
+    <h2>Recursos Útiles</h2>
+    <ul>
+        <li><strong>Docs oficiales:</strong> https://gradio.app/docs</li>
+        <li><strong>Ejemplos en HF Spaces:</strong> https://huggingface.co/spaces</li>
+        <li><strong>GitHub Gradio:</strong> https://github.com/gradio-app/gradio</li>
+        <li><strong>Discord comunidad:</strong> Soporte activo</li>
+        <li><strong>Ollama:</strong> https://ollama.ai</li>
+        <li><strong>Hugging Face Hub:</strong> https://huggingface.co</li>
+    </ul>
+</section>
+
+<!-- Slide 42: Tips y Trucos -->
+<section>
+    <h2>Tips y Trucos</h2>
+    <ul>
+        <li><strong>Usar .then():</strong> Para encadenar eventos</li>
+        <li><strong>Shared state:</strong> Compartir datos entre funciones</li>
+        <li><strong>Custom components:</strong> Crear componentes personalizados</li>
+        <li><strong>API endpoint:</strong> gr.Interface crea API REST automática</li>
+        <li><strong>Streaming:</strong> Para respuestas en tiempo real</li>
+    </ul>
+</section>
+
+<!-- Slide 43: Streaming en Gradio -->
+<section>
+    <h2>Streaming en Gradio (Respuestas en Tiempo Real)</h2>
+    <pre><code class="language-python">import gradio as gr
+
+def chat_streaming(mensaje, historial):
+    historial = historial or []
+    respuesta = ""
+
+    # Simular streaming
+    for palabra in mensaje.split():
+        respuesta += palabra + " "
+        yield historial + [[mensaje, respuesta]]
+
+with gr.Blocks() as demo:
+    chatbot = gr.Chatbot()
+    entrada = gr.Textbox(label="Mensaje")
+    enviar = gr.Button("Enviar")
+
+    enviar.click(chat_streaming, inputs=[entrada, chatbot], outputs=chatbot)
+
+demo.launch()</code></pre>
+</section>
+
+<!-- Slide 44: Conclusión -->
+<section>
+    <h2>Conclusión</h2>
+    <ul>
+        <li>Gradio es la forma más rápida de crear interfaces para ML</li>
+        <li>Perfecta para prototipos, demos y compartir modelos</li>
+        <li>Integración perfecta con Hugging Face Spaces y Ollama</li>
+        <li>Con solo Python puedes crear aplicaciones web profesionales</li>
+        <li>Ideal para investigadores y desarrolladores que no dominan frontend</li>
+        <li>Apoyada por la comunidad de Hugging Face</li>
+    </ul>
+    <p><strong>¡Ahora crea tu próximo chatbot de IA con Gradio!</strong></p>
+</section>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/plugin/highlight/highlight.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            transition: 'slide',
+            transitionSpeed: 'default',
+            controls: true,
+            progress: true,
+            center: false,
+            slideNumber: true
+        });
+
+        // Aplicar highlight.js a todo el código
+        document.querySelectorAll('pre code').forEach((el) => {
+            hljs.highlightElement(el);
+        });
+    </script>
+</body>
+</html>

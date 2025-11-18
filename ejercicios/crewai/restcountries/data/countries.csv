@@ -1,0 +1,13 @@
+name,population,area,region,subregion,capital,languages,timezones
+Spain,47560000,505990,Europe,Southern Europe,Madrid,1,2
+France,65480000,643801,Europe,Western Europe,Paris,1,1
+Germany,82408000,357022,Europe,Western Europe,Berlin,1,1
+Italy,58940000,301340,Europe,Southern Europe,Rome,1,1
+United Kingdom,66844000,242900,Europe,Northern Europe,London,1,1
+Japan,125100000,377975,Asia,Eastern Asia,Tokyo,1,1
+China,1425893465,9706961,Asia,Eastern Asia,Beijing,1,1
+India,1417173173,3287263,Asia,Southern Asia,New Delhi,2,1
+Brazil,217033000,8515767,Americas,South America,Brasília,1,4
+United States,331002651,9833520,Americas,North America,"Washington, D.C.",1,8
+Egypt,104124440,1002000,Africa,Northern Africa,Cairo,1,1
+Nigeria,223804632,923768,Africa,Western Africa,Abuja,1,1
