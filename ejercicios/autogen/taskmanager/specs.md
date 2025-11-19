@@ -1,0 +1,9 @@
+- haz un chatbot en gradio
+- la tarea del chatbot es gestionar una lista de tareas que tiene que estar visible en la interfaz
+- el chatbot tiene que permitir añadir, eliminar y listar tareas
+- usa crewai para gestionar la lógica del chatbot o autogen en funcion de lo que selecciones el usuario en un selector
+- el chatbot tiene que tener memoria para recordar las tareas añadidas o eliminadas
+- el chatbot tiene que usar un modelo local de ollama
+- el chatbot tiene que estar en español
+- el chatbot tiene que tener un tono divertido y amigable
+- el chatbot tiene que validar que las tareas no esten vacias al añadirlas
