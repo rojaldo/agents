@@ -1,0 +1,11 @@
+langchain
+langchain-community
+langchain-chroma
+langchain-ollama
+chromadb
+sentence-transformers
+rank_bm25
+ragas
+crewai
+crewai-tools
+pyautogen
