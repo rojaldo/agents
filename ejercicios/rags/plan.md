@@ -39,17 +39,17 @@ Este plan detalla una serie progresiva de ejemplos para dominar la creación de 
 *   **Stack**: LangChain (Agents) + Custom Tools.
 *   **Descripción**: Un agente con acceso a una herramienta de búsqueda. Si el usuario saluda, responde normal. Si pregunta por información específica del curso, invoca la herramienta de búsqueda.
 
-### 7. RAG con CrewAI
+### 7. Evaluación de RAG (RAGAS)
+*   **Concepto**: Medir la calidad de las respuestas (Fidelidad y Relevancia).
+*   **Stack**: RAGAS + LangChain.
+*   **Descripción**: Script que toma un dataset de prueba `(Pregunta, Respuesta_Esperada)`, ejecuta el pipeline RAG y calcula métricas de calidad.
+
+### 8. RAG con CrewAI
 *   **Concepto**: Agentes especializados colaborando con acceso a herramientas de búsqueda.
 *   **Stack**: CrewAI + LangChain Tool (Chroma).
 *   **Descripción**: Un equipo de agentes (Investigador y Redactor). El investigador usa una herramienta para buscar en la base de datos vectorial y el redactor compila la respuesta.
 
-### 8. RAG con AutoGen
+### 9. RAG con AutoGen
 *   **Concepto**: Conversación multi-agente con capacidades de recuperación.
 *   **Stack**: AutoGen + Function Calling (Tool).
 *   **Descripción**: Un sistema donde un `UserProxy` y un `Assistant` colaboran. El `Assistant` puede invocar una función `search_docs` para recuperar contexto antes de responder.
-
-### 9. Evaluación de RAG (RAGAS)
-*   **Concepto**: Medir la calidad de las respuestas (Fidelidad y Relevancia).
-*   **Stack**: RAGAS + LangChain.
-*   **Descripción**: Script que toma un dataset de prueba `(Pregunta, Respuesta_Esperada)`, ejecuta el pipeline RAG y calcula métricas de calidad.
