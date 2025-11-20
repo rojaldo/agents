@@ -9,141 +9,41 @@ TÍTULO PRELIMINAR
 
 Referencia: BOE-A-1978-31229 
 
-
 ÍNDICE 
 
-
 TÍTULO 1. De los derechos y deberes fundamentales.
-
-
 CAPÍTULO PRIMERO. De los españoles y lOS EXtanjerOsS.
-
-
 CAPÍTULO SEGUNDO. Derechos y libertades
-
-
-Sección 1.? De los derechos fundamentales y de las libertades públicas 
-
-
-Sección 2.*? De los derechos y deberes de los CiUdadanoS  
-
-
+Sección 1 De los derechos fundamentales y de las libertades públicas 
+Sección 2 De los derechos y deberes de los CiUdadanoS  
 CAPÍTULO TERCERO. De los principios rectores de la política social y eCONÓMICA. 
-
-
 CAPÍTULO CUARTO. De las garantías de las libertades y derechos fundamentales
-
 CAPÍTULO QUINTO. De la suspensión de los derechos y libertades
-
 TÍTULO Il. De la Corona
-
 CAPÍTULO SEGUNDO. De la elaboración de las leyeS.
-
 CAPÍTULO TERCERO. Delos Tratados Internacionales
-
 TÍTULO IV. Del Gobierno y de la Administración
-
 TÍTULO V. De las relaciones entre el Gobierno y las Cortes Generales
-
 TÍTULO VI. Del Poder Judicial
-
-TÍTULO VII. Economía y Hacienda 
-
-Página 1 
-
-
-24 
-
-
-25 
-
-
-BOLETÍN OFICIAL DEL ESTADO 
-LEGISLACIÓN CONSOLIDADA 
-
-
+TÍTULO VII. Economía y Hacienda  
 TÍTULO VIII. De la Organización Territorial del Estado 
-
-
 CAPÍTULO PRIMERO. Principios generales.          
-
-
 CAPÍTULO SEGUNDO. De la Administración Local 
-
-
 CAPÍTULO TERCERO. De las Comunidades Autónomas 
-
-
 TÍTULO IX. Del Tribunal Constitucional. 
-
-
 TÍTULO X. De la reforma Constitucional  
 
 
 DISPOSICIONES ADICIONALES  
-
-
 DISPOSICIONES TRANSITORIAS  
-
-
 DISPOSICION DEROGATORIA.  
-
-
 DISPOSICION FINAL 
 
 
-Página 2 
+PREÁMBULO
 
 
-28 
-
-
-28 
-
-
-28 
-
-
-29 
-
-
-35 
-
-
-36 
-
-
-37 
-
-
-37 
-
-
-39 
-
-
-39 
-
-
-BOLETÍN OFICIAL DEL ESTADO 
-LEGISLACIÓN CONSOLIDADA 
-
-
-TEXTO CONSOLIDADO 
-Última modificación: 17 de febrero de 2024 
-
-
-DON JUAN CARLOS |, REY DE ESPAÑA, A TODOS LOS QUE LA PRESENTE VIEREN 
-Y ENTENDIEREN, 
-
-SABED: QUE LAS CORTES HAN APROBADO Y EL PUEBLO ESPAÑOL RATIFICADO 
-LA SIGUIENTE CONSTITUCIÓN: 
-
-
-PREÁMBULO 
-
-
-La Nación española, deseando establecer la justicia, la libertad y la seguridad y 
+La Nacn española, deseando establecer la justicia, la libertad y la seguridad y 
 promover el bien de cuantos la integran, en uso de su soberanía, proclama su voluntad de: 
 
 
@@ -207,27 +107,16 @@ Comunidades Autónomas de acuerdo con sus Estatutos.
 cultural que será objeto de especial respeto y protección. 
 
 
-Página 3 
-
-
-BOLETÍN OFICIAL DEL ESTADO 
-LEGISLACIÓN CONSOLIDADA 
-
-
+ 
+ 
 Artículo 4. 
-
-
 1. La bandera de España está formada por tres franjas horizontales, roja, amarilla y roja, 
-siendo la amarilla de doble anchura que cada una de las rojas. 
+siendo la arilla de doble anchura que cada una de las rojas. 
 
 2. Los Estatutos podrán reconocer banderas y enseñas propias de las Comunidades 
-Autónomas. Estas se utilizarán junto a la bandera de España en sus edificios públicos y en 
+Autónoma Estas se utilizarán junto a la bandera de España en sus edificios públicos y en 
 sus actos oficiales. 
-
-
 Artículo 5. 
-
-
 La capital del Estado es la villa de Madrid. 
 
 
@@ -296,28 +185,16 @@ Derechos Humanos y los tratados y acuerdos internacionales sobre las mismas mate
 ratificados por España. 
 
 
-Página 4 
-
-
-BOLETÍN OFICIAL DEL ESTADO 
-LEGISLACIÓN CONSOLIDADA 
-
-
+ 
+ 
 CAPÍTULO PRIMERO 
-
-
 De los españoles y los extranjeros 
-
-
 Artículo 11. 
-
-
 1. La nacionalidad española se adquiere, se conserva y se pierde de acuerdo con lo 
-establecido por la ley. 
-
+establecido por la ley.
 2. Ningún español de origen podrá ser privado de su nacionalidad. 
 
-3. El Estado podrá concertar tratados de doble nacionalidad con los países 
+3. El Estado podrá coertar tratados de doble nacionalidad con los países 
 iberoamericanos o con aquellos que hayan tenido o tengan una particular vinculación con 
 España. En estos mismos países, aun cuando no reconozcan a sus ciudadanos un derecho 
 recíproco, podrán naturalizarse los españoles sin perder su nacionalidad de origen. 
@@ -387,25 +264,17 @@ creencias religiosas de la sociedad española y mantendrán las consiguientes re
 cooperación con la Iglesia Católica y las demás confesiones. 
 
 
-Página 5 
-
-
-BOLETÍN OFICIAL DEL ESTADO 
-LEGISLACIÓN CONSOLIDADA 
-
-
+ 
+ 
 Artículo 17. 
-
-
 1. Toda persona tiene derecho a la libertad y a la seguridad. Nadie puede ser privado de 
-su libertad, sino con la observancia de lo establecido en este artículo y en los casos y en la 
+su libertad, sino con la observancia de lo establecido en este artículo y en los casos y en l
 forma previstos en la ley. 
 
-2. La detención preventiva no podrá durar más del tiempo estrictamente necesario para 
+2.a detención preventiva no podrá durar más del tiempo estrictamente necesario para 
 la realización de las averiguaciones tendentes al esclarecimiento de los hechos, y, en todo 
-caso, en el plazo máximo de setenta y dos horas, el detenido deberá ser puesto en libertad o 
-a disposición de la autoridad judicial. 
-
+so, en el plazo máximo de setenta y dos horas, el detenido deberá ser puesto en libertad o 
+a disposición de la autoridad judicial.
 3. Toda persona detenida debe ser informada de forma inmediata, y de modo que le sea 
 comprensible, de sus derechos y de las razones de su detención, no pudiendo ser obligada a 
 declarar. Se garantiza la asistencia de abogado al detenido en las diligencias policiales y 
@@ -474,28 +343,20 @@ honor, a la intimidad, a la propia imagen y a la protección de la juventud y de
 información en virtud de resolución judicial. 
 
 
-Página 6 
-
-
-BOLETÍN OFICIAL DEL ESTADO 
-LEGISLACIÓN CONSOLIDADA 
-
-
+ 
+ 
 Artículo 21. 
-
-
 1. Se reconoce el derecho de reunión pacífica y sin armas. El ejercicio de este derecho 
-no necesitará autorización previa. 
-
+no necesitará autorización previa.
 2. En los casos de reuniones en lugares de tránsito público y manifestaciones se dará 
 comunicación previa a la autoridad, que sólo podrá prohibirlas cuando existan razones 
-fundadas de alteración del orden público, con peligro para personas o bienes. 
+fundadas de alteración del ordenúblico, con peligro para personas o bienes. 
 
 
-Artículo 22. 
+Artículo 22
 
 
-1. Se reconoce el derecho de asociación. 
+1. Se recoce el derecho de asociación. 
 
 2. Las asociaciones que persigan fines o utilicen medios tipificados como delito son 
 ilegales. 
@@ -563,28 +424,19 @@ Se prohíben los Tribunales de Honor en el ámbito de la Administración civil y
 organizaciones profesionales. 
 
 
-Página 7 
-
-
-BOLETÍN OFICIAL DEL ESTADO 
-LEGISLACIÓN CONSOLIDADA 
-
-
+ 
+ 
 Artículo 27. 
-
-
 1. Todos tienen el derecho a la educación. Se reconoce la libertad de enseñanza. 
 
-2. La educación tendrá por objeto el pleno desarrollo de la personalidad humana en el 
+2. La educaón tendrá por objeto el pleno desarrollo de la personalidad humana en el 
 respeto a los principios democráticos de convivencia y a los derechos y libertades 
-fundamentales. 
-
+fundamentales.
 3. Los poderes públicos garantizan el derecho que asiste a los padres para que sus hijos 
-reciban la formación religiosa y moral que esté de acuerdo con sus propias convicciones. 
-
+reciban la formación religiosa y moral que esté de acuerdo con sus propias convicciones.
 4. La enseñanza básica es obligatoria y gratuita. 
 
-5. Los poderes públicos garantizan el derecho de todos a la educación, mediante una 
+5. Los poderes públicos garantizan el derecho de todos a la educación, mediante un
 programación general de la enseñanza, con participación efectiva de todos los sectores 
 afectados y la creación de centros docentes. 
 
@@ -650,28 +502,21 @@ militar obligatorio, pudiendo imponer, en su caso, una prestación social sustit
 riesgo, catástrofe o calamidad pública. 
 
 
-Página 8 
-
-
-BOLETÍN OFICIAL DEL ESTADO 
-LEGISLACIÓN CONSOLIDADA 
-
-
+ 
+ 
 Artículo 31. 
-
-
 1. Todos contribuirán al sostenimiento de los gastos públicos de acuerdo con su 
 capacidad económica mediante un sistema tributario justo inspirado en los principios de 
-igualdad y progresividad que, en ningún caso, tendrá alcance confiscatorio. 
+igualdad y ogresividad que, en ningún caso, tendrá alcance confiscatorio. 
 
 2. El gasto público realizará una asignación equitativa de los recursos públicos, y su 
-programación y ejecución responderán a los criterios de eficiencia y economía. 
+programacn y ejecución responderán a los criterios de eficiencia y economía. 
 
 3. Sólo podrán establecerse prestaciones personales o patrimoniales de carácter público 
-con arreglo a la ley. 
+con arrlo a la ley. 
 
 
-Artículo 32. 
+Artíco 32. 
 
 
 1. El hombre y la mujer tienen derecho a contraer matrimonio con plena igualdad jurídica. 
@@ -741,26 +586,14 @@ poderes públicos garantizan y protegen su ejercicio y la defensa de la producti
 acuerdo con las exigencias de la economía general y, en su caso, de la planificación. 
 
 
-Página 9 
-
-
-BOLETÍN OFICIAL DEL ESTADO 
-LEGISLACIÓN CONSOLIDADA 
-
-
+ 
+ 
 CAPÍTULO TERCERO 
-
-
 De los principios rectores de la política social y económica 
-
-
 Artículo 39. 
-
-
-1. Los poderes públicos aseguran la protección social, económica y jurídica de la familia. 
-
+1. Los poderes públicos aseguran la protección social, económica y jurídica de la familia.
 2. Los poderes públicos aseguran, asimismo, la protección integral de los hijos, iguales 
-éstos ante la ley con independencia de su filiación, y de las madres, cualquiera que sea su 
+éstos ante la ley con independencia de su filiación, y de las madres, cualquiera que sea s
 estado civil. La ley posibilitará la investigación de la paternidad. 
 
 3. Los padres deben prestar asistencia de todo orden a los hijos habidos dentro o fuera 
@@ -832,25 +665,16 @@ Artículo 45.
 de la persona, así como el deber de conservarlo. 
 
 
-Página 10 
-
-
-BOLETÍN OFICIAL DEL ESTADO 
-LEGISLACIÓN CONSOLIDADA 
-
-
+ 
+ 
 2. Los poderes públicos velarán por la utilización racional de todos los recursos 
-naturales, con el fin de proteger y mejorar la calidad de la vida y defender y restaurar el 
+naturales, con el fin de proteger y mejorar la calidad de la vida y defender y restaurarl 
 medio ambiente, apoyándose en la indispensable solidaridad colectiva. 
 
-3. Para quienes violen lo dispuesto en el apartado anterior, en los términos que la ley fije 
+3. Para quienes violen lo dispuesto en el apartado anterior, en los términos que la lefije 
 se establecerán sanciones penales o, en su caso, administrativas, así como la obligación de 
-reparar el daño causado. 
-
-
+parar el daño causado. 
 Artículo 46. 
-
-
 Los poderes públicos garantizarán la conservación y promoverán el enriquecimiento del 
 patrimonio histórico, cultural y artístico de los pueblos de España y de los bienes que lo 
 integran, cualquiera que sea su régimen jurídico y su titularidad. La ley penal sancionará los 
@@ -921,28 +745,17 @@ intereses económicos que les sean propios. Su estructura interna y funcionamien
 ser democráticos. 
 
 
-Página 11 
-
-
-BOLETÍN OFICIAL DEL ESTADO 
-LEGISLACIÓN CONSOLIDADA 
-
-
+ 
+ 
 CAPÍTULO CUARTO 
-
-
 De las garantías de las libertades y derechos fundamentales 
-
-
 Artículo 53. 
-
-
 1. Los derechos y libertades reconocidos en el Capítulo segundo del presente Título 
 vinculan a todos los poderes públicos. Sólo por ley, que en todo caso deberá respetar su 
-contenido esencial, podrá regularse el ejercicio de tales derechos y libertades, que se 
+contenido encial, podrá regularse el ejercicio de tales derechos y libertades, que se 
 tutelarán de acuerdo con lo previsto en el artículo 161, 1, a). 
 
-2. Cualquier ciudadano podrá recabar la tutela de las libertades y derechos reconocidos 
+2. Cualqur ciudadano podrá recabar la tutela de las libertades y derechos reconocidos 
 en el artículo 14 y la Sección primera del Capítulo segundo ante los Tribunales ordinarios por 
 un procedimiento basado en los principios de preferencia y sumariedad y, en su caso, a 
 través del recurso de amparo ante el Tribunal Constitucional. Este último recurso será 
@@ -1007,26 +820,15 @@ histórica, y ejerce las funciones que le atribuyen expresamente la Constitució
 Corona. 
 
 
-Página 12 
-
-
-BOLETÍN OFICIAL DEL ESTADO 
-LEGISLACIÓN CONSOLIDADA 
-
-
+ 
+ 
 3. La persona del Rey es inviolable y no está sujeta a responsabilidad. Sus actos estarán 
-siempre refrendados en la forma establecida en el artículo 64, careciendo de validez sin 
-dicho refrendo, salvo lo dispuesto en el artículo 65, 2. 
-
-
+siempre refrendados en la forma establecida en el artículo 64, careciendo de validez sin icho refrendo, salvo lo dispuesto en el artículo 65, 2. 
 Artículo 57. 
-
-
 1. La Corona de España es hereditaria en los sucesores de S. M. Don Juan Carlos | de 
-Borbón, legítimo heredero de la dinastía histórica. La sucesión en el trono seguirá el orden 
-regular de primogenitura y representación, siendo preferida siempre la línea anterior a las 
+Borbón, legítimo heredero de la dinastía histórica. La sucesión en el trono seguirá el ordenregular de primogenitura y representación, siendo preferida siempre la línea anterior a las 
 posteriores; en la misma línea, el grado más próximo al más remoto; en el mismo grado, el 
-varón a la mujer, y en el mismo sexo, la persona de más edad a la de menos. 
+var a la mujer, y en el mismo sexo, la persona de más edad a la de menos. 
 
 2. El Príncipe heredero, desde su nacimiento o desde que se produzca el hecho que 
 origine el llamamiento, tendrá la dignidad de Príncipe de Asturias y los demás títulos 
@@ -1097,28 +899,20 @@ hacerse cargo de sus funciones, prestarán el mismo juramento, así como el de f
 Rey. 
 
 
-Página 13 
-
-
-BOLETÍN OFICIAL DEL ESTADO 
-LEGISLACIÓN CONSOLIDADA 
-
-
+ 
+ 
 Artículo 62. 
-Corresponde al Rey: 
+Corresponde al Rey:
 
-
-a) Sancionar y promulgar las leyes. 
-
+a) Sancionar y promulgar las leyes.
 b) Convocar y disolver las Cortes Generales y convocar elecciones en los términos 
-previstos en la Constitución. 
-
+previstos en la Constitución.
 c) Convocar a referéndum en los casos previstos en la Constitución. 
 
-d) Proponer el candidato a Presidente del Gobierno y, en su caso, nombrarlo, así como 
+d) Proponer el candidato a esidente del Gobierno y, en su caso, nombrarlo, así como 
 poner fin a sus funciones en los términos previstos en la Constitución. 
 
-e) Nombrar y separar a los miembros del Gobierno, a propuesta de su Presidente. 
+e) Nombrar y separar a lomiembros del Gobierno, a propuesta de su Presidente. 
 
 f) Expedir los decretos acordados en el Consejo de Ministros, conferir los empleos civiles 
 y militares y conceder honores y distinciones con arreglo a las leyes. 
@@ -1190,28 +984,16 @@ atribuya la Constitución.
 3. Las Cortes Generales son inviolables. 
 
 
-Página 14 
-
-
-BOLETÍN OFICIAL DEL ESTADO 
-LEGISLACIÓN CONSOLIDADA 
-
-
+ 
+ 
 Artículo 67. 
-
-
 1. Nadie podrá ser miembro de las dos Cámaras simultáneamente, ni acumular el acta 
-de una Asamblea de Comunidad Autónoma con la de Diputado al Congreso. 
-
+de una Asamblea de Comunidad Autónoma con la de Diputado al Congreso.
 2. Los miembros de las Cortes Generales no estarán ligados por mandato imperativo. 
 
-3. Las reuniones de Parlamentarios que se celebren sin convocatoria reglamentaria no 
+3. Las reuniones de Parlamentarios que se celebren sin convocatoriaeglamentaria no 
 vincularán a las Cámaras, y no podrán ejercer sus funciones ni ostentar sus privilegios. 
-
-
 Artículo 68. 
-
-
 1. El Congreso se compone de un mínimo de 300 y un máximo de 400 Diputados, 
 elegidos por sufragio universal, libre, igual, directo y secreto, en los términos que establezca 
 la ley. 
@@ -1285,28 +1067,19 @@ e) A los militares profesionales y miembros de las Fuerzas y Cuerpos de Segurida
 Policía en activo. 
 
 
-Página 15 
-
-
-BOLETÍN OFICIAL DEL ESTADO 
-LEGISLACIÓN CONSOLIDADA 
-
-
+ 
+ 
 f) A los miembros de las Juntas Electorales. 
-
-
 2. La validez de las actas y credenciales de los miembros de ambas Cámaras estará 
-sometida al control judicial, en los términos que establezca la ley electoral. 
+sometida al control judicial, en los términos que establezca la ley electoral.
 
-
-Artículo 71. 
-
+Artículo 71.
 
 1. Los Diputados y Senadores gozarán de inviolabilidad por las opiniones manifestadas 
-en el ejercicio de sus funciones. 
+en el ejercio de sus funciones. 
 
 2. Durante el período de su mandato los Diputados y Senadores gozarán asimismo de 
-inmunidad y sólo podrán ser detenidos en caso de flagrante delito. No podrán ser inculpados 
+inmuniday sólo podrán ser detenidos en caso de flagrante delito. No podrán ser inculpados 
 ni procesados sin la previa autorización de la Cámara respectiva. 
 
 3. En las causas contra Diputados y Senadores será competente la Sala de lo Penal del 
@@ -1375,27 +1148,20 @@ las cuestiones internacionales, las leyes orgánicas y de bases y los Presupuest
 del Estado. 
 
 
-Página 16 
-
-
-BOLETÍN OFICIAL DEL ESTADO 
-LEGISLACIÓN CONSOLIDADA 
-
-
+ 
+ 
 Artículo 76. 
-
-
 1. El Congreso y el Senado, y, en su caso, ambas Cámaras conjuntamente, podrán 
 nombrar Comisiones de investigación sobre cualquier asunto de interés público. Sus 
-conclusiones no serán vinculantes para los Tribunales, ni afectarán a las resoluciones 
+conclusioneno serán vinculantes para los Tribunales, ni afectarán a las resoluciones 
 judiciales, sin perjuicio de que el resultado de la investigación sea comunicado al Ministerio 
-Fiscal para el ejercicio, cuando proceda, de las acciones oportunas. 
+Fiscal pa el ejercicio, cuando proceda, de las acciones oportunas. 
 
 2. Será obligatorio comparecer a requerimiento de las Cámaras. La ley regulará las 
-sanciones que puedan imponerse por incumplimiento de esta obligación. 
+sancion que puedan imponerse por incumplimiento de esta obligación. 
 
 
-Artículo 77. 
+Artíco 77. 
 
 
 1. Las Cámaras pueden recibir peticiones individuales y colectivas, siempre por escrito, 
@@ -1463,26 +1229,18 @@ general y las demás previstas en la Constitución.
 absoluta del Congreso, en una votación final sobre el conjunto del proyecto. 
 
 
-Página 17 
-
-
-BOLETÍN OFICIAL DEL ESTADO 
-LEGISLACIÓN CONSOLIDADA 
-
-
+ 
+ 
 Artículo 82. 
-
-
 1. Las Cortes Generales podrán delegar en el Gobierno la potestad de dictar normas con 
-rango de ley sobre materias determinadas no incluidas en el artículo anterior. 
-
+rango de ley sobre materias determinadas no incluidas en el artículo anterior.
 2. La delegación legislativa deberá otorgarse mediante una ley de bases cuando su 
 objeto sea la formación de textos articulados o por una ley ordinaria cuando se trate de 
-refundir varios textos legales en uno solo. 
+refundir varios textos legales en uno solo
 
 3. La delegación legislativa habrá de otorgarse al Gobierno de forma expresa para 
-materia concreta y con fijación del plazo para su ejercicio. La delegación se agota por el uso 
-que de ella haga el Gobierno mediante la publicación de la norma correspondiente. No podrá 
+materia concreta y con fijación del plazpara su ejercicio. La delegación se agota por el uso 
+que de ella haga el Gobierno mediante la publicación de la norma correspondiente. No podr
 entenderse concedida de modo implícito o por tiempo indeterminado. Tampoco podrá 
 permitir la subdelegación a autoridades distintas del propio Gobierno. 
 
@@ -1551,27 +1309,19 @@ con la Constitución y los Reglamentos de las Cámaras.
 adopción de un proyecto de ley o remitir a la Mesa del Congreso una proposición de ley, 
 
 
-Página 18 
-
-
-BOLETÍN OFICIAL DEL ESTADO 
-LEGISLACIÓN CONSOLIDADA 
-
-
+ 
+ 
 delegando ante dicha Cámara un máximo de tres miembros de la Asamblea encargados de 
-su defensa. 
-
+su defensa.
 3. Una ley orgánica regulará las formas de ejercicio y requisitos de la iniciativa popular 
-para la presentación de proposiciones de ley. En todo caso se exigirán no menos de 500.000 
+para la psentación de proposiciones de ley. En todo caso se exigirán no menos de 500.000 
 firmas acreditadas. No procederá dicha iniciativa en materias propias de ley orgánica, 
-tributarias o de carácter internacional, ni en lo relativo a la prerrogativa de gracia. 
+tributarias o de carácter internacional, ni en lo relativo a la prerrogativa de gracia.
 
-
-Artículo 88. 
-
+Artículo 88.
 
 Los proyectos de ley serán aprobados en Consejo de Ministros, que los someterá al 
-Congreso, acompañados de una exposición de motivos y de los antecedentes necesarios 
+Congreso, ompañados de una exposición de motivos y de los antecedentes necesarios 
 para pronunciarse sobre ellos. 
 
 
@@ -1641,26 +1391,18 @@ garantía del cumplimiento de estos tratados y de las resoluciones emanadas de l
 organismos internacionales o supranacionales titulares de la cesión. 
 
 
-Página 19 
-
-
-BOLETÍN OFICIAL DEL ESTADO 
-LEGISLACIÓN CONSOLIDADA 
-
-
+ 
+ 
 Artículo 94. 
-
-
 1. La prestación del consentimiento del Estado para obligarse por medio de tratados o 
-convenios requerirá la previa autorización de las Cortes Generales, en los siguientes casos: 
+convenios requerirá la previa autorización de las Cortes Generales, en los siguientes casos
 
 
-a) Tratados de carácter político. 
+a) atados de carácter político. 
 
-b) Tratados o convenios de carácter militar. 
-
+b) Tratados o convenios de carácter militar.
 c) Tratados o convenios que afecten a la integridad territorial del Estado o a los derechos 
-y deberes fundamentales establecidos en el Título |. 
+y deberes fundamentales establecidos en elítulo |. 
 
 d) Tratados o convenios que impliquen obligaciones financieras para la Hacienda 
 Pública. 
@@ -1735,27 +1477,20 @@ representantes designados por los Grupos políticos con representación parlamen
 través del Presidente del Congreso, propondrá un candidato a la Presidencia del Gobierno. 
 
 
-Página 20 
-
-
-BOLETÍN OFICIAL DEL ESTADO 
-LEGISLACIÓN CONSOLIDADA 
-
-
+ 
+ 
 2. El candidato propuesto conforme a lo previsto en el apartado anterior expondrá ante el 
-Congreso de los Diputados el programa político del Gobierno que pretenda formar y 
-solicitará la confianza de la Cámara. 
+Congreso de los Diputados el programa político del Gobierno que pretenda formar y olicitará la confianza de la Cámara. 
 
-3. Si el Congreso de los Diputados, por el voto de la mayoría absoluta de sus miembros, 
-otorgare su confianza a dicho candidato, el Rey le nombrará Presidente. De no alcanzarse 
+3. Si el Congreso de los Diputados, por el voto de la mayoría absoluta de sus miembros,otorgare su confianza a dicho candidato, el Rey le nombrará Presidente. De no alcanzarse 
 dicha mayoría, se someterá la misma propuesta a nueva votación cuarenta y ocho horas 
-después de la anterior, y la confianza se entenderá otorgada si obtuviere la mayoría simple. 
+después de la anterior, y la confianza se entenderá otorgada si obtuviere la mayorísimple. 
 
 4. Si efectuadas las citadas votaciones no se otorgase la confianza para la investidura, 
-se tramitarán sucesivas propuestas en la forma prevista en los apartados anteriores. 
+se tmitarán sucesivas propuestas en la forma prevista en los apartados anteriores. 
 
 5. Si transcurrido el plazo de dos meses, a partir de la primera votación de investidura, 
-ningún candidato hubiere obtenido la confianza del Congreso, el Rey disolverá ambas 
+niún candidato hubiere obtenido la confianza del Congreso, el Rey disolverá ambas 
 Cámaras y convocará nuevas elecciones con el refrendo del Presidente del Congreso. 
 
 
@@ -1824,26 +1559,20 @@ Artículo 105.
 La ley regulará: 
 
 
-Página 21 
-
-
-BOLETÍN OFICIAL DEL ESTADO 
-LEGISLACIÓN CONSOLIDADA 
-
-
+ 
+ 
 a) La audiencia de los ciudadanos, directamente O a través de las organizaciones y 
-asociaciones reconocidas por la ley, en el procedimiento de elaboración de las disposiciones 
+asociaciones reconocidas por la ley, en el procedimiento de elaboración de lasisposiciones 
 administrativas que les afecten. 
 
-b) El acceso de los ciudadanos a los archivos y registros administrativos, salvo en lo que 
-afecte a la seguridad y defensa del Estado, la averiguación de los delitos y la intimidad de las 
-personas. 
+bEl acceso de los ciudadanos a los archivos y registros administrativos, salvo en lo que 
+afecte a la seguridad y defensa del Estado, la averiguación de los delitos y la intimidad de las ersonas. 
 
 c) El procedimiento a través del cual deben producirse los actos administrativos, 
-garantizando, cuando proceda, la audiencia del interesado. 
+garanzando, cuando proceda, la audiencia del interesado. 
 
 
-Artículo 106. 
+Artulo 106. 
 
 
 1. Los Tribunales controlan la potestad reglamentaria y la legalidad de la actuación 
@@ -1914,28 +1643,19 @@ declaración de política general. La confianza se entenderá otorgada cuando vo
 la misma la mayoría simple de los Diputados. 
 
 
-Página 22 
-
-
-BOLETÍN OFICIAL DEL ESTADO 
-LEGISLACIÓN CONSOLIDADA 
-
-
+ 
+ 
 Artículo 113. 
-
-
 1. El Congreso de los Diputados puede exigir la responsabilidad política del Gobierno 
-mediante la adopción por mayoría absoluta de la moción de censura. 
-
+mediante la adopción por mayoría absoluta de la moción de censura.
 2. La moción de censura deberá ser propuesta al menos por la décima parte de los 
-Diputados, y habrá de incluir un candidato a la Presidencia del Gobierno. 
-
+Diputados, y habrá de incluir un candidato a la Presidencia del Gobierno.
 3. La moción de censura no podrá ser votada hasta que transcurran cinco días desde su 
 presentación. En los dos primeros días de dicho plazo podrán presentarse mociones 
-alternativas. 
+alternativas
 
 4. Si la moción de censura no fuere aprobada por el Congreso, sus signatarios no podrán 
-presentar otra durante el mismo período de sesiones. 
+presentar ra durante el mismo período de sesiones. 
 
 
 Artículo 114. 
@@ -2002,28 +1722,21 @@ principio de responsabilidad del Gobierno y de sus agentes reconocidos en la Con
 en las leyes. 
 
 
-Página 23 
-
-
-BOLETÍN OFICIAL DEL ESTADO 
-LEGISLACIÓN CONSOLIDADA 
-
-
+ 
+ 
 TÍTULO VI 
-Del Poder Judicial 
+Del Poder Judicial
 
-
-Artículo 117. 
-
+Artículo 117.
 
 1. La justicia emana del pueblo y se administra en nombre del Rey por Jueces y 
-Magistrados integrantes del poder judicial, independientes, inamovibles, responsables y 
+Magistradosntegrantes del poder judicial, independientes, inamovibles, responsables y 
 sometidos únicamente al imperio de la ley. 
 
-2. Los Jueces y Magistrados no podrán ser separados, suspendidos, trasladados ni 
+2. Los Jues y Magistrados no podrán ser separados, suspendidos, trasladados ni 
 jubilados, sino por alguna de las causas y con las garantías previstas en la ley. 
 
-3. El ejercicio de la potestad jurisdiccional en todo tipo de procesos, juzgando y haciendo 
+3. El ercicio de la potestad jurisdiccional en todo tipo de procesos, juzgando y haciendo 
 ejecutar lo juzgado, corresponde exclusivamente a los Juzgados y Tribunales determinados 
 por las leyes, según las normas de competencia y procedimiento que las mismas 
 establezcan. 
@@ -2093,27 +1806,15 @@ cinco años. De éstos, doce entre Jueces y Magistrados de todas las categorías
 los términos que establezca la ley orgánica; cuatro a propuesta del Congreso de los 
 
 
-Página 24 
-
-
-BOLETÍN OFICIAL DEL ESTADO 
-LEGISLACIÓN CONSOLIDADA 
-
-
+ 
+ 
 Diputados, y cuatro a propuesta del Senado, elegidos en ambos casos por mayoría de tres 
-quintos de sus miembros, entre abogados y otros juristas, todos ellos de reconocida 
-competencia y con más de quince años de ejercicio en su profesión. 
-
-
+quintos de sus miembros, entre abogados y otros juristas, todos ellos de reconocida ompetencia y con más de quince años de ejercicio en su profesión. 
 Artículo 123. 
-
-
 1. El Tribunal Supremo, con jurisdicción en toda España, es el órgano jurisdiccional 
-superior en todos los órdenes, salvo lo dispuesto en materia de garantías constitucionales. 
-
+superior en todos los órdenes, salvo lo dispuesto en materia de garantías constitucionales.
 2. El Presidente del Tribunal Supremo será nombrado por el Rey, a propuesta del 
-Consejo General del Poder Judicial, en la forma que determine la ley. 
-
+Consejo General del Poder Judicial, en la forma que determine la ley.
 
 Artículo 124. 
 
@@ -2180,27 +1881,20 @@ monopolio y asimismo acordar la intervención de empresas cuando así lo exigier
 general. 
 
 
-Página 25 
-
-
-BOLETÍN OFICIAL DEL ESTADO 
-LEGISLACIÓN CONSOLIDADA 
-
-
+ 
+ 
 Artículo 129. 
-
-
 1. La ley establecerá las formas de participación de los interesados en la Seguridad 
 Social y en la actividad de los organismos públicos cuya función afecte directamente a la 
-calidad de la vida o al bienestar general. 
+calidad de lvida o al bienestar general. 
 
 2. Los poderes públicos promoverán eficazmente las diversas formas de participación en 
-la empresa y fomentarán, mediante una legislación adecuada, las sociedades cooperativas. 
+la empresa fomentarán, mediante una legislación adecuada, las sociedades cooperativas. 
 También establecerán los medios que faciliten el acceso de los trabajadores a la propiedad 
-de los medios de producción. 
+de los mios de producción. 
 
 
-Artículo 130. 
+Artícu 130. 
 
 
 1. Los poderes públicos atenderán a la modernización y desarrollo de todos los sectores 
@@ -2269,27 +1963,17 @@ beneficios fiscales que afecten a los tributos del Estado.
 Generales del Estado al menos tres meses antes de la expiración de los del año anterior. 
 
 
-Página 26 
-
-
-BOLETÍN OFICIAL DEL ESTADO 
-LEGISLACIÓN CONSOLIDADA 
-
-
+ 
+ 
 4. Si la Ley de Presupuestos no se aprobara antes del primer día del ejercicio económico 
-correspondiente, se considerarán automáticamente prorrogados los Presupuestos del 
-ejercicio anterior hasta la aprobación de los nuevos. 
+correspondiente, se considerarán automáticamente prorrogados los Presupuestos del jercicio anterior hasta la aprobación de los nuevos. 
 
-5. Aprobados los Presupuestos Generales del Estado, el Gobierno podrá presentar 
-proyectos de ley que impliquen aumento del gasto público o disminución de los ingresos 
-correspondientes al mismo ejercicio presupuestario. 
-
+5. Aprobados los Presupuestos Generales del Estado, el Gobierno podrá presentarproyectos de ley que impliquen aumento del gasto público o disminución de los ingresos 
+correspondientes al mismo ejercicio presupuestario.
 6. Toda proposición o enmienda que suponga aumento de los créditos o disminución de 
-los ingresos presupuestarios requerirá la conformidad del Gobierno para su tramitación. 
-
+los ingresos presupuestarios requerirá la conformidad del Gobierno para su tramitación.
 7. La Ley de Presupuestos no puede crear tributos. Podrá modificarlos cuando una ley 
-tributaria sustantiva así lo prevea. 
-
+tributaria sustantiva así lo prevea.
 
 Artículo 135. 
 
@@ -2357,27 +2041,16 @@ delegación de ellas en el examen y comprobación de la Cuenta General del Estad
 y serán censuradas por éste. 
 
 
-Página 27 
-
-
-BOLETÍN OFICIAL DEL ESTADO 
-LEGISLACIÓN CONSOLIDADA 
-
-
+ 
+ 
 El Tribunal de Cuentas, sin perjuicio de su propia jurisdicción, remitirá a las Cortes 
-Generales un informe anual en el que, cuando proceda, comunicará las infracciones o 
-responsabilidades en que, a su juicio, se hubiere incurrido. 
+Generales un informe anual en el que, cuando proceda, comunicará las infracciones o esponsabilidades en que, a su juicio, se hubiere incurrido. 
 
-3. Los miembros del Tribunal de Cuentas gozarán de la misma independencia e 
-inamovilidad y estarán sometidos a las mismas incompatibilidades que los Jueces. 
+3. Los miembros del Tribunal de Cuentas gozarán de la misma independencia einamovilidad y estarán sometidos a las mismas incompatibilidades que los Jueces. 
 
-4. Una ley orgánica regulará la composición, organización y funciones del Tribunal de 
+4. Una ley orgánica regulará la composición, organización y funciones delribunal de 
 Cuentas. 
-
-
 TÍTULO VII! 
-
-
 De la Organización Territorial del Estado 
 
 
@@ -2449,28 +2122,19 @@ Diputaciones u otras Corporaciones de carácter representativo.
 3. Se podrán crear agrupaciones de municipios diferentes de la provincia. 
 
 
-Página 28 
-
-
-BOLETÍN OFICIAL DEL ESTADO 
-LEGISLACIÓN CONSOLIDADA 
-
-
+ 
+ 
 4. En los archipiélagos, las islas tendrán además su administración propia en forma de 
-Cabildos o Consejos. 
+Cabildos o Consejos.
 
-
-Artículo 142. 
-
+Artículo 142.
 
 Las Haciendas locales deberán disponer de los medios suficientes para el desempeño 
-de las funciones que la ley atribuye a las Corporaciones respectivas y se nutrirán 
+de las funcnes que la ley atribuye a las Corporaciones respectivas y se nutrirán 
 fundamentalmente de tributos propios y de participación en los del Estado y de las 
-Comunidades Autónomas. 
+Comunidades Autónomas.
 
-
-CAPÍTULO TERCERO 
-
+CAPÍTULO TERCERO
 
 De las Comunidades Autónomas 
 
@@ -2539,28 +2203,20 @@ como parte integrante de su ordenamiento jurídico.
 2. Los Estatutos de autonomía deberán contener: 
 
 
-Página 29 
-
-
-BOLETÍN OFICIAL DEL ESTADO 
-LEGISLACIÓN CONSOLIDADA 
-
-
+ 
+ 
 a) La denominación de la Comunidad que mejor corresponda a su identidad histórica. 
+) La delimitación de su territorio. 
 
-b) La delimitación de su territorio. 
-
-Cc) La denominación, organización y sede de las instituciones autónomas propias. 
-
+Cc) La denominación, organización y sede de las instituciones autónomas propias.
 d) Las competencias asumidas dentro del marco establecido en la Constitución y las 
-bases para el traspaso de los servicios correspondientes a las mismas. 
-
+bases para el traspaso de los servicios correspondientes a las mismas.
 
 3. La reforma de los Estatutos se ajustará al procedimiento establecido en los mismos y 
-requerirá, en todo caso, la aprobación por las Cortes Generales, mediante ley orgánica. 
+requerirá, en todo caso, la aprobación por las Cortes Generales, mednte ley orgánica. 
 
 
-Artículo 148. 
+Artículo 148
 
 
 1. Las Comunidades Autónomas podrán asumir competencias en las siguientes 
@@ -2643,25 +2299,18 @@ constitucionales.
 3.2 Relaciones internacionales. 
 
 
-Página 30 
-
-
-BOLETÍN OFICIAL DEL ESTADO 
-LEGISLACIÓN CONSOLIDADA 
-
-
+ 
+ 
 4.2 Defensa y Fuerzas Armadas. 
+.2 Administración de Justicia. 
 
-5.2 Administración de Justicia. 
-
-6.2 Legislación mercantil, penal y penitenciaria; legislación procesal, sin perjuicio de las 
-necesarias especialidades que en este orden se deriven de las particularidades del derecho 
-sustantivo de las Comunidades Autónomas. 
+6.2 Legislación mercantil, penal y penitenciaria; legislación procesal, sin perjuicio dlas 
+necesarias especialidades que en este orden se deriven de las particularidades del derecho ustantivo de las Comunidades Autónomas. 
 
 7.2 Legislación laboral; sin perjuicio de su ejecución por los órganos de las Comunidades 
-Autónomas. 
+Autónos. 
 
-8.2 Legislación civil, sin perjuicio de la conservación, modificación y desarrollo por las 
+8.2 Legislación civil, sin perjuicio de la conservación, modificación y desarrollo por la
 Comunidades Autónomas de los derechos civiles, forales o especiales, allí donde existan. En 
 todo caso, las reglas relativas a la aplicación y eficacia de las normas jurídicas, relaciones 
 jurídico-civiles relativas a las formas de matrimonio, ordenación de los registros e 
@@ -2734,26 +2383,18 @@ exportación y la expoliación; museos, bibliotecas y archivos de titularidad es
 perjuicio de su gestión por parte de las Comunidades Autónomas. 
 
 
-Página 31 
-
-
-BOLETÍN OFICIAL DEL ESTADO 
-LEGISLACIÓN CONSOLIDADA 
-
-
+ 
+ 
 29,2 Seguridad pública, sin perjuicio de la posibilidad de creación de policías por las 
-Comunidades Autónomas en la forma que se establezca en los respectivos Estatutos en el 
-marco de lo que disponga una ley orgánica. 
+Comunidades Autónomas en la forma que se establezca en los respectivos Estatutos en el arco de lo que disponga una ley orgánica. 
 
-30.2 Regulación de las condiciones de obtención, expedición y homologación de títulos 
-académicos y profesionales y normas básicas para el desarrollo del artículo 27 de la 
-Constitución, a fin de garantizar el cumplimiento de las obligaciones de los poderes públicos 
+30.2 Regulación de las condiciones de obtención, expedición y homologación de títulosacadémicos y profesionales y normas básicas para el desarrollo del artículo 27 de la 
+Constitución, a fin de garantizar el cumplimiento de las obligaciones de los poderes públis 
 en esta materia. 
 
-31.* Estadística para fines estatales. 
+31.Estadística para fines estatales. 
 
-32.2 Autorización para la convocatoria de consultas populares por vía de referéndum. 
-
+32.2 Autorización para la convocatoria de consultas populares por vía de referéndum.
 
 2. Sin perjuicio de las competencias que podrán asumir las Comunidades Autónomas, el 
 Estado considerará el servicio de la cultura como deber y atribución esencial y facilitará la 
@@ -2817,27 +2458,21 @@ absoluta de sus miembros.
 Comisión Constitucional del Congreso, la cual, dentro del plazo de dos meses, lo examinará 
 
 
-Página 32 
-
-
-BOLETÍN OFICIAL DEL ESTADO 
-LEGISLACIÓN CONSOLIDADA 
-
-
+ 
+ 
 con el concurso y asistencia de una delegación de la Asamblea proponente para determinar 
-de común acuerdo su formulación definitiva. 
-
+de común acuerdo su formulación definitiva.
 3.2 Si se alcanzare dicho acuerdo, el texto resultante será sometido a referéndum del 
 cuerpo electoral de las provincias comprendidas en el ámbito territorial del proyectado 
-Estatuto. 
+Estatuto
 
 4.2 Si el proyecto de Estatuto es aprobado en cada provincia por la mayoría de los votos 
-válidamente emitidos, será elevado a las Cortes Generales. Los plenos de ambas Cámaras 
+válidante emitidos, será elevado a las Cortes Generales. Los plenos de ambas Cámaras 
 decidirán sobre el texto mediante un voto de ratificación. Aprobado el Estatuto, el Rey lo 
-sancionará y lo promulgará como ley. 
+sancnará y lo promulgará como ley. 
 
 5. De no alcanzarse el acuerdo a que se refiere el apartado 2 de este número, el 
-proyecto de Estatuto será tramitado como proyecto de ley ante las Cortes Generales. El 
+precto de Estatuto será tramitado como proyecto de ley ante las Cortes Generales. El 
 texto aprobado por éstas será sometido a referéndum del cuerpo electoral de las provincias 
 comprendidas en el ámbito territorial del proyectado Estatuto. En caso de ser aprobado por 
 la mayoría de los votos válidamente emitidos en cada provincia, procederá su promulgación 
@@ -2898,27 +2533,16 @@ normas reglamentarias.
 d) Por el Tribunal de Cuentas, el económico y presupuestario. 
 
 
-Página 33 
-
-
-BOLETÍN OFICIAL DEL ESTADO 
-LEGISLACIÓN CONSOLIDADA 
-
-
+ 
+ 
 Artículo 154. 
-
-
 Un Delegado nombrado por el Gobierno dirigirá la Administración del Estado en el 
-territorio de la Comunidad Autónoma y la coordinará, cuando proceda, con la administración 
+territorio de la Comunidad Autónoma y la coordinará, cuando proceda, con la administraci 
 propia de la Comunidad. 
-
-
 Artículo 155. 
-
-
 1. Si una Comunidad Autónoma no cumpliere las obligaciones que la Constitución u 
 otras leyes le impongan, o actuare de forma que atente gravemente al interés general de 
-España, el Gobierno, previo requerimiento al Presidente de la Comunidad Autónoma y, en el 
+España, el Gierno, previo requerimiento al Presidente de la Comunidad Autónoma y, en el 
 caso de no ser atendido, con la aprobación por mayoría absoluta del Senado, podrá adoptar 
 las medidas necesarias para obligar a aquélla al cumplimiento forzoso de dichas 
 obligaciones o para la protección del mencionado interés general. 
@@ -2980,27 +2604,15 @@ inversión, cuyos recursos serán distribuidos por las Cortes Generales entre la
 Autónomas y provincias, en su caso. 
 
 
-Página 34 
-
-
-BOLETÍN OFICIAL DEL ESTADO 
-LEGISLACIÓN CONSOLIDADA 
-
-
+ 
+ 
 TÍTULO IX 
-
-
 Del Tribunal Constitucional 
-
-
 Artículo 159. 
-
-
 1. El Tribunal Constitucional se compone de 12 miembros nombrados por el Rey; de 
-ellos, cuatro a propuesta del Congreso por mayoría de tres quintos de sus miembros; cuatro 
+ellos, cuatro a propuesta del Congreso por mayoría de tres quintos de sus miembros; cuatr
 a propuesta del Senado, con idéntica mayoría; dos a propuesta del Gobierno, y dos a 
-propuesta del Consejo General del Poder Judicial. 
-
+propuesta del Consejo General del Poder Judicial.
 2. Los miembros del Tribunal Constitucional deberán ser nombrados entre Magistrados y 
 Fiscales, Profesores de Universidad, funcionarios públicos y Abogados, todos ellos juristas 
 de reconocida competencia con más de quince años de ejercicio profesional. 
@@ -3072,26 +2684,19 @@ interés legítimo, así como el Defensor del Pueblo y el Ministerio Fiscal.
 2. En los demás casos, la ley orgánica determinará las personas y órganos legitimados. 
 
 
-Página 35 
-
-
-BOLETÍN OFICIAL DEL ESTADO 
-LEGISLACIÓN CONSOLIDADA 
-
-
+ 
+ 
 Artículo 163. 
-
-
 Cuando un órgano judicial considere, en algún proceso, que una norma con rango de ley, 
-aplicable al caso, de cuya validez dependa el fallo, pueda ser contraria a la Constitución, 
+aplicable al caso, de cuya validez dependa el fallo, pueda ser contraria a la Constitución
 planteará la cuestión ante el Tribunal Constitucional en los supuestos, en la forma y con los 
-efectos que establezca la ley, que en ningún caso serán suspensivos. 
+efectos que establezca la ley, que en ningún caso serán suspensivos
 
 
-Artículo 164. 
+Artículo 164
 
 
-1. Las sentencias del Tribunal Constitucional se publicarán en el boletín oficial del Estado 
+1. Las senncias del Tribunal Constitucional se publicarán en el  
 con los votos particulares, si los hubiere. Tienen el valor de cosa juzgada a partir del día 
 siguiente de su publicación y no cabe recurso alguno contra ellas. Las que declaren la 
 inconstitucionalidad de una ley o de una norma con fuerza de ley y todas las que no se 
@@ -3162,28 +2767,19 @@ No podrá iniciarse la reforma constitucional en tiempo de guerra o de vigencia 
 de los estados previstos en el artículo 116. 
 
 
-Página 36 
-
-
-BOLETÍN OFICIAL DEL ESTADO 
-LEGISLACIÓN CONSOLIDADA 
-
-
+ 
+ 
 DISPOSICIONES ADICIONALES 
-
-
 Primera. 
-
-
 La Constitución ampara y respeta los derechos históricos de los territorios forales. 
 La actualización general de dicho régimen foral se llevará a cabo, en su caso, en el 
-marco de la Constitución y de los Estatutos de Autonomía. 
+marco dla Constitución y de los Estatutos de Autonomía. 
 
 
-Segunda. 
+Segun. 
 
 
-La declaración de mayoría de edad contenida en el artículo 12 de esta Constitución no 
+La claración de mayoría de edad contenida en el artículo 12 de esta Constitución no 
 perjudica las situaciones amparadas por los derechos forales en el ámbito del Derecho 
 privado. 
 
@@ -3249,28 +2845,17 @@ referéndum expresamente convocado al efecto, y aprobado por mayoría de los vot
 emitidos. 
 
 
-Página 37 
-
-
-BOLETÍN OFICIAL DEL ESTADO 
-LEGISLACIÓN CONSOLIDADA 
-
-
+ 
+ 
 2. Si la iniciativa no prosperase, solamente se podrá reproducir la misma en distinto 
-período del mandato del Organo Foral competente, y en todo caso, cuando haya transcurrido 
-el plazo mínimo que establece el artículo 143. 
-
-
+período del mandato del Organo Foral competente, y en todo caso, cuando haya transcurrido l plazo mínimo que establece el artículo 143. 
 Quinta. 
-
-
 Las ciudades de Ceuta y Melilla podrán constituirse en Comunidades Autónomas si así 
 lo deciden sus respectivos Ayuntamientos, mediante acuerdo adoptado por la mayoría 
-absoluta de sus miembros y así lo autorizan las Cortes Generales, mediante una ley 
-orgánica, en los términos previstos en el artículo 144. 
+absoluta de sus miembros y así lo autorizan las Cortes Generales, mediante una leyorgánica, en los términos previstos en el artículo 144. 
 
 
-Sexta. 
+Sta. 
 
 
 Cuando se remitieran a la Comisión Constitucional del Congreso varios proyectos de 
@@ -3334,25 +2919,19 @@ propuesta del Gobierno y a los dos que proceden de la formulada por el Consejo G
 Poder Judicial. Del mismo modo se procederá transcurridos otros tres años entre los dos 
 
 
-Página 38 
+ 
+ 
+grupos no afectados por el sorteo anterior. A partir de entonces se estará a lo establecido en l número 3 del artículo 159. 
 
 
-BOLETÍN OFICIAL DEL ESTADO 
-LEGISLACIÓN CONSOLIDADA 
+DISPOSICION DOGATORIA 
 
 
-grupos no afectados por el sorteo anterior. A partir de entonces se estará a lo establecido en 
-el número 3 del artículo 159. 
-
-
-DISPOSICION DEROGATORIA 
-
-
-1. Queda derogada la Ley 1/1977, de 4 de enero, para la Reforma Política, así como, en 
+1. Queda degada la Ley 1/1977, de 4 de enero, para la Reforma Política, así como, en 
 tanto en cuanto no estuvieran ya derogadas por la anteriormente mencionada Ley, la de 
 Principios del Movimiento Nacional, de 17 de mayo de 1958; el Fuero de los Españoles, de 
-17 de julio de 1945; el del Trabajo, de 9 de marzo de 1938; la Ley Constitutiva de las Cortes, 
-de 17 de julio de 1942; la Ley de Sucesión en la Jefatura del Estado, de 26 de julio de 1947, 
+17 de jul de 1945; el del Trabajo, de 9 de marzo de 1938; la Ley Constitutiva de las Cortes, 
+de 17 de julio de 1942; la Ley de Sucesión en la Jefatura del Estado, de 26 de julio de 1947
 todas ellas modificadas por la Ley Orgánica del Estado, de 10 de enero de 1967, y en los 
 mismos términos esta última y la de Referéndum Nacional de 22 de octubre de 1945. 
 
@@ -3371,7 +2950,7 @@ DISPOSICION FINAL
 
 
 Esta Constitución entrará en vigor el mismo día de la publicación de su texto oficial en el 
-boletín oficial del Estado. Se publicará también en las demás lenguas de España. 
+. Se publicará también en las demás lenguas de España. 
 
 
 POR TANTO, 
@@ -3400,6 +2979,6 @@ Antonio Fontán Pérez
 Este texto consolidado no tiene valor jurídico. 
 
 
-Página 39 
+ 
 
 
