@@ -32,7 +32,7 @@ def search_knowledge_base(query: str) -> str:
         return f"Error en búsqueda: {str(e)}"
 
 def main():
-    print(f"--- Ejemplo 08: RAG con AutoGen (Function Calling) ---")
+    print("--- Ejemplo 08: RAG con AutoGen (Function Calling) ---")
 
     # 2. Configurar AutoGen con Ollama
     config_list = [
