@@ -39,6 +39,55 @@ def main():
     
     count = 0
     
+    def process_articles(articles, context_meta):
+        nonlocal count
+        for articulo in articles:
+            art_numero = articulo.get("número", "")
+            if "apartados" in articulo:
+                for apartado in articulo["apartados"]:
+                    text = apartado.get("texto", "")
+                    if text:
+                        meta = context_meta.copy()
+                        meta.update({
+                            "articulo": art_numero,
+                            "apartado": apartado.get("orden", "")
+                        })
+                        documents.append(text)
+                        metadatas.append(meta)
+                        
+                        # Create ID
+                        safe_titulo = "".join(c for c in meta.get("titulo_orden", "") if c.isalnum())
+                        safe_art = "".join(c for c in art_numero if c.isalnum())
+                        safe_ap = "".join(c for c in apartado.get('orden', '') if c.isalnum())
+                        ids.append(f"{safe_titulo}_{safe_art}_{safe_ap}_{uuid.uuid4().hex[:8]}")
+                        count += 1
+
+    def process_node(node, current_meta):
+        # Update metadata with current node info
+        new_meta = current_meta.copy()
+        
+        if "tipo" in node: # TÍTULO, DISPOSICIONES
+            new_meta["titulo_tipo"] = node.get("tipo", "")
+            new_meta["titulo_orden"] = node.get("orden", "")
+            new_meta["titulo_nombre"] = node.get("nombre", "")
+        
+        if "capítulos" in node:
+            for capitulo in node["capítulos"]:
+                cap_meta = new_meta.copy()
+                cap_meta["capitulo_orden"] = capitulo.get("orden", "")
+                cap_meta["capitulo_nombre"] = capitulo.get("nombre", "")
+                process_node(capitulo, cap_meta)
+                
+        if "secciones" in node:
+            for seccion in node["secciones"]:
+                sec_meta = new_meta.copy()
+                sec_meta["seccion_orden"] = seccion.get("orden", "")
+                sec_meta["seccion_nombre"] = seccion.get("nombre", "")
+                process_node(seccion, sec_meta)
+                
+        if "artículos" in node:
+            process_articles(node["artículos"], new_meta)
+
     for parte in partes:
         # Case 1: Content (Preámbulo, Disposiciones)
         if "contenido" in parte:
@@ -76,36 +125,13 @@ def main():
                         ids.append(f"disp_{uuid.uuid4().hex[:8]}")
                         count += 1
             
-        # Case 2: Structured parts (Titles with Articles)
-        elif "artículos" in parte:
-            titulo_tipo = parte.get("tipo", "")
-            titulo_orden = parte.get("orden", "")
-            
-            for articulo in parte["artículos"]:
-                art_numero = articulo.get("número", "")
-                
-                if "apartados" in articulo:
-                    for apartado in articulo["apartados"]:
-                        text = apartado.get("texto", "")
-                        if text:
-                            meta = {
-                                "titulo_tipo": titulo_tipo,
-                                "titulo_orden": titulo_orden,
-                                "articulo": art_numero,
-                                "apartado": apartado.get("orden", ""),
-                                "fecha_promulgacion": fecha_promulgacion,
-                                "fuente_boe": fuente_boe
-                            }
-                            documents.append(text)
-                            metadatas.append(meta)
-                            # Create a unique ID
-                            # Cleaning strings for ID
-                            safe_titulo = "".join(c for c in titulo_orden if c.isalnum())
-                            safe_art = "".join(c for c in art_numero if c.isalnum())
-                            safe_ap = "".join(c for c in apartado.get('orden', '') if c.isalnum())
-                            
-                            ids.append(f"{safe_titulo}_{safe_art}_{safe_ap}_{uuid.uuid4().hex[:8]}")
-                            count += 1
+        # Case 2: Structured parts (Titles with Articles, Chapters, Sections)
+        else:
+            base_meta = {
+                "fecha_promulgacion": fecha_promulgacion,
+                "fuente_boe": fuente_boe
+            }
+            process_node(parte, base_meta)
 
     # Add to collection
     if documents:

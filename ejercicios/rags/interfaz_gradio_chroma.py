@@ -3,6 +3,7 @@ import chromadb
 import os
 import json
 import numpy as np
+import re
 from sklearn.metrics.pairwise import cosine_similarity
 
 # Paths
@@ -74,6 +75,19 @@ def search_function(query, k, fetch_k, lambda_mult, where_str, score_threshold):
             except json.JSONDecodeError:
                 return f"Error: Invalid JSON in 'where' filter. Example: {{\"tipo\": \"TÍTULO\"}}"
 
+        # Auto-detect Article intent if no explicit filter
+        detected_filter_msg = ""
+        if not where_filter:
+            # Regex to find "articulo X" or "artículo X"
+            match = re.search(r'\bart[íi]culo\s+(\d+)\b', query, re.IGNORECASE)
+            if match:
+                art_num = match.group(1)
+                # Construct the expected metadata value, e.g., "Artículo 14"
+                where_filter = {"articulo": f"Artículo {art_num}"}
+                detected_filter_msg = f"ℹ️ Filtro automático aplicado: {json.dumps(where_filter, ensure_ascii=False)}\n\n"
+
+        # 1. Get embeddings for the query
+
         # 1. Get embeddings for the query
         # We can use the collection's embedding function implicitly by querying
         # But to do MMR properly we need the query embedding. 
@@ -140,6 +154,9 @@ def search_function(query, k, fetch_k, lambda_mult, where_str, score_threshold):
 
         # 5. Format Output
         output_text = []
+        if detected_filter_msg:
+            output_text.append(detected_filter_msg)
+
         for idx in selected_indices:
             dist = distances[idx]
             # Simple similarity conversion for display
