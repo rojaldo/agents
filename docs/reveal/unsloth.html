@@ -1022,36 +1022,37 @@ ollama run mi-modelo "¿Qué es IA?"</code></pre>
 
             <!-- MÓDULO 6: AVANZADAS -->
             <section>
-                <h2>📚 Módulo 6: Técnicas Avanzadas</h2>
-            </section>
+                <section>
+                    <h2>📚 Módulo 6: Técnicas Avanzadas</h2>
+                </section>
 
-            <section>
-                <h3>DPO vs SFT vs RLHF (1/2)</h3>
-                <p><strong>SFT (Supervised Fine-Tuning):</strong> Copiar respuestas</p>
-                <p><strong>RLHF (Reinforcement Learning):</strong> 3 modelos, complejo</p>
-                <p><strong>DPO (Direct Preference):</strong> 1 modelo, simple</p>
-            </section>
+                <section>
+                    <h3>DPO vs SFT vs RLHF (1/2)</h3>
+                    <p><strong>SFT (Supervised Fine-Tuning):</strong> Copiar respuestas</p>
+                    <p><strong>RLHF (Reinforcement Learning):</strong> 3 modelos, complejo</p>
+                    <p><strong>DPO (Direct Preference):</strong> 1 modelo, simple</p>
+                </section>
 
-            <section>
-                <h3>DPO vs SFT vs RLHF (2/2)</h3>
-                <p><strong>DPO = LoRA + Preferencias</strong></p>
-                <pre><code class="language-json">{
+                <section>
+                    <h3>DPO vs SFT vs RLHF (2/2)</h3>
+                    <p><strong>DPO = LoRA + Preferencias</strong></p>
+                    <pre><code class="language-json">{
     "prompt": "2+2=?",
     "chosen": "2+2=4",
     "rejected": "2+2=5"
 }</code></pre>
-                <p style="margin-top: 1em;"><strong>Ventaja:</strong> Más simple que RLHF</p>
-            </section>
+                    <p style="margin-top: 1em;"><strong>Ventaja:</strong> Más simple que RLHF</p>
+                </section>
 
-            <section>
-                <h3>Crear Dataset DPO</h3>
-                <p><strong>Opción 1: LLM grande genera pares</strong></p>
-                <p><strong>Opción 2: Evaluadores humanos eligen mejor</strong></p>
-            </section>
+                <section>
+                    <h3>Crear Dataset DPO</h3>
+                    <p><strong>Opción 1: LLM grande genera pares</strong></p>
+                    <p><strong>Opción 2: Evaluadores humanos eligen mejor</strong></p>
+                </section>
 
-            <section>
-                <h3>Entrenar con DPO</h3>
-                <pre><code class="language-python">from trl import DPOTrainer
+                <section>
+                    <h3>Entrenar con DPO</h3>
+                    <pre><code class="language-python">from trl import DPOTrainer
 
 dpo_trainer = DPOTrainer(
     model=modelo,
@@ -1061,35 +1062,35 @@ dpo_trainer = DPOTrainer(
 )
 
 dpo_trainer.train()</code></pre>
-            </section>
+                </section>
 
-            <section>
-                <h3>Aplicaciones DPO</h3>
-                <ul>
-                    <li><strong>Safety:</strong> Rechazar solicitudes peligrosas</li>
-                    <li><strong>Creatividad:</strong> Preferred respuestas poéticas</li>
-                    <li><strong>Especificidad:</strong> Alinear a estilo específico</li>
-                </ul>
-            </section>
+                <section>
+                    <h3>Aplicaciones DPO</h3>
+                    <ul>
+                        <li><strong>Safety:</strong> Rechazar solicitudes peligrosas</li>
+                        <li><strong>Creatividad:</strong> Preferred respuestas poéticas</li>
+                        <li><strong>Especificidad:</strong> Alinear a estilo específico</li>
+                    </ul>
+                </section>
 
-            <section>
-                <h3>Continued Pretraining (1/2)</h3>
-                <p><strong>¿Cuándo?</strong> Tienes 100K+ documentos en dominio específico</p>
-                <p><strong>¿Por qué?</strong> Modelo entiende tu jerga técnica</p>
-            </section>
+                <section>
+                    <h3>Continued Pretraining (1/2)</h3>
+                    <p><strong>¿Cuándo?</strong> Tienes 100K+ documentos en dominio específico</p>
+                    <p><strong>¿Por qué?</strong> Modelo entiende tu jerga técnica</p>
+                </section>
 
-            <section>
-                <h3>Continued Pretraining (2/2)</h3>
-                <p><strong>Vs Fine-tuning:</strong></p>
-                <ul>
-                    <li>Fine-tuning: Instrucción-respuesta</li>
-                    <li>Continued PT: Textos crudos → predecir siguiente</li>
-                </ul>
-            </section>
+                <section>
+                    <h3>Continued Pretraining (2/2)</h3>
+                    <p><strong>Vs Fine-tuning:</strong></p>
+                    <ul>
+                        <li>Fine-tuning: Instrucción-respuesta</li>
+                        <li>Continued PT: Textos crudos → predecir siguiente</li>
+                    </ul>
+                </section>
 
-            <section>
-                <h3>Implementar Continued Pretraining</h3>
-                <pre><code class="language-python">from transformers import TextDataset
+                <section>
+                    <h3>Implementar Continued Pretraining</h3>
+                    <pre><code class="language-python">from transformers import TextDataset
 
 dataset = TextDataset(
     tokenizer=tokenizer,
@@ -1098,47 +1099,47 @@ dataset = TextDataset(
 )
 
 trainer.train()  # Entrenar con datos crudos</code></pre>
-            </section>
+                </section>
 
-            <section>
-                <h3>Long Context: RoPE Scaling (1/2)</h3>
-                <p><strong>Problema:</strong> Llama 2 solo soporta 4096 tokens</p>
-                <p><strong>Solución:</strong> RoPE Scaling</p>
-            </section>
+                <section>
+                    <h3>Long Context: RoPE Scaling (1/2)</h3>
+                    <p><strong>Problema:</strong> Llama 2 solo soporta 4096 tokens</p>
+                    <p><strong>Solución:</strong> RoPE Scaling</p>
+                </section>
 
-            <section>
-                <h3>Long Context: RoPE Scaling (2/2)</h3>
-                <pre><code class="language-python">modelo, tokenizer = FastLanguageModel.from_pretrained(
+                <section>
+                    <h3>Long Context: RoPE Scaling (2/2)</h3>
+                    <pre><code class="language-python">modelo, tokenizer = FastLanguageModel.from_pretrained(
     model_name="unsloth/llama-2-7b-bnb-4bit",
     max_seq_length=8192,  # 2x más contexto
     load_in_4bit=True,
 )
 
 # Unsloth aplica RoPE automáticamente</code></pre>
-            </section>
+                </section>
 
-            <section>
-                <h3>RoPE Métodos</h3>
-                <ul>
-                    <li><strong>Linear:</strong> Escalar linealmente</li>
-                    <li><strong>NTK:</strong> Ajuste inteligente ⭐</li>
-                    <li><strong>YaRN:</strong> Combinado (experimental)</li>
-                </ul>
-            </section>
+                <section>
+                    <h3>RoPE Métodos</h3>
+                    <ul>
+                        <li><strong>Linear:</strong> Escalar linealmente</li>
+                        <li><strong>NTK:</strong> Ajuste inteligente ⭐</li>
+                        <li><strong>YaRN:</strong> Combinado (experimental)</li>
+                    </ul>
+                </section>
 
-            <section>
-                <h3>Costo de Long Context</h3>
-                <ul>
-                    <li>4096 tokens: 8GB</li>
-                    <li>8192 tokens: 16GB</li>
-                    <li>32768 tokens: 64GB+</li>
-                </ul>
-                <p style="margin-top: 1em;"><strong>Soluciones:</strong> 4-bit, Flash Attention, checkpointing</p>
-            </section>
+                <section>
+                    <h3>Costo de Long Context</h3>
+                    <ul>
+                        <li>4096 tokens: 8GB</li>
+                        <li>8192 tokens: 16GB</li>
+                        <li>32768 tokens: 64GB+</li>
+                    </ul>
+                    <p style="margin-top: 1em;"><strong>Soluciones:</strong> 4-bit, Flash Attention, checkpointing</p>
+                </section>
 
-            <section>
-                <h3>Caso: Resumen de Documentos Largos</h3>
-                <pre><code class="language-python"># Documento de 5000 tokens
+                <section>
+                    <h3>Caso: Resumen de Documentos Largos</h3>
+                    <pre><code class="language-python"># Documento de 5000 tokens
 prompt = f"""
 Resume en 3 puntos:
 
@@ -1147,6 +1148,7 @@ Resume en 3 puntos:
 Resumen:"""
 
 outputs = modelo.generate(**inputs, max_new_tokens=200)</code></pre>
+                </section>
             </section>
 
             <!-- RESUMEN -->
