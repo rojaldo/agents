@@ -1,0 +1,1797 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLAMA-Factory: Parámetros de Entrenamiento</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/theme/white.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-light.min.css">
+    <style>
+        .reveal { text-align: left; color: #555555; }
+        .reveal section { text-align: left; padding: 40px; display: flex; flex-direction: column; justify-content: flex-start; }
+        .reveal h1, .reveal h2, .reveal h3 { text-transform: none; text-align: left; color: #555555; }
+
+        /* Encabezados */
+        .reveal h1 { font-size: 1.05em; margin-bottom: 0.5em; }
+        .reveal h2 { font-size: 1em; margin-bottom: 0.5em; }
+        .reveal h3 { font-size: 0.75em; margin-bottom: 0.3em; }
+
+        /* Párrafos y énfasis */
+        .reveal p { font-size: 0.6em; margin: 0.3em 0; color: #555555; }
+        .reveal strong { font-size: 1em; font-weight: bold; }
+
+        /* Código */
+        .reveal pre { background: #f8f8f8; border: 1px solid #ddd; width: 100%; padding: 0.5em; margin: 0.5em 0; }
+        .reveal pre code { font-size: 0.7em; color: #555555; }
+
+        /* Listas y elementos */
+        .reveal ul { font-size: 0.55em; text-align: left; margin-left: 0.5em; color: #555555; }
+        .reveal li { margin: 0.3em 0; color: #555555; }
+
+        /* Tablas */
+        .reveal table { font-size: 0.55em; }
+        .reveal table td { padding: 0.3em; }
+
+        /* Clases de colores */
+        .success { color: #27ae60; font-weight: bold; }
+        .warning { color: #e67e22; font-weight: bold; }
+        .error { color: #e74c3c; font-weight: bold; }
+        .info { color: #3498db; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- TITULO -->
+            <section class="title-slide">
+                <h1>🚀 LLAMA-Factory</h1>
+                <h2>Parámetros de Entrenamiento</h2>
+                <p style="margin-top: 2em;"><strong>Framework unificado para fine-tuning de LLMs</strong></p>
+            </section>
+
+            <!-- INTRODUCCIÓN -->
+            <section>
+                <h2>¿Qué es LLAMA-Factory?</h2>
+                <ul>
+                    <li><strong>Framework unificado</strong> para fine-tuning de LLMs y VLMs</li>
+                    <li><strong>Sin código:</strong> WebUI completa para entrenar</li>
+                    <li><strong>+100 modelos:</strong> LLaMA, Mistral, Qwen, ChatGLM, etc.</li>
+                    <li><strong>Múltiples técnicas:</strong> LoRA, QLoRA, full fine-tuning</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Modos de Entrenamiento Soportados</h3>
+                <ul>
+                    <li><span class="success">✅ SFT:</span> Supervised Fine-Tuning (instrucciones)</li>
+                    <li><span class="success">✅ PT:</span> Continued Pre-Training (textos raw)</li>
+                    <li><span class="success">✅ RM:</span> Reward Model Training</li>
+                    <li><span class="success">✅ DPO:</span> Direct Preference Optimization</li>
+                    <li><span class="success">✅ PPO:</span> Proximal Policy Optimization</li>
+                    <li><span class="success">✅ KTO/ORPO:</span> Métodos de preferencias</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>¿Por Qué Usar LLAMA-Factory?</h3>
+                <p><strong>Problemas que resuelve:</strong></p>
+                <ul>
+                    <li>Complejidad del código de fine-tuning</li>
+                    <li>Gestión manual de VRAM y memoria</li>
+                    <li>Necesidad de expertise técnica profunda</li>
+                    <li>Falta de estandarización en configuraciones</li>
+                </ul>
+                <p style="margin-top: 1em;"><strong>Soluciones:</strong> WebUI intuitiva + CLI + API</p>
+            </section>
+
+            <section>
+                <h3>Ventajas Principales</h3>
+                <ul>
+                    <li><strong>Accesible:</strong> No requiere codificación</li>
+                    <li><strong>Flexible:</strong> Soporta múltiples técnicas de training</li>
+                    <li><strong>Eficiente:</strong> Optimizado para memoria y velocidad</li>
+                    <li><strong>Versátil:</strong> Desde chat-bots hasta expertos especializados</li>
+                    <li><strong>Escalable:</strong> Desde 8B hasta 70B+ modelos</li>
+                </ul>
+            </section>
+
+            <!-- CATEGORÍAS DE PARÁMETROS -->
+            <section>
+                <h2>Categorías de Parámetros</h2>
+                <ul>
+                    <li><span class="info">1.</span> Configuración del Modelo</li>
+                    <li><span class="info">2.</span> Hiperparámetros de Entrenamiento</li>
+                    <li><span class="info">3.</span> Parámetros LoRA/QLoRA</li>
+                    <li><span class="info">4.</span> Configuración de Datos</li>
+                    <li><span class="info">5.</span> Parámetros de Cuantización</li>
+                    <li><span class="info">6.</span> Evaluación y Logging</li>
+                    <li><span class="info">7.</span> Parámetros RLHF/Preferencias</li>
+                </ul>
+            </section>
+
+            <!-- SECCIÓN 1: CONFIGURACIÓN DEL MODELO -->
+            <section>
+                <h2>1️⃣ Configuración del Modelo</h2>
+            </section>
+
+            <section>
+                <h3>model_name_or_path</h3>
+                <p><strong>Función:</strong> Especifica el modelo base</p>
+                <p><strong>Formato:</strong> HuggingFace ID o ruta local</p>
+                <p><strong>Ejemplos:</strong></p>
+                <pre><code>model_name_or_path: "meta-llama/Llama-3-8B"
+model_name_or_path: "/path/to/local/model"
+model_name_or_path: "Qwen/Qwen2-7B"</code></pre>
+                <p><span class="warning">⚠️ CRÍTICO:</span> Debe estar disponible en HuggingFace o localmente</p>
+            </section>
+
+            <section>
+                <h3>template</h3>
+                <p><strong>Función:</strong> Define el formato de chat del modelo</p>
+                <p><strong>Impacto:</strong> ¡DEBE coincidir entre entrenamiento e inferencia!</p>
+                <p><strong>Valores comunes:</strong></p>
+                <ul>
+                    <li><code>llama3</code> → Meta Llama 3</li>
+                    <li><code>llama2</code> → Meta Llama 2</li>
+                    <li><code>mistral</code> → Mistral 7B/8x7B</li>
+                    <li><code>qwen</code> → Qwen 2</li>
+                    <li><code>alpaca</code> → Alpaca-style format</li>
+                    <li><code>default</code> → Sin template especial</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>finetuning_type</h3>
+                <p><strong>Función:</strong> Método de fine-tuning a usar</p>
+                <table>
+                    <tr>
+                        <td><strong>Tipo</strong></td>
+                        <td><strong>VRAM</strong></td>
+                        <td><strong>Velocidad</strong></td>
+                    </tr>
+                    <tr>
+                        <td><code>lora</code></td>
+                        <td>⭐ 3-4GB</td>
+                        <td>⭐⭐ Rápido</td>
+                    </tr>
+                    <tr>
+                        <td><code>full</code></td>
+                        <td>❌ 40-80GB</td>
+                        <td>⭐⭐⭐ Muy rápido</td>
+                    </tr>
+                    <tr>
+                        <td><code>freeze</code></td>
+                        <td>⭐ Intermedio</td>
+                        <td>⭐⭐ Medio</td>
+                    </tr>
+                </table>
+            </section>
+
+            <section>
+                <h3>adapter_name_or_path</h3>
+                <p><strong>Función:</strong> Carga un LoRA adapter previamente entrenado</p>
+                <p><strong>Uso típico:</strong> Continuar entrenamiento desde checkpoint</p>
+                <pre><code>model_name_or_path: "meta-llama/Llama-3-8B"
+adapter_name_or_path: "./saves/llama3-8b/checkpoint-1000"</code></pre>
+                <p><strong>Resultado:</strong> Modelo base + LoRA adapter cargados</p>
+            </section>
+
+            <!-- SECCIÓN 2: HIPERPARÁMETROS DE ENTRENAMIENTO -->
+            <section>
+                <h2>2️⃣ Hiperparámetros de Entrenamiento</h2>
+            </section>
+
+            <section>
+                <h3>learning_rate</h3>
+                <p><strong>Función:</strong> Tamaño de paso en descenso de gradiente</p>
+                <p><strong>Impacto:</strong> Crítico para convergencia</p>
+                <table>
+                    <tr>
+                        <td><strong>Tipo</strong></td>
+                        <td><strong>Valor recomendado</strong></td>
+                    </tr>
+                    <tr>
+                        <td>LoRA/QLoRA SFT</td>
+                        <td>2e-4 (0.0002)</td>
+                    </tr>
+                    <tr>
+                        <td>LoRA/QLoRA DPO</td>
+                        <td>5e-6 (0.000005)</td>
+                    </tr>
+                    <tr>
+                        <td>Full SFT</td>
+                        <td>1e-5 (0.00001)</td>
+                    </tr>
+                    <tr>
+                        <td>Pre-training</td>
+                        <td>1e-5 (0.00001)</td>
+                    </tr>
+                </table>
+            </section>
+
+            <section>
+                <h3>num_train_epochs</h3>
+                <p><strong>Función:</strong> Número de pasadas completas por el dataset</p>
+                <p><strong>Rango típico:</strong> 1.0 - 3.0</p>
+                <ul>
+                    <li><strong>1 época:</strong> Dataset pequeño o pre-tuning rápido</li>
+                    <li><strong>2-3 épocas:</strong> Recomendado para la mayoría de casos</li>
+                    <li><strong>&gt;3 épocas:</strong> ⚠️ Riesgo de overfitting</li>
+                </ul>
+                <pre><code>num_train_epochs: 3.0</code></pre>
+            </section>
+
+            <section>
+                <h3>per_device_train_batch_size</h3>
+                <p><strong>Función:</strong> Muestras procesadas antes de actualizar pesos</p>
+                <p><strong>Relación con VRAM:</strong> Mayor batch = más VRAM</p>
+                <table>
+                    <tr>
+                        <td><strong>GPU</strong></td>
+                        <td><strong>Batch (QLoRA)</strong></td>
+                        <td><strong>Batch (LoRA)</strong></td>
+                    </tr>
+                    <tr>
+                        <td>12GB (3060/4060)</td>
+                        <td>1</td>
+                        <td>2</td>
+                    </tr>
+                    <tr>
+                        <td>24GB (4090)</td>
+                        <td>2-4</td>
+                        <td>4-8</td>
+                    </tr>
+                    <tr>
+                        <td>40GB (A100)</td>
+                        <td>4-8</td>
+                        <td>8-16</td>
+                    </tr>
+                </table>
+            </section>
+
+            <section>
+                <h3>gradient_accumulation_steps</h3>
+                <p><strong>Función:</strong> Simula batches más grandes sin más VRAM</p>
+                <p><strong>Fórmula:</strong> Effective Batch = batch_size × accumulation_steps</p>
+                <p><strong>Ejemplo:</strong></p>
+                <ul>
+                    <li>per_device_train_batch_size: 1</li>
+                    <li>gradient_accumulation_steps: 8</li>
+                    <li><span class="success">= Effective batch de 8</span></li>
+                </ul>
+                <p style="margin-top: 0.5em;"><strong>Trade-off:</strong> Más pasos → entrenamiento más lento</p>
+            </section>
+
+            <section>
+                <h3>learning_rate + warmup_ratio</h3>
+                <p><strong>warmup_ratio:</strong> Aumento gradual de LR al inicio</p>
+                <p><strong>Propósito:</strong> Estabilidad en entrenamientos iniciales</p>
+                <pre><code>warmup_ratio: 0.1  # 10% de pasos como warmup
+warmup_steps: 500  # O especificar directamente</code></pre>
+                <p><strong>Gráfica típica:</strong></p>
+                <ul>
+                    <li>Pasos 0-10%: LR aumenta de 0 → target</li>
+                    <li>Pasos 10%-100%: LR disminuye (cosine schedule)</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>lr_scheduler_type</h3>
+                <p><strong>Función:</strong> Estrategia de ajuste de learning rate</p>
+                <table>
+                    <tr>
+                        <td><strong>Tipo</strong></td>
+                        <td><strong>Comportamiento</strong></td>
+                    </tr>
+                    <tr>
+                        <td><code>cosine</code> ⭐</td>
+                        <td>Disminuye suavemente (recomendado)</td>
+                    </tr>
+                    <tr>
+                        <td><code>linear</code></td>
+                        <td>Disminuye linealmente</td>
+                    </tr>
+                    <tr>
+                        <td><code>constant</code></td>
+                        <td>LR fija durante todo entrenamiento</td>
+                    </tr>
+                    <tr>
+                        <td><code>polynomial</code></td>
+                        <td>Disminuye polinomialmente</td>
+                    </tr>
+                </table>
+            </section>
+
+            <section>
+                <h3>weight_decay y max_grad_norm</h3>
+                <p><strong>weight_decay:</strong> Regularización L2</p>
+                <ul>
+                    <li><strong>Función:</strong> Penaliza pesos grandes</li>
+                    <li><strong>Rango típico:</strong> 0.0 - 0.01</li>
+                    <li><strong>Efecto:</strong> Previene overfitting</li>
+                    <li><strong>Recomendado:</strong> 0.01</li>
+                </ul>
+                <p style="margin-top: 1em;"><strong>max_grad_norm:</strong> Clipping de gradientes</p>
+                <ul>
+                    <li><strong>Función:</strong> Limita magnitud de gradientes</li>
+                    <li><strong>Valores comunes:</strong> 0.3, 1.0</li>
+                    <li><strong>Previene:</strong> Exploding gradients</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>optim (Optimizer)</h3>
+                <p><strong>Función:</strong> Algoritmo de optimización</p>
+                <table>
+                    <tr>
+                        <td><strong>Optimizer</strong></td>
+                        <td><strong>VRAM</strong></td>
+                        <td><strong>Velocidad</strong></td>
+                    </tr>
+                    <tr>
+                        <td><code>adamw_torch</code> ⭐</td>
+                        <td>Normal</td>
+                        <td>Rápido</td>
+                    </tr>
+                    <tr>
+                        <td><code>adamw_bnb_8bit</code></td>
+                        <td>-25% VRAM</td>
+                        <td>Más lento</td>
+                    </tr>
+                    <tr>
+                        <td><code>adafactor</code></td>
+                        <td>-50% VRAM</td>
+                        <td>Muy lento</td>
+                    </tr>
+                </table>
+                <p style="margin-top: 0.5em;"><span class="info">💡</span> adamw_torch es lo más balanceado</p>
+            </section>
+
+            <!-- SECCIÓN 3: PARÁMETROS LORA/QLORA -->
+            <section>
+                <h2>3️⃣ Parámetros LoRA/QLoRA</h2>
+            </section>
+
+            <section>
+                <h3>lora_rank (r)</h3>
+                <p><strong>Función:</strong> Dimensión de las matrices de bajo rango</p>
+                <p><strong>Impacto:</strong> Mayor rango = más parámetros, más VRAM</p>
+                <table>
+                    <tr>
+                        <td><strong>Rank</strong></td>
+                        <td><strong>Caso de uso</strong></td>
+                        <td><strong>Parámetros LoRA</strong></td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>Tareas simples</td>
+                        <td>~1M</td>
+                    </tr>
+                    <tr>
+                        <td>16 ⭐</td>
+                        <td>Mayoría de casos</td>
+                        <td>~2M</td>
+                    </tr>
+                    <tr>
+                        <td>32</td>
+                        <td>Tareas complejas</td>
+                        <td>~4M</td>
+                    </tr>
+                    <tr>
+                        <td>64</td>
+                        <td>Datasets grandes</td>
+                        <td>~8M</td>
+                    </tr>
+                </table>
+            </section>
+
+            <section>
+                <h3>lora_alpha</h3>
+                <p><strong>Función:</strong> Factor de escala para actualizaciones LoRA</p>
+                <p><strong>Regla de oro:</strong> lora_alpha = 2 × lora_rank</p>
+                <pre><code>lora_rank: 8   → lora_alpha: 16
+lora_rank: 16  → lora_alpha: 32
+lora_rank: 32  → lora_alpha: 64
+lora_rank: 64  → lora_alpha: 128</code></pre>
+                <p><strong>Efecto:</strong> Controla intensidad del cambio LoRA</p>
+            </section>
+
+            <section>
+                <h3>lora_dropout</h3>
+                <p><strong>Función:</strong> Dropout para capas LoRA</p>
+                <p><strong>Propósito:</strong> Prevenir overfitting</p>
+                <table>
+                    <tr>
+                        <td><strong>Dropout</strong></td>
+                        <td><strong>Escenario</strong></td>
+                    </tr>
+                    <tr>
+                        <td>0.05</td>
+                        <td>Punto de partida (recomendado)</td>
+                    </tr>
+                    <tr>
+                        <td>0.1</td>
+                        <td>Regularización moderada</td>
+                    </tr>
+                    <tr>
+                        <td>0.2-0.3</td>
+                        <td>Fuerte regularización (overfitting)</td>
+                    </tr>
+                </table>
+                <p style="margin-top: 0.5em;"><strong>Ajuste:</strong> Si ves overfitting, aumenta dropout</p>
+            </section>
+
+            <section>
+                <h3>lora_target / target_modules</h3>
+                <p><strong>Función:</strong> Qué capas del modelo aplicar LoRA</p>
+                <p><strong>Opciones:</strong></p>
+                <ul>
+                    <li><code>all</code> ⭐ → Todas las capas lineales</li>
+                    <li><code>all-linear</code> → Idem a "all"</li>
+                    <li><code>["q_proj","k_proj","v_proj","o_proj"]</code> → Solo atención</li>
+                </ul>
+                <p style="margin-top: 1em;"><span class="success">✅ Mejor rendimiento:</span> lora_target: "all"</p>
+            </section>
+
+            <section>
+                <h3>lora_modules_to_save</h3>
+                <p><strong>Función:</strong> Capas adicionales a entrenar (además de LoRA)</p>
+                <p><strong>Caso de uso:</strong> Afinar embedding o layer norm</p>
+                <pre><code># Típicamente no es necesario
+# Usar solo si experimentas con arquitecturas nuevas</code></pre>
+            </section>
+
+            <section>
+                <h3>Resumen: Configuración LoRA Óptima</h3>
+                <pre><code>finetuning_type: lora
+
+# Recomendado para mayoría de casos:
+lora_rank: 16
+lora_alpha: 32
+lora_dropout: 0.05
+lora_target: all
+
+# Parámetros LoRA resultantes: ~2M
+# VRAM adicional: ~200MB</code></pre>
+            </section>
+
+            <!-- SECCIÓN 4: CONFIGURACIÓN DE DATOS -->
+            <section>
+                <h2>4️⃣ Configuración de Datos</h2>
+            </section>
+
+            <section>
+                <h3>stage</h3>
+                <p><strong>Función:</strong> Modo de entrenamiento</p>
+                <table>
+                    <tr>
+                        <td><strong>Stage</strong></td>
+                        <td><strong>Propósito</strong></td>
+                        <td><strong>Datos</strong></td>
+                    </tr>
+                    <tr>
+                        <td><code>sft</code> ⭐</td>
+                        <td>Fine-tuning supervisado</td>
+                        <td>Instrucción-respuesta</td>
+                    </tr>
+                    <tr>
+                        <td><code>pt</code></td>
+                        <td>Pre-training continuado</td>
+                        <td>Textos crudos</td>
+                    </tr>
+                    <tr>
+                        <td><code>dpo</code></td>
+                        <td>Optimización de preferencias</td>
+                        <td>Pares chosen-rejected</td>
+                    </tr>
+                    <tr>
+                        <td><code>rm</code></td>
+                        <td>Modelo de recompensa</td>
+                        <td>Pares de preferencia</td>
+                    </tr>
+                </table>
+            </section>
+
+            <section>
+                <h3>dataset</h3>
+                <p><strong>Función:</strong> Nombre del dataset</p>
+                <p><strong>Requisito:</strong> Debe estar definido en dataset_info.json</p>
+                <p><strong>Datasets disponibles:</strong></p>
+                <ul>
+                    <li><code>alpaca_en</code> → Alpaca English</li>
+                    <li><code>alpaca_zh</code> → Alpaca Chinese</li>
+                    <li><code>dpo_en_demo</code> → DPO demo dataset</li>
+                    <li>O define los tuyos en dataset_info.json</li>
+                </ul>
+                <pre><code>dataset: "alpaca_en"</code></pre>
+            </section>
+
+            <section>
+                <h3>cutoff_len</h3>
+                <p><strong>Función:</strong> Longitud máxima de secuencia (tokens)</p>
+                <p><strong>Impacto:</strong> Mayor longitud = más VRAM y tiempo</p>
+                <table>
+                    <tr>
+                        <td><strong>Longitud</strong></td>
+                        <td><strong>VRAM (+)</strong></td>
+                        <td><strong>Caso de uso</strong></td>
+                    </tr>
+                    <tr>
+                        <td>512</td>
+                        <td>Base</td>
+                        <td>Tareas simples</td>
+                    </tr>
+                    <tr>
+                        <td>1024</td>
+                        <td>+25%</td>
+                        <td>Preguntas medianas</td>
+                    </tr>
+                    <tr>
+                        <td>2048 ⭐</td>
+                        <td>+100%</td>
+                        <td>Recomendado</td>
+                    </tr>
+                    <tr>
+                        <td>4096</td>
+                        <td>+400%</td>
+                        <td>Largo contexto</td>
+                    </tr>
+                </table>
+            </section>
+
+            <section>
+                <h3>max_samples y val_size</h3>
+                <p><strong>max_samples:</strong> Número máximo de ejemplos a usar</p>
+                <ul>
+                    <li><strong>Uso:</strong> Limitar dataset para pruebas rápidas</li>
+                    <li><strong>Ejemplo:</strong> max_samples: 1000</li>
+                    <li><strong>Beneficio:</strong> Entrenamientos más rápidos inicialmente</li>
+                </ul>
+                <p style="margin-top: 1em;"><strong>val_size:</strong> Proporción de datos para validación</p>
+                <ul>
+                    <li><strong>Rango:</strong> 0.0 - 1.0</li>
+                    <li><strong>Recomendado:</strong> 0.1 (10%)</li>
+                    <li><strong>Ejemplo:</strong> val_size: 0.1</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>preprocessing_num_workers y overwrite_cache</h3>
+                <p><strong>preprocessing_num_workers:</strong> Procesos paralelos para datos</p>
+                <ul>
+                    <li><strong>Valor:</strong> Usar número de cores CPU</li>
+                    <li><strong>Ejemplo:</strong> preprocessing_num_workers: 16</li>
+                    <li><strong>Efecto:</strong> Acelera carga de datasets</li>
+                </ul>
+                <p style="margin-top: 1em;"><strong>overwrite_cache:</strong> Regenerar caché de datos</p>
+                <ul>
+                    <li><strong>Cuándo usar:</strong> Cambios en dataset o preprocessamiento</li>
+                    <li><strong>Ejemplo:</strong> overwrite_cache: true</li>
+                </ul>
+            </section>
+
+            <!-- SECCIÓN 5: CUANTIZACIÓN -->
+            <section>
+                <h2>5️⃣ Parámetros de Cuantización</h2>
+            </section>
+
+            <section>
+                <h3>quantization_bit</h3>
+                <p><strong>Función:</strong> Precisión de cuantización</p>
+                <table>
+                    <tr>
+                        <td><strong>Bits</strong></td>
+                        <td><strong>VRAM</strong></td>
+                        <td><strong>Precisión</strong></td>
+                    </tr>
+                    <tr>
+                        <td>4-bit (NF4) ⭐</td>
+                        <td>7GB (Llama 3 8B)</td>
+                        <td>Buena</td>
+                    </tr>
+                    <tr>
+                        <td>8-bit</td>
+                        <td>15GB (Llama 3 8B)</td>
+                        <td>Muy buena</td>
+                    </tr>
+                    <tr>
+                        <td>Sin cuantizar</td>
+                        <td>30GB (Llama 3 8B)</td>
+                        <td>Excelente</td>
+                    </tr>
+                </table>
+                <pre><code>quantization_bit: 4  # Para QLoRA
+# O dejar vacío para precisión completa</code></pre>
+            </section>
+
+            <section>
+                <h3>bnb_4bit_quant_type</h3>
+                <p><strong>Función:</strong> Tipo de cuantización 4-bit</p>
+                <table>
+                    <tr>
+                        <td><strong>Tipo</strong></td>
+                        <td><strong>Precisión</strong></td>
+                        <td><strong>Recomendación</strong></td>
+                    </tr>
+                    <tr>
+                        <td><code>nf4</code> ⭐</td>
+                        <td>Normal Float 4</td>
+                        <td>Mejor opción</td>
+                    </tr>
+                    <tr>
+                        <td><code>fp4</code></td>
+                        <td>Float 4</td>
+                        <td>Alternativa</td>
+                    </tr>
+                </table>
+                <pre><code>bnb_4bit_quant_type: "nf4"</code></pre>
+                <p><span class="success">✅ NF4 proporciona mejor precisión</span></p>
+            </section>
+
+            <section>
+                <h3>bnb_4bit_use_double_quant</h3>
+                <p><strong>Función:</strong> Cuantizar las constantes de cuantización</p>
+                <p><strong>Efecto:</strong> Reduces VRAM adicional ~30%</p>
+                <pre><code>bnb_4bit_use_double_quant: true</code></pre>
+                <p><strong>Trade-off:</strong> Entrenamiento muy ligeramente más lento</p>
+                <p style="margin-top: 0.5em;"><span class="success">✅ Recomendado siempre usar</span></p>
+            </section>
+
+            <section>
+                <h3>bnb_4bit_compute_dtype</h3>
+                <p><strong>Función:</strong> Tipo de datos para computación</p>
+                <p><strong>Nota:</strong> Pesos se guardan en 4-bit, pero se usan 16/32-bit para cálculos</p>
+                <table>
+                    <tr>
+                        <td><strong>Tipo</strong></td>
+                        <td><strong>Estabilidad</strong></td>
+                        <td><strong>GPU</strong></td>
+                    </tr>
+                    <tr>
+                        <td><code>bfloat16</code> ⭐</td>
+                        <td>Excelente</td>
+                        <td>Ampere+ (RTX 30/40)</td>
+                    </tr>
+                    <tr>
+                        <td><code>float16</code></td>
+                        <td>Buena</td>
+                        <td>Cualquier GPU</td>
+                    </tr>
+                </table>
+                <pre><code>bnb_4bit_compute_dtype: "bfloat16"</code></pre>
+            </section>
+
+            <!-- SECCIÓN 6: PRECISIÓN -->
+            <section>
+                <h2>6️⃣ Parámetros de Precisión</h2>
+            </section>
+
+            <section>
+                <h3>fp16 y bf16</h3>
+                <p><strong>Función:</strong> Precisión de entrenamiento</p>
+                <p><strong>Regla:</strong> Usar fp16 O bf16, nunca ambos</p>
+                <table>
+                    <tr>
+                        <td><strong>Tipo</strong></td>
+                        <td><strong>VRAM</strong></td>
+                        <td><strong>Estabilidad</strong></td>
+                    </tr>
+                    <tr>
+                        <td><code>fp16</code></td>
+                        <td>Normal</td>
+                        <td>Puede ser inestable</td>
+                    </tr>
+                    <tr>
+                        <td><code>bf16</code> ⭐</td>
+                        <td>Normal</td>
+                        <td>Muy estable</td>
+                    </tr>
+                </table>
+                <pre><code>bf16: true
+# No poner fp16 si usas bf16</code></pre>
+            </section>
+
+            <section>
+                <h3>do_train y do_eval</h3>
+                <p><strong>do_train:</strong> Habilitar fase de entrenamiento</p>
+                <p><strong>do_eval:</strong> Habilitar evaluación durante entrenamiento</p>
+                <pre><code>do_train: true
+do_eval: true</code></pre>
+                <p><strong>Caso típico:</strong> Ambos en true para monitoreo completo</p>
+            </section>
+
+            <!-- SECCIÓN 7: EVALUACIÓN Y LOGGING -->
+            <section>
+                <h2>7️⃣ Evaluación y Logging</h2>
+            </section>
+
+            <section>
+                <h3>evaluation_strategy y eval_steps</h3>
+                <p><strong>evaluation_strategy:</strong> Cuándo evaluar</p>
+                <table>
+                    <tr>
+                        <td><strong>Estrategia</strong></td>
+                        <td><strong>Comportamiento</strong></td>
+                    </tr>
+                    <tr>
+                        <td><code>no</code></td>
+                        <td>Sin evaluación</td>
+                    </tr>
+                    <tr>
+                        <td><code>steps</code> ⭐</td>
+                        <td>Cada N pasos de entrenamiento</td>
+                    </tr>
+                    <tr>
+                        <td><code>epoch</code></td>
+                        <td>Al final de cada época</td>
+                    </tr>
+                </table>
+                <pre><code>evaluation_strategy: "steps"
+eval_steps: 500</code></pre>
+            </section>
+
+            <section>
+                <h3>save_strategy y save_steps</h3>
+                <p><strong>save_strategy:</strong> Cuándo guardar checkpoints</p>
+                <pre><code>save_strategy: "steps"
+save_steps: 500</code></pre>
+                <p><strong>Opciones:</strong> "no", "steps", "epoch"</p>
+                <p style="margin-top: 1em;"><strong>Recomendación:</strong> Guardar cada 500 pasos</p>
+                <p><span class="warning">⚠️</span> Más checkpoints = más espacio en disco</p>
+            </section>
+
+            <section>
+                <h3>logging_steps</h3>
+                <p><strong>Función:</strong> Frecuencia de logging de métricas</p>
+                <pre><code>logging_steps: 10</code></pre>
+                <p><strong>Efectos:</strong></p>
+                <ul>
+                    <li>Muestra loss cada 10 pasos</li>
+                    <li>Mayor frecuencia = más información</li>
+                    <li>logging_steps: 1 para debugging detallado</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>output_dir y plot_loss</h3>
+                <p><strong>output_dir:</strong> Directorio para guardado</p>
+                <pre><code>output_dir: "./saves/llama3-8b/lora/sft"</code></pre>
+                <p style="margin-top: 1em;"><strong>plot_loss:</strong> Generar gráfica de pérdida</p>
+                <pre><code>plot_loss: true</code></pre>
+                <p><strong>Resultado:</strong> Archivo training_loss.png con visualización</p>
+            </section>
+
+            <!-- SECCIÓN 8: PARÁMETROS RLHF -->
+            <section>
+                <h2>8️⃣ Parámetros RLHF/Preferencias</h2>
+            </section>
+
+            <section>
+                <h3>pref_beta (DPO)</h3>
+                <p><strong>Función:</strong> Parámetro beta para DPO</p>
+                <p><strong>Impacto:</strong> Controla fuerza de la preferencia</p>
+                <table>
+                    <tr>
+                        <td><strong>Beta</strong></td>
+                        <td><strong>Efecto</strong></td>
+                    </tr>
+                    <tr>
+                        <td>0.01</td>
+                        <td>Débil (soft preferences)</td>
+                    </tr>
+                    <tr>
+                        <td>0.1 ⭐</td>
+                        <td>Recomendado</td>
+                    </tr>
+                    <tr>
+                        <td>1.0</td>
+                        <td>Fuerte (hard preferences)</td>
+                    </tr>
+                </table>
+                <pre><code>pref_beta: 0.1</code></pre>
+            </section>
+
+            <section>
+                <h3>pref_loss y reward_model</h3>
+                <p><strong>pref_loss:</strong> Función de pérdida para DPO</p>
+                <ul>
+                    <li><code>sigmoid</code> ⭐ → DPO estándar</li>
+                    <li><code>orpo</code> → ORPO (alternativa)</li>
+                    <li><code>simpo</code> → SimPO (simplificado)</li>
+                </ul>
+                <p style="margin-top: 1em;"><strong>reward_model:</strong> Para PPO training</p>
+                <pre><code>reward_model: "./saves/llama3-8b/lora/reward"</code></pre>
+                <p><strong>Requisito:</strong> Modelo de recompensa ya entrenado</p>
+            </section>
+
+            <!-- SECCIÓN 9: MODOS DE ENTRENAMIENTO -->
+            <section>
+                <h2>9️⃣ Modos de Entrenamiento</h2>
+            </section>
+
+            <section>
+                <h3>Modo 1: SFT (Supervised Fine-Tuning)</h3>
+                <p><strong>Propósito:</strong> Fine-tuning en pares instrucción-respuesta</p>
+                <pre><code>stage: "sft"
+dataset: "alpaca_en"
+cutoff_len: 2048
+learning_rate: 2e-4
+num_train_epochs: 3</code></pre>
+                <p><strong>Datos requeridos:</strong></p>
+                <ul>
+                    <li>instruction (requerido)</li>
+                    <li>output (requerido)</li>
+                    <li>input (opcional)</li>
+                </ul>
+                <p style="margin-top: 0.5em;"><span class="success">✅ Modo más común y fácil</span></p>
+            </section>
+
+            <section>
+                <h3>Modo 2: PT (Continued Pre-Training)</h3>
+                <p><strong>Propósito:</strong> Entrenar en textos crudos de dominio específico</p>
+                <pre><code>stage: "pt"
+finetuning_type: "lora"  # o "full"
+cutoff_len: 2048
+learning_rate: 1e-5  # Más baja que SFT
+num_train_epochs: 1</code></pre>
+                <p><strong>Datos:</strong> Textos crudos sin estructura</p>
+                <p style="margin-top: 0.5em;"><span class="info">💡</span> Mejor para documentos especializados</p>
+            </section>
+
+            <section>
+                <h3>Modo 3: RM (Reward Model Training)</h3>
+                <p><strong>Propósito:</strong> Entrenar modelo de recompensa para RLHF</p>
+                <pre><code>stage: "rm"
+dataset: "dpo_en_demo"
+learning_rate: 1e-5
+num_train_epochs: 1</code></pre>
+                <p><strong>Datos requeridos:</strong></p>
+                <ul>
+                    <li>instruction (requerido)</li>
+                    <li>chosen (requerido)</li>
+                    <li>rejected (requerido)</li>
+                </ul>
+                <p style="margin-top: 0.5em;"><strong>Requisito previo:</strong> Modelo SFT base</p>
+            </section>
+
+            <section>
+                <h3>Modo 4: DPO (Direct Preference Optimization)</h3>
+                <p><strong>Propósito:</strong> Alineación directa con preferencias sin modelo de recompensa</p>
+                <pre><code>stage: "dpo"
+pref_beta: 0.1
+pref_loss: "sigmoid"
+learning_rate: 5e-6  # Muy baja
+num_train_epochs: 3</code></pre>
+                <p><strong>Ventajas sobre RM+PPO:</strong></p>
+                <ul>
+                    <li>Más simple (no requiere RM)</li>
+                    <li>Más rápido de entrenar</li>
+                    <li>Menos uso de VRAM</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Modo 5: PPO (Proximal Policy Optimization)</h3>
+                <p><strong>Propósito:</strong> RLHF completo con modelo de recompensa</p>
+                <pre><code>stage: "ppo"
+reward_model: "./saves/llama3-8b/lora/reward"
+learning_rate: 1e-5
+num_train_epochs: 1</code></pre>
+                <p><strong>Requisitos previos:</strong></p>
+                <ul>
+                    <li>Modelo SFT base</li>
+                    <li>Modelo de recompensa entrenado</li>
+                </ul>
+                <p style="margin-top: 0.5em;"><span class="warning">⚠️</span> Más complejo, requiere más recursos</p>
+            </section>
+
+            <section>
+                <h3>QLoRA vs LoRA Completo</h3>
+                <table>
+                    <tr>
+                        <td><strong>Aspecto</strong></td>
+                        <td><strong>QLoRA</strong></td>
+                        <td><strong>LoRA Completo</strong></td>
+                    </tr>
+                    <tr>
+                        <td>VRAM</td>
+                        <td>⭐ 3-4GB</td>
+                        <td>❌ 15-30GB</td>
+                    </tr>
+                    <tr>
+                        <td>Velocidad</td>
+                        <td>⭐⭐ Media</td>
+                        <td>⭐⭐⭐ Rápido</td>
+                    </tr>
+                    <tr>
+                        <td>Precisión</td>
+                        <td>⭐⭐ Buena</td>
+                        <td>⭐⭐⭐ Excelente</td>
+                    </tr>
+                    <tr>
+                        <td>GPU mínima</td>
+                        <td>12GB</td>
+                        <td>40GB</td>
+                    </tr>
+                </table>
+                <p style="margin-top: 0.5em;"><span class="success">✅ QLoRA: ideal para consumer GPUs</span></p>
+            </section>
+
+            <!-- SECCIÓN 10: EJEMPLOS PRÁCTICOS -->
+            <section>
+                <h2>🔟 Ejemplos de Configuración</h2>
+            </section>
+
+            <section>
+                <h3>Ejemplo 1: RTX 3090/4090 (24GB VRAM)</h3>
+                <pre><code>model_name_or_path: "meta-llama/Llama-3-8B-Instruct"
+stage: sft
+finetuning_type: lora
+dataset: alpaca_en
+template: llama3
+
+per_device_train_batch_size: 2
+gradient_accumulation_steps: 4
+learning_rate: 2e-4
+num_train_epochs: 3
+lr_scheduler_type: cosine
+warmup_ratio: 0.1
+
+lora_rank: 16
+lora_alpha: 32
+lora_dropout: 0.05
+lora_target: all
+
+quantization_bit: 4
+bnb_4bit_quant_type: nf4
+bnb_4bit_use_double_quant: true
+bnb_4bit_compute_dtype: bfloat16
+
+output_dir: "./saves/llama3-8b-qlora-sft"
+logging_steps: 10
+save_steps: 500
+plot_loss: true</code></pre>
+            </section>
+
+            <section>
+                <h3>Ejemplo 2: A100/H100 (80GB VRAM)</h3>
+                <pre><code>model_name_or_path: "meta-llama/Llama-3-70B"
+stage: sft
+finetuning_type: full
+dataset: alpaca_en
+template: llama3
+
+per_device_train_batch_size: 4
+gradient_accumulation_steps: 4
+learning_rate: 1e-5
+num_train_epochs: 3
+lr_scheduler_type: cosine
+
+bf16: true
+
+output_dir: "./saves/llama3-70b-full-sft"
+logging_steps: 10
+save_steps: 1000
+plot_loss: true</code></pre>
+                <p><strong>Ventaja:</strong> Sin cuantización, más precisión</p>
+            </section>
+
+            <section>
+                <h3>Ejemplo 3: DPO en RTX 4090</h3>
+                <pre><code>model_name_or_path: "./saves/llama3-8b-qlora-sft"
+stage: dpo
+dataset: dpo_en_demo
+template: llama3
+
+pref_beta: 0.1
+pref_loss: sigmoid
+
+per_device_train_batch_size: 2
+gradient_accumulation_steps: 4
+learning_rate: 5e-6  # Más baja que SFT
+num_train_epochs: 3
+
+lora_rank: 16
+lora_alpha: 32
+
+quantization_bit: 4
+bnb_4bit_quant_type: nf4
+
+output_dir: "./saves/llama3-8b-qlora-dpo"
+plot_loss: true</code></pre>
+            </section>
+
+            <section>
+                <h3>Ejemplo 4: Continued Pretraining</h3>
+                <pre><code>model_name_or_path: "meta-llama/Llama-3-8B"
+stage: pt
+finetuning_type: lora
+cutoff_len: 2048
+
+per_device_train_batch_size: 2
+gradient_accumulation_steps: 8
+learning_rate: 1e-5
+num_train_epochs: 1
+
+lora_rank: 8
+lora_alpha: 16
+lora_target: all
+
+quantization_bit: 4
+bnb_4bit_quant_type: nf4
+
+output_dir: "./saves/llama3-8b-pt"
+max_samples: 10000  # Limitar para prueba</code></pre>
+            </section>
+
+            <!-- SECCIÓN 11: MEJORES PRÁCTICAS -->
+            <section>
+                <h2>1️⃣1️⃣ Mejores Prácticas</h2>
+            </section>
+
+            <section>
+                <h3>Gestión de Learning Rate</h3>
+                <p><strong>Regla de oro:</strong> Usa learning rates diferentes por modo</p>
+                <table>
+                    <tr>
+                        <td><strong>Modo</strong></td>
+                        <td><strong>Learning Rate</strong></td>
+                    </tr>
+                    <tr>
+                        <td>SFT (LoRA)</td>
+                        <td>2e-4</td>
+                    </tr>
+                    <tr>
+                        <td>SFT (Full)</td>
+                        <td>1e-5</td>
+                    </tr>
+                    <tr>
+                        <td>DPO</td>
+                        <td>5e-6</td>
+                    </tr>
+                    <tr>
+                        <td>PPO</td>
+                        <td>1e-5</td>
+                    </tr>
+                    <tr>
+                        <td>Pre-training</td>
+                        <td>1e-5</td>
+                    </tr>
+                </table>
+            </section>
+
+            <section>
+                <h3>Manejo de VRAM</h3>
+                <p><strong>Estrategia 1: Reducir por dimensión</strong></p>
+                <ul>
+                    <li>Reduce cutoff_len: 2048 → 1024</li>
+                    <li>Efecto: -50% VRAM</li>
+                </ul>
+                <p style="margin-top: 0.8em;"><strong>Estrategia 2: Reducir batch size</strong></p>
+                <ul>
+                    <li>per_device_train_batch_size: 2 → 1</li>
+                    <li>gradient_accumulation_steps: 4 → 8</li>
+                    <li>Efecto: -50% VRAM, mismo batch efectivo</li>
+                </ul>
+                <p style="margin-top: 0.8em;"><strong>Estrategia 3: Optimizadores ligeros</strong></p>
+                <ul>
+                    <li>optim: "adamw_bnb_8bit"</li>
+                    <li>Efecto: -25% VRAM</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Monitoreo de Entrenamiento</h3>
+                <p><strong>Métricas a observar:</strong></p>
+                <ul>
+                    <li><strong>Loss de entrenamiento:</strong> Debe decrecer suavemente</li>
+                    <li><strong>Loss de validación:</strong> Debe disminuir también</li>
+                    <li><strong>Overfitting:</strong> Si val_loss > train_loss después de algunas épocas</li>
+                </ul>
+                <p style="margin-top: 1em;"><strong>Soluciones si hay overfitting:</strong></p>
+                <ul>
+                    <li>Reduce num_train_epochs</li>
+                    <li>Aumenta lora_dropout a 0.1 o 0.2</li>
+                    <li>Aumenta weight_decay a 0.1</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Selección de Template</h3>
+                <p><strong>CRÍTICO:</strong> Template debe coincidir exactamente</p>
+                <table>
+                    <tr>
+                        <td><strong>Template</strong></td>
+                        <td><strong>Modelos</strong></td>
+                    </tr>
+                    <tr>
+                        <td><code>llama3</code></td>
+                        <td>Llama 3, 3.1, 3.2</td>
+                    </tr>
+                    <tr>
+                        <td><code>llama2</code></td>
+                        <td>Llama 2</td>
+                    </tr>
+                    <tr>
+                        <td><code>mistral</code></td>
+                        <td>Mistral, Mixtral</td>
+                    </tr>
+                    <tr>
+                        <td><code>qwen</code></td>
+                        <td>Qwen 2, QwQ</td>
+                    </tr>
+                </table>
+                <p style="margin-top: 0.5em;"><span class="warning">⚠️</span> Template incorrecto = resultados pobres</p>
+            </section>
+
+            <section>
+                <h3>Configuración de Batch Size Efectivo</h3>
+                <p><strong>Fórmula:</strong> Effective Batch = per_device × accumulation × num_gpus</p>
+                <p><strong>Ejemplos de configuraciones equivalentes:</strong></p>
+                <pre><code># Opción 1: Batch pequeño, acumulación alta
+per_device_train_batch_size: 1
+gradient_accumulation_steps: 8
+# Effective batch = 8, bajo VRAM
+
+# Opción 2: Batch moderado
+per_device_train_batch_size: 2
+gradient_accumulation_steps: 4
+# Effective batch = 8, VRAM moderado
+
+# Opción 3: Batch alto, sin acumulación
+per_device_train_batch_size: 8
+gradient_accumulation_steps: 1
+# Effective batch = 8, alto VRAM</code></pre>
+            </section>
+
+            <section>
+                <h3>Configuración LoRA Balanceada</h3>
+                <p><strong>Para la mayoría de casos:</strong></p>
+                <pre><code>lora_rank: 16
+lora_alpha: 32
+lora_dropout: 0.05
+lora_target: all</code></pre>
+                <p><strong>Para modelos pequeños (&lt;7B):</strong></p>
+                <pre><code>lora_rank: 8
+lora_alpha: 16</code></pre>
+                <p style="margin-top: 0.8em;"><strong>Para tareas complejas o datasets grandes:</strong></p>
+                <pre><code>lora_rank: 32
+lora_alpha: 64</code></pre>
+            </section>
+
+            <section>
+                <h3>Optimización de Tiempo de Entrenamiento</h3>
+                <p><strong>Estrategias para acelerar:</strong></p>
+                <ul>
+                    <li><strong>1. Reduce cutoff_len:</strong> 2048 → 1024 = -50% tiempo</li>
+                    <li><strong>2. Usa BF16:</strong> Más rápido que FP16</li>
+                    <li><strong>3. Aumenta batch_size:</strong> Si VRAM lo permite</li>
+                    <li><strong>4. Reduce eval_steps:</strong> Menos evaluaciones innecesarias</li>
+                    <li><strong>5. Usa múltiples GPUs:</strong> DDP es fundamental</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Reproducibilidad</h3>
+                <p><strong>Para resultados reproducibles:</strong></p>
+                <pre><code># Fijar seeds para reproducibilidad
+seed: 42</code></pre>
+                <p><strong>Cuidado con:</strong></p>
+                <ul>
+                    <li>Versiones diferentes de librerías pueden dar resultados distintos</li>
+                    <li>Entrenamientos distribuidos (DDP) pueden introducir no-determinismo</li>
+                    <li>GPUs diferentes pueden tener diferencias menores en precisión</li>
+                </ul>
+                <p style="margin-top: 0.5em;"><span class="info">💡</span> Documentar todas las versiones de dependencias</p>
+            </section>
+
+            <!-- SECCIÓN 12: TROUBLESHOOTING -->
+            <section>
+                <h2>1️⃣2️⃣ Troubleshooting Común</h2>
+            </section>
+
+            <section>
+                <h3>Error: CUDA Out of Memory</h3>
+                <p><strong>Soluciones (en orden de efectividad):</strong></p>
+                <ol style="font-size: 0.55em;">
+                    <li>Reduce cutoff_len: 2048 → 1024 (-50% VRAM)</li>
+                    <li>Reduce per_device_train_batch_size: 2 → 1</li>
+                    <li>Aumenta gradient_accumulation_steps: 4 → 8</li>
+                    <li>Usa quantization_bit: 4 (QLoRA)</li>
+                    <li>Usa optim: "adamw_bnb_8bit"</li>
+                    <li>Reduce lora_rank: 16 → 8</li>
+                </ol>
+            </section>
+
+            <section>
+                <h3>Error: Template no coincide</h3>
+                <p><strong>Síntoma:</strong> Respuestas sin formato o muy pobres</p>
+                <p><strong>Solución:</strong> Verifica que el template sea correcto</p>
+                <pre><code># Durante entrenamiento:
+template: "llama3"
+
+# Durante inferencia (DEBE SER IGUAL):
+template: "llama3"</code></pre>
+                <p style="margin-top: 0.5em;">Templates disponibles en: dataset_info.json</p>
+            </section>
+
+            <section>
+                <h3>Error: Dataset no encontrado</h3>
+                <p><strong>Síntoma:</strong> "Dataset not found in dataset_info.json"</p>
+                <p><strong>Soluciones:</strong></p>
+                <ol style="font-size: 0.55em;">
+                    <li>Verifica nombre exacto en dataset_info.json</li>
+                    <li>Comprueba que ruta al archivo sea correcta</li>
+                    <li>Usa overwrite_cache: true si cambió el dataset</li>
+                </ol>
+            </section>
+
+            <section>
+                <h3>Pérdida no disminuye (loss plateau)</h3>
+                <p><strong>Causas posibles:</strong></p>
+                <ul>
+                    <li>Learning rate demasiado alta → reduce a 1/10</li>
+                    <li>Learning rate demasiado baja → aumenta 10×</li>
+                    <li>Datos de mala calidad → revisa dataset</li>
+                    <li>Template incorrecto → verifica chat format</li>
+                </ul>
+                <p style="margin-top: 1em;"><strong>Estrategia:</strong> Entrena 100 pasos con cada LR</p>
+            </section>
+
+            <section>
+                <h3>Overfitting: Val loss > Train loss</h3>
+                <p><strong>Síntomas:</strong> Modelo memoriza datos de entrenamiento</p>
+                <p><strong>Soluciones:</strong></p>
+                <ul>
+                    <li>Reduce num_train_epochs: 3 → 2 o 1</li>
+                    <li>Aumenta lora_dropout: 0.05 → 0.2</li>
+                    <li>Aumenta weight_decay: 0.01 → 0.1</li>
+                    <li>Obtén más datos si es posible</li>
+                </ul>
+            </section>
+
+            <!-- SECCIÓN 13: RECURSOS -->
+            <section>
+                <h2>1️⃣3️⃣ Recursos y Referencias</h2>
+            </section>
+
+            <section>
+                <h3>Documentación Oficial</h3>
+                <ul>
+                    <li><strong>LLAMA-Factory Docs:</strong> https://llamafactory.readthedocs.io</li>
+                    <li><strong>GitHub Repo:</strong> https://github.com/hiyouga/LLaMA-Factory</li>
+                    <li><strong>HuggingFace Docs:</strong> https://huggingface.co/docs/transformers</li>
+                    <li><strong>BitsAndBytes (cuantización):</strong> https://github.com/TimDettmers/bitsandbytes</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Mejores Modelos Bases (2024)</h3>
+                <ul>
+                    <li><strong>Llama 3.2:</strong> "meta-llama/Llama-3.2-8B-Instruct"</li>
+                    <li><strong>Mistral:</strong> "mistralai/Mistral-7B-Instruct-v0.3"</li>
+                    <li><strong>Qwen:</strong> "Qwen/Qwen2.5-7B-Instruct"</li>
+                    <li><strong>Phi:</strong> "microsoft/Phi-3-mini-4k-instruct"</li>
+                </ul>
+                <p style="margin-top: 1em;"><strong>Recomendación:</strong> Empieza con Llama 3.2 8B</p>
+            </section>
+
+            <section>
+                <h3>Datasets Públicos</h3>
+                <ul>
+                    <li><strong>Alpaca:</strong> Instrucciones de alta calidad</li>
+                    <li><strong>ShareGPT:</strong> Conversaciones ChatGPT reales</li>
+                    <li><strong>OpenAssistant:</strong> Preferencias humanas</li>
+                    <li><strong>Donde crear datos:</strong> scale.com, prodigy.ai</li>
+                </ul>
+            </section>
+
+            <!-- RESUMEN -->
+            <!-- SECCIÓN 14: COMPARACIÓN DE MODELOS -->
+            <section>
+                <h2>1️⃣4️⃣ Comparación de Modelos Base</h2>
+            </section>
+
+            <section>
+                <h3>Modelos Pequeños (3-8B)</h3>
+                <table style="font-size: 0.5em;">
+                    <tr>
+                        <td><strong>Modelo</strong></td>
+                        <td><strong>VRAM SFT</strong></td>
+                        <td><strong>Velocidad</strong></td>
+                        <td><strong>Calidad</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Phi 3.5 Mini (3.8B)</td>
+                        <td>⭐ 2-3GB</td>
+                        <td>⭐⭐⭐</td>
+                        <td>⭐⭐ Buena</td>
+                    </tr>
+                    <tr>
+                        <td>Mistral 7B</td>
+                        <td>⭐⭐ 4-6GB</td>
+                        <td>⭐⭐⭐</td>
+                        <td>⭐⭐⭐ Excelente</td>
+                    </tr>
+                    <tr>
+                        <td>Llama 3.2 8B</td>
+                        <td>⭐⭐ 4-6GB</td>
+                        <td>⭐⭐⭐</td>
+                        <td>⭐⭐⭐ Excelente</td>
+                    </tr>
+                    <tr>
+                        <td>Qwen 2.5 7B</td>
+                        <td>⭐⭐ 4-6GB</td>
+                        <td>⭐⭐⭐</td>
+                        <td>⭐⭐⭐ Excelente</td>
+                    </tr>
+                </table>
+                <p style="margin-top: 0.5em;"><span class="success">✅ Recomendado para empezar:</span> Llama 3.2 8B</p>
+            </section>
+
+            <section>
+                <h3>Modelos Medianos (13-32B)</h3>
+                <table style="font-size: 0.5em;">
+                    <tr>
+                        <td><strong>Modelo</strong></td>
+                        <td><strong>VRAM SFT</strong></td>
+                        <td><strong>Inferencia</strong></td>
+                        <td><strong>GPU Mínima</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Mistral 12B</td>
+                        <td>8-12GB</td>
+                        <td>⭐⭐⭐ Rápido</td>
+                        <td>RTX 4090</td>
+                    </tr>
+                    <tr>
+                        <td>Llama 2 13B</td>
+                        <td>10-14GB</td>
+                        <td>⭐⭐ Moderado</td>
+                        <td>RTX 4090</td>
+                    </tr>
+                    <tr>
+                        <td>Qwen 2.5 32B</td>
+                        <td>20-24GB</td>
+                        <td>⭐⭐⭐ Rápido</td>
+                        <td>RTX 6000 / A100</td>
+                    </tr>
+                </table>
+                <p style="margin-top: 0.5em;"><span class="warning">⚠️</span> Requieren GPUs high-end</p>
+            </section>
+
+            <!-- SECCIÓN 15: CÁLCULO DE VRAM -->
+            <section>
+                <h2>1️⃣5️⃣ Cálculo de VRAM Necesario</h2>
+            </section>
+
+            <section>
+                <h3>Fórmula Aproximada de VRAM</h3>
+                <p><strong>Para QLoRA:</strong></p>
+                <pre><code>VRAM (GB) ≈ (Model size × 0.5) + Batch overhead
+Para Llama 3 8B: ≈ 4GB + 2GB = 6GB
+Para Llama 3 70B: ≈ 35GB + 5GB = 40GB (⚠️ NO cabe)</code></pre>
+                <p style="margin-top: 1em;"><strong>Para LoRA completo (sin cuantizar):</strong></p>
+                <pre><code>VRAM (GB) ≈ (Model size × 2) + Batch overhead
+Para Llama 3 8B: ≈ 16GB + 4GB = 20GB
+Para Llama 3 70B: ≈ 140GB (❌ Solo A100/H100)</code></pre>
+            </section>
+
+            <section>
+                <h3>Tabla de VRAM por Configuración</h3>
+                <table style="font-size: 0.5em;">
+                    <tr>
+                        <td><strong>Modelo/Config</strong></td>
+                        <td><strong>QLoRA 4bit</strong></td>
+                        <td><strong>LoRA BF16</strong></td>
+                        <td><strong>Full FP32</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Llama 3 8B</td>
+                        <td>4-6GB</td>
+                        <td>16-24GB</td>
+                        <td>40-50GB</td>
+                    </tr>
+                    <tr>
+                        <td>Llama 3 70B</td>
+                        <td>40-48GB</td>
+                        <td>140GB+</td>
+                        <td>350GB+</td>
+                    </tr>
+                    <tr>
+                        <td>Mistral 7B</td>
+                        <td>4-6GB</td>
+                        <td>14-20GB</td>
+                        <td>35-45GB</td>
+                    </tr>
+                </table>
+            </section>
+
+            <!-- SECCIÓN 16: MÉTRICAS DE EVALUACIÓN -->
+            <section>
+                <h2>1️⃣6️⃣ Métricas de Evaluación</h2>
+            </section>
+
+            <section>
+                <h3>Pérdida (Loss)</h3>
+                <p><strong>Definición:</strong> Error de predicción del modelo</p>
+                <p><strong>Interpretación:</strong></p>
+                <ul>
+                    <li>Loss decrece durante entrenamiento: ✅ Normal</li>
+                    <li>Loss aumenta después de N épocas: ⚠️ Overfitting</li>
+                    <li>Loss se mantiene plano: ❌ Learning rate muy baja</li>
+                </ul>
+                <p style="margin-top: 0.8em;"><strong>Valores típicos:</strong></p>
+                <ul>
+                    <li>Inicio: 2.5 - 3.5</li>
+                    <li>Fin: 0.3 - 0.8</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Perplexity</h3>
+                <p><strong>Definición:</strong> Exponencial de la pérdida promedio</p>
+                <pre><code>Perplexity = exp(Loss)</code></pre>
+                <p><strong>Interpretación:</strong></p>
+                <ul>
+                    <li><strong>Menor es mejor</strong></li>
+                    <li>Perplexity 5 = Modelo muy confiado</li>
+                    <li>Perplexity 100+ = Modelo inseguro</li>
+                </ul>
+                <p style="margin-top: 0.8em;"><strong>Comparación:</strong></p>
+                <ul>
+                    <li>GPT-3: ~5-10</li>
+                    <li>Fine-tuned LLM: ~2-5</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>BLEU y ROUGE (Evaluación textual)</h3>
+                <p><strong>BLEU (Bilingual Evaluation Understudy):</strong></p>
+                <ul>
+                    <li>Compara n-gramas entre generado y referencia</li>
+                    <li>Rango: 0-100 (100 = copia exacta)</li>
+                    <li>Mejor para: traducciones, resúmenes</li>
+                </ul>
+                <p style="margin-top: 0.8em;"><strong>ROUGE (Recall-Oriented Understudy):</strong></p>
+                <ul>
+                    <li>Mide recall de n-gramas y secuencias</li>
+                    <li>Mejor para: resúmenes, extractivos</li>
+                </ul>
+                <p style="margin-top: 0.8em;"><strong>Limitación:</strong> No miden semántica real</p>
+            </section>
+
+            <!-- SECCIÓN 17: MÁS TROUBLESHOOTING -->
+            <section>
+                <h2>1️⃣7️⃣ Más Problemas y Soluciones</h2>
+            </section>
+
+            <section>
+                <h3>Problema: Generaciones repetitivas</h3>
+                <p><strong>Síntoma:</strong> Modelo genera el mismo texto una y otra vez</p>
+                <p><strong>Causas:</strong></p>
+                <ul>
+                    <li>Learning rate demasiado alta (overfitting)</li>
+                    <li>Dataset pequeño o sesgado</li>
+                    <li>Template incorrecto durante inferencia</li>
+                </ul>
+                <p style="margin-top: 0.8em;"><strong>Soluciones:</strong></p>
+                <ul>
+                    <li>Reduce learning_rate a 1/5 del valor actual</li>
+                    <li>Verifica que template en inferencia = template en entrenamiento</li>
+                    <li>Aumenta temperature durante generación (0.7-0.9)</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Problema: Modelo ignora instrucciones</h3>
+                <p><strong>Síntoma:</strong> No sigue instrucciones del usuario</p>
+                <p><strong>Causas principales:</strong></p>
+                <ol style="font-size: 0.55em;">
+                    <li>Template erróneo en inferencia</li>
+                    <li>Dataset de SFT de mala calidad</li>
+                    <li>Learning rate demasiado baja</li>
+                    <li>Modelo base no apto para instrucciones</li>
+                </ol>
+                <p style="margin-top: 0.8em;"><strong>Debugging:</strong></p>
+                <ul>
+                    <li>Usa modelo base -Instruct</li>
+                    <li>Revisa formato de dataset vs template</li>
+                    <li>Aumenta learning_rate ligeramente</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Problema: Pérdida sube después de mejorar</h3>
+                <p><strong>Síntoma:</strong> Loss baja N pasos, luego sube</p>
+                <p><strong>Causas:</strong></p>
+                <ul>
+                    <li>Learning rate scheduler muy agresivo</li>
+                    <li>Gradientes explosivos en algunos pasos</li>
+                    <li>Batch size muy pequeño con acumulación alta</li>
+                </ul>
+                <p style="margin-top: 0.8em;"><strong>Soluciones:</strong></p>
+                <ul>
+                    <li>Reduce max_grad_norm: 1.0 → 0.3</li>
+                    <li>Aumenta warmup_ratio: 0.1 → 0.2</li>
+                    <li>Usa lr_scheduler_type: "constant" para probar</li>
+                </ul>
+            </section>
+
+            <!-- SECCIÓN 18: CASOS DE USO -->
+            <section>
+                <h2>1️⃣8️⃣ Casos de Uso Específicos</h2>
+            </section>
+
+            <section>
+                <h3>Caso 1: Chatbot Dominio Específico</h3>
+                <p><strong>Configuración recomendada:</strong></p>
+                <pre><code>stage: sft
+learning_rate: 2e-4
+num_train_epochs: 3
+lora_rank: 16
+cutoff_len: 2048</code></pre>
+                <p><strong>Dataset:</strong> 500-2000 ejemplos instrucción-respuesta</p>
+                <p><strong>Tiempo:</strong> 2-4 horas en RTX 4090</p>
+                <p><strong>Resultado:</strong> Chatbot especializado</p>
+            </section>
+
+            <section>
+                <h3>Caso 2: Código Generation</h3>
+                <p><strong>Configuración recomendada:</strong></p>
+                <pre><code>stage: sft
+learning_rate: 1e-4  # Más baja para código
+num_train_epochs: 2
+lora_rank: 32  # Rank más alto para complejidad
+cutoff_len: 4096  # Más contexto para código</code></pre>
+                <p><strong>Dataset:</strong> Code + docstring pairs</p>
+                <p><strong>Métrica importante:</strong> BLEU score</p>
+            </section>
+
+            <section>
+                <h3>Caso 3: Summarization</h3>
+                <p><strong>Configuración recomendada:</strong></p>
+                <pre><code>stage: pt
+learning_rate: 1e-5  # Pre-training
+cutoff_len: 2048
+num_train_epochs: 1
+
+# O SFT si tienes ejemplos resumen
+stage: sft
+learning_rate: 5e-5</code></pre>
+                <p><strong>Métrica:</strong> ROUGE para eval</p>
+            </section>
+
+            <section>
+                <h3>Caso 4: Classification</h3>
+                <p><strong>Configuración recomendada:</strong></p>
+                <pre><code>stage: sft
+learning_rate: 2e-4
+num_train_epochs: 3-5  # Más épocas, tarea simple
+per_device_train_batch_size: 4
+lora_rank: 8  # Rank bajo, tarea simple</code></pre>
+                <p><strong>Dataset:</strong> Texto + clase</p>
+                <p><strong>Métrica:</strong> Accuracy, F1 score</p>
+            </section>
+
+            <!-- SECCIÓN 19: INTEGRACIÓN HUGGINGFACE -->
+            <section>
+                <h2>1️⃣9️⃣ Publicar en HuggingFace Hub</h2>
+            </section>
+
+            <section>
+                <h3>Subir LoRA Adapter</h3>
+                <p><strong>Pasos:</strong></p>
+                <ol style="font-size: 0.55em;">
+                    <li>Crea cuenta en https://huggingface.co</li>
+                    <li>Obtén token en settings → Access Tokens</li>
+                    <li>En LLAMA-Factory, en entrenamiento activa:
+                        <pre><code>push_to_hub: true
+hub_model_id: "usuario/mi-modelo-llama3"
+hub_strategy: "every_save"</code></pre>
+                    </li>
+                    <li>¡El adapter se sube automáticamente!</li>
+                </ol>
+            </section>
+
+            <section>
+                <h3>Cargar desde HuggingFace</h3>
+                <p><strong>Durante inferencia:</strong></p>
+                <pre><code>model_name_or_path: "meta-llama/Llama-3-8B"
+adapter_name_or_path: "usuario/mi-modelo-llama3"</code></pre>
+                <p><strong>Ventajas:</strong></p>
+                <ul>
+                    <li>Compartir fácilmente</li>
+                    <li>Versionamiento</li>
+                    <li>Documentación asociada</li>
+                    <li>Comunidad ve tu trabajo</li>
+                </ul>
+            </section>
+
+            <!-- SECCIÓN 20: DATOS Y FORMATO -->
+            <section>
+                <h2>2️⃣0️⃣ Preparación de Datos</h2>
+            </section>
+
+            <section>
+                <h3>Formatos de Dataset Soportados</h3>
+                <p><strong>1. JSON (Recomendado)</strong></p>
+                <pre><code>[
+  {
+    "instruction": "¿Cuál es la capital de Francia?",
+    "input": "",
+    "output": "La capital de Francia es París"
+  }
+]</code></pre>
+                <p style="margin-top: 0.8em;"><strong>2. JSONL (Streaming)</strong></p>
+                <pre><code>{"instruction": "...", "output": "..."}
+{"instruction": "...", "output": "..."}</code></pre>
+            </section>
+
+            <section>
+                <h3>Validación de Dataset</h3>
+                <p><strong>Checklist antes de entrenar:</strong></p>
+                <ul>
+                    <li><span class="success">✅</span> Todos los ejemplos tienen "output"</li>
+                    <li><span class="success">✅</span> "instruction" es claro y específico</li>
+                    <li><span class="success">✅</span> Variedad: no solo copias del mismo patrón</li>
+                    <li><span class="success">✅</span> Longitud: no extremadamente largo/corto</li>
+                    <li><span class="success">✅</span> Limpieza: sin caracteres extraños</li>
+                    <li><span class="success">✅</span> Mínimo 100 ejemplos (ideal 1000+)</li>
+                </ul>
+            </section>
+
+            <!-- SECCIÓN 21: INFERENCIA POST-ENTRENAMIENTO -->
+            <section>
+                <h2>2️⃣1️⃣ Inferencia Después de Fine-Tuning</h2>
+            </section>
+
+            <section>
+                <h3>Usando LLAMA-Factory para Inferencia</h3>
+                <p><strong>Vía WebUI:</strong></p>
+                <ol style="font-size: 0.55em;">
+                    <li>Ve a tab "Chat"</li>
+                    <li>Selecciona modelo base</li>
+                    <li>Carga LoRA adapter entrenado</li>
+                    <li>¡Comienza a chatear!</li>
+                </ol>
+                <p style="margin-top: 1em;"><strong>Vía CLI:</strong></p>
+                <pre><code>llamafactory-cli chat \
+  --model_name_or_path meta-llama/Llama-3-8B \
+  --adapter_name_or_path ./saves/mi-adapter</code></pre>
+            </section>
+
+            <section>
+                <h3>Exportar Modelo Completo</h3>
+                <p><strong>Fusionar LoRA con modelo base:</strong></p>
+                <pre><code>llamafactory-cli export \
+  --model_name_or_path meta-llama/Llama-3-8B \
+  --adapter_name_or_path ./saves/mi-adapter \
+  --output_dir ./exports/merged-model</code></pre>
+                <p><strong>Resultado:</strong> Modelo independiente sin LoRA</p>
+                <p style="margin-top: 0.8em;"><span class="warning">⚠️</span> Genera archivo de ~15GB para Llama 3 8B</p>
+            </section>
+
+            <!-- SECCIÓN 22: DISTRIBUCIÓN DE DATOS -->
+            <section>
+                <h2>2️⃣2️⃣ Técnicas Avanzadas de Datos</h2>
+            </section>
+
+            <section>
+                <h3>Data Augmentation</h3>
+                <p><strong>Técnicas para expandir dataset:</strong></p>
+                <ul>
+                    <li><strong>Parafraseo:</strong> Genera variantes de instrucciones</li>
+                    <li><strong>Back-translation:</strong> Traduce a otro idioma y vuelve</li>
+                    <li><strong>Few-shot prompting:</strong> Usa LLM para generar datos</li>
+                </ul>
+                <p style="margin-top: 1em;"><strong>Ejemplo con LLM grande:</strong></p>
+                <pre><code># Usa GPT-4 para generar más ejemplos
+from openai import OpenAI
+# Genera variaciones de tus ejemplos base</code></pre>
+            </section>
+
+            <section>
+                <h3>Manejo de Class Imbalance</h3>
+                <p><strong>Problema:</strong> Dataset desbalanceado</p>
+                <p><strong>Soluciones:</strong></p>
+                <ul>
+                    <li><strong>Upsampling:</strong> Repite ejemplos minority</li>
+                    <li><strong>Downsampling:</strong> Reduce ejemplos majority</li>
+                    <li><strong>Weights:</strong> Asigna pesos a clases en loss</li>
+                    <li><strong>Oversampling + undersampling:</strong> Combina ambos</li>
+                </ul>
+            </section>
+
+            <!-- SECCIÓN 23: OPTIMIZACIONES AVANZADAS -->
+            <section>
+                <h2>2️⃣3️⃣ Optimizaciones Avanzadas</h2>
+            </section>
+
+            <section>
+                <h3>Flash Attention</h3>
+                <p><strong>Función:</strong> Optimización de memoria para atención</p>
+                <p><strong>Impacto:</strong></p>
+                <ul>
+                    <li>Reduce VRAM de atención en ~20-30%</li>
+                    <li>Acelera secuencias largas</li>
+                    <li>Compatible con GPUs Ampere+ y Ada</li>
+                </ul>
+                <pre><code># Automático en LLAMA-Factory si GPU compatible
+# No requiere configuración adicional</code></pre>
+            </section>
+
+            <section>
+                <h3>Gradient Checkpointing</h3>
+                <p><strong>Función:</strong> Trade-off VRAM por velocidad</p>
+                <p><strong>Comportamiento:</strong></p>
+                <ul>
+                    <li>No guarda activaciones intermedias</li>
+                    <li>Recomputa en backward pass</li>
+                    <li>Reduce VRAM ~30%, más lento</li>
+                </ul>
+                <p style="margin-top: 0.8em;"><strong>Cuándo usar:</strong></p>
+                <ul>
+                    <li>VRAM limitado pero GPU rápida</li>
+                    <li>Timeout no es problema</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Resumen: Checklist Rápido</h2>
+                <ul style="font-size: 0.55em;">
+                    <li><span class="success">✅</span> Elige modelo: Llama 3.2, Mistral, Qwen</li>
+                    <li><span class="success">✅</span> Selecciona template correcto</li>
+                    <li><span class="success">✅</span> Prepara dataset en formato JSON</li>
+                    <li><span class="success">✅</span> Elige stage: SFT (más común)</li>
+                    <li><span class="success">✅</span> Configura batch size según VRAM</li>
+                    <li><span class="success">✅</span> Usa learning_rate: 2e-4 (LoRA)</li>
+                    <li><span class="success">✅</span> LoRA params: rank=16, alpha=32, dropout=0.05</li>
+                    <li><span class="success">✅</span> Enable cuantización si VRAM limitada</li>
+                    <li><span class="success">✅</span> Entrena 3 épocas con evaluación cada 500 pasos</li>
+                    <li><span class="success">✅</span> Monitorea gráficas de loss</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Próximos Pasos</h2>
+                <ul>
+                    <li><strong>1. Instala LLAMA-Factory:</strong> pip install llama-factory</li>
+                    <li><strong>2. Abre WebUI:</strong> llamafactory-cli webui</li>
+                    <li><strong>3. Carga modelo base:</strong> Elige desde lista</li>
+                    <li><strong>4. Selecciona dataset:</strong> alpaca_en por defecto</li>
+                    <li><strong>5. Ajusta parámetros:</strong> Usa valores recomendados</li>
+                    <li><strong>6. ¡Comienza a entrenar!</strong> Presiona Start Training</li>
+                </ul>
+            </section>
+
+            <section class="title-slide">
+                <h1>¡Listo para Entrenar!</h1>
+                <p style="margin-top: 2em;">Con LLAMA-Factory, fine-tuning es accesible para todos</p>
+                <p style="margin-top: 1em;"><strong>Documentación:</strong> https://llamafactory.readthedocs.io</p>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: true,
+            transition: 'slide',
+            keyboard: true,
+            center: false,
+            margin: 0.1
+        });
+
+        // Highlight code blocks after reveal is ready
+        Reveal.on('ready', function() {
+            document.querySelectorAll('pre code').forEach(function(el) {
+                hljs.highlightElement(el);
+            });
+        });
+    </script>
+</body>
+</html>
