@@ -1,0 +1,1223 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curso de Fine-Tuning Eficiente con Unsloth</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/theme/white.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-light.min.css">
+    <style>
+        .reveal { text-align: left; color: #555555; }
+        .reveal section { text-align: left; padding: 40px; display: flex; flex-direction: column; justify-content: flex-start; }
+        .reveal h1, .reveal h2, .reveal h3 { text-transform: none; text-align: left; color: #555555; }
+
+        .reveal h1 { font-size: 1.05em; margin-bottom: 0.5em; }
+        .reveal h2 { font-size: 1em; margin-bottom: 0.5em; }
+        .reveal h3 { font-size: 0.75em; margin-bottom: 0.3em; }
+
+        .reveal p { font-size: 0.6em; margin: 0.3em 0; color: #555555; }
+        .reveal strong { font-size: 1em; font-weight: bold; }
+
+        .reveal pre { background: #f8f8f8; border: 1px solid #ddd; width: 100%; padding: 0.5em; margin: 0.5em 0; }
+        .reveal pre code { font-size: 0.7em; color: #555555; line-height: 1.2; }
+
+        .reveal ul { font-size: 0.55em; text-align: left; margin-left: 0.5em; color: #555555; }
+        .reveal li { margin: 0.3em 0; color: #555555; }
+
+        .reveal table { font-size: 0.55em; margin: 0.5em 0; }
+        .reveal table td { padding: 0.3em; }
+
+        .title-slide { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white !important; }
+        .title-slide h1, .title-slide h2, .title-slide h3, .title-slide p { color: white; }
+
+        .highlight { background: #fff3cd; padding: 2px 4px; border-radius: 3px; }
+        .success { color: #28a745; font-weight: bold; }
+        .warning { color: #ffc107; font-weight: bold; }
+        .error { color: #dc3545; font-weight: bold; }
+        .info { color: #17a2b8; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- INTRODUCCIÓN -->
+            <section class="title-slide">
+                <h1>🚀 Fine-Tuning Eficiente con Unsloth</h1>
+                <p style="font-size: 0.8em; margin-top: 1em;">Entrenar Modelos de Lenguaje Rápido y Económico</p>
+            </section>
+
+            <section>
+                <h2>¿Qué aprenderás?</h2>
+                <ul>
+                    <li><strong>Fundamentos:</strong> Cómo funciona Unsloth y sus ventajas</li>
+                    <li><strong>Configuración:</strong> Setup en Colab y localmente</li>
+                    <li><strong>Fine-tuning:</strong> LoRA y QLoRA paso a paso</li>
+                    <li><strong>Entrenamiento:</strong> TrainingArguments y SFTTrainer</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>¿Qué aprenderás? (Continuación)</h2>
+                <ul>
+                    <li><strong>Evaluación:</strong> Inferencia y métricas</li>
+                    <li><strong>Exportación:</strong> GGUF, Ollama, Hugging Face</li>
+                    <li><strong>Avanzadas:</strong> DPO, Continued Pretraining, Long Context</li>
+                    <li><strong>Producción:</strong> Mejores prácticas y deployment</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>¿Por qué Unsloth?</h2>
+                <ul>
+                    <li><span class="success">✅ 2x más rápido</span> que métodos tradicionales</li>
+                    <li><span class="success">✅ 80% menos memoria</span> consumida</li>
+                    <li><span class="success">✅ Misma calidad</span> de entrenamiento</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Comparativa: Con vs Sin Unsloth</h2>
+                <table>
+                    <tr>
+                        <td><strong>Métrica</strong></td>
+                        <td><strong>Sin Unsloth</strong></td>
+                        <td><strong>Con Unsloth</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Tiempo/epoch</td>
+                        <td>120 min</td>
+                        <td>60 min ⚡</td>
+                    </tr>
+                    <tr>
+                        <td>Memoria GPU</td>
+                        <td>40 GB</td>
+                        <td>8 GB 💾</td>
+                    </tr>
+                    <tr>
+                        <td>Tokens/seg</td>
+                        <td>500</td>
+                        <td>1000 📈</td>
+                    </tr>
+                    <tr>
+                        <td>Costo/hora</td>
+                        <td>$10.32</td>
+                        <td>$3.06 💰</td>
+                    </tr>
+                </table>
+            </section>
+
+            <!-- MÓDULO 1: FUNDAMENTOS -->
+            <section>
+                <h2>📚 Módulo 1: Fundamentos</h2>
+            </section>
+
+            <section>
+                <h3>¿Qué es Unsloth?</h3>
+                <p><strong>Unsloth</strong> es una librería que optimiza LLM training:</p>
+                <ul>
+                    <li>Reescribe kernels CUDA</li>
+                    <li>Combina operaciones (kernel fusion)</li>
+                    <li>Reduce transferencias de memoria</li>
+                    <li>Mantiene precisión original</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>El Problema del Fine-tuning Tradicional</h3>
+                <p><strong>Consumo de memoria (Llama 2 7B):</strong></p>
+                <ul>
+                    <li>Parámetros: 28 GB</li>
+                    <li>Gradientes: 28 GB</li>
+                    <li>Optimizer states: 56 GB</li>
+                    <li>Activaciones: 12 GB</li>
+                </ul>
+                <p style="margin-top: 1em;"><strong>Total: 132 GB ❌</strong></p>
+                <p>Una GPU A100 con 80GB NO es suficiente</p>
+            </section>
+
+            <section>
+                <h3>Soluciones Tradicionales (Lentas)</h3>
+                <ul>
+                    <li><strong>Gradient Checkpointing:</strong> Más lento</li>
+                    <li><strong>Entrenar en CPU:</strong> Muy lento</li>
+                    <li><strong>Reducir Batch Size:</strong> Entrenamiento inestable</li>
+                    <li><strong>Full Fine-tuning:</strong> Imposible sin GPU potente</li>
+                </ul>
+                <p style="margin-top: 1em;"><span class="warning">⚠️</span> Problemas: Costo, tiempo, accesibilidad</p>
+            </section>
+
+            <section>
+                <h3>Cómo Unsloth Resuelve el Problema (1/2)</h3>
+                <p><strong>Kernel Fusion:</strong></p>
+                <ul>
+                    <li>Antes: Atención + FFN = 2 kernels separados</li>
+                    <li>Ahora: Fusionado en 1 kernel</li>
+                    <li>Beneficio: Sin copias de memoria intermedias</li>
+                </ul>
+                <p style="margin-top: 1em;"><strong>Precisión Selectiva:</strong></p>
+                <ul>
+                    <li>Float16 donde es seguro</li>
+                    <li>Float32 donde es crítico</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Cómo Unsloth Resuelve el Problema (2/2)</h3>
+                <p><strong>RoPE Vectorizado:</strong></p>
+                <ul>
+                    <li>Embeddings optimizados</li>
+                    <li>Menos operaciones</li>
+                </ul>
+                <p style="margin-top: 1em;"><strong>Resultado Final:</strong></p>
+                <ul>
+                    <li><span class="success">✅ 8GB memoria</span> (vs 132GB)</li>
+                    <li><span class="success">✅ 2x velocidad</span></li>
+                    <li><span class="success">✅ Misma calidad</span></li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Modelos Soportados</h3>
+                <p><strong>Optimizados completamente:</strong></p>
+                <ul>
+                    <li>Llama 2, 3, 3.1 (7B, 13B, 70B)</li>
+                    <li>Mistral, Mixtral</li>
+                    <li>Gemma, Gemma 2</li>
+                    <li>Qwen, Yi, Phi</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Requisitos de Hardware</h3>
+                <table>
+                    <tr>
+                        <td><strong>GPU</strong></td>
+                        <td><strong>VRAM</strong></td>
+                        <td><strong>Modelo Max</strong></td>
+                    </tr>
+                    <tr>
+                        <td>T4 (Free Colab)</td>
+                        <td>16 GB</td>
+                        <td>Llama 7B</td>
+                    </tr>
+                    <tr>
+                        <td>L4 (Pro Colab)</td>
+                        <td>24 GB</td>
+                        <td>Llama 13B</td>
+                    </tr>
+                    <tr>
+                        <td>RTX 3080</td>
+                        <td>10 GB</td>
+                        <td>Llama 7B</td>
+                    </tr>
+                    <tr>
+                        <td>A100</td>
+                        <td>80 GB</td>
+                        <td>Llama 70B</td>
+                    </tr>
+                </table>
+            </section>
+
+            <section>
+                <h3>Instalación: Google Colab (Paso 1)</h3>
+                <ul>
+                    <li>Ir a <strong>colab.research.google.com</strong></li>
+                    <li>Crear nuevo notebook</li>
+                    <li>Menú: <strong>Runtime → Change runtime type</strong></li>
+                    <li>Seleccionar: <strong>GPU (T4 gratis, L4 Pro)</strong></li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Instalación: Google Colab (Paso 2)</h3>
+                <p><strong>Instalar dependencias:</strong></p>
+                <pre><code class="language-bash">!pip install unsloth[colab-new] \
+  @ git+https://github.com/unslothai/unsloth.git
+!pip install xformers datasets</code></pre>
+            </section>
+
+            <section>
+                <h3>Instalación: Google Colab (Paso 3)</h3>
+                <p><strong>Verificar instalación:</strong></p>
+                <pre><code class="language-python">from unsloth import FastLanguageModel
+import torch
+
+print(f"PyTorch: {torch.__version__}")
+print(f"CUDA: {torch.cuda.is_available()}")
+print(f"GPU: {torch.cuda.get_device_name()}")</code></pre>
+            </section>
+
+            <section>
+                <h3>Instalación: Local (Linux/WSL) - Paso 1</h3>
+                <pre><code class="language-bash"># Crear entorno
+conda create --name unsloth python=3.10
+conda activate unsloth
+
+# Instalar PyTorch con CUDA
+conda install pytorch pytorch-cuda=11.8 \
+  -c pytorch -c nvidia</code></pre>
+            </section>
+
+            <section>
+                <h3>Instalación: Local (Linux/WSL) - Paso 2</h3>
+                <pre><code class="language-bash"># Instalar Unsloth
+pip install unsloth[colab]
+
+# Instalar dependencias adicionales
+pip install xformers datasets transformers \
+  accelerate trl</code></pre>
+            </section>
+
+            <section>
+                <h3>Primera Práctica: "Hola Mundo"</h3>
+                <pre><code class="language-python">from unsloth import FastLanguageModel
+
+modelo, tokenizer = FastLanguageModel.from_pretrained(
+    model_name="unsloth/llama-2-7b-bnb-4bit",
+    max_seq_length=2048,
+    load_in_4bit=True,
+)
+
+print("✅ Modelo cargado exitosamente")</code></pre>
+            </section>
+
+            <section>
+                <h3>Generación Básica</h3>
+                <pre><code class="language-python">prompt = "La inteligencia artificial"
+
+inputs = tokenizer(prompt, return_tensors="pt").to("cuda")
+
+outputs = modelo.generate(**inputs, max_new_tokens=50)
+
+print(tokenizer.decode(outputs[0]))</code></pre>
+            </section>
+
+            <!-- MÓDULO 2: CONCEPTOS -->
+            <section>
+                <h2>📚 Módulo 2: Conceptos de Fine-Tuning</h2>
+            </section>
+
+            <section>
+                <h3>Full Fine-tuning Explicado</h3>
+                <p><strong>¿Qué es?</strong> Actualizar TODOS los parámetros</p>
+                <ul>
+                    <li>7.0 Billones de parámetros entrenable</li>
+                    <li>Memoria: 21-40 GB</li>
+                    <li>Velocidad: Lenta</li>
+                </ul>
+                <p style="margin-top: 1em;"><strong>¿Cuándo usar?</strong></p>
+                <ul>
+                    <li>✅ Datasets enormes (>10M ejemplos)</li>
+                    <li>✅ Presupuesto ilimitado</li>
+                    <li>❌ No en Colab, no en laptop</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>PEFT: Parameter-Efficient Fine-Tuning</h3>
+                <p><strong>Idea clave:</strong> Solo adapta 0.08% de parámetros</p>
+                <ul>
+                    <li>Memoria: 4-8 GB ✅</li>
+                    <li>Velocidad: 2x más rápido ⚡</li>
+                    <li>Calidad: 98-99% igual</li>
+                </ul>
+                <p style="margin-top: 1em;"><strong>¿Cuándo usar?</strong></p>
+                <ul>
+                    <li>✅ Colab T4/L4</li>
+                    <li>✅ GPU local</li>
+                    <li>✅ Datasets medianos</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>LoRA: Low-Rank Adaptation (1/2)</h3>
+                <p><strong>Problema matemático:</strong> Matriz W es grande</p>
+                <pre><code class="language-python">W_full: 4096 × 4096 = 16M params
+# Imposible entrenar todos</code></pre>
+                <p style="margin-top: 1em;"><strong>Solución: Factorización de bajo rango</strong></p>
+                <pre><code class="language-python">W_nuevo = W_original + BA
+B: 4096 × 64
+A: 64 × 4096
+Total: 524K params (30x menos!)</code></pre>
+            </section>
+
+            <section>
+                <h3>LoRA: Low-Rank Adaptation (2/2)</h3>
+                <p><strong>Visualización del concepto:</strong></p>
+                <ul>
+                    <li>W_original: Congelado, no se actualiza</li>
+                    <li>B, A: Matrices pequeñas, SÍ se entrenan</li>
+                    <li>La suma BA + W_original: Modelo adaptado</li>
+                </ul>
+                <p style="margin-top: 1em;"><strong>Ventaja magistral:</strong></p>
+                <ul>
+                    <li>30x menos parámetros</li>
+                    <li>Casi la misma capacidad</li>
+                    <li>8GB memoria en lugar de 40GB</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>QLoRA: LoRA + Cuantización 4-bit</h3>
+                <p><strong>LoRA:</strong> 6M parámetros entrenable</p>
+                <p><strong>4-bit:</strong> Cuantizar modelo a 4-bit (8x menos)</p>
+                <p><strong>Resultado:</strong> Entrenar modelos gigantes en GPU chica</p>
+                <p style="margin-top: 1em;"><strong>Tradeoff:</strong></p>
+                <ul>
+                    <li>LoRA: 100% calidad</li>
+                    <li>QLoRA: 98% calidad, 8x menos memoria</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Comparativa: Full vs LoRA vs QLoRA</h3>
+                <table>
+                    <tr>
+                        <td><strong>Método</strong></td>
+                        <td><strong>Memoria</strong></td>
+                        <td><strong>Velocidad</strong></td>
+                        <td><strong>Calidad</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Full</td>
+                        <td>40+ GB</td>
+                        <td>Lenta ⚠️</td>
+                        <td>100%</td>
+                    </tr>
+                    <tr>
+                        <td>LoRA</td>
+                        <td>24 GB</td>
+                        <td>2x 🚀</td>
+                        <td>99%</td>
+                    </tr>
+                    <tr>
+                        <td>QLoRA</td>
+                        <td>8 GB</td>
+                        <td>3x 🚀</td>
+                        <td>98%</td>
+                    </tr>
+                </table>
+            </section>
+
+            <section>
+                <h3>Hiperparámetro r: Rango LoRA</h3>
+                <p><strong>r controla el "tamaño" de los adaptadores</strong></p>
+                <ul>
+                    <li><code>r=8</code>: Muy bajo (1M params)</li>
+                    <li><code>r=16</code>: Bajo (2M params)</li>
+                    <li><code>r=32</code>: Medio (4M params) ⭐ Recomendado</li>
+                    <li><code>r=64</code>: Alto (8M params)</li>
+                    <li><code>r=128</code>: Muy alto (16M params)</li>
+                </ul>
+                <p style="margin-top: 1em;"><strong>Regla práctica:</strong> r=32 funciona para casi todos</p>
+            </section>
+
+            <section>
+                <h3>Hiperparámetro lora_alpha</h3>
+                <p><strong>¿Qué hace?</strong> Controla el "peso" del adaptador</p>
+                <pre><code class="language-python">output = W @ input + (lora_alpha/r) * BA @ input
+         ^original         ^factor de escala</code></pre>
+                <p style="margin-top: 1em;"><strong>Regla de oro:</strong> lora_alpha = r × 2</p>
+                <ul>
+                    <li>r=32 → lora_alpha=64</li>
+                    <li>r=16 → lora_alpha=32</li>
+                    <li>r=64 → lora_alpha=128</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Hiperparámetro lora_dropout</h3>
+                <p><strong>Regularización:</strong> Evitar overfitting</p>
+                <ul>
+                    <li><code>0.0</code>: Sin dropout (riesgo overfitting)</li>
+                    <li><code>0.05</code>: Recomendado ⭐</li>
+                    <li><code>0.1</code>: Para datasets pequeños</li>
+                    <li><code>0.2</code>: Muy agresivo</li>
+                </ul>
+                <p style="margin-top: 1em;"><strong>Efecto:</strong> Más dropout = menos overfitting pero convergencia más lenta</p>
+            </section>
+
+            <section>
+                <h3>Hiperparámetro target_modules</h3>
+                <p><strong>¿Dónde aplicar LoRA?</strong> Solo en ciertas capas</p>
+                <ul>
+                    <li><code>["q_proj", "v_proj"]</code>: Balance óptimo ⭐</li>
+                    <li><code>["q_proj"]</code>: Mínimo, muy rápido</li>
+                    <li><code>["q", "v", "k", "o", "up", "down"]</code>: Máximo, lento</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Preparación de Datos: Formato Alpaca</h3>
+                <p><strong>Perfecto para:</strong> Q&A, clasificación</p>
+                <pre><code class="language-json">{
+  "instruction": "¿Cuál es la capital de España?",
+  "input": "",
+  "output": "Madrid"
+}</code></pre>
+            </section>
+
+            <section>
+                <h3>Preparación de Datos: Formato ShareGPT</h3>
+                <p><strong>Perfecto para:</strong> Conversaciones, chat</p>
+                <pre><code class="language-json">{
+  "conversations": [
+    {"from": "human", "value": "Hola, ¿cómo estás?"},
+    {"from": "gpt", "value": "¡Muy bien, gracias!"},
+    {"from": "human", "value": "¿Qué puedes hacer?"},
+    {"from": "gpt", "value": "Puedo ayudarte con..."}
+  ]
+}</code></pre>
+            </section>
+
+            <section>
+                <h3>Chat Templates: Por qué Importan</h3>
+                <p><strong>SIN plantilla (MALO):</strong></p>
+                <pre><code>"Usuario: Hola. Asistente: Hola, ¿cómo estás?"</code></pre>
+                <p style="margin-top: 1em;"><strong>CON plantilla (BUENO):</strong></p>
+                <pre><code>"[INST] Hola [/INST] Hola, ¿cómo estás?"</code></pre>
+                <p style="margin-top: 1em;"><strong>Beneficio:</strong> Tokens especiales marcan roles claramente</p>
+            </section>
+
+            <!-- MÓDULO 3: FINE-TUNING -->
+            <section>
+                <h2>📚 Módulo 3: Fine-Tuning Completo</h2>
+            </section>
+
+            <section>
+                <h3>Paso 1: Cargar Modelo Base</h3>
+                <pre><code class="language-python">from unsloth import FastLanguageModel
+
+modelo, tokenizer = FastLanguageModel.from_pretrained(
+    model_name="unsloth/llama-2-7b-bnb-4bit",
+    max_seq_length=2048,
+    load_in_4bit=True,
+)
+
+print(f"Modelo: {modelo.config.model_type}")
+print(f"Parámetros: {sum(p.numel() for p in modelo.parameters())/1e9:.1f}B")</code></pre>
+            </section>
+
+            <section>
+                <h3>Paso 2: Aplicar LoRA</h3>
+                <pre><code class="language-python">modelo = FastLanguageModel.get_peft_model(
+    modelo,
+    r=32,
+    lora_alpha=64,
+    lora_dropout=0.05,
+    target_modules=["q_proj", "v_proj"],
+    bias="none",
+    use_gradient_checkpointing=True,
+)
+
+modelo.print_trainable_parameters()
+# trainable: 4M || total: 7.1B || 0.05%</code></pre>
+            </section>
+
+            <section>
+                <h3>Paso 3a: TrainingArguments - Rutas</h3>
+                <pre><code class="language-python">training_args = TrainingArguments(
+    output_dir="./llama2_finetuned",
+    save_strategy="steps",
+    save_steps=100,
+    save_total_limit=3,
+    eval_strategy="steps",
+    eval_steps=50,
+)</code></pre>
+            </section>
+
+            <section>
+                <h3>Paso 3b: TrainingArguments - Learning Rate</h3>
+                <pre><code class="language-python">training_args = TrainingArguments(
+    learning_rate=5e-4,
+    lr_scheduler_type="cosine",
+    warmup_steps=50,
+    num_train_epochs=3,
+)</code></pre>
+                <p style="margin-top: 1em;"><strong>Recomendaciones:</strong></p>
+                <ul>
+                    <li>LoRA: 5e-4 a 1e-4</li>
+                    <li>Full Fine-tuning: 2e-5 a 5e-5</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Paso 3c: TrainingArguments - Batch</h3>
+                <pre><code class="language-python">training_args = TrainingArguments(
+    per_device_train_batch_size=4,
+    per_device_eval_batch_size=4,
+    gradient_accumulation_steps=4,
+    # Batch efectivo = 4 × 4 = 16
+)</code></pre>
+                <p style="margin-top: 1em;"><strong>Cálculo:</strong> batch_efectivo = per_device × accumulation</p>
+            </section>
+
+            <section>
+                <h3>Paso 3d: TrainingArguments - Hardware</h3>
+                <pre><code class="language-python">training_args = TrainingArguments(
+    optim="adamw_8bit",
+    fp16=True,
+    # Usar float16 para GPU + quantized optimizer
+    weight_decay=0.01,
+    max_grad_norm=1.0,
+)</code></pre>
+            </section>
+
+            <section>
+                <h3>Learning Rate Scheduler Explicado</h3>
+                <p><strong>LR muy alto:</strong> [2.5, 2.4, 5.3, NaN] ❌ Inestable</p>
+                <p><strong>LR correcto:</strong> [2.5, 2.4, 2.2, 1.9, 1.7] ✅ Convergencia</p>
+                <p><strong>LR muy bajo:</strong> [2.5, 2.499, 2.498] ⚠️ Lento</p>
+                <p style="margin-top: 1em;"><strong>Cosine Scheduler (Recomendado):</strong></p>
+                <ul>
+                    <li>Warmup inicial: 0 → LR</li>
+                    <li>Decay final: LR → 0</li>
+                    <li>Convergencia suave y estable</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Batch Size y Accumulation Detallado</h3>
+                <p><strong>Batch Size pequeño (1-2):</strong></p>
+                <ul>
+                    <li>Ruido alto, inestable, muy lento</li>
+                </ul>
+                <p style="margin-top: 1em;"><strong>Batch Size medio (4-16):</strong></p>
+                <ul>
+                    <li>Balance óptimo, estable, rápido</li>
+                </ul>
+                <p style="margin-top: 1em;"><strong>Batch Size grande (32+):</strong></p>
+                <ul>
+                    <li>Rápido pero OOM en GPU pequeña</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Gradient Accumulation Ejemplo</h3>
+                <p><strong>Sin accumulation:</strong> GPU memory overflow ❌</p>
+                <p><strong>Con accumulation:</strong></p>
+                <ul>
+                    <li>Paso 1-4: Forward + Backward (acumular gradientes)</li>
+                    <li>Paso 4: Actualizar pesos (solo ahora!)</li>
+                    <li>Efecto: Batch de 16 en memoria de 4 ✅</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>AdamW 8-bit vs Adam</h3>
+                <p><strong>Adam (Normal):</strong></p>
+                <ul>
+                    <li>Mantiene 2 estados por parámetro (momentum + variance)</li>
+                    <li>7B modelo → 14B memoria solo en estados ❌</li>
+                </ul>
+                <p style="margin-top: 1em;"><strong>AdamW 8-bit (Cuantizado):</strong></p>
+                <ul>
+                    <li>Mismos estados pero en 8-bit</li>
+                    <li>7B modelo → 1.75B memoria ✅ 8x menos</li>
+                    <li>Calidad casi idéntica</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Paso 4: Crear SFTTrainer</h3>
+                <pre><code class="language-python">from trl import SFTTrainer
+
+trainer = SFTTrainer(
+    model=modelo,
+    tokenizer=tokenizer,
+    args=training_args,
+    train_dataset=dataset["train"],
+    eval_dataset=dataset["validation"],
+    dataset_text_field="output",
+    max_seq_length=2048,
+)</code></pre>
+            </section>
+
+            <section>
+                <h3>Paso 5: Entrenar</h3>
+                <pre><code class="language-python">print("🚀 Iniciando entrenamiento...")
+trainer.train()
+
+print("✅ Entrenamiento completado!")
+print(f"Modelo guardado en: {training_args.output_dir}")</code></pre>
+            </section>
+
+            <section>
+                <h3>Interpretar Loss Durante Entrenamiento</h3>
+                <ul>
+                    <li><strong>Loss disminuye:</strong> ✅ Entrenamiento funciona</li>
+                    <li><strong>Val loss también disminuye:</strong> ✅ Generalizando bien</li>
+                    <li><strong>Train loss baja, val sube:</strong> ⚠️ Overfitting detectado</li>
+                    <li><strong>Loss no cambia:</strong> ❌ LR muy bajo</li>
+                    <li><strong>Loss explota (NaN):</strong> ❌ LR muy alto</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Monitoring con Weights & Biases</h3>
+                <pre><code class="language-python">import wandb
+wandb.login()
+
+training_args = TrainingArguments(
+    ...,
+    report_to=["wandb"],
+    run_name="llama2-v1",
+)
+
+# W&B creará dashboard automáticamente
+trainer.train()</code></pre>
+                <p style="margin-top: 1em;"><strong>Ventajas:</strong> Gráficas, comparaciones, historial</p>
+            </section>
+
+            <!-- MÓDULO 4: INFERENCIA -->
+            <section>
+                <h2>📚 Módulo 4: Inferencia y Evaluación</h2>
+            </section>
+
+            <section>
+                <h3>Cargar Modelo Entrenado</h3>
+                <pre><code class="language-python">modelo, tokenizer = FastLanguageModel.from_pretrained(
+    model_name="./mi_modelo_finetuned",
+    max_seq_length=2048,
+    load_in_4bit=True,
+)</code></pre>
+            </section>
+
+            <section>
+                <h3>Modo Inferencia (Crítico!)</h3>
+                <pre><code class="language-python"># SIN for_inference:
+# - Cálculo de gradientes: ACTIVO
+# - Memoria: 8GB
+# - Velocidad: Lenta
+
+modelo = FastLanguageModel.for_inference(modelo)
+
+# CON for_inference:
+# - Cálculo de gradientes: INACTIVO
+# - Memoria: 3GB
+# - Velocidad: 2-3x más rápido</code></pre>
+            </section>
+
+            <section>
+                <h3>Generación Básica (Paso a Paso)</h3>
+                <ul>
+                    <li><strong>Paso 1:</strong> Tokenizar input</li>
+                    <li><strong>Paso 2:</strong> Pasar a GPU</li>
+                    <li><strong>Paso 3:</strong> Llamar a generate()</li>
+                    <li><strong>Paso 4:</strong> Decodificar output</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Generación: Código Completo</h3>
+                <pre><code class="language-python">prompt = "La IA es"
+
+inputs = tokenizer(prompt, return_tensors="pt").to("cuda")
+
+outputs = modelo.generate(
+    **inputs,
+    max_new_tokens=50,
+    temperature=0.7,
+    top_p=0.9,
+)
+
+respuesta = tokenizer.decode(outputs[0], skip_special_tokens=True)
+print(respuesta)</code></pre>
+            </section>
+
+            <section>
+                <h3>Parámetros: max_new_tokens</h3>
+                <p><strong>¿Qué controla?</strong> Cuántos tokens generar</p>
+                <ul>
+                    <li>1-50: Respuestas cortas</li>
+                    <li>50-200: Respuestas medianas ⭐</li>
+                    <li>200-1000: Respuestas largas</li>
+                </ul>
+                <p style="margin-top: 1em;"><strong>Trade-off:</strong> Más tokens = más tiempo</p>
+            </section>
+
+            <section>
+                <h3>Parámetros: temperature</h3>
+                <p><strong>Controla:</strong> Aleatoriedad/creatividad</p>
+                <ul>
+                    <li>0.0: Determinístico (siempre igual)</li>
+                    <li>0.5: Bajo aleatoriedad (conservador)</li>
+                    <li>0.7: Medio (balanceado) ⭐</li>
+                    <li>1.0: Alto aleatoriedad (creativo)</li>
+                    <li>>1.0: Muy aleatorio (experimental)</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Parámetros: top_p (Nucleus Sampling)</h3>
+                <p><strong>Controla:</strong> Diversidad de opciones</p>
+                <ul>
+                    <li>0.5: Solo tokens muy seguros</li>
+                    <li>0.9: Considera 90% de probabilidad ⭐</li>
+                    <li>1.0: Todas las opciones</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Configuraciones Recomendadas (1/2)</h3>
+                <p><strong>Q&A Consistente:</strong></p>
+                <pre><code class="language-python">config = {
+    "max_new_tokens": 100,
+    "temperature": 0.3,
+    "top_p": 0.95,
+    "do_sample": False,  # Determinístico
+}</code></pre>
+            </section>
+
+            <section>
+                <h3>Configuraciones Recomendadas (2/2)</h3>
+                <p><strong>Chat Balanceado:</strong></p>
+                <pre><code class="language-python">config = {
+    "max_new_tokens": 200,
+    "temperature": 0.7,
+    "top_p": 0.9,
+    "do_sample": True,
+}</code></pre>
+                <p style="margin-top: 1em;"><strong>Escritura Creativa:</strong></p>
+                <pre><code class="language-python">config = {
+    "max_new_tokens": 500,
+    "temperature": 0.9,
+    "top_p": 0.95,
+}</code></pre>
+            </section>
+
+            <section>
+                <h3>Streaming de Respuestas</h3>
+                <p><strong>¿Por qué?</strong> Ver respuesta carácter por carácter (como ChatGPT)</p>
+                <p><strong>Uso:</strong> Interfaces web, mejor UX</p>
+            </section>
+
+            <section>
+                <h3>Implementar Streaming</h3>
+                <pre><code class="language-python">from transformers import TextIteratorStreamer
+from threading import Thread
+
+streamer = TextIteratorStreamer(
+    tokenizer,
+    skip_special_tokens=True
+)
+
+thread = Thread(target=modelo.generate, kwargs={
+    **inputs,
+    streamer=streamer,
+    max_new_tokens=200,
+})
+thread.start()
+
+for text in streamer:
+    print(text, end="", flush=True)
+
+thread.join()</code></pre>
+            </section>
+
+            <section>
+                <h3>Métricas: Perplexity</h3>
+                <p><strong>¿Qué mide?</strong> Cuán "sorprendido" está el modelo</p>
+                <ul>
+                    <li>Perplexity 10: Muy seguro ✅</li>
+                    <li>Perplexity 50: Algo seguro</li>
+                    <li>Perplexity 100: Inseguro ❌</li>
+                </ul>
+                <p style="margin-top: 1em;"><strong>Benchmark:</strong> GPT-2=20, BERT=76</p>
+            </section>
+
+            <section>
+                <h3>Métricas: BLEU y ROUGE</h3>
+                <p><strong>BLEU:</strong> Similitud exacta con referencia</p>
+                <p><strong>ROUGE:</strong> Similitud con tokens solapados</p>
+                <p style="margin-top: 1em;"><strong>Interpretación:</strong></p>
+                <ul>
+                    <li>0-0.3: Malo ❌</li>
+                    <li>0.3-0.5: Aceptable ⚠️</li>
+                    <li>0.5-0.7: Bueno ✅</li>
+                    <li>0.7+: Excelente ✅✅</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>LLM-as-a-Judge (1/2)</h3>
+                <p><strong>Idea:</strong> Usar LLM más poderoso para evaluar</p>
+                <p><strong>Ventaja:</strong> Más realista que BLEU/ROUGE</p>
+            </section>
+
+            <section>
+                <h3>LLM-as-a-Judge (2/2)</h3>
+                <pre><code class="language-python">criterios = """
+Evalúa 1-10:
+- Precisión: ¿factualmente correcto?
+- Claridad: ¿fácil entender?
+- Completitud: ¿responde todo?
+
+Prompt: {prompt}
+Respuesta: {respuesta}
+
+Puntuación:"""</code></pre>
+            </section>
+
+            <!-- MÓDULO 5: EXPORTACIÓN -->
+            <section>
+                <h2>📚 Módulo 5: Exportación y Despliegue</h2>
+            </section>
+
+            <section>
+                <h3>Guardar LoRA (Pequeño)</h3>
+                <pre><code class="language-python">modelo.save_pretrained("./mi_modelo")
+tokenizer.save_pretrained("./mi_modelo")
+
+# Resultado: 4-50 MB ✅ PEQUEÑO!</code></pre>
+                <p style="margin-top: 1em;"><strong>Ventajas:</strong> Compartible, rápido</p>
+                <p><strong>Desventaja:</strong> Necesita modelo base original</p>
+            </section>
+
+            <section>
+                <h3>Subir a Hugging Face Hub</h3>
+                <pre><code class="language-python">from huggingface_hub import login
+
+login()  # Pedir token
+
+modelo.push_to_hub("usuario/llama2-finetuned")
+tokenizer.push_to_hub("usuario/llama2-finetuned")</code></pre>
+            </section>
+
+            <section>
+                <h3>Fusionar LoRA (Independiente)</h3>
+                <pre><code class="language-python">modelo = modelo.merge_and_unload()
+
+modelo.save_pretrained("./modelo_merged")
+tokenizer.save_pretrained("./modelo_merged")
+
+# Resultado: 14 GB ❌ GRANDE
+# Ventaja: Completamente independiente</code></pre>
+            </section>
+
+            <section>
+                <h3>Diferentes Formatos: Float Precision</h3>
+                <table>
+                    <tr>
+                        <td><strong>Formato</strong></td>
+                        <td><strong>Tamaño</strong></td>
+                        <td><strong>Velocidad</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Float32</td>
+                        <td>14 GB</td>
+                        <td>Lenta</td>
+                    </tr>
+                    <tr>
+                        <td>Float16 ⭐</td>
+                        <td>7 GB</td>
+                        <td>Rápida</td>
+                    </tr>
+                    <tr>
+                        <td>BFloat16</td>
+                        <td>7 GB</td>
+                        <td>Mejor</td>
+                    </tr>
+                    <tr>
+                        <td>Int8</td>
+                        <td>3.5 GB</td>
+                        <td>Muy rápida</td>
+                    </tr>
+                </table>
+            </section>
+
+            <section>
+                <h3>¿Qué es GGUF? (1/2)</h3>
+                <p><strong>GGUF = GPT-Generated Unified Format</strong></p>
+                <ul>
+                    <li>Optimizado para CPU (no GPU)</li>
+                    <li>Cuantización flexible</li>
+                    <li>Portable (Windows, Mac, Linux)</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>¿Qué es GGUF? (2/2)</h3>
+                <p><strong>Comparativa:</strong></p>
+                <ul>
+                    <li>HF .safetensors: 14GB GPU</li>
+                    <li>GGUF q4_k_m: 3-4GB CPU ← 4x eficiente</li>
+                </ul>
+                <p style="margin-top: 1em;"><strong>Caso de uso:</strong> Ejecutar en laptop sin GPU</p>
+            </section>
+
+            <section>
+                <h3>Convertir a GGUF</h3>
+                <pre><code class="language-python">modelo = modelo.merge_and_unload()
+
+modelo.save_pretrained_gguf(
+    "modelo_gguf",
+    quantization_method="q4_k_m"
+)
+
+# Resultado: modelo_gguf/model.gguf (3-4GB)</code></pre>
+            </section>
+
+            <section>
+                <h3>Métodos de Cuantización GGUF</h3>
+                <table>
+                    <tr>
+                        <td><strong>Método</strong></td>
+                        <td><strong>Tamaño</strong></td>
+                        <td><strong>Calidad</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Q8_0</td>
+                        <td>5.5 GB</td>
+                        <td>Excelente</td>
+                    </tr>
+                    <tr>
+                        <td>Q5_K_M</td>
+                        <td>4.3 GB</td>
+                        <td>Excelente</td>
+                    </tr>
+                    <tr>
+                        <td>Q4_K_M ⭐</td>
+                        <td>3.5 GB</td>
+                        <td>Buena</td>
+                    </tr>
+                    <tr>
+                        <td>Q3_K_M</td>
+                        <td>2.6 GB</td>
+                        <td>Aceptable</td>
+                    </tr>
+                </table>
+            </section>
+
+            <section>
+                <h3>Recomendaciones por Hardware</h3>
+                <ul>
+                    <li><strong>Laptop 8GB:</strong> q4_k_m</li>
+                    <li><strong>Desktop 16GB:</strong> q5_k_m</li>
+                    <li><strong>Máxima calidad:</strong> q8_0</li>
+                    <li><strong>Máxima velocidad:</strong> q3_k_m</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Ejecutar con Ollama (1/2)</h3>
+                <p><strong>Paso 1:</strong> Descargar Ollama desde ollama.ai</p>
+                <p><strong>Paso 2:</strong> Instalar</p>
+                <p><strong>Paso 3:</strong> Crear Modelfile</p>
+            </section>
+
+            <section>
+                <h3>Ejecutar con Ollama (2/2)</h3>
+                <pre><code class="language-bash">cat > Modelfile <<EOF
+FROM ./modelo_gguf/model.gguf
+PARAMETER temperature 0.7
+PARAMETER top_p 0.9
+EOF
+
+ollama create mi-modelo -f Modelfile
+ollama run mi-modelo "¿Qué es IA?"</code></pre>
+            </section>
+
+            <!-- MÓDULO 6: AVANZADAS -->
+            <section>
+                <h2>📚 Módulo 6: Técnicas Avanzadas</h2>
+            </section>
+
+            <section>
+                <h3>DPO vs SFT vs RLHF (1/2)</h3>
+                <p><strong>SFT (Supervised Fine-Tuning):</strong> Copiar respuestas</p>
+                <p><strong>RLHF (Reinforcement Learning):</strong> 3 modelos, complejo</p>
+                <p><strong>DPO (Direct Preference):</strong> 1 modelo, simple</p>
+            </section>
+
+            <section>
+                <h3>DPO vs SFT vs RLHF (2/2)</h3>
+                <p><strong>DPO = LoRA + Preferencias</strong></p>
+                <pre><code class="language-json">{
+    "prompt": "2+2=?",
+    "chosen": "2+2=4",
+    "rejected": "2+2=5"
+}</code></pre>
+                <p style="margin-top: 1em;"><strong>Ventaja:</strong> Más simple que RLHF</p>
+            </section>
+
+            <section>
+                <h3>Crear Dataset DPO</h3>
+                <p><strong>Opción 1: LLM grande genera pares</strong></p>
+                <p><strong>Opción 2: Evaluadores humanos eligen mejor</strong></p>
+            </section>
+
+            <section>
+                <h3>Entrenar con DPO</h3>
+                <pre><code class="language-python">from trl import DPOTrainer
+
+dpo_trainer = DPOTrainer(
+    model=modelo,
+    args=training_args,
+    train_dataset=dataset,
+    tokenizer=tokenizer,
+)
+
+dpo_trainer.train()</code></pre>
+            </section>
+
+            <section>
+                <h3>Aplicaciones DPO</h3>
+                <ul>
+                    <li><strong>Safety:</strong> Rechazar solicitudes peligrosas</li>
+                    <li><strong>Creatividad:</strong> Preferred respuestas poéticas</li>
+                    <li><strong>Especificidad:</strong> Alinear a estilo específico</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Continued Pretraining (1/2)</h3>
+                <p><strong>¿Cuándo?</strong> Tienes 100K+ documentos en dominio específico</p>
+                <p><strong>¿Por qué?</strong> Modelo entiende tu jerga técnica</p>
+            </section>
+
+            <section>
+                <h3>Continued Pretraining (2/2)</h3>
+                <p><strong>Vs Fine-tuning:</strong></p>
+                <ul>
+                    <li>Fine-tuning: Instrucción-respuesta</li>
+                    <li>Continued PT: Textos crudos → predecir siguiente</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Implementar Continued Pretraining</h3>
+                <pre><code class="language-python">from transformers import TextDataset
+
+dataset = TextDataset(
+    tokenizer=tokenizer,
+    file_path="textos_medicos.txt",
+    block_size=2048,
+)
+
+trainer.train()  # Entrenar con datos crudos</code></pre>
+            </section>
+
+            <section>
+                <h3>Long Context: RoPE Scaling (1/2)</h3>
+                <p><strong>Problema:</strong> Llama 2 solo soporta 4096 tokens</p>
+                <p><strong>Solución:</strong> RoPE Scaling</p>
+            </section>
+
+            <section>
+                <h3>Long Context: RoPE Scaling (2/2)</h3>
+                <pre><code class="language-python">modelo, tokenizer = FastLanguageModel.from_pretrained(
+    model_name="unsloth/llama-2-7b-bnb-4bit",
+    max_seq_length=8192,  # 2x más contexto
+    load_in_4bit=True,
+)
+
+# Unsloth aplica RoPE automáticamente</code></pre>
+            </section>
+
+            <section>
+                <h3>RoPE Métodos</h3>
+                <ul>
+                    <li><strong>Linear:</strong> Escalar linealmente</li>
+                    <li><strong>NTK:</strong> Ajuste inteligente ⭐</li>
+                    <li><strong>YaRN:</strong> Combinado (experimental)</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Costo de Long Context</h3>
+                <ul>
+                    <li>4096 tokens: 8GB</li>
+                    <li>8192 tokens: 16GB</li>
+                    <li>32768 tokens: 64GB+</li>
+                </ul>
+                <p style="margin-top: 1em;"><strong>Soluciones:</strong> 4-bit, Flash Attention, checkpointing</p>
+            </section>
+
+            <section>
+                <h3>Caso: Resumen de Documentos Largos</h3>
+                <pre><code class="language-python"># Documento de 5000 tokens
+prompt = f"""
+Resume en 3 puntos:
+
+{documento_largo}
+
+Resumen:"""
+
+outputs = modelo.generate(**inputs, max_new_tokens=200)</code></pre>
+            </section>
+
+            <!-- RESUMEN -->
+            <section>
+                <h2>📚 Resumen: Tu Viaje Completo</h2>
+            </section>
+
+            <section>
+                <h3>Módulos Completados</h3>
+                <ul>
+                    <li><span class="success">✅ Módulo 1:</span> Fundamentos y setup</li>
+                    <li><span class="success">✅ Módulo 2:</span> LoRA, QLoRA, datos</li>
+                    <li><span class="success">✅ Módulo 3:</span> Entrenamiento completo</li>
+                    <li><span class="success">✅ Módulo 4:</span> Inferencia y evaluación</li>
+                    <li><span class="success">✅ Módulo 5:</span> Exportación</li>
+                    <li><span class="success">✅ Módulo 6:</span> DPO, Continued PT, Long Context</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Próximos Pasos</h3>
+                <ul>
+                    <li><strong>1. Experimenta:</strong> Prueba con datasets públicos</li>
+                    <li><strong>2. Itera:</strong> Ajusta hiperparámetros</li>
+                    <li><strong>3. Especializa:</strong> Usa técnicas avanzadas</li>
+                    <li><strong>4. Despliega:</strong> Exporta a Ollama</li>
+                    <li><strong>5. Comparte:</strong> Sube a Hugging Face</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Checklist de Éxito</h3>
+                <ul>
+                    <li>✅ Modelo cargado en GPU sin errores</li>
+                    <li>✅ Loss disminuye durante entrenamiento</li>
+                    <li>✅ No hay overfitting severo</li>
+                    <li>✅ Generación produce textos coherentes</li>
+                    <li>✅ Modelo exportado correctamente</li>
+                    <li>✅ Funciona en Ollama sin GPU</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Recursos Recomendados</h3>
+                <ul>
+                    <li><strong>Unsloth GitHub:</strong> github.com/unslothai/unsloth</li>
+                    <li><strong>Hugging Face:</strong> huggingface.co/models</li>
+                    <li><strong>Ollama:</strong> ollama.ai</li>
+                    <li><strong>Weights & Biases:</strong> wandb.ai</li>
+                </ul>
+            </section>
+
+            <section class="title-slide">
+                <h1>¡Estás Listo!</h1>
+                <p style="font-size: 0.8em; margin-top: 1em;">Entrena, itera, despliega y comparte tus modelos 🚀</p>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/plugin/highlight/highlight.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: true,
+            transition: 'slide',
+            plugins: [ RevealHighlight ],
+            keyboard: true,
+            center: false,
+        });
+    </script>
+</body>
+</html>

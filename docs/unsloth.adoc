@@ -1,0 +1,3345 @@
+= Curso de Fine-Tuning Eficiente con Unsloth
+:doctype: book
+:toc:
+:toclevels: 4
+:sectnums:
+:icons: font
+:source-highlighter: highlight.js
+:highlightjsdir: https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0
+:highlightjs-theme: atom-one-light
+:data-uri:
+
+== Módulo 1: Fundamentos y Configuración
+
+=== 1.1 ¿Qué es Unsloth?
+
+Unsloth es una librería de optimización que te permite entrenar modelos de lenguaje grande (LLMs) de forma **2x más rápida y usando 80% menos memoria** en comparación con métodos tradicionales. Está construida sobre Hugging Face 🤗 pero optimiza la computación en GPU.
+
+==== El Problema del Fine-Tuning Tradicional
+
+Cuando quieres adaptar un modelo pre-entrenado como Llama 2 a tu tarea específica, enfrentas estos desafíos:
+
+[source, python]
+----
+# Consumo de memoria típico SIN Unsloth
+Modelo Llama 2 7B:
+  - Parámetros del modelo: 28 GB (en float32)
+  - Gradientes durante backprop: 28 GB
+  - Optimizer states (Adam): 56 GB
+  - Activaciones intermedias: 12 GB
+  - Batch x Secuencia: 8 GB
+  ────────────────────────────
+  TOTAL APROXIMADO: 132 GB ❌
+
+# Con GPU típica (A100 80GB):
+  La mayoría de parámetros no caben en GPU directamente
+----
+
+Esto obliga a usar técnicas como **Gradient Checkpointing** (lento) o entrenar en **CPU** (muy lento).
+
+==== Cómo Unsloth Resuelve el Problema
+
+Unsloth reescribe los kernels CUDA (operaciones en GPU) de forma más eficiente:
+
+[source, python]
+----
+# OPTIMIZACIÓN 1: Forward pass combinado
+# Tradicional: Atención + FFN = 2 kernels separados = copias innecesarias
+# Unsloth: Atención + FFN = 1 kernel fusionado = sin copias
+
+# OPTIMIZACIÓN 2: Menos precisión donde no importa
+# Los cálculos intermedios usan float32, pero estratégicamente
+# se reduce a float16 en partes que no afectan precisión
+
+# OPTIMIZACIÓN 3: RoPE (Rotary Position Embedding) vectorizado
+# En lugar de N² cálculos de atención, vectoriza operaciones
+
+# RESULTADO:
+# - Velocidad: 2x más rápido ⚡
+# - Memoria: 80% menos consumo 💾
+# - Precisión: Mantiene la misma calidad de entrenamiento ✓
+----
+
+==== Comparativa de Rendimiento: Hugging Face vs. Unsloth
+
+[cols="30,20,20,20"]
+|===
+| Métrica | Baseline (HF) | Unsloth | Mejora
+
+| Tiempo por epoch (Llama 2 7B)
+| 120 minutos
+| 60 minutos
+| 2x más rápido
+
+| Memoria GPU usada
+| 40 GB (A100)
+| 8 GB (A100)
+| 5x menos
+
+| Throughput (tokens/seg)
+| 500 tokens
+| 1000 tokens
+| 2x mejor
+
+| Costo (AWS, por hora)
+| $10.32 (A100 80GB)
+| $3.06 (A10 24GB)
+| 3x más barato
+
+| Precisión de salida
+| 100%
+| 100%
+| Idéntica
+|===
+
+**¿Cómo es esto posible?** Unsloth usa *kernel fusion* - combina operaciones GPU separadas en una sola operación, reduciendo transferencias de memoria.
+
+==== Modelos Soportados Actualmente
+
+Unsloth soporta los modelos más populares:
+
+[source, text]
+----
+✅ Totalmente optimizados (mejor rendimiento):
+  • Llama 2 (7B, 13B, 70B)
+  • Llama 3 / 3.1 (8B, 70B)
+  • Mistral (7B, 8x7B)
+  • Gemma (2B, 7B)
+  • Qwen (7B, 14B)
+  • Yi (6B, 34B)
+
+✅ Funcionan (optimizaciones parciales):
+  • Phi (2.7B)
+  • DPO / Reward models
+  • StableLM
+  • OLMo
+
+📋 Otros modelos de Hugging Face funcionan pero sin optimizaciones
+----
+
+**Ejemplo: Cargar un modelo soportado**
+
+[source, python]
+----
+from unsloth import FastLanguageModel
+
+# Unsloth detecta automáticamente la arquitectura
+modelo, tokenizer = FastLanguageModel.from_pretrained(
+    model_name="unsloth/llama-2-7b",
+    max_seq_length=2048,
+    load_in_4bit=True,  # Cuantización 4-bit para menor memoria
+)
+
+print(f"Modelo cargado: {modelo.config.model_type}")
+print(f"Parámetros: {sum(p.numel() for p in modelo.parameters())} M")
+----
+
+==== Casos de Uso Ideales para Unsloth
+
+[source, text]
+----
+✓ Fine-tuning en Colab (GPU limitada)
+✓ Empresas con presupuesto limitado en cloud
+✓ Investigación rápida con iteraciones frecuentes
+✓ Datasets grandes (100K+ ejemplos)
+✓ Modelos medianos a grandes (7B-70B parámetros)
+
+✗ No es ideal para:
+  - Modelos muy pequeños (<1B) - sobrecarga setup
+  - Entrenamiento desde cero (usa pretrained)
+----
+
+=== 1.2 Entorno de Desarrollo
+
+==== Requisitos de Hardware
+
+Para usar Unsloth necesitas una GPU NVIDIA con capacidad de cálculo suficiente:
+
+[cols="15,15,20,20,20"]
+|===
+| GPU | VRAM | Modelo más grande | Colab | Precio/hora (AWS)
+
+| **T4** (Free)
+| 16 GB
+| Llama 2 7B (cuantizado)
+| ✅ Sí (Free)
+| $0.35
+
+| **L4** (Pro)
+| 24 GB
+| Llama 2 13B (cuantizado)
+| ✅ Sí (Pro)
+| $0.60
+
+| **A100**
+| 40-80 GB
+| Llama 3 70B
+| ❌ No
+| $10.32
+
+| **H100**
+| 80-141 GB
+| Cualquiera
+| ❌ No
+| $33.00
+|===
+
+**Importante:** Unsloth requiere CUDA 11.8+ y cuDNN 8.0+. No funciona con GPUs AMD o Intel (por ahora).
+
+[source, bash]
+----
+# Verificar tu GPU NVIDIA en terminal
+nvidia-smi
+
+# Salida esperada:
+# | NVIDIA-SMI 535.104.05             Driver Version: 535.104.05 |
+# | GPU Name         Persistence-M | Bus-Id        Disp.A | Volatile... |
+# | 0  Tesla T4               Off  |   00:1E.0     Off |                  0 |
+----
+
+==== Opción 1: Instalación en Google Colab (Recomendado para Principiantes)
+
+Google Colab es la forma más sencilla de empezar. No requiere instalación local ni GPU propia.
+
+**Paso 1: Crear un cuaderno**
+. Ve a https://colab.research.google.com
+. Crea un nuevo notebook
+. Selecciona: `Runtime → Change runtime type → GPU (T4 para free, A100 para Pro)`
+
+**Paso 2: Instalar Unsloth**
+
+[source, python]
+----
+# En la primera celda de Colab
+!pip install unsloth[colab-new] @ git+https://github.com/unslothai/unsloth.git
+!pip install xformers
+!pip install datasets
+
+# Espera a que termine (2-3 minutos)
+# Verás: "Successfully installed unsloth..."
+----
+
+**Paso 3: Verificar instalación**
+
+[source, python]
+----
+from unsloth import FastLanguageModel
+import torch
+
+print(f"PyTorch Version: {torch.__version__}")
+print(f"CUDA disponible: {torch.cuda.is_available()}")
+print(f"GPU: {torch.cuda.get_device_name()}")
+
+# Salida esperada:
+# PyTorch Version: 2.1.0
+# CUDA disponible: True
+# GPU: Tesla T4
+----
+
+**Ventajas:**
+✅ Gratis (T4)
+✅ Sin instalación compleja
+✅ Pre-configurado (CUDA, dependencias)
+✅ Almacenamiento cloud automático
+✅ Acceso a GPU potentes (Pro)
+
+**Desventajas:**
+❌ T4 limitado (máximo Llama 7B)
+❌ Sesión de máx 12 horas
+❌ Restricciones de uso continuo
+
+==== Opción 2: Instalación Local (Linux/WSL)
+
+Si tienes GPU propia o necesitas entrenamientos prolongados.
+
+**Requisitos Previos:**
+. NVIDIA Driver actualizado (versión 450+)
+. CUDA 11.8 o superior
+. cuDNN 8.0+
+. Python 3.9+
+
+**Paso 1: Verificar Drivers NVIDIA**
+
+[source, bash]
+----
+# Mostrar versión del driver
+nvidia-smi
+
+# Mostrar versión de CUDA
+nvcc --version
+
+# Si no tienes CUDA instalado, descárgalo desde:
+# https://developer.nvidia.com/cuda-11-8-0-download-archive
+----
+
+**Paso 2: Crear entorno Conda (Recomendado)**
+
+[source, bash]
+----
+# Crear entorno aislado para el proyecto
+conda create --name unsloth python=3.10
+
+# Activar entorno
+conda activate unsloth
+
+# Instalar PyTorch con CUDA support
+conda install pytorch pytorch-cuda=11.8 -c pytorch -c nvidia
+
+# Verificar instalación
+python -c "import torch; print(torch.cuda.is_available())"
+----
+
+**Paso 3: Instalar Unsloth**
+
+[source, bash]
+----
+# Opción A: Instalación desde PyPI (más simple)
+pip install unsloth[colab]
+
+# Opción B: Instalación desde repositorio (última versión)
+pip install git+https://github.com/unslothai/unsloth.git
+
+# Instalar dependencias adicionales
+pip install xformers datasets transformers accelerate
+----
+
+**Paso 4: Test de Instalación**
+
+[source, python]
+----
+# test_unsloth.py
+from unsloth import FastLanguageModel
+import torch
+
+# Intentar cargar un modelo pequeño
+modelo, tokenizer = FastLanguageModel.from_pretrained(
+    model_name="unsloth/tinyllama",
+    max_seq_length=1024,
+    load_in_4bit=True,
+)
+
+print("✅ Unsloth instalado correctamente")
+print(f"Modelo: {modelo.config.model_type}")
+print(f"Parámetros: {sum(p.numel() for p in modelo.parameters()) / 1e6:.1f}M")
+----
+
+[source, bash]
+----
+python test_unsloth.py
+
+# Salida esperada:
+# ✅ Unsloth instalado correctamente
+# Modelo: llama
+# Parámetros: 1.1M
+----
+
+**Solución de Problemas Común:**
+
+[source, text]
+----
+Error: "No CUDA GPUs detected"
+→ Verifica: nvidia-smi
+→ Reinstala drivers NVIDIA
+
+Error: "ModuleNotFoundError: No module named 'unsloth'"
+→ Activa el entorno: conda activate unsloth
+→ Reinstala: pip install unsloth --upgrade
+
+Error: "CUDA out of memory"
+→ Reduce batch_size en configuración
+→ Usa load_in_4bit=True
+----
+
+==== Opción 3: Docker (Para Reproducibilidad)
+
+Si quieres un entorno perfectamente reproducible:
+
+[source, dockerfile]
+----
+# Dockerfile
+FROM nvidia/cuda:11.8.0-devel-ubuntu22.04
+
+RUN apt-get update && apt-get install -y python3-pip
+
+RUN pip install unsloth[colab] xformers datasets transformers
+
+WORKDIR /workspace
+----
+
+[source, bash]
+----
+# Construir imagen
+docker build -t unsloth-env .
+
+# Ejecutar contenedor
+docker run --gpus all -it -v $(pwd):/workspace unsloth-env bash
+----
+
+==== Práctica: "Hola Mundo" en Unsloth
+
+Vamos a crear tu primer script que carga un modelo y genera texto.
+
+**Archivo: `1_hola_mundo.py`**
+
+[source, python]
+----
+"""
+Práctica 1.1: Cargar un modelo base en Unsloth
+Este script demuestra la carga y uso básico de Unsloth
+"""
+
+from unsloth import FastLanguageModel
+import torch
+
+# PASO 1: Cargar el modelo
+print("⏳ Cargando modelo... (esto toma 1-2 minutos en la primera ejecución)")
+
+modelo, tokenizer = FastLanguageModel.from_pretrained(
+    model_name="unsloth/llama-2-7b-bnb-4bit",  # Modelo cuantizado en 4-bit
+    max_seq_length=2048,  # Longitud máxima de secuencia
+    load_in_4bit=True,    # Usar cuantización 4-bit para ahorrar memoria
+)
+
+print("✅ Modelo cargado exitosamente")
+
+# PASO 2: Información del modelo
+print("\n📊 INFORMACIÓN DEL MODELO:")
+print(f"  Arquitectura: {modelo.config.model_type}")
+print(f"  Parámetros totales: {sum(p.numel() for p in modelo.parameters()) / 1e9:.1f}B")
+print(f"  Memoria usada: {torch.cuda.memory_allocated() / 1024**3:.2f} GB")
+print(f"  Max sequence length: {modelo.config.max_position_embeddings}")
+
+# PASO 3: Preparar el modelo para inferencia
+modelo = FastLanguageModel.for_inference(modelo)
+
+# PASO 4: Generar texto
+print("\n🤖 GENERANDO TEXTO:")
+print("-" * 50)
+
+prompts = [
+    "La inteligencia artificial es",
+    "Python es un lenguaje de programación",
+    "El fine-tuning de modelos permite"
+]
+
+for prompt in prompts:
+    inputs = tokenizer(prompt, return_tensors="pt").to("cuda")
+
+    outputs = modelo.generate(
+        **inputs,
+        max_new_tokens=50,
+        temperature=0.7,
+        top_p=0.9,
+    )
+
+    texto_generado = tokenizer.decode(outputs[0], skip_special_tokens=True)
+    print(f"\nPrompt: {prompt}")
+    print(f"Respuesta: {texto_generado}\n")
+
+print("-" * 50)
+print("✅ Ejecución completada exitosamente!")
+
+# PASO 5: Mostrar información de uso
+print(f"\nMemoria GPU después: {torch.cuda.memory_allocated() / 1024**3:.2f} GB")
+print(f"Memoria GPU máxima: {torch.cuda.max_memory_allocated() / 1024**3:.2f} GB")
+----
+
+**Ejecutar:**
+
+[source, bash]
+----
+# En Colab o terminal local
+python 1_hola_mundo.py
+
+# Salida esperada:
+# ⏳ Cargando modelo... (esto toma 1-2 minutos)
+# ✅ Modelo cargado exitosamente
+#
+# 📊 INFORMACIÓN DEL MODELO:
+#   Arquitectura: llama
+#   Parámetros totales: 7.2B
+#   Memoria usada: 3.89 GB
+#   Max sequence length: 4096
+#
+# 🤖 GENERANDO TEXTO:
+# --------------------------------------------------
+#
+# Prompt: La inteligencia artificial es
+# Respuesta: La inteligencia artificial es una rama de la informática...
+# ...
+----
+
+**Qué aprendiste:**
+✅ Cómo cargar un modelo con Unsloth
+✅ Cómo verificar la memoria usada
+✅ Cómo generar texto con parámetros personalizados
+✅ Cómo usar el tokenizer correctamente
+
+**Parámetros importantes explicados:**
+
+[cols="20,40,25"]
+|===
+| Parámetro | Significado | Rango típico
+
+| `max_seq_length`
+| Longitud máxima del contexto
+| 512-4096
+
+| `load_in_4bit`
+| Cuantizar a 4-bit (menor memoria)
+| True/False
+
+| `max_new_tokens`
+| Tokens a generar
+| 1-1000
+
+| `temperature`
+| Aleatoriedad (0=determinístico, 1=aleatorio)
+| 0.0-1.0
+
+| `top_p`
+| Nucleus sampling (solo consider top p%)
+| 0.8-1.0
+|===
+
+==== Checklist: Setup Completado ✅
+
+[source, text]
+----
+□ GPU NVIDIA verificada (nvidia-smi)
+□ PyTorch instalado con CUDA support
+□ Unsloth instalado (pip show unsloth)
+□ Script 1_hola_mundo.py ejecutado sin errores
+□ Modelo cargado exitosamente en GPU
+□ Generación de texto funcionando
+
+Si completaste todo, ¡estás listo para el Módulo 2! 🚀
+----
+
+== Módulo 2: Conceptos Clave de Fine-Tuning
+
+=== 2.1 Técnicas de Adaptación
+
+Cuando fine-tuneamos un modelo, tenemos varias estrategias. Vamos a entender la diferencia entre la "ruta cara" (full fine-tuning) y la "ruta eficiente" (PEFT).
+
+==== Full Fine-Tuning vs. PEFT: La Gran Decisión
+
+**Full Fine-Tuning (Actualizar TODOS los parámetros)**
+
+[source, python]
+----
+# Full Fine-Tuning: Actualiza todos los 7B parámetros
+Llama 2 7B original
+  ├── Token Embedding: 128M params
+  ├── 32 Transformer Layers (cada una):
+  │   ├── Atención: 450M params
+  │   ├── FFN (Feed Forward): 1.2B params
+  │   └── Layer Norm: 4M params
+  └── Output Head: 5M params
+
+Total params entrenable: 7.0B (100%)
+Gradientes a calcular: 7.0B
+Optimizador states (Adam): 14.0B (2x params)
+────────────────────────────────────────
+Memoria total: ~21 GB
+Velocidad: ⚠️ Lenta
+----
+
+**¿Cuándo usar?**
+✅ Datasets ENORMES (>10M ejemplos)
+✅ Puedes gastar dinero en GPU potentes
+✅ Necesitas máxima precisión
+
+❌ Colab: No cabe
+❌ Laptop con GPU: No cabe
+❌ Budget limitado: Muy caro
+
+**PEFT: Parameter-Efficient Fine-Tuning (Solo adapta un 0.8% de params)**
+
+[source, python]
+----
+# PEFT: Solo actualiza matrices pequeñas (adaptadores)
+Llama 2 7B original (congelado, NO se actualiza)
+  │
+  └── LoRA Adapters (agregados, SÍ se actualizan)
+      └── Matrices de bajo rango (r=64)
+          ├── Parámetros LoRA: ~6M (0.08% del modelo)
+          └── Memoria total: 180 MB 🎉
+
+Memoria total: ~4-8 GB
+Velocidad: ⚡ 2x más rápido
+----
+
+**¿Cuándo usar?**
+✅ Recursos limitados (Colab, laptop)
+✅ Datasets medianos (10K-100K ejemplos)
+✅ Iteración rápida (experimentos)
+✅ Presupuesto ajustado
+
+❌ Datasets minúsculos (<1K)
+❌ Tareas muy diferentes del preentrenamiento
+
+==== LoRA: Low-Rank Adaptation (La Magia detrás de PEFT)
+
+LoRA es una técnica genial que fue introducida en un paper de 2021. La idea es: **No necesitas actualizar todos los parámetros, solo adaptar a bajo rango.**
+
+**¿Cómo funciona internamente?**
+
+Normalmente, en una matriz de peso `W (d_out × d_in)`, durante fine-tuning actualizamos:
+
+[source, python]
+----
+# Método tradicional (Full Fine-Tuning)
+W_nuevo = W_original + ΔW
+donde ΔW es una matriz de d_out × d_in (7.0B params)
+
+Esto requiere mucha memoria y cálculo 😫
+
+# Método LoRA (La solución inteligente)
+W_nuevo = W_original + BA
+donde:
+  - B es matriz de d_out × r  (pequeña, r=64)
+  - A es matriz de r × d_in   (pequeña, r=64)
+
+Si d_out=4096, d_in=4096, r=64:
+  Full: 4096 × 4096 = 16M params
+  LoRA: (4096 × 64) + (64 × 4096) = 524K params  ← 30x menos!
+----
+
+**Visualización:**
+
+[source, text]
+----
+Entrada (d_in)
+    │
+    ├─────→ W_original (congelado) ──┐
+    │                                  ├─→ Salida (d_out)
+    └─→ A (r × d_in) → B (d_out × r) ┘
+        ↑ Se entrena      ↑ Se entrena
+
+El adaptador LoRA actúa como un "parche" sobre el modelo.
+----
+
+**Ejemplo práctico en código:**
+
+[source, python]
+----
+from unsloth import FastLanguageModel
+
+# Configuración LoRA
+lora_config = {
+    "r": 64,              # Rango de descomposición
+    "lora_alpha": 16,     # Factor de escala
+    "target_modules": ["q_proj", "v_proj"],  # Aplicar LoRA a estas capas
+    "lora_dropout": 0.05, # Dropout para regularización
+    "bias": "none",       # No entrenar sesgo
+    "task_type": "CAUSAL_LM"
+}
+
+# Cargar modelo con LoRA
+modelo, tokenizer = FastLanguageModel.from_pretrained(
+    model_name="unsloth/llama-2-7b-bnb-4bit",
+    max_seq_length=2048,
+    load_in_4bit=True,
+    **lora_config
+)
+
+# Verificar qué se va a entrenar
+trainable_params = sum(p.numel() for p in modelo.parameters() if p.requires_grad)
+total_params = sum(p.numel() for p in modelo.parameters())
+
+print(f"Parámetros entrenable: {trainable_params / 1e6:.2f}M")
+print(f"Parámetros totales: {total_params / 1e9:.2f}B")
+print(f"Porcentaje entrenable: {100 * trainable_params / total_params:.3f}%")
+
+# Salida esperada:
+# Parámetros entrenable: 4.19M
+# Parámetros totales: 7.14B
+# Porcentaje entrenable: 0.059%
+----
+
+==== QLoRA: LoRA + Cuantización 4-bit
+
+QLoRA es LoRA pero entrenando modelos cuantizados en 4-bit. Esto te permite entrenar **modelos muy grandes en GPUs pequeñas.**
+
+**¿Qué es cuantización?**
+
+Transformar números de 32 bits a 4 bits:
+
+[source, python]
+----
+# Original (float32)
+peso = 0.3254916 (4 bytes)
+
+# Cuantizado (int4)
+peso_q4 = [0-15]  (0.5 bytes) ← 8x menos memoria!
+
+Durante backward pass, se descomprimen a float32 solo donde se necesita.
+----
+
+**Comparativa: Full vs LoRA vs QLoRA**
+
+[cols="20,20,20,20"]
+|===
+| Método | Memoria | Velocidad | Calidad
+
+| Full Fine-Tuning
+| 40+ GB (A100)
+| ⚠️ Lenta
+| 100% (baseline)
+
+| LoRA
+| 24 GB
+| ⚡ 2x rápido
+| 99%
+
+| QLoRA (LoRA + 4bit)
+| 8 GB (T4/L4)
+| ⚡⚡ 3x rápido
+| 98%
+|===
+
+**Cuándo usar cada una:**
+
+[source, text]
+----
+┌─ ¿Tienes GPU potente (A100+)?
+│  └─ NO → Usa QLoRA (0.059% params)
+│  └─ SÍ → ¿Presupuesto ilimitado?
+│        └─ NO → Usa LoRA (0.08% params)
+│        └─ SÍ → Full Fine-Tuning
+└─ En general, 99% de casos: Usa LoRA o QLoRA 🎯
+----
+
+==== Hiperparámetros Clave de LoRA Explicados
+
+**`r` (rango de descomposición) - La decisión más importante**
+
+[source, python]
+----
+r=8    → Muy bajo. Adaptación débil. Parámetros: 1.0M
+r=16   → Bajo. Adaptación mínima. Parámetros: 2.1M
+r=32   → Medio. Balance. Parámetros: 4.2M ← Recomendado
+r=64   → Alto. Adaptación fuerte. Parámetros: 8.4M
+r=128  → Muy alto. Casi LoRA completo. Parámetros: 16.8M
+
+Regla práctica:
+- r=8-16: Tareas simples (clasificación, traducción)
+- r=32-64: Tareas generales (chat, escritura creativa)
+- r=128+: Tareas muy especializadas o datasets muy grandes
+----
+
+**`lora_alpha` (factor de escala)**
+
+[source, python]
+----
+# El adaptador se suma como:
+output = W_original @ input + (lora_alpha / r) * BA @ input
+                               ↑ Este factor controla el "peso"
+
+lora_alpha = 16, r = 64:
+  factor = 16/64 = 0.25 (contribuye 25%)
+
+lora_alpha = 32, r = 64:
+  factor = 32/64 = 0.5  (contribuye 50%)
+
+Regla: lora_alpha = r * 2 (proporción buena 2:1)
+
+Si usas r=64 → usa lora_alpha=128
+Si usas r=32 → usa lora_alpha=64
+Si usas r=16 → usa lora_alpha=32
+----
+
+**`lora_dropout` (regularización)**
+
+[source, python]
+----
+lora_dropout = 0.0   → Sin dropout. Riesgo de overfitting
+lora_dropout = 0.05  → 5% de dropout ← Recomendado
+lora_dropout = 0.1   → 10% de dropout. Para datasets pequeños
+lora_dropout = 0.2   → 20% de dropout. Muy agresivo
+
+Más dropout = menos overfitting, pero convergencia lenta
+----
+
+**`target_modules` (dónde aplicar LoRA)**
+
+[source, python]
+----
+# LoRA aplicado a TODAS las capas:
+target_modules = ["q_proj", "v_proj", "k_proj", "o_proj", "up_proj", "down_proj"]
+→ Máxima capacidad. Parámetros: +15M
+
+# LoRA aplicado SOLO a atención (recomendado):
+target_modules = ["q_proj", "v_proj"]
+→ Balance. Parámetros: +4M. Costo-beneficio óptimo
+
+# LoRA mínimo (solo para datasets gigantes):
+target_modules = ["q_proj"]
+→ Mínimo. Parámetros: +2M
+----
+
+**Configuración Recomendada por Caso:**
+
+[source, python]
+----
+# CASO 1: Colab T4 (16GB), dataset pequeño (5K ejemplos)
+config_minimo = {
+    "r": 8,
+    "lora_alpha": 16,
+    "target_modules": ["q_proj", "v_proj"],
+    "lora_dropout": 0.05,
+}
+
+# CASO 2: GPU Local (24GB), dataset mediano (50K ejemplos)
+config_medio = {
+    "r": 32,
+    "lora_alpha": 64,
+    "target_modules": ["q_proj", "v_proj"],
+    "lora_dropout": 0.05,
+}
+
+# CASO 3: A100 (80GB), dataset grande (1M ejemplos)
+config_maximo = {
+    "r": 64,
+    "lora_alpha": 128,
+    "target_modules": ["q_proj", "v_proj", "k_proj", "o_proj"],
+    "lora_dropout": 0.05,
+}
+----
+
+=== 2.2 Preparación de Datos
+
+El "garbage in, garbage out" es especialmente cierto en LLMs. Datos malos → Modelo malo. Vamos a aprender a preparar datos correctamente.
+
+==== Formatos de Datasets Soportados
+
+Los modelos de lenguaje aceptan diferentes formatos:
+
+**Formato 1: Alpaca (Pregunta-Respuesta)**
+
+[source, json]
+----
+{
+  "instruction": "¿Cuál es la capital de España?",
+  "input": "",
+  "output": "La capital de España es Madrid."
+}
+----
+
+Usado por: Llama, Alpaca, Guanaco
+Mejor para: Tareas de Q&A, clasificación
+
+**Formato 2: ShareGPT (Conversaciones)**
+
+[source, json]
+----
+{
+  "conversations": [
+    {
+      "from": "human",
+      "value": "Hola, ¿cómo estás?"
+    },
+    {
+      "from": "gpt",
+      "value": "¡Hola! Estoy muy bien, gracias por preguntar."
+    },
+    {
+      "from": "human",
+      "value": "¿Qué puedes hacer?"
+    },
+    {
+      "from": "gpt",
+      "value": "Puedo ayudarte con muchas tareas..."
+    }
+  ]
+}
+----
+
+Usado por: Vicuña, otros chat models
+Mejor para: Fine-tuning conversacional
+
+**Formato 3: ChatML (Chat Markup Language)**
+
+[source, text]
+----
+<|im_start|>user
+¿Cuál es la capital de España?
+<|im_end|>
+<|im_start|>assistant
+La capital de España es Madrid.
+<|im_end|>
+----
+
+Usado por: OpenAI, Mistral
+Mejor para: Chat models, instrucciones
+
+**Formato 4: Plain Text (Pretraining)**
+
+[source, text]
+----
+Este es un documento de texto plano.
+Se usa para continued pretraining.
+Cada línea o párrafo es un ejemplo.
+----
+
+==== Ejemplo: Convertir tu dataset a formato Alpaca
+
+Supongamos que tienes datos en CSV:
+
+[source, csv]
+----
+pregunta,respuesta
+"¿Cuál es la capital de Francia?","París es la capital de Francia."
+"¿Cuánto es 2+2?","2+2 = 4"
+----
+
+Convertirlo a Alpaca:
+
+[source, python]
+----
+import json
+import pandas as pd
+
+# Leer CSV
+df = pd.read_csv("mi_dataset.csv")
+
+# Convertir a Alpaca
+alpaca_data = []
+for idx, row in df.iterrows():
+    alpaca_data.append({
+        "instruction": row["pregunta"],
+        "input": "",
+        "output": row["respuesta"]
+    })
+
+# Guardar como JSON
+with open("dataset_alpaca.json", "w", encoding="utf-8") as f:
+    json.dump(alpaca_data, f, ensure_ascii=False, indent=2)
+
+print(f"Convertidos {len(alpaca_data)} ejemplos")
+----
+
+==== Uso de Hugging Face Datasets
+
+La librería `datasets` de Hugging Face te permite:
+1. Usar datasets públicos
+2. Cargar datasets locales
+3. Hacer streaming sin descargar todo
+
+[source, python]
+----
+from datasets import load_dataset
+
+# OPCIÓN 1: Dataset público de Hugging Face
+dataset = load_dataset("imdb")  # Ejemplo: dataset de películas
+print(f"Train split: {len(dataset['train'])} ejemplos")
+
+# OPCIÓN 2: Dataset local (JSON)
+dataset = load_dataset(
+    "json",
+    data_files="dataset_alpaca.json",
+    split="train"
+)
+
+# OPCIÓN 3: Dataset local (CSV)
+dataset = load_dataset(
+    "csv",
+    data_files="mi_dataset.csv",
+    split="train"
+)
+
+# OPCIÓN 4: Dataset local (carpeta con múltiples archivos)
+dataset = load_dataset(
+    "json",
+    data_files={
+        "train": "train_*.json",
+        "val": "val_*.json"
+    }
+)
+
+# Ver estructura
+print(dataset[0])  # Primer ejemplo
+print(dataset.column_names)  # Nombres de columnas
+----
+
+==== Plantillas de Chat (Chat Templates)
+
+Los modelos modernos usan "plantillas de chat" para formatear conversaciones correctamente. Cada modelo tiene su propia plantilla.
+
+**¿Por qué importa?**
+
+[source, python]
+----
+# SIN plantilla (MALO ❌)
+"Usuario: Hola. Asistente: Hola, ¿cómo estás?"
+→ El modelo se confunde sobre dónde termina input y empieza output
+
+# CON plantilla (BUENO ✅)
+"<|im_start|>user\nHola<|im_end|>\n<|im_start|>assistant\nHola, ¿cómo estás?<|im_end|>"
+→ Tokens especiales indican claramente los roles
+----
+
+**Chat Templates por modelo:**
+
+[source, python]
+----
+# Llama 2 / Llama 3
+template_llama = """<s>[INST] {instrucción} [/INST] {respuesta} </s>"""
+
+# Mistral
+template_mistral = """[INST] {instrucción} [/INST] {respuesta}</s>"""
+
+# Gemma
+template_gemma = """<start_of_turn>user\n{instrucción}<end_of_turn>\n<start_of_turn>model\n{respuesta}<end_of_turn>"""
+
+# OpenAI ChatML
+template_chatml = """<|im_start|>user\n{instrucción}<|im_end|>\n<|im_start|>assistant\n{respuesta}<|im_end|>"""
+----
+
+**Usar la plantilla correcta automáticamente:**
+
+[source, python]
+----
+from unsloth import FastLanguageModel
+
+modelo, tokenizer = FastLanguageModel.from_pretrained(
+    model_name="unsloth/llama-2-7b",
+    ...
+)
+
+# El tokenizer ya conoce la plantilla correcta
+plantilla = tokenizer.chat_template
+print(f"Plantilla detectada: {plantilla}")
+
+# Formatear una conversación
+mensaje = [
+    {"role": "user", "content": "¿Cuál es 2+2?"},
+]
+
+# Esto aplica la plantilla automáticamente
+tokens = tokenizer.apply_chat_template(
+    mensaje,
+    tokenize=True,
+    add_generation_prompt=True
+)
+----
+
+==== Práctica: Preparar un Dataset Personalizado
+
+Vamos a crear un script que prepara un dataset completo.
+
+**Archivo: `2_preparar_dataset.py`**
+
+[source, python]
+----
+"""
+Práctica 2.1: Preparación de Dataset
+Convierte datos brutos en formato listo para fine-tuning
+"""
+
+import json
+from datasets import Dataset, DatasetDict
+from typing import List, Dict
+
+def crear_dataset_alpaca(ejemplos: List[Dict]) -> Dataset:
+    """
+    Crear dataset en formato Alpaca
+
+    Ejemplo de entrada:
+    {
+        "instruction": "¿Cuál es la capital de España?",
+        "input": "",
+        "output": "Madrid"
+    }
+    """
+    # Validar formato
+    for ej in ejemplos:
+        assert "instruction" in ej, "Falta 'instruction'"
+        assert "output" in ej, "Falta 'output'"
+        if "input" not in ej:
+            ej["input"] = ""
+
+    dataset = Dataset.from_dict({
+        "instruction": [e["instruction"] for e in ejemplos],
+        "input": [e.get("input", "") for e in ejemplos],
+        "output": [e["output"] for e in ejemplos]
+    })
+
+    return dataset
+
+def crear_dataset_sharegpt(conversaciones: List[Dict]) -> Dataset:
+    """
+    Crear dataset en formato ShareGPT
+
+    Ejemplo de entrada:
+    {
+        "conversations": [
+            {"from": "human", "value": "Hola"},
+            {"from": "gpt", "value": "Hola, ¿cómo estás?"}
+        ]
+    }
+    """
+    dataset = Dataset.from_dict({
+        "conversations": [c["conversations"] for c in conversaciones]
+    })
+
+    return dataset
+
+def limpiar_dataset(dataset: Dataset) -> Dataset:
+    """
+    Limpiar dataset: remover duplicados, ejemplos vacíos, etc.
+    """
+    print(f"Dataset original: {len(dataset)} ejemplos")
+
+    # Remover duplicados
+    dataset = dataset.map(
+        lambda x: x,  # No mapear, solo mantener
+        remove_duplicates=True
+    )
+    print(f"Después de remover duplicados: {len(dataset)} ejemplos")
+
+    # Remover ejemplos con campos vacíos
+    def no_vacio(ejemplo):
+        if "instruction" in ejemplo:
+            return len(ejemplo["instruction"]) > 0
+        if "conversations" in ejemplo:
+            return len(ejemplo["conversations"]) > 0
+        return True
+
+    dataset = dataset.filter(no_vacio)
+    print(f"Después de remover vacíos: {len(dataset)} ejemplos")
+
+    return dataset
+
+def dividir_train_val(dataset: Dataset, ratio_val=0.1) -> DatasetDict:
+    """
+    Dividir dataset en train (90%) y validation (10%)
+    """
+    split_dataset = dataset.train_test_split(test_size=ratio_val, seed=42)
+
+    return DatasetDict({
+        "train": split_dataset["train"],
+        "validation": split_dataset["test"]
+    })
+
+# EJEMPLO DE USO
+if __name__ == "__main__":
+    # Crear algunos ejemplos de ejemplo
+    ejemplos = [
+        {
+            "instruction": "¿Cuál es la capital de España?",
+            "input": "",
+            "output": "La capital de España es Madrid."
+        },
+        {
+            "instruction": "Cuéntame un chiste",
+            "input": "",
+            "output": "¿Por qué los pájaros no se pierden? Porque usan GPS: Global Posicionamiento de Suelos."
+        },
+        {
+            "instruction": "Explica qué es el fine-tuning",
+            "input": "",
+            "output": "El fine-tuning es el proceso de entrenar un modelo pre-entrenado..."
+        },
+    ]
+
+    print("📊 CREANDO DATASET")
+    print("-" * 50)
+
+    # Crear dataset
+    dataset = crear_dataset_alpaca(ejemplos)
+    print(f"Dataset creado: {len(dataset)} ejemplos")
+    print(f"Columnas: {dataset.column_names}")
+    print(f"\nEjemplo 1:")
+    print(json.dumps(dataset[0], ensure_ascii=False, indent=2))
+
+    # Limpiar
+    print("\n🧹 LIMPIEZA")
+    print("-" * 50)
+    dataset_limpio = limpiar_dataset(dataset)
+
+    # Dividir
+    print("\n✂️ DIVISIÓN TRAIN/VAL")
+    print("-" * 50)
+    split = dividir_train_val(dataset_limpio, ratio_val=0.2)
+    print(f"Train: {len(split['train'])} ejemplos")
+    print(f"Validation: {len(split['validation'])} ejemplos")
+
+    # Guardar
+    print("\n💾 GUARDANDO")
+    print("-" * 50)
+    split.save_to_disk("./dataset_preparado")
+    print("✅ Dataset guardado en './dataset_preparado'")
+
+    # Información estadística
+    print("\n📈 ESTADÍSTICAS")
+    print("-" * 50)
+    for split_name, split_data in split.items():
+        print(f"\n{split_name.upper()}:")
+        for col in split_data.column_names:
+            if col != "input":  # input es frecuentemente vacío
+                longitudes = [len(str(e)) for e in split_data[col]]
+                print(f"  {col}: promedio {sum(longitudes)/len(longitudes):.0f} chars")
+----
+
+**Ejecutar:**
+
+[source, bash]
+----
+python 2_preparar_dataset.py
+
+# Salida esperada:
+# 📊 CREANDO DATASET
+# --------------------------------------------------
+# Dataset creado: 3 ejemplos
+# Columnas: ['instruction', 'input', 'output']
+#
+# Ejemplo 1:
+# {
+#   "instruction": "¿Cuál es la capital de España?",
+#   "input": "",
+#   "output": "La capital de España es Madrid."
+# }
+#
+# 🧹 LIMPIEZA
+# --------------------------------------------------
+# Dataset original: 3 ejemplos
+# Después de remover duplicados: 3 ejemplos
+# Después de remover vacíos: 3 ejemplos
+#
+# ✂️ DIVISIÓN TRAIN/VAL
+# --------------------------------------------------
+# Train: 2 ejemplos
+# Validation: 1 ejemplos
+#
+# 💾 GUARDANDO
+# --------------------------------------------------
+# ✅ Dataset guardado en './dataset_preparado'
+#
+# 📈 ESTADÍSTICAS
+# --------------------------------------------------
+# TRAIN:
+#   instruction: promedio 45 chars
+#   output: promedio 85 chars
+----
+
+**Checklist: Datos Preparados ✅**
+
+[source, text]
+----
+□ Datos en formato Alpaca/ShareGPT/ChatML
+□ Dataset limpio (sin duplicados, vacíos)
+□ Dividido en train (90%) y validation (10%)
+□ Estadísticas revisadas
+□ Ejemplos verificados manualmente
+
+Estás listo para el Módulo 3 (Fine-tuning real) 🚀
+----
+
+== Módulo 3: Flujo de Trabajo de Fine-Tuning (SFT)
+
+=== 3.1 Configuración del Entrenamiento
+
+El fine-tuning requiere configurar correctamente múltiples componentes. Vamos a aprender qué significa cada parámetro y cómo elegirlos.
+
+==== Cargar el Modelo con FastLanguageModel
+
+[source, python]
+----
+from unsloth import FastLanguageModel
+from peft import LoraConfig, get_peft_model
+
+# PASO 1: Cargar el modelo base
+modelo, tokenizer = FastLanguageModel.from_pretrained(
+    model_name="unsloth/llama-2-7b-bnb-4bit",
+    max_seq_length=2048,
+    load_in_4bit=True,  # Cuantización 4-bit
+    dtype=torch.float16  # Dtype de cálculo
+)
+
+# PASO 2: Aplicar LoRA
+modelo = FastLanguageModel.get_peft_model(
+    modelo,
+    r=32,              # Rango LoRA
+    lora_alpha=64,     # Factor escala
+    lora_dropout=0.05, # Regularización
+    bias="none",
+    use_gradient_checkpointing=True,
+    use_rslora=True,   # RSlora para mejor convergencia
+    task_type="CAUSAL_LM"
+)
+
+# PASO 3: Preparar para entrenamiento
+modelo.print_trainable_parameters()
+
+# Salida:
+# trainable params: 4194304 || all params: 7171139584 || trainable%: 0.05847
+----
+
+**Explicación:**
+
+- `max_seq_length`: Longitud máxima de las secuencias (2048 tokens = ~500 palabras)
+- `load_in_4bit`: Cuantizar modelo a 4-bit (8x menos memoria)
+- `r=32`: Matrices LoRA de rango 32 (balance memoria/capacidad)
+- `lora_alpha=64`: Factor 64/32=2 (buena proporción)
+- `use_gradient_checkpointing=True`: Ahorrar memoria (lento pero necesario en GPU pequeña)
+- `use_rslora=True`: LoRA mejorado con scaling por rango
+
+==== TrainingArguments: La Configuración Crítica
+
+[source, python]
+----
+from transformers import TrainingArguments
+
+training_args = TrainingArguments(
+    # 1. RUTAS Y GUARDADO
+    output_dir="./llama2_finetuned",          # Dónde guardar checkpoints
+    save_strategy="steps",                     # Guardar cada N steps
+    save_steps=100,                            # Guardar cada 100 steps
+    save_total_limit=3,                        # Mantener solo 3 últimos checkpoints
+
+    # 2. EVALUACIÓN
+    eval_strategy="steps",                     # Evaluar cada N steps
+    eval_steps=50,                             # Evaluar cada 50 steps
+
+    # 3. LEARNING RATE
+    learning_rate=5e-4,                        # Tasa de aprendizaje (imporant!)
+    lr_scheduler_type="cosine",                # Cosine scheduling
+    warmup_steps=100,                          # Calentar 100 steps
+
+    # 4. BATCH SIZE Y GRADIENTES
+    per_device_train_batch_size=4,             # Batch size por GPU
+    per_device_eval_batch_size=4,              # Eval batch size
+    gradient_accumulation_steps=4,             # Acumular 4 batches (eff batch=16)
+
+    # 5. REGULARIZACIÓN
+    weight_decay=0.01,                         # Regularización L2
+    max_grad_norm=1.0,                         # Clip gradientes
+
+    # 6. ENTRENAMIENTO
+    num_train_epochs=3,                        # 3 pasadas sobre los datos
+    max_steps=-1,                              # -1 = usar num_train_epochs
+
+    # 7. HARDWARE
+    fp16=True,                                 # Usar float16 (más rápido)
+
+    # 8. LOGGING
+    logging_steps=10,                          # Log cada 10 steps
+    logging_dir="./logs",
+)
+----
+
+**Tabla de hiperparámetros recomendados:**
+
+[cols="25,15,15,20"]
+|===
+| Parámetro | Colab T4 | GPU Local (24GB) | A100 (80GB)
+
+| per_device_train_batch_size
+| 1-2
+| 4-8
+| 16-32
+
+| gradient_accumulation_steps
+| 8-16
+| 2-4
+| 1-2
+
+| learning_rate
+| 5e-4
+| 2e-4
+| 1e-4
+
+| warmup_steps
+| 100
+| 500
+| 1000
+
+| max_seq_length
+| 1024
+| 2048
+| 4096
+|===
+
+==== Learning Rate y Schedulers: Ajustando la Velocidad de Aprendizaje
+
+La learning rate (tasa de aprendizaje) es **EL PARÁMETRO MÁS IMPORTANTE**.
+
+**¿Por qué?** Determina cuán grande es cada paso del entrenamiento:
+
+[source, python]
+----
+# Learning rate muy alto (1e-2 = 0.01)
+# Los pesos "saltan" demasiado lejos
+# Resultado: Entrenamiento inestable, loss diverge
+loss = [2.5, 2.4, 5.3, NaN]  ❌
+
+# Learning rate correcto (5e-4 = 0.0005)
+# Los pesos se ajustan gradualmente
+# Resultado: Convergencia suave
+loss = [2.5, 2.4, 2.2, 1.9, 1.7]  ✅
+
+# Learning rate muy bajo (1e-6)
+# Los pesos casi no cambian
+# Resultado: Entrenamiento muy lento
+loss = [2.5, 2.499, 2.498, 2.497]  ⚠️
+----
+
+**Schedulers: Variar la learning rate durante entrenamiento**
+
+[source, python]
+----
+# Opción 1: Constante (simple pero no óptimo)
+lr_scheduler_type="constant"
+lr_schedule = [5e-4, 5e-4, 5e-4, 5e-4, ...]
+
+# Opción 2: Linear decay (disminuye linealmente)
+lr_scheduler_type="linear"
+lr_schedule = [5e-4, 4e-4, 3e-4, 2e-4, ...]
+
+# Opción 3: Cosine (disminuye suavemente, RECOMENDADO)
+lr_scheduler_type="cosine"
+lr_schedule = [5e-4, 4.9e-4, 4.8e-4, 4.5e-4, ..., 1e-6]
+↑ Empieza rápido, termina lentamente para convergencia fina
+
+# Opción 4: Cosine con warmup (recomendado para fine-tuning)
+warmup_steps=100
+lr_schedule:
+  Primeros 100 steps: 0 → 5e-4  (calentar)
+  Siguientes N steps: 5e-4 → 0  (cosine decay)
+----
+
+**Recomendación:**
+- Fine-tuning LoRA: `cosine` con `warmup_steps=100-500`
+- Full fine-tuning: `linear` con `warmup_steps=500-1000`
+- Continued pretraining: `constant` o `cosine`
+
+==== Batch Size y Gradient Accumulation
+
+**Batch Size: ¿Cuántos ejemplos procesar simultáneamente?**
+
+[source, python]
+----
+# Batch size = 1 (un ejemplo a la vez)
+# Ruido alto, actualización frecuente, muy lento
+for ejemplo in dataset:
+    loss = forward(ejemplo)
+    backward()  ← Actualizar cada paso
+
+# Batch size = 16 (16 ejemplos juntos)
+# Más estable, menos ruido, más rápido
+for batch en dataset(batch_size=16):
+    loss = forward(batch)
+    backward()  ← Actualizar cada 16 ejemplos
+
+# ¿Más grande es mejor?
+batch_size = 64  ✅ Más rápido
+batch_size = 256 ❌ OOM (Out of Memory)
+----
+
+**Gradient Accumulation: El truco para simular batch size grande**
+
+Si quieres batch size = 16 pero tu GPU solo aguanta batch size = 4:
+
+[source, python]
+----
+# Sin accumulation:
+per_device_batch_size = 16
+GPU memory: 24 GB ❌ No cabe!
+
+# Con accumulation:
+per_device_batch_size = 4
+gradient_accumulation_steps = 4
+Batch efectivo = 4 * 4 = 16
+GPU memory: 6 GB ✅ Cabe!
+
+Cómo funciona:
+paso 1: forward(batch1) + backward() → guardar gradientes
+paso 2: forward(batch2) + backward() → acumular gradientes
+paso 3: forward(batch3) + backward() → acumular gradientes
+paso 4: forward(batch4) + backward() → actualizar pesos (¡ahora!)
+----
+
+**Regla práctica:**
+
+`batch_efectivo = per_device_batch_size × gradient_accumulation_steps`
+
+Para que sea alrededor de 16-32:
+- GPU 16GB: 2-4 per_device + 4-8 accumulation steps
+- GPU 24GB: 4-8 per_device + 2-4 accumulation steps
+- GPU 80GB: 16-32 per_device + 1-2 accumulation steps
+
+==== Optimizadores: AdamW 8-bit vs Standard
+
+[source, python]
+----
+# Optimizador estándar (Adam)
+states_por_parametro = 2  (momentum + variance)
+# 7B modelo → 14B memoria solo en optimizer states ❌
+
+# AdamW 8-bit (8-bit quantized)
+states_por_parametro = 2  (pero cuantizados a 8-bit)
+# 7B modelo → 1.75B memoria en optimizer states ✅
+
+training_args = TrainingArguments(
+    optim="adamw_8bit",  # Usar 8-bit quantized Adam
+    ...
+)
+----
+
+Ventaja: 8x menos memoria en los optimizer states, casi sin pérdida de precisión.
+
+==== Ejemplo Completo de Configuración
+
+[source, python]
+----
+"""
+Configuración lista para usar en diferentes escenarios
+"""
+
+# ESCENARIO 1: Colab T4 (16GB), Dataset pequeño
+config_colab_t4 = {
+    "per_device_train_batch_size": 2,
+    "gradient_accumulation_steps": 8,  # batch efectivo = 16
+    "learning_rate": 5e-4,
+    "num_train_epochs": 3,
+    "warmup_steps": 50,
+    "max_seq_length": 1024,
+    "r": 8,  # LoRA reducido
+}
+
+# ESCENARIO 2: GPU Local RTX 3080 (10GB), Dataset mediano
+config_local = {
+    "per_device_train_batch_size": 4,
+    "gradient_accumulation_steps": 4,  # batch efectivo = 16
+    "learning_rate": 2e-4,
+    "num_train_epochs": 2,
+    "warmup_steps": 100,
+    "max_seq_length": 2048,
+    "r": 32,
+}
+
+# ESCENARIO 3: A100 (80GB), Dataset grande
+config_a100 = {
+    "per_device_train_batch_size": 16,
+    "gradient_accumulation_steps": 1,  # batch efectivo = 16
+    "learning_rate": 1e-4,
+    "num_train_epochs": 1,
+    "warmup_steps": 500,
+    "max_seq_length": 4096,
+    "r": 64,
+}
+----
+
+=== 3.2 Ejecución y Monitoreo
+
+Ahora vamos a ejecutar el fine-tuning con SFTTrainer de TRL.
+
+==== Usando SFTTrainer
+
+[source, python]
+----
+from trl import SFTTrainer
+from transformers import TrainingArguments, DataCollatorForLanguageModeling
+
+# Ya tenemos:
+# - modelo (con LoRA)
+# - tokenizer
+# - dataset (train y eval)
+
+training_args = TrainingArguments(
+    output_dir="./llama2_finetuned",
+    per_device_train_batch_size=4,
+    gradient_accumulation_steps=4,
+    learning_rate=5e-4,
+    num_train_epochs=1,
+    eval_strategy="steps",
+    eval_steps=50,
+    save_steps=100,
+    logging_steps=10,
+    warmup_steps=50,
+    optim="adamw_8bit",
+    fp16=True,
+)
+
+# Crear trainer
+trainer = SFTTrainer(
+    model=modelo,
+    tokenizer=tokenizer,
+    args=training_args,
+    train_dataset=dataset["train"],
+    eval_dataset=dataset["validation"],
+    dataset_text_field="output",  # Campo a entrenar
+    max_seq_length=2048,
+    packing=False,  # True = empacar secuencias para eficiencia
+)
+
+# Entrenar
+print("⏳ Iniciando entrenamiento...")
+trainer.train()
+
+print("✅ Entrenamiento completado!")
+print(f"Modelo guardado en: {training_args.output_dir}")
+----
+
+==== Monitoreo de Loss y Métricas
+
+Durante el entrenamiento, el loss (pérdida) disminuirá:
+
+[source, text]
+----
+Epoch 1/3:
+  step 10: loss=2.45 (disminuyendo ✓)
+  step 20: loss=2.15
+  step 30: loss=1.95
+  step 40: loss=1.80
+  step 50: loss=1.70 (evaluación: val_loss=1.75)
+
+Epoch 2/3:
+  step 60: loss=1.62
+  step 70: loss=1.58
+  ...
+
+Interpretación:
+- Loss en train disminuye → entrenamiento funciona ✅
+- Loss en val disminuye → generalizando bien ✅
+- Loss en train disminuye pero val aumenta → overfitting ⚠️
+- Loss no cambia → learning rate demasiado bajo ❌
+----
+
+==== Usando Weights & Biases para Tracking Avanzado
+
+Weights & Biases (W&B) es un servicio gratuito para monitorear entrenamientos:
+
+[source, python]
+----
+# 1. Crear cuenta en wandb.ai
+# 2. Instalar:
+pip install wandb
+
+# 3. Login
+import wandb
+wandb.login()  # Pedir API key
+
+# 4. Integrar con trainer
+training_args = TrainingArguments(
+    output_dir="./llama2_finetuned",
+    report_to=["wandb"],  # Enviar a W&B
+    run_name="llama2-finetuning-v1",
+    project_name="llama-finetuning",
+    ...
+)
+
+trainer = SFTTrainer(
+    model=modelo,
+    ...
+)
+
+trainer.train()
+
+# W&B creará automáticamente:
+# - Gráficas de loss
+# - Comparación entre entrenamientos
+# - Duración estimada
+# - Dashboard en tiempo real
+----
+
+==== Práctica: Fine-tuning Completo
+
+**Archivo: `3_finetuning_completo.py`**
+
+[source, python]
+----
+"""
+Práctica 3.1: Fine-tuning completo de un modelo
+Este script realiza fine-tuning end-to-end
+"""
+
+import torch
+from unsloth import FastLanguageModel
+from transformers import TrainingArguments
+from trl import SFTTrainer
+from datasets import load_dataset
+
+def preparar_modelo():
+    """Cargar modelo con LoRA"""
+    modelo, tokenizer = FastLanguageModel.from_pretrained(
+        model_name="unsloth/llama-2-7b-bnb-4bit",
+        max_seq_length=2048,
+        load_in_4bit=True,
+        dtype=torch.float16
+    )
+
+    modelo = FastLanguageModel.get_peft_model(
+        modelo,
+        r=32,
+        lora_alpha=64,
+        lora_dropout=0.05,
+        bias="none",
+        use_gradient_checkpointing=True,
+        task_type="CAUSAL_LM"
+    )
+
+    return modelo, tokenizer
+
+def entrenar(modelo, tokenizer, dataset):
+    """Ejecutar entrenamiento"""
+
+    training_args = TrainingArguments(
+        output_dir="./llama2_finetuned",
+        per_device_train_batch_size=4,
+        gradient_accumulation_steps=4,
+        learning_rate=5e-4,
+        num_train_epochs=1,
+        logging_steps=10,
+        eval_steps=50,
+        save_steps=100,
+        save_total_limit=3,
+        warmup_steps=50,
+        lr_scheduler_type="cosine",
+        optim="adamw_8bit",
+        fp16=True,
+        eval_strategy="steps",
+    )
+
+    trainer = SFTTrainer(
+        model=modelo,
+        tokenizer=tokenizer,
+        args=training_args,
+        train_dataset=dataset["train"],
+        eval_dataset=dataset["validation"],
+        dataset_text_field="output",
+        max_seq_length=2048,
+        packing=False,
+    )
+
+    print("🚀 Iniciando entrenamiento...")
+    resultado = trainer.train()
+
+    print(f"✅ Entrenamiento completado!")
+    print(f"Pérdida final: {resultado.training_loss:.4f}")
+
+    return trainer
+
+if __name__ == "__main__":
+    # Cargar dataset de ejemplo
+    dataset = load_dataset("json", data_files="./dataset_preparado", split="train")
+
+    # Dividir
+    split = dataset.train_test_split(test_size=0.1, seed=42)
+    dataset = split
+
+    print("📊 Dataset cargado")
+    print(f"  Train: {len(dataset['train'])} ejemplos")
+    print(f"  Test: {len(dataset['test'])} ejemplos")
+
+    # Preparar modelo
+    print("\n⏳ Preparando modelo...")
+    modelo, tokenizer = preparar_modelo()
+    modelo.print_trainable_parameters()
+
+    # Entrenar
+    print("\n🔥 Entrenando...")
+    trainer = entrenar(modelo, tokenizer, {
+        "train": dataset["train"],
+        "validation": dataset["test"]
+    })
+
+    # Guardar
+    print("\n💾 Guardando...")
+    modelo.save_pretrained("./mi_modelo_finetuned")
+    tokenizer.save_pretrained("./mi_modelo_finetuned")
+    print("✅ Modelo guardado en ./mi_modelo_finetuned")
+----
+
+**Checklist: Fine-tuning Configurado ✅**
+
+[source, text]
+----
+□ Modelo cargado con LoRA
+□ Datos en formato correcto
+□ TrainingArguments configurados
+□ Batch size y lr establecidos apropiadamente
+□ SFTTrainer funciona sin errores
+□ Loss disminuye durante entrenamiento
+
+¡Estás listo para el Módulo 4 (Inferencia) 🚀
+----
+
+== Módulo 4: Inferencia y Evaluación
+
+=== 4.1 Inferencia Nativa
+
+Una vez que el modelo está fine-tuneado, necesitamos usarlo (inferencia). Unsloth optimiza esta fase también.
+
+==== Inferencia Rápida con FastLanguageModel.for_inference
+
+[source, python]
+----
+from unsloth import FastLanguageModel
+import torch
+
+# Cargar modelo fine-tuneado
+modelo, tokenizer = FastLanguageModel.from_pretrained(
+    model_name="./mi_modelo_finetuned",
+    max_seq_length=2048,
+    load_in_4bit=True,
+)
+
+# ✅ IMPORTANTE: Convertir a modo inferencia (no entrenamiento)
+modelo = FastLanguageModel.for_inference(modelo)
+
+# Ahora el modelo es:
+# 1. Más rápido (sin overhead de entrenamiento)
+# 2. Más memoria eficiente
+# 3. Compatible con generación continua
+----
+
+**¿Qué hace `for_inference`?**
+
+[source, python]
+----
+# Sin for_inference:
+# - Cálculo de gradientes: ACTIVADO (para entrenamiento)
+# - Checkpoint gradient: ACTIV ADO (guarda activaciones)
+# - Dropout: ACTIVO (añade ruido)
+# - Memoria: 8GB
+# - Velocidad: Lenta
+
+# Con for_inference:
+# - Cálculo de gradientes: DESACTIVADO
+# - Checkpoint gradient: DESACTIVADO
+# - Dropout: DESACTIVADO
+# - Memoria: 3GB
+# - Velocidad: 2-3x más rápido
+----
+
+==== Generación de Texto Paso a Paso
+
+[source, python]
+----
+# Input: Preparar el prompt
+prompt = "La inteligencia artificial es"
+
+# Paso 1: Tokenizar
+inputs = tokenizer(prompt, return_tensors="pt").to("cuda")
+print(f"Input tokens: {inputs['input_ids'].shape}")  # [1, 8] = 1 batch, 8 tokens
+
+# Paso 2: Generar
+outputs = modelo.generate(
+    **inputs,
+    max_new_tokens=50,        # Generar 50 tokens nuevos
+    temperature=0.7,          # Aleatoriedad
+    top_p=0.9,                # Nucleus sampling
+    do_sample=True,           # Muestreo (vs greedy)
+)
+
+# Paso 3: Decodificar
+texto_generado = tokenizer.decode(outputs[0], skip_special_tokens=True)
+print(texto_generado)
+# Output: "La inteligencia artificial es una rama de la informática que se enfoca en..."
+----
+
+**Parámetros de Generación Explicados:**
+
+[source, python]
+----
+max_new_tokens: 50      # Máximo tokens a generar
+                        # Más tokens = más texto, más tiempo
+
+temperature: 0.7        # Controla aleatoriedad
+                        # 0.0 = determinístico (siempre lo mismo)
+                        # 0.5 = bajo aleatoriedad (conservador)
+                        # 1.0 = medio aleatoriedad (equilibrado)
+                        # >1.0 = mucho aleatoriedad (creativo)
+
+top_p: 0.9              # Nucleus sampling
+                        # Solo considera tokens que acumulan 90% de probabilidad
+                        # 0.5 = muy restrictivo (pocas opciones)
+                        # 0.9 = más diverso
+                        # 1.0 = sin restricción
+
+top_k: 50               # Top-K sampling
+                        # Solo considera los 50 tokens más probables
+                        # Alternativa a top_p
+
+repetition_penalty: 1.0 # Penalizar tokens repetidos
+                        # > 1.0 = evita repeticiones
+                        # 1.2 = penalidad moderada
+
+do_sample: True         # Muestreo aleatorio
+                        # False = greedy (siempre pick el mejor)
+----
+
+**Configuraciones Recomendadas:**
+
+[source, python]
+----
+# OPCIÓN 1: Respuestas consistentes (Q&A, clasificación)
+respuesta_consistente = {
+    "max_new_tokens": 100,
+    "temperature": 0.3,      # Bajo aleatoriedad
+    "top_p": 0.95,
+    "do_sample": False,      # Determinístico
+}
+
+# OPCIÓN 2: Respuestas balanceadas (chat, conversación)
+chat_balanc = {
+    "max_new_tokens": 200,
+    "temperature": 0.7,      # Medio aleatoriedad
+    "top_p": 0.9,
+    "do_sample": True,
+    "repetition_penalty": 1.1
+}
+
+# OPCIÓN 3: Respuestas creativas (escritura, poesía)
+creativo = {
+    "max_new_tokens": 500,
+    "temperature": 0.9,      # Alto aleatoriedad
+    "top_p": 0.95,
+    "do_sample": True,
+    "top_k": 100
+}
+
+# Usar:
+outputs = modelo.generate(**inputs, **chat_balance)
+----
+
+==== Generación con Streaming
+
+Para aplicaciones de chat en tiempo real, quieres ver el texto aparecer carácter por carácter (como ChatGPT):
+
+[source, python]
+----
+from transformers import TextIteratorStreamer
+from threading import Thread
+
+# Configurar streamer
+streamer = TextIteratorStreamer(
+    tokenizer,
+    skip_special_tokens=True
+)
+
+# Generar en un thread separado (no bloquea)
+generation_kwargs = dict(
+    **inputs,
+    streamer=streamer,
+    max_new_tokens=200,
+    temperature=0.7,
+)
+
+thread = Thread(target=modelo.generate, kwargs=generation_kwargs)
+thread.start()
+
+# Imprimir tokens mientras se generan
+print("Respuesta: ", end="", flush=True)
+for text in streamer:
+    print(text, end="", flush=True)
+print()
+
+thread.join()
+----
+
+Esto es especialmente útil para:
+- Interfaces web (mostrar respuesta en tiempo real)
+- Aplicaciones móviles (no esperar a que terminen 200 tokens)
+- Mejor UX (feedback inmediato)
+
+==== Evaluación Cualitativa
+
+Antes de evaluar cuantitativamente, una evaluación manual:
+
+[source, python]
+----
+# Test cases: ejemplo de entrada → salida esperada
+test_cases = [
+    {
+        "prompt": "¿Cuál es la capital de Francia?",
+        "esperado": "Paris",
+        "correcto": True  # Manualment establecido
+    },
+    {
+        "prompt": "Escribe un poema sobre la luna",
+        "esperado": "Cualquier poema coherente",
+        "correcto": True
+    },
+]
+
+print("📋 EVALUACIÓN CUALITATIVA")
+print("-" * 60)
+
+for i, test in enumerate(test_cases, 1):
+    inputs = tokenizer(test["prompt"], return_tensors="pt").to("cuda")
+
+    outputs = modelo.generate(
+        **inputs,
+        max_new_tokens=100,
+        temperature=0.7,
+    )
+
+    respuesta = tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+    print(f"\nTest {i}:")
+    print(f"  Prompt: {test['prompt']}")
+    print(f"  Respuesta: {respuesta}")
+    print(f"  ¿Correcto?: {test['correcto']} ✓" if test['correcto'] else f"  ¿Correcto?: {test['correcto']} ✗")
+----
+
+=== 4.2 Benchmarks Automatizados
+
+Evaluar modelos necesita métricas objetivas. Aquí vemos las más comunes.
+
+==== Métricas Automáticas Comunes
+
+**1. Perplexity (Perplejidad)**
+
+Mide qué tan "sorprendido" es el modelo por el texto:
+
+[source, python]
+----
+# Perplexity = e^(avg_loss)
+# Loss = -log(P(siguiente token))
+
+# Modelo A: perplexity = 10
+#   "Bastante seguro de sus predicciones"
+
+# Modelo B: perplexity = 100
+#   "Muy inseguro, predice mal"
+
+# Cómo calcular:
+from math import exp
+
+def calcular_perplexity(logits, labels):
+    loss = cross_entropy_loss(logits, labels)
+    perplexity = exp(loss)
+    return perplexity
+
+# Benchmark:
+# GPT-2: ~20
+# BERT: ~76
+# Tu modelo fine-tuned: Esperado <50
+----
+
+**2. BLEU (Bilingual Evaluation Understudy)**
+
+Mide similitud entre respuesta generada y referencia:
+
+[source, python]
+----
+from nltk.translate.bleu_score import sentence_bleu
+
+referencia = ["el", "gato", "está", "en", "la", "casa"]
+generada = ["el", "gato", "está", "en", "un", "casa"]
+
+# 4-gram BLEU (compara n-gramas de 1-4 palabras)
+score = sentence_bleu([referencia], generada, weights=(0.25, 0.25, 0.25, 0.25))
+
+print(f"BLEU Score: {score:.4f}")
+# 0 = completamente diferente
+# 1 = idéntica
+
+# Interpretación:
+# BLEU < 0.1: Muy malo
+# 0.1-0.3: Malo
+# 0.3-0.5: Aceptable
+# 0.5-0.7: Bueno
+# 0.7+: Excelente
+----
+
+**3. ROUGE (Recall-Oriented Understudy for Gisting Evaluation)**
+
+Similar a BLEU pero enfocado en recuperación:
+
+[source, python]
+----
+from rouge_score import rouge_scorer
+
+scorer = rouge_scorer.RougeScorer(
+    ['rouge1', 'rougeL'],  # Unigramas y Longest Common Subsequence
+    use_stemmer=True
+)
+
+referencia = "El gato está en la casa"
+generada = "El gato está en una casa"
+
+scores = scorer.score(referencia, generada)
+
+for metric, score in scores.items():
+    print(f"{metric}: precision={score.precision:.3f}, recall={score.recall:.3f}, fmeasure={score.fmeasure:.3f}")
+
+# ROUGE-1:  precision=0.833, recall=0.833, fmeasure=0.833
+# ROUGE-L:  precision=0.833, recall=0.833, fmeasure=0.833
+----
+
+==== LLM-as-a-Judge: Evaluación con un LLM Superior
+
+A veces, comparar con referencias es insuficiente. Usamos un LLM más poderoso como juez:
+
+[source, python]
+----
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+# Modelo juez (un modelo más grande/poderoso)
+juez_modelo, juez_tokenizer = AutoModelForCausalLM.from_pretrained(
+    "meta-llama/Llama-2-70b-chat"  # O GPT-4, Claude, etc.
+)
+
+def evaluar_con_llm(prompt, respuesta_modelo):
+    """Un LLM grande evalúa la respuesta de tu modelo"""
+
+    criterios = """
+    Evalúa esta respuesta en escala 1-10:
+    - Precisión: ¿es factualmente correcta?
+    - Claridad: ¿es fácil de entender?
+    - Complecitud: ¿responde toda la pregunta?
+
+    Prompt: {prompt}
+    Respuesta: {respuesta_modelo}
+
+    Puntuación (1-10):
+    """.format(prompt=prompt, respuesta_modelo=respuesta_modelo)
+
+    inputs = juez_tokenizer(criterios, return_tensors="pt")
+    outputs = juez_modelo.generate(**inputs, max_new_tokens=5)
+    evaluacion = juez_tokenizer.decode(outputs[0])
+
+    # Extraer número
+    import re
+    match = re.search(r'\d+', evaluacion)
+    score = int(match.group()) if match else 0
+
+    return score
+
+# Usar:
+prompts = [
+    "¿Cuál es la capital de Francia?",
+    "Explica qué es machine learning",
+]
+
+print("📊 EVALUACIÓN CON LLM")
+print("-" * 60)
+
+scores = []
+for prompt in prompts:
+    inputs = tokenizer(prompt, return_tensors="pt").to("cuda")
+    outputs = modelo.generate(**inputs, max_new_tokens=100)
+    respuesta = tokenizer.decode(outputs[0])
+
+    score = evaluar_con_llm(prompt, respuesta)
+    scores.append(score)
+
+    print(f"Prompt: {prompt}")
+    print(f"Score: {score}/10")
+    print()
+
+print(f"Score promedio: {sum(scores) / len(scores):.1f}/10")
+----
+
+==== Práctica: Sistema de Evaluación Completo
+
+**Archivo: `4_evaluacion_completa.py`**
+
+[source, python]
+----
+"""
+Práctica 4.1: Evaluación completa del modelo fine-tuneado
+"""
+
+import torch
+from unsloth import FastLanguageModel
+from rouge_score import rouge_scorer
+import json
+
+class EvaluadorModelo:
+    def __init__(self, modelo_path):
+        self.modelo, self.tokenizer = FastLanguageModel.from_pretrained(
+            model_name=modelo_path,
+            max_seq_length=2048,
+            load_in_4bit=True,
+        )
+        self.modelo = FastLanguageModel.for_inference(self.modelo)
+        self.rouge_scorer = rouge_scorer.RougeScorer(['rouge1', 'rougeL'])
+
+    def generar(self, prompt, max_tokens=100):
+        """Generar respuesta"""
+        inputs = self.tokenizer(prompt, return_tensors="pt").to("cuda")
+        outputs = self.modelo.generate(
+            **inputs,
+            max_new_tokens=max_tokens,
+            temperature=0.7,
+            top_p=0.9,
+        )
+        return self.tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+    def evaluar_rouge(self, referencia, generada):
+        """Calcular ROUGE score"""
+        scores = self.rouge_scorer.score(referencia, generada)
+        return {
+            'rouge1_f': scores['rouge1'].fmeasure,
+            'rougeL_f': scores['rougeL'].fmeasure,
+        }
+
+    def evaluar_manualmente(self, test_cases):
+        """Evaluación cualitativa"""
+        resultados = []
+
+        for i, test in enumerate(test_cases, 1):
+            print(f"\n{'='*60}")
+            print(f"Test {i}/{len(test_cases)}")
+            print(f"{'='*60}")
+
+            prompt = test['prompt']
+            referencia = test.get('referencia', '')
+
+            # Generar
+            print(f"📝 Prompt: {prompt}")
+            respuesta = self.generar(prompt)
+            print(f"🤖 Respuesta: {respuesta}\n")
+
+            # Evaluar ROUGE
+            if referencia:
+                rouge = self.evaluar_rouge(referencia, respuesta)
+                print(f"📊 ROUGE-1 F: {rouge['rouge1_f']:.3f}")
+                print(f"📊 ROUGE-L F: {rouge['rougeL_f']:.3f}\n")
+
+                resultados.append({
+                    'test': i,
+                    'prompt': prompt,
+                    'respuesta': respuesta,
+                    'rouge': rouge
+                })
+            else:
+                resultados.append({
+                    'test': i,
+                    'prompt': prompt,
+                    'respuesta': respuesta,
+                })
+
+            # Pedir evaluación manual
+            print("¿Correcto? (S/N): ", end="")
+
+        return resultados
+
+# Usar:
+if __name__ == "__main__":
+    evaluador = EvaluadorModelo("./mi_modelo_finetuned")
+
+    test_cases = [
+        {
+            "prompt": "¿Cuál es la capital de España?",
+            "referencia": "La capital de España es Madrid",
+        },
+        {
+            "prompt": "Explica qué es el machine learning",
+            "referencia": "Machine learning es una rama de la IA...",
+        },
+    ]
+
+    resultados = evaluador.evaluar_manualmente(test_cases)
+
+    # Guardar resultados
+    with open("evaluacion_resultados.json", "w") as f:
+        json.dump(resultados, f, indent=2, ensure_ascii=False)
+
+    print("\n✅ Evaluación completada. Resultados guardados en evaluacion_resultados.json")
+----
+
+**Checklist: Modelo Evaluado ✅**
+
+[source, text]
+----
+□ Modelo cargado en modo inferencia
+□ Generación de texto funcionando
+□ Parámetros de generación ajustados
+□ Métricas automáticas (ROUGE/BLEU) calculadas
+□ Evaluación manual realizada
+□ Resultados documentados
+
+¡Estás listo para el Módulo 5 (Exportación) 🚀
+----
+
+== Módulo 5: Exportación y Despliegue
+
+=== 5.1 Guardado de Modelos
+
+Una vez fine-tuneado el modelo, necesitas guardarlo en un formato que puedas compartir y desplegar.
+
+==== Guardar Adaptadores LoRA
+
+Los adaptadores LoRA son **muy pequeños** (4-50MB), perfectos para compartir:
+
+[source, python]
+----
+# Guardación simple
+modelo.save_pretrained("./mi_modelo_finetuned")
+tokenizer.save_pretrained("./mi_modelo_finetuned")
+
+# Estructura generada:
+# mi_modelo_finetuned/
+# ├── adapter_config.json       # Configuración LoRA (1KB)
+# ├── adapter_model.bin          # Pesos LoRA (4-50MB) ← MUY PEQUEÑO!
+# ├── tokenizer.json
+# ├── tokenizer.model
+# └── tokenizer_config.json
+
+# Ventajas:
+# ✅ Pequeño (puedes subirlo a GitHub, HuggingFace, etc)
+# ✅ Rápido de cargar
+# ✅ Fácil de compartir
+
+# Desventaja:
+# ❌ Necesita el modelo base original para usar
+----
+
+**Subir a Hugging Face Hub:**
+
+[source, python]
+----
+from huggingface_hub import login, create_repo
+
+# 1. Crear token en huggingface.co/settings/tokens
+login()  # Pedir token
+
+# 2. Crear repositorio
+repo_id = "tu_usuario/llama2-finetuned-chat"
+create_repo(repo_id, repo_type="model")
+
+# 3. Subir
+modelo.push_to_hub(repo_id)
+tokenizer.push_to_hub(repo_id)
+
+print(f"Modelo subido a: https://huggingface.co/{repo_id}")
+
+# Para cargar después:
+# modelo, tokenizer = FastLanguageModel.from_pretrained(
+#     model_name=f"{repo_id}",
+# )
+----
+
+==== Fusionar Adaptadores (Merge LoRA)
+
+A veces necesitas un modelo **completo** que no requiera el original:
+
+[source, python]
+----
+# LoRA aplicado (lo que tenías antes)
+modelo = FastLanguageModel.get_peft_model(...)
+
+# FUSIONAR: Combinar modelo base + adaptadores LoRA
+modelo = modelo.merge_and_unload()
+
+# Ahora tienes un modelo "normal" completo
+# Sin necesidad del modelo base original
+
+# Guardar modelo fusionado (archivo grande)
+modelo.save_pretrained("./llama2_finetuned_merged")
+
+# Resultado:
+# model.safetensors: 14GB (7B params × 2 para seguridad)
+# ❌ Mucho más grande
+# ✅ Completamente independiente
+# ✅ Compatible con cualquier herramienta
+
+# Decidir:
+# - Solo LoRA (pequeño): Ideal para dev, research
+# - Merged (grande): Ideal para producción, distribución
+----
+
+==== Guardar en Diferentes Formatos
+
+**Opción 1: Float16 (Recomendado para balance)**
+
+[source, python]
+----
+import torch
+
+# Model en float16 (menor precisión, menos memoria)
+modelo = modelo.to(torch.float16)
+modelo.save_pretrained("./modelo_fp16")
+
+# Tamaño: ~7GB (50% menos que float32)
+# Precisión: 99% igual a float32
+----
+
+**Opción 2: Float32 (Máxima precisión)**
+
+[source, python]
+----
+# Float32 (máxima precisión)
+modelo = modelo.to(torch.float32)
+modelo.save_pretrained("./modelo_fp32")
+
+# Tamaño: ~14GB
+# Precisión: 100%
+# Uso: Poca. Float32 es el estándar pero costoso en memoria
+----
+
+**Opción 3: BFloat16 (Precisión+Velocidad)**
+
+[source, python]
+----
+# BFloat16 (balance perfecto en Ampere+ GPUs)
+modelo = modelo.to(torch.bfloat16)
+modelo.save_pretrained("./modelo_bf16")
+
+# Tamaño: ~7GB (como float16)
+# Precisión: Mejor que float16
+# Velocidad: Mejor que float32
+# Nota: Solo funciona en GPU Ampere (A100, RTX 3000+)
+----
+
+**Comparativa:**
+
+[cols="20,15,15,20"]
+|===
+| Formato | Tamaño | Velocidad | Precisión
+
+| Float32
+| 14GB
+| Lenta
+| 100%
+
+| Float16
+| 7GB
+| Rápida
+| 99%
+
+| BFloat16
+| 7GB
+| Rápida
+| 99.5%
+
+| Int8 (Cuantizado)
+| 3.5GB
+| Muy rápida
+| 97%
+
+| Int4 (Cuantizado)
+| 1.75GB
+| Extremadamente rápida
+| 95%
+|===
+
+=== 5.2 Formato GGUF y Ollama
+
+GGUF es un formato **optimizado para CPU e inference rápida**. Perfecto para ejecutar modelos en laptop sin GPU.
+
+==== ¿Qué es GGUF?
+
+[source, text]
+----
+GGUF = GPT-Generated Unified Format
+
+Diseñado por ggml.ai para:
+✅ Inference rápida en CPU
+✅ Bajo uso de memoria
+✅ Cuantización flexible
+✅ Portabilidad (Windows, Mac, Linux)
+
+Comparativa:
+- Formato HF (.safetensors): 14GB en GPU
+- Formato GGUF q4_k_m:        3-4GB en CPU ← 4x más eficiente!
+----
+
+==== Convertir a GGUF con Unsloth
+
+[source, python]
+----
+from unsloth import FastLanguageModel
+
+# Cargar modelo fine-tuneado
+modelo, tokenizer = FastLanguageModel.from_pretrained(
+    model_name="./mi_modelo_finetuned",
+)
+
+# Fusionar primero (obligatorio para GGUF)
+modelo = modelo.merge_and_unload()
+
+# Convertir a GGUF
+modelo.save_pretrained_gguf(
+    "modelo_gguf",           # Carpeta salida
+    quantization_method="q4_k_m"  # Método cuantización
+)
+
+# Resultado:
+# modelo_gguf/
+# └── model.gguf  (3-4GB)
+----
+
+**Métodos de Cuantización GGUF:**
+
+[cols="15,15,20,20"]
+|===
+| Formato | Tamaño | Velocidad | Precisión
+
+| F32
+| 14GB
+| Lenta
+| Máxima
+
+| F16
+| 7GB
+| Media
+| Muy buena
+
+| Q8_0
+| 5.5GB
+| Buena
+| Excelente
+
+| Q5_K_M
+| 4.3GB
+| Buena
+| Excelente
+
+| Q4_K_M
+| 3.5GB
+| Muy buena
+| Buena
+
+| Q4_0
+| 3.5GB
+| Muy buena
+| Aceptable
+
+| Q3_K_M
+| 2.6GB
+| Excelente
+| Aceptable
+
+| Q2_K
+| 2.1GB
+| Excelente
+| Pobre
+|===
+
+**Recomendación:**
+- Laptop (8GB RAM): Usa q4_k_m
+- Desktop (16GB+ RAM): Usa q5_k_m
+- Máxima calidad: Usa q8_0
+- Máxima velocidad: Usa q3_k_m
+
+==== Ejecutar en Ollama
+
+Ollama es una aplicación que ejecuta modelos GGUF **ultra fácil**:
+
+[source, bash]
+----
+# 1. Descargar Ollama desde ollama.ai
+# 2. Instalar
+
+# 3. Crear Modelfile
+cat > Modelfile <<EOF
+FROM ./modelo_gguf/model.gguf
+PARAMETER temperature 0.7
+PARAMETER top_p 0.9
+PARAMETER stop "<|im_end|>"
+EOF
+
+# 4. Crear modelo en Ollama
+ollama create mi-modelo -f Modelfile
+
+# 5. Ejecutar
+ollama run mi-modelo "¿Cuál es la capital de Francia?"
+
+# Salida:
+# Loading model...
+# La capital de Francia es París.
+----
+
+**Crear Modelfile personalizado:**
+
+[source, dockerfile]
+----
+# Modelfile
+FROM ./mi_modelo.gguf
+
+# Parámetros por defecto
+PARAMETER temperature 0.7
+PARAMETER top_p 0.9
+PARAMETER top_k 50
+PARAMETER num_predict 200
+
+# Instrucción del sistema
+SYSTEM """Eres un asistente útil que responde en español."""
+
+# Tokens de parada (cuándo dejar de generar)
+PARAMETER stop "<|im_end|>"
+PARAMETER stop "[end]"
+
+# Prompt template
+TEMPLATE """[INST] {{ .Prompt }} [/INST]"""
+----
+
+==== Práctica: Exportación Completa
+
+**Archivo: `5_exportar_modelo.py`**
+
+[source, python]
+----
+"""
+Práctica 5.1: Exportar modelo para producción
+Genera: LoRA adaptadores, modelo fusionado, y GGUF
+"""
+
+import torch
+from unsloth import FastLanguageModel
+import os
+
+class ExportadorModelo:
+    def __init__(self, modelo_path):
+        print("⏳ Cargando modelo...")
+        self.modelo, self.tokenizer = FastLanguageModel.from_pretrained(
+            model_name=modelo_path,
+            max_seq_length=2048,
+            load_in_4bit=True,
+        )
+
+    def guardar_lora(self, output_dir="./exports/lora"):
+        """Guardar solo adaptadores LoRA (pequeño)"""
+        print(f"\n💾 Guardando LoRA en {output_dir}...")
+        os.makedirs(output_dir, exist_ok=True)
+
+        self.modelo.save_pretrained(output_dir)
+        self.tokenizer.save_pretrained(output_dir)
+
+        # Calcular tamaño
+        import shutil
+        size_mb = shutil.disk_usage(output_dir).used / 1024 / 1024
+        print(f"✅ LoRA guardado. Tamaño: {size_mb:.1f}MB")
+
+        return output_dir
+
+    def guardar_fusionado(self, output_dir="./exports/merged"):
+        """Guardar modelo completamente fusionado"""
+        print(f"\n💾 Fundiendo y guardando en {output_dir}...")
+        os.makedirs(output_dir, exist_ok=True)
+
+        # Fusionar
+        modelo_fusionado = self.modelo.merge_and_unload()
+
+        # Guardar en float16 (balance)
+        modelo_fusionado = modelo_fusionado.to(torch.float16)
+        modelo_fusionado.save_pretrained(output_dir)
+        self.tokenizer.save_pretrained(output_dir)
+
+        import shutil
+        size_gb = shutil.disk_usage(output_dir).used / 1024 / 1024 / 1024
+        print(f"✅ Modelo fusionado guardado. Tamaño: {size_gb:.1f}GB")
+
+        return output_dir
+
+    def guardar_gguf(self, output_dir="./exports/gguf"):
+        """Convertir a GGUF (para Ollama)"""
+        print(f"\n💾 Convirtiendo a GGUF en {output_dir}...")
+        os.makedirs(output_dir, exist_ok=True)
+
+        modelo_fusionado = self.modelo.merge_and_unload()
+
+        # Convertir
+        modelo_fusionado.save_pretrained_gguf(
+            output_dir,
+            quantization_method="q4_k_m"
+        )
+
+        import os
+        gguf_size = os.path.getsize(os.path.join(output_dir, "model.gguf")) / 1024 / 1024
+        print(f"✅ GGUF guardado. Tamaño: {gguf_size:.1f}MB")
+
+        return output_dir
+
+    def crear_modelfile(self, gguf_dir, output_file="./exports/Modelfile"):
+        """Crear Modelfile para Ollama"""
+        print(f"\n📝 Creando Modelfile...")
+
+        modelfile_content = f"""FROM {os.path.abspath(os.path.join(gguf_dir, "model.gguf"))}
+
+PARAMETER temperature 0.7
+PARAMETER top_p 0.9
+PARAMETER top_k 50
+PARAMETER num_predict 200
+
+SYSTEM "Eres un asistente útil."
+
+PARAMETER stop "[INST]"
+PARAMETER stop "INST]"
+
+TEMPLATE "[INST] {{ .Prompt }} [/INST]"
+"""
+
+        with open(output_file, "w") as f:
+            f.write(modelfile_content)
+
+        print(f"✅ Modelfile creado en {output_file}")
+        print(f"\nPara usar con Ollama:")
+        print(f"  ollama create mi-modelo -f {output_file}")
+        print(f"  ollama run mi-modelo 'Tu prompt aquí'")
+
+# Usar:
+if __name__ == "__main__":
+    exportador = ExportadorModelo("./mi_modelo_finetuned")
+
+    print("\n📦 PROCESO DE EXPORTACIÓN")
+    print("=" * 60)
+
+    # Exportar en todos los formatos
+    lora_dir = exportador.guardar_lora()
+    merged_dir = exportador.guardar_fusionado()
+    gguf_dir = exportador.guardar_gguf()
+
+    # Crear Modelfile
+    exportador.crear_modelfile(gguf_dir)
+
+    print("\n" + "=" * 60)
+    print("✅ EXPORTACIÓN COMPLETADA")
+    print("-" * 60)
+    print(f"LoRA (para desarrollo):     {lora_dir}")
+    print(f"Fusionado (para prod):      {merged_dir}")
+    print(f"GGUF (para Ollama):         {gguf_dir}")
+    print("-" * 60)
+    print("\n📋 Próximos pasos:")
+    print("1. Subir LoRA a Hugging Face Hub: push_to_hub()")
+    print("2. Usar Ollama localmente con GGUF")
+    print("3. Desplegar modelo fusionado en producción")
+----
+
+**Checklist: Modelo Exportado ✅**
+
+[source, text]
+----
+□ Adaptadores LoRA guardados
+□ Modelo fusionado generado
+□ Conversión a GGUF exitosa
+□ Modelfile creado para Ollama
+□ Todos los formatos probados
+
+¡Estás listo para el Módulo 6 (Técnicas Avanzadas) 🚀
+----
+
+== Módulo 6: Técnicas Avanzadas
+
+=== 6.1 DPO (Direct Preference Optimization)
+
+DPO es una técnica para hacer que los modelos produzcan respuestas que los humanos prefieren, sin necesitar un modelo de recompensa separado (como en RLHF).
+
+==== SFT vs. RLHF vs. DPO: La Progresión
+
+**SFT (Supervised Fine-Tuning) - Lo que hemos hecho:**
+
+[source, python]
+----
+# SFT: Simplemente aprende a copiar respuestas de referencia
+Dataset: {
+    "prompt": "¿Cuál es 2+2?",
+    "respuesta": "2+2 = 4"
+}
+
+Modelo aprende: prompt → respuesta
+Limitación: Si la respuesta de referencia es mediocre, el modelo aprende a ser mediocre
+----
+
+**RLHF (Reinforcement Learning from Human Feedback) - Tradicional:**
+
+[source, python]
+----
+# RLHF: Usa un modelo de recompensa (reward model) para guiar al modelo
+Paso 1: Entrenar modelo de recompensa (aprende qué es "bueno")
+Paso 2: Usar reward model para entrenar el modelo principal (RL)
+
+Ventaja: El modelo mejora iterativamente
+Desventaja: Complejo, 3 modelos implicados, lento
+Ejemplo: Como lo hace ChatGPT (OpenAI)
+----
+
+**DPO (Direct Preference Optimization) - Moderno y simple:**
+
+[source, python]
+----
+# DPO: Aprende directamente de comparaciones (sin reward model explícito)
+Dataset: {
+    "prompt": "¿Cuál es 2+2?",
+    "respuesta_buena": "2+2 = 4",
+    "respuesta_mala": "2+2 = 5"
+}
+
+El modelo aprende: "La respuesta buena es mejor que la mala"
+Sin necesidad de un modelo de recompensa separado
+
+Ventaja: Más simple que RLHF, 1 modelo en lugar de 3
+Ventaja: Más eficiente en memoria y tiempo
+Desventaja: Funciona mejor con SFT previo
+----
+
+==== Preparación de Datasets de Preferencia
+
+**Formato de Dataset DPO:**
+
+[source, json]
+----
+{
+    "prompt": "¿Cuál es la capital de Francia?",
+    "chosen": "La capital de Francia es París.",
+    "rejected": "La capital de Francia es Londres."
+}
+----
+
+**Cómo crear datos de preferencia:**
+
+Opción 1: Usar un LLM más grande para generar ambas respuestas
+
+[source, python]
+----
+import json
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+# Modelo grande (GPT-4, Llama 70B, Claude, etc.)
+juez, juez_tokenizer = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-70b-chat")
+
+prompts = [
+    "¿Cuál es la capital de Francia?",
+    "Explica machine learning en 1 línea",
+]
+
+dataset_dpo = []
+
+for prompt in prompts:
+    # Generar 2 respuestas diferentes
+    inputs = juez_tokenizer(prompt, return_tensors="pt")
+
+    # Respuesta 1 (temperature alta = diversa)
+    outputs1 = juez.generate(**inputs, temperature=0.9, max_new_tokens=50)
+    respuesta1 = juez_tokenizer.decode(outputs1[0])
+
+    # Respuesta 2 (temperature baja = conservadora)
+    outputs2 = juez.generate(**inputs, temperature=0.1, max_new_tokens=50)
+    respuesta2 = juez_tokenizer.decode(outputs2[0])
+
+    # Evaluar cuál es mejor (manualmente o con heurística)
+    # Aquí asumimos que la respuesta con mayor probabilidad es "mejor"
+    dataset_dpo.append({
+        "prompt": prompt,
+        "chosen": respuesta2,      # Más probable
+        "rejected": respuesta1,    # Menos probable
+    })
+
+# Guardar
+with open("dpo_dataset.json", "w") as f:
+    json.dump(dataset_dpo, f, indent=2, ensure_ascii=False)
+----
+
+Opción 2: Usar evaluación humana
+
+[source, python]
+----
+# Recopilar pares de respuestas
+# Pedir a humanos que elijan la mejor
+# Guardar como DPO dataset
+
+dataset_dpo = []
+
+# De evaluadores humanos:
+pares_evaluados = [
+    {
+        "prompt": "¿Cuál es 2+2?",
+        "respuesta_a": "2+2 = 4",
+        "respuesta_b": "2+2 = 5",
+        "mejor": "respuesta_a"  # Humano prefiere A
+    },
+    ...
+]
+
+for par in pares_evaluados:
+    if par["mejor"] == "respuesta_a":
+        dataset_dpo.append({
+            "prompt": par["prompt"],
+            "chosen": par["respuesta_a"],
+            "rejected": par["respuesta_b"],
+        })
+    else:
+        dataset_dpo.append({
+            "prompt": par["prompt"],
+            "chosen": par["respuesta_b"],
+            "rejected": par["respuesta_a"],
+        })
+----
+
+==== Entrenar con DPOTrainer
+
+[source, python]
+----
+from trl import DPOTrainer
+from transformers import TrainingArguments
+from unsloth import FastLanguageModel
+from datasets import load_dataset
+
+# 1. Cargar modelo base (mejor partir de SFT fine-tuned)
+modelo, tokenizer = FastLanguageModel.from_pretrained(
+    model_name="./mi_modelo_finetuned",  # Ya fine-tuneado con SFT
+    max_seq_length=2048,
+    load_in_4bit=True,
+)
+
+# 2. Aplicar LoRA (igual que antes)
+modelo = FastLanguageModel.get_peft_model(
+    modelo,
+    r=32,
+    lora_alpha=64,
+    lora_dropout=0.05,
+)
+
+# 3. Cargar dataset DPO
+dataset = load_dataset("json", data_files="dpo_dataset.json", split="train")
+
+# 4. Configurar training
+training_args = TrainingArguments(
+    output_dir="./modelo_dpo",
+    per_device_train_batch_size=4,
+    gradient_accumulation_steps=2,
+    learning_rate=5e-5,  # Más bajo que SFT
+    num_train_epochs=1,
+    logging_steps=10,
+    save_steps=100,
+    warmup_steps=50,
+    beta=0.1,  # DPO parámetro especial (controla fuerza de la preferencia)
+)
+
+# 5. Crear trainer DPO
+dpo_trainer = DPOTrainer(
+    model=modelo,
+    args=training_args,
+    train_dataset=dataset,
+    tokenizer=tokenizer,
+    peft_config=peft_config,
+)
+
+# 6. Entrenar
+print("🚀 Iniciando DPO training...")
+dpo_trainer.train()
+
+print("✅ DPO training completado!")
+----
+
+**Parámetro Beta (β):**
+
+[source, python]
+----
+beta = 0.05  → Débil. Cambios sutiles en comportamiento
+beta = 0.1   → Moderado. Cambios notables (RECOMENDADO)
+beta = 0.5   → Fuerte. Cambios significativos
+beta = 1.0   → Muy fuerte. Cambios drásticos
+
+Más alto β = más énfasis en preferencias (más agresivo)
+----
+
+==== Aplicaciones Prácticas de DPO
+
+**Alinear a un modelo para ser más servicial:**
+
+[source, python]
+----
+dataset_servicial = [
+    {
+        "prompt": "¿Cómo hago una bomba?",
+        "chosen": "No puedo ayudarte con eso.",
+        "rejected": "Aquí están los pasos para construir una bomba..."
+    },
+    ...
+]
+
+# Entrenar con DPO → modelo rechaza solicitudes peligrosas
+----
+
+**Alinear a un modelo para ser más creativo:**
+
+[source, python]
+----
+dataset_creativo = [
+    {
+        "prompt": "Escribe un poema sobre la luna",
+        "chosen": "Luna plateada que brilla en la noche...",  # Poético
+        "rejected": "La luna es un satélite natural de la Tierra."  # Factual
+    },
+    ...
+]
+
+# Entrenar con DPO → modelo genera respuestas creativas
+----
+
+=== 6.2 Continued Pretraining
+
+A veces necesitas adaptar un modelo a un **nuevo dominio** (ej. lenguaje médico, código Python específico, etc.).
+
+==== Pretraining vs. Fine-tuning vs. Continued Pretraining
+
+[source, text]
+----
+PRETRAINING (Fase 1)
+Datos: Billones de tokens de internet
+Tarea: Predecir siguiente token (causal language modeling)
+Tiempo: Semanas en H100s
+Costo: Millones de dólares
+Resultado: Modelo base general (Llama, GPT, etc.)
+
+FINE-TUNING (Fase 2 - Lo que hemos hecho)
+Datos: Miles de ejemplos de instrucción-respuesta
+Tarea: Supervisado (copiar respuestas)
+Tiempo: Horas
+Costo: Decenas de dólares
+Resultado: Modelo especializado en chat
+
+CONTINUED PRETRAINING (Fase 2 alternativa)
+Datos: Textos crudos en tu dominio (no pares instruction-respuesta)
+Tarea: Predecir siguiente token (igual a pretraining)
+Tiempo: Horas
+Costo: Decenas de dólares
+Resultado: Modelo que entiende tu dominio especial
+----
+
+==== Cuándo Usar Continued Pretraining
+
+[source, text]
+----
+✅ Usa Continued Pretraining si:
+   - Tienes mucho texto en tu dominio (100K+ documentos)
+   - Lenguaje técnico especial (medicina, legal, código)
+   - Quieres que el modelo entienda tu jerga
+   - Tienes tiempo/recursos
+
+❌ No uses si:
+   - Pocos ejemplos (<10K)
+   - Dominio similar a internet (general knowledge)
+   - Necesitas urgentemente
+----
+
+==== Implementación
+
+[source, python]
+----
+from transformers import TextDataset, DataCollatorForLanguageModeling
+from transformers import Trainer, TrainingArguments
+from unsloth import FastLanguageModel
+
+# 1. Preparar datos crudos (plain text)
+# archivo: "textos_medicos.txt"
+# Contiene: párrafos de textos médicos, uno por línea
+
+# 2. Cargar modelo
+modelo, tokenizer = FastLanguageModel.from_pretrained(
+    model_name="unsloth/llama-2-7b-bnb-4bit",
+    max_seq_length=2048,
+    load_in_4bit=True,
+)
+
+# 3. Preparar dataset de texto
+train_dataset = TextDataset(
+    tokenizer=tokenizer,
+    file_path="textos_medicos.txt",
+    block_size=2048,
+)
+
+# 4. Data collator
+data_collator = DataCollatorForLanguageModeling(
+    tokenizer=tokenizer,
+    mlm=False,  # False = causal language modeling (no masked)
+)
+
+# 5. Training arguments
+training_args = TrainingArguments(
+    output_dir="./modelo_continued_pretrain",
+    per_device_train_batch_size=4,
+    gradient_accumulation_steps=4,
+    learning_rate=2e-5,  # Más bajo que fine-tuning
+    num_train_epochs=3,
+    save_steps=1000,
+    logging_steps=100,
+)
+
+# 6. Entrenar
+trainer = Trainer(
+    model=modelo,
+    args=training_args,
+    train_dataset=train_dataset,
+    data_collator=data_collator,
+)
+
+trainer.train()
+----
+
+=== 6.3 Contexto Largo (Long Context)
+
+Llama 2 soporta 4096 tokens. ¿Qué si necesitas 8192 o más?
+
+==== RoPE Scaling
+
+**RoPE = Rotary Position Embeddings**
+
+Los modelos usan "posiciones" para saber dónde está cada token en la secuencia:
+
+[source, python]
+----
+# Llama 2 original
+max_position_embeddings = 4096
+# El modelo "no sabe" qué hacer más allá de 4096 tokens
+
+# Con RoPE Scaling
+max_position_embeddings = 8192  # Duplicamos el contexto
+rope_scaling = {
+    "type": "linear",   # Linear scaling
+    "factor": 2.0       # Escalar 2x
+}
+
+# El modelo aprende a interpolar posiciones para contexto más largo
+----
+
+**Métodos de scaling:**
+
+[source, python]
+----
+# Linear scaling: Simplemente escalar linealmente
+# Funciona pero menos óptimo
+rope_scaling = {"type": "linear", "factor": 2.0}
+
+# NTK scaling: Ajuste inteligente del frequency
+# Mejor que linear, recomendado
+rope_scaling = {"type": "ntk", "factor": 2.0}
+
+# YaRN: Combinación de linear + ntk
+# El mejor, experimental
+rope_scaling = {"type": "yarn", "factor": 2.0, "original_max_position_embeddings": 4096}
+----
+
+==== Fine-tuning con Contexto Largo
+
+[source, python]
+----
+from unsloth import FastLanguageModel
+import torch
+
+# 1. Cargar con contexto largo
+modelo, tokenizer = FastLanguageModel.from_pretrained(
+    model_name="unsloth/llama-2-7b-bnb-4bit",
+    max_seq_length=8192,  # 2x el original
+    load_in_4bit=True,
+)
+
+# 2. Aplicar RoPE scaling automáticamente
+# Unsloth lo hace automáticamente cuando usas max_seq_length > 4096
+
+# 3. Aplicar LoRA
+modelo = FastLanguageModel.get_peft_model(
+    modelo,
+    r=32,
+    lora_alpha=64,
+    lora_dropout=0.05,
+)
+
+# 4. Fine-tuning normal
+# (Usando dataset con secuencias largas)
+
+# 5. Usar el modelo
+modelo = FastLanguageModel.for_inference(modelo)
+
+long_prompt = "..." * 5000  # 5000 tokens de contexto
+
+inputs = tokenizer(long_prompt, return_tensors="pt").to("cuda")
+outputs = modelo.generate(**inputs, max_new_tokens=100)
+respuesta = tokenizer.decode(outputs[0])
+----
+
+**Limitaciones:**
+
+[source, text]
+----
+⚠️ Contextos muy largos consumen mucha memoria
+max_seq_length = 4096: 8GB
+max_seq_length = 8192: 16GB
+max_seq_length = 32768: 64GB+
+
+Soluciones:
+- Usar quantización 4-bit (visto antes)
+- Usar flash attention 2 (Unsloth lo hace automáticamente)
+- Reducir batch size
+- Usar gradient checkpointing
+----
+
+==== Caso de Uso: Resumen de Documentos Largos
+
+[source, python]
+----
+# Documento muy largo (ej. 15 páginas = 5000 tokens)
+documento_largo = "..." * 5000
+
+prompt = f"""
+Resumo el siguiente documento en 3 puntos principales:
+
+{documento_largo}
+
+Resumen:
+"""
+
+inputs = tokenizer(prompt, return_tensors="pt").to("cuda")
+outputs = modelo.generate(
+    **inputs,
+    max_new_tokens=200,
+    temperature=0.3,  # Determinístico para resumen
+)
+
+resumen = tokenizer.decode(outputs[0])
+print(resumen)
+----
+
+**Práctica: Técnicas Avanzadas Completas**
+
+**Archivo: `6_tecnicas_avanzadas.py`**
+
+[source, python]
+----
+"""
+Práctica 6.1: DPO, Continued Pretraining, Long Context
+"""
+
+from unsloth import FastLanguageModel
+from trl import DPOTrainer
+from transformers import TrainingArguments
+from datasets import load_dataset
+import torch
+
+class EntrenadorAvanzado:
+    def __init__(self, modelo_base):
+        self.modelo_base = modelo_base
+
+    def hacer_dpo(self, dataset_path, output_dir="./modelo_dpo"):
+        """Entrenar con DPO"""
+        print("🔄 DPO Training...")
+
+        modelo, tokenizer = FastLanguageModel.from_pretrained(
+            model_name=self.modelo_base,
+            max_seq_length=2048,
+            load_in_4bit=True,
+        )
+
+        modelo = FastLanguageModel.get_peft_model(
+            modelo,
+            r=32,
+            lora_alpha=64,
+            lora_dropout=0.05,
+        )
+
+        dataset = load_dataset("json", data_files=dataset_path, split="train")
+
+        training_args = TrainingArguments(
+            output_dir=output_dir,
+            per_device_train_batch_size=4,
+            gradient_accumulation_steps=2,
+            learning_rate=5e-5,
+            num_train_epochs=1,
+            warmup_steps=50,
+        )
+
+        dpo_trainer = DPOTrainer(
+            model=modelo,
+            args=training_args,
+            train_dataset=dataset,
+            tokenizer=tokenizer,
+        )
+
+        dpo_trainer.train()
+        print("✅ DPO completado!")
+
+        return modelo, tokenizer
+
+    def hacer_continued_pretraining(self, texto_path, output_dir="./modelo_pretrain"):
+        """Continued pretraining en dominio específico"""
+        print("📚 Continued Pretraining...")
+
+        modelo, tokenizer = FastLanguageModel.from_pretrained(
+            model_name=self.modelo_base,
+            max_seq_length=2048,
+            load_in_4bit=True,
+        )
+
+        from transformers import TextDataset, DataCollatorForLanguageModeling, Trainer
+
+        dataset = TextDataset(
+            tokenizer=tokenizer,
+            file_path=texto_path,
+            block_size=2048,
+        )
+
+        training_args = TrainingArguments(
+            output_dir=output_dir,
+            per_device_train_batch_size=4,
+            learning_rate=2e-5,
+            num_train_epochs=1,
+        )
+
+        trainer = Trainer(
+            model=modelo,
+            args=training_args,
+            train_dataset=dataset,
+            data_collator=DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False),
+        )
+
+        trainer.train()
+        print("✅ Continued pretraining completado!")
+
+        return modelo
+
+    def usar_long_context(self, max_seq=8192):
+        """Fine-tuning con contexto largo"""
+        print(f"🔭 Usando contexto largo ({max_seq} tokens)...")
+
+        modelo, tokenizer = FastLanguageModel.from_pretrained(
+            model_name=self.modelo_base,
+            max_seq_length=max_seq,  # Contexto largo
+            load_in_4bit=True,
+        )
+
+        print(f"✅ Modelo cargado con {max_seq} tokens de contexto máximo")
+        print(f"   Memoria actual: {torch.cuda.memory_allocated() / 1024**3:.2f}GB")
+
+        return modelo, tokenizer
+
+# Usar:
+if __name__ == "__main__":
+    entrenador = EntrenadorAvanzado("unsloth/llama-2-7b-bnb-4bit")
+
+    print("\n🚀 TÉCNICAS AVANZADAS")
+    print("=" * 60)
+
+    # DPO
+    # modelo_dpo, tok_dpo = entrenador.hacer_dpo("dpo_dataset.json")
+
+    # Continued pretraining
+    # modelo_pretrain = entrenador.hacer_continued_pretraining("textos_medicos.txt")
+
+    # Long context
+    modelo_long, tok_long = entrenador.usar_long_context(max_seq=8192)
+
+    print("\n✅ Todas las técnicas avanzadas disponibles!")
+----
+
+**Checklist: Técnicas Avanzadas Dominadas ✅**
+
+[source, text]
+----
+□ DPO training entendido
+□ Datos de preferencia preparados
+□ Continued pretraining practicado
+□ Long context utilizado
+□ RoPE scaling comprendido
+
+¡Has completado el Módulo 6! 🎉
+----
+
+== Proyecto Final
+* Definición del problema.
+* Selección del modelo base y dataset.
+* Ejecución del pipeline completo (SFT -> Export -> Demo).
+* Presentación de resultados.
+
+== Recursos Adicionales
+* Documentación oficial de Unsloth.
+* Repositorios de Hugging Face recomendados.
+* Comunidades de Discord y Reddit.
