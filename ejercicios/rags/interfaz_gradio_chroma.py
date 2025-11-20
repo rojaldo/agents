@@ -5,6 +5,7 @@ import json
 import numpy as np
 import re
 from sklearn.metrics.pairwise import cosine_similarity
+from typing import Optional
 
 # Paths
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -65,8 +66,16 @@ def calculate_mmr(query_embedding, doc_embeddings, doc_ids, k, lambda_mult):
             
     return selected_indices
 
-def search_function(query, k, fetch_k, lambda_mult, where_str, score_threshold):
+def search_function(query, k, fetch_k, lambda_mult, where_str, score_threshold, agent_type, agent_role, agent_task):
     try:
+        # Initialize agent info
+        agent_info = ""
+        if agent_type != "Sin agente":
+            agent_info = f"\n📋 **Configuración del Agente:**\n"
+            agent_info += f"- Tipo: {agent_type}\n"
+            agent_info += f"- Rol: {agent_role if agent_role else 'No especificado'}\n"
+            agent_info += f"- Tarea: {agent_task if agent_task else 'No especificada'}\n\n"
+
         # Parse 'where' filter
         where_filter = None
         if where_str and where_str.strip():
@@ -154,6 +163,8 @@ def search_function(query, k, fetch_k, lambda_mult, where_str, score_threshold):
 
         # 5. Format Output
         output_text = []
+        if agent_info:
+            output_text.append(agent_info)
         if detected_filter_msg:
             output_text.append(detected_filter_msg)
 
@@ -187,26 +198,44 @@ def search_function(query, k, fetch_k, lambda_mult, where_str, score_threshold):
 with gr.Blocks(title="Buscador Constitución Española (ChromaDB)") as demo:
     gr.Markdown("# Buscador Semántico - Constitución Española")
     gr.Markdown("Base de datos vectorial: ChromaDB")
-    
+
     with gr.Row():
         with gr.Column(scale=1):
             query_input = gr.Textbox(label="Consulta", placeholder="Escribe tu pregunta aquí...", lines=2)
-            
+
             with gr.Accordion("Parámetros de Búsqueda", open=True):
                 k_slider = gr.Slider(minimum=1, maximum=20, value=4, step=1, label="k (Resultados finales)")
                 fetch_k_slider = gr.Slider(minimum=1, maximum=50, value=10, step=1, label="fetch_k (Candidatos iniciales)")
                 lambda_slider = gr.Slider(minimum=0.0, maximum=1.0, value=0.5, step=0.1, label="lambda_mult (0=Diversidad, 1=Relevancia)")
                 threshold_slider = gr.Slider(minimum=0.0, maximum=1.0, value=0.0, step=0.05, label="Score Threshold (Min Similitud)")
                 where_input = gr.Textbox(label="Filtro Metadata (JSON)", placeholder='{"tipo_seccion": "TÍTULO"}', value="")
-            
+
+            with gr.Accordion("Configuración de Agente", open=False):
+                agent_type_dropdown = gr.Dropdown(
+                    choices=["Sin agente", "CrewAI", "AutoGen"],
+                    value="Sin agente",
+                    label="Tipo de Agente"
+                )
+                agent_role_input = gr.Textbox(
+                    label="Rol del Agente",
+                    placeholder="Ej: Abogado especialista en Constitución",
+                    value=""
+                )
+                agent_task_input = gr.Textbox(
+                    label="Tarea del Agente",
+                    placeholder="Ej: Analizar los derechos fundamentales y hacer recomendaciones",
+                    value="",
+                    lines=2
+                )
+
             search_btn = gr.Button("Buscar", variant="primary")
-            
+
         with gr.Column(scale=2):
             results_output = gr.Textbox(label="Resultados", lines=20, show_copy_button=True)
 
     search_btn.click(
         fn=search_function,
-        inputs=[query_input, k_slider, fetch_k_slider, lambda_slider, where_input, threshold_slider],
+        inputs=[query_input, k_slider, fetch_k_slider, lambda_slider, where_input, threshold_slider, agent_type_dropdown, agent_role_input, agent_task_input],
         outputs=results_output
     )
 

@@ -1,0 +1,1119 @@
+Constitución Española:
+
+  Fuente_BOE:
+    numero: '311'
+    fecha: 29 de diciembre de 1978
+    publicacion: BOE
+    referencia: BOE-A-1978-31229
+  partes_estructurales:
+    - nombre: Preámbulo
+      contenido: 'La Nación española, deseando establecer la justicia, la libertad
+        y la seguridad y promover el bien de cuantos la integran, en uso de su soberanía,
+        proclama su voluntad de: Garantizar la convivencia democrática dentro de la
+        Constitución y de las leyes conforme a un orden económico y social justo.
+        Consolidar un Estado de Derecho que asegure el imperio de la ley como expresión
+        de la voluntad popular. Proteger a todos los españoles y pueblos de España
+        en el ejercicio de los derechos humanos, sus culturas y tradiciones, lenguas
+        e instituciones. Promover el progreso de la cultura y de la economía para
+        asegurar a todos una digna calidad de vida. Establecer una sociedad democrática
+        avanzada, y Colaborar en el fortalecimiento de unas relaciones pacíficas y
+        de eficaz cooperación entre todos los pueblos de la Tierra. En consecuencia,
+        las Cortes aprueban y el pueblo español ratifica la siguiente CONSTITUCIÓN.'
+    - tipo: TÍTULO
+      orden: PRELIMINAR
+      artículos:
+        - número: 1
+          apartados:
+            - orden: 1
+              texto: España se constituye en un Estado social y democrático de Derecho,
+                que propugna como valores superiores de su ordenamiento jurídico la
+                libertad, la justicia, la igualdad y el pluralismo político [8].
+            - orden: 2
+              texto: La soberanía nacional reside en el pueblo español, del que emanan
+                los poderes del Estado [8].
+            - orden: 3
+              texto: La forma política del Estado español es la Monarquía parlamentaria
+                [8].
+        - número: 2
+          apartados:
+            - orden: Único
+              texto: La Constitución se fundamenta en la indisoluble unidad de la
+                Nación española, patria común e indivisible de todos los españoles,
+                y reconoce y garantiza el derecho a la autonomía de las nacionalidades
+                y regiones que la integran y la solidaridad entre todas ellas [9].
+        - número: 3
+          apartados:
+            - orden: 1
+              texto: El castellano es la lengua española oficial del Estado. Todos
+                los españoles tienen el deber de conocerla y el derecho a usarla [9].
+            - orden: 2
+              texto: Las demás lenguas españolas serán también oficiales en las respectivas
+                Comunidades Autónomas de acuerdo con sus Estatutos [9].
+            - orden: 3
+              texto: La riqueza de las distintas modalidades lingüísticas de España
+                es un patrimonio cultural que será objeto de especial respeto y protección
+                [9, 10].
+        - número: 4
+          apartados:
+            - orden: 1
+              texto: La bandera de España está formada por tres franjas horizontales,
+                roja, amarilla y roja, siendo la amarilla de doble anchura que cada
+                una de las rojas [10].
+            - orden: 2
+              texto: Los Estatutos podrán reconocer banderas y enseñas propias de
+                las Comunidades Autónomas. Estas se utilizarán junto a la bandera
+                de España en sus edificios públicos y en sus actos oficiales [10].
+        - número: 5
+          apartados:
+            - orden: Único
+              texto: La capital del Estado es la villa de Madrid [10].
+        - número: 6
+          apartados:
+            - orden: Único
+              texto: Los partidos políticos expresan el pluralismo político, concurren
+                a la formación y manifestación de la voluntad popular y son instrumento
+                fundamental para la participación política. Su creación y el ejercicio
+                de su actividad son libres dentro del respeto a la Constitución y
+                a la ley. Su estructura interna y funcionamiento deberán ser democráticos
+                [11].
+        - número: 7
+          apartados:
+            - orden: Único
+              texto: Los sindicatos de trabajadores y las asociaciones empresariales
+                contribuyen a la defensa y promoción de los intereses económicos y
+                sociales que les son propios. Su creación y el ejercicio de su actividad
+                son libres dentro del respeto a la Constitución y a la ley. Su estructura
+                interna y funcionamiento deberán ser democráticos [11].
+        - número: 8
+          apartados:
+            - orden: 1
+              texto: Las Fuerzas Armadas, constituidas por el Ejército de Tierra,
+                la Armada y el Ejército del Aire, tienen como misión garantizar la
+                soberanía e independencia de España, defender su integridad territorial
+                y el ordenamiento constitucional [12].
+            - orden: 2
+              texto: Una ley orgánica regulará las bases de la organización militar
+                conforme a los principios de la presente Constitución [12].
+        - número: 9
+          apartados:
+            - orden: 1
+              texto: Los ciudadanos y los poderes públicos están sujetos a la Constitución
+                y al resto del ordenamiento jurídico [12].
+            - orden: 2
+              texto: Corresponde a los poderes públicos promover las condiciones para
+                que la libertad y la igualdad del individuo y de los grupos en que
+                se integra sean reales y efectivas; remover los obstáculos que impidan
+                o dificulten su plenitud y facilitar la participación de todos los
+                ciudadanos en la vida política, económica, cultural y social [12,
+                13].
+            - orden: 3
+              texto: La Constitución garantiza el principio de legalidad, la jerarquía
+                normativa, la publicidad de las normas, la irretroactividad de las
+                disposiciones sancionadoras no favorables o restrictivas de derechos
+                individuales, la seguridad jurídica, la responsabilidad y la interdicción
+                de la arbitrariedad de los poderes públicos [13].
+    - tipo: TÍTULO
+      orden: I
+      nombre: De los derechos y deberes fundamentales
+      artículo_inicial: Artículo 10
+      capítulos:
+        - orden: PRIMERO
+          nombre: De los españoles y los extranjeros
+          artículos:
+            - número: 10
+              apartados:
+                - orden: 1
+                  texto: La dignidad de la persona, los derechos inviolables que le
+                    son inherentes, el libre desarrollo de la personalidad, el respeto
+                    a la ley y a los derechos de los demás son fundamento del orden
+                    político y de la paz social [14].
+                - orden: 2
+                  texto: Las normas relativas a los derechos fundamentales y a las
+                    libertades que la Constitución reconoce se interpretarán de conformidad
+                    con la Declaración Universal de Derechos Humanos y los tratados
+                    y acuerdos internacionales sobre las mismas materias ratificados
+                    por España [14].
+            - número: 11
+              apartados:
+                - orden: 1
+                  texto: La nacionalidad española se adquiere, se conserva y se pierde
+                    de acuerdo con lo establecido por la ley [15].
+                - orden: 2
+                  texto: Ningún español de origen podrá ser privado de su nacionalidad
+                    [15].
+                - orden: 3
+                  texto: El Estado podrá concertar tratados de doble nacionalidad
+                    con los países iberoamericanos o con aquellos que hayan tenido
+                    o tengan una particular vinculación con España. En estos mismos
+                    países, aun cuando no reconozcan a sus ciudadanos un derecho recíproco,
+                    podrán naturalizarse los españoles sin perder su nacionalidad
+                    de origen [15].
+            - número: 12
+              apartados:
+                - orden: Único
+                  texto: Los españoles son mayores de edad a los dieciocho años [16].
+            - número: 13
+              apartados:
+                - orden: 1
+                  texto: Los extranjeros gozarán en España de las libertades públicas
+                    que garantiza el presente Título en los términos que establezcan
+                    los tratados y la ley [16].
+                - orden: 2
+                  texto: Solamente los españoles serán titulares de los derechos reconocidos
+                    en el artículo 23, salvo lo que, atendiendo a criterios de reciprocidad,
+                    pueda establecerse por tratado o ley para el derecho de sufragio
+                    activo y pasivo en las elecciones municipales [16].
+                - orden: 3
+                  texto: La extradición sólo se concederá en cumplimiento de un tratado
+                    o de la ley, atendiendo al principio de reciprocidad. Quedan excluidos
+                    de la extradición los delitos políticos, no considerándose como
+                    tales los actos de terrorismo [16].
+                - orden: 4
+                  texto: La ley establecerá los términos en que los ciudadanos de
+                    otros países y los apátridas podrán gozar del derecho de asilo
+                    en España [17].
+        - orden: SEGUNDO
+          nombre: Derechos y libertades
+          secciones:
+            - orden: 1.ª
+              nombre: De los derechos fundamentales y de las libertades públicas
+              artículos:
+                - número: 14
+                  apartados:
+                    - orden: Único
+                      texto: Los españoles son iguales ante la ley, sin que pueda
+                        prevalecer discriminación alguna por razón de nacimiento,
+                        raza, sexo, religión, opinión o cualquier otra condición o
+                        circunstancia personal o social [17].
+                - número: 15
+                  apartados:
+                    - orden: Único
+                      texto: Todos tienen derecho a la vida y a la integridad física
+                        y moral, sin que, en ningún caso, puedan ser sometidos a tortura
+                        ni a penas o tratos inhumanos o degradantes. Queda abolida
+                        la pena de muerte, salvo lo que puedan disponer las leyes
+                        penales militares para tiempos de guerra [17, 18].
+                - número: 16
+                  apartados:
+                    - orden: 1
+                      texto: Se garantiza la libertad ideológica, religiosa y de culto
+                        de los individuos y las comunidades sin más limitación, en
+                        sus manifestaciones, que la necesaria para el mantenimiento
+                        del orden público protegido por la ley [18].
+                    - orden: 2
+                      texto: Nadie podrá ser obligado a declarar sobre su ideología,
+                        religión o creencias [18].
+                    - orden: 3
+                      texto: Ninguna confesión tendrá carácter estatal. Los poderes
+                        públicos tendrán en cuenta las creencias religiosas de la
+                        sociedad española y mantendrán las consiguientes relaciones
+                        de cooperación con la Iglesia Católica y las demás confesiones
+                        [18, 19].
+                - número: 17
+                  apartados:
+                    - orden: 1
+                      texto: Toda persona tiene derecho a la libertad y a la seguridad.
+                        Nadie puede ser privado de su libertad, sino con la observancia
+                        de lo establecido en este artículo y en los casos y en la
+                        forma previstos en la ley [19].
+                    - orden: 2
+                      texto: La detención preventiva no podrá durar más del tiempo
+                        estrictamente necesario para la realización de las averiguaciones
+                        tendentes al esclarecimiento de los hechos, y, en todo caso,
+                        en el plazo máximo de setenta y dos horas, el detenido deberá
+                        ser puesto en libertad o a disposición de la autoridad judicial
+                        [19].
+                    - orden: 3
+                      texto: Toda persona detenida debe ser informada de forma inmediata,
+                        y de modo que le sea comprensible, de sus derechos y de las
+                        razones de su detención, no pudiendo ser obligada a declarar.
+                        Se garantiza la asistencia de abogado al detenido en las diligencias
+                        policiales y judiciales, en los términos que la ley establezca
+                        [20].
+                    - orden: 4
+                      texto: La ley regulará un procedimiento de «habeas corpus» para
+                        producir la inmediata puesta a disposición judicial de toda
+                        persona detenida ilegalmente. Asimismo, por ley se determinará
+                        el plazo máximo de duración de la prisión provisional [20].
+                - número: 18
+                  apartados:
+                    - orden: 1
+                      texto: Se garantiza el derecho al honor, a la intimidad personal
+                        y familiar y a la propia imagen [21].
+                    - orden: 2
+                      texto: El domicilio es inviolable. Ninguna entrada o registro
+                        podrá hacerse en él sin consentimiento del titular o resolución
+                        judicial, salvo en caso de flagrante delito [21].
+                    - orden: 3
+                      texto: Se garantiza el secreto de las comunicaciones y, en especial,
+                        de las postales, telegráficas y telefónicas, salvo resolución
+                        judicial [21].
+                    - orden: 4
+                      texto: La ley limitará el uso de la informática para garantizar
+                        el honor y la intimidad personal y familiar de los ciudadanos
+                        y el pleno ejercicio de sus derechos [21, 22].
+                - número: 19
+                  apartados:
+                    - orden: Único
+                      texto: Los españoles tienen derecho a elegir libremente su residencia
+                        y a circular por el territorio nacional. Asimismo, tienen
+                        derecho a entrar y salir libremente de España en los términos
+                        que la ley establezca. Este derecho no podrá ser limitado
+                        por motivos políticos o ideológicos [22].
+                - número: 20
+                  apartados:
+                    - orden: 1.a
+                      texto: A expresar y difundir libremente los pensamientos, ideas
+                        y opiniones mediante la palabra, el escrito o cualquier otro
+                        medio de reproducción [22].
+                    - orden: 1.b
+                      texto: A la producción y creación literaria, artística, científica
+                        y técnica [23].
+                    - orden: 1.c
+                      texto: A la libertad de cátedra [23].
+                    - orden: 1.d
+                      texto: A comunicar o recibir libremente información veraz por
+                        cualquier medio de difusión. La ley regulará el derecho a
+                        la cláusula de conciencia y al secreto profesional en el ejercicio
+                        de estas libertades [23].
+                    - orden: 2
+                      texto: El ejercicio de estos derechos no puede restringirse
+                        mediante ningún tipo de censura previa [23].
+                    - orden: 3
+                      texto: La ley regulará la organización y el control parlamentario
+                        de los medios de comunicación social dependientes del Estado
+                        o de cualquier ente público y garantizará el acceso a dichos
+                        medios de los grupos sociales y políticos significativos,
+                        respetando el pluralismo de la sociedad y de las diversas
+                        lenguas de España [23].
+                    - orden: 4
+                      texto: Estas libertades tienen su límite en el respeto a los
+                        derechos reconocidos en este Título, en los preceptos de las
+                        leyes que lo desarrollen y, especialmente, en el derecho al
+                        honor, a la intimidad, a la propia imagen y a la protección
+                        de la juventud y de la infancia [24].
+                    - orden: 5
+                      texto: Sólo podrá acordarse el secuestro de publicaciones, grabaciones
+                        y otros medios de información en virtud de resolución judicial
+                        [24].
+                - número: 21
+                  apartados:
+                    - orden: 1
+                      texto: Se reconoce el derecho de reunión pacífica y sin armas.
+                        El ejercicio de este derecho no necesitará autorización previa
+                        [24, 25].
+                    - orden: 2
+                      texto: En los casos de reuniones en lugares de tránsito público
+                        y manifestaciones se dará comunicación previa a la autoridad,
+                        que sólo podrá prohibirlas cuando existan razones fundadas
+                        de alteración del orden público, con peligro para personas
+                        o bienes [25].
+                - número: 22
+                  apartados:
+                    - orden: 1
+                      texto: Se reconoce el derecho de asociación [25].
+                    - orden: 2
+                      texto: Las asociaciones que persigan fines o utilicen medios
+                        tipificados como delito son ilegales [25].
+                    - orden: 3
+                      texto: Las asociaciones constituidas al amparo de este artículo
+                        deberán inscribirse en un registro a los solos efectos de
+                        publicidad [25, 26].
+                    - orden: 4
+                      texto: Las asociaciones sólo podrán ser disueltas o suspendidas
+                        en sus actividades en virtud de resolución judicial motivada
+                        [26].
+                    - orden: 5
+                      texto: Se prohíben las asociaciones secretas y las de carácter
+                        paramilitar [26].
+                - número: 23
+                  apartados:
+                    - orden: 1
+                      texto: Los ciudadanos tienen el derecho a participar en los
+                        asuntos públicos, directamente o por medio de representantes,
+                        libremente elegidos en elecciones periódicas por sufragio
+                        universal [26].
+                    - orden: 2
+                      texto: Asimismo, tienen derecho a acceder en condiciones de
+                        igualdad a las funciones y cargos públicos, con los requisitos
+                        que señalen las leyes [26].
+                - número: 24
+                  apartados:
+                    - orden: 1
+                      texto: Todas las personas tienen derecho a obtener la tutela
+                        efectiva de los jueces y tribunales en el ejercicio de sus
+                        derechos e intereses legítimos, sin que, en ningún caso, pueda
+                        producirse indefensión [27].
+                    - orden: 2
+                      texto: Asimismo, todos tienen derecho al Juez ordinario predeterminado
+                        por la ley, a la defensa y a la asistencia de letrado, a ser
+                        informados de la acusación formulada contra ellos, a un proceso
+                        público sin dilaciones indebidas y con todas las garantías,
+                        a utilizar los medios de prueba pertinentes para su defensa,
+                        a no declarar contra sí mismos, a no confesarse culpables
+                        y a la presunción de inocencia. La ley regulará los casos
+                        en que, por razón de parentesco o de secreto profesional,
+                        no se estará obligado a declarar sobre hechos presuntamente
+                        delictivos [27, 28].
+                - número: 25
+                  apartados:
+                    - orden: 1
+                      texto: Nadie puede ser condenado o sancionado por acciones u
+                        omisiones que en el momento de producirse no constituyan delito,
+                        falta o infracción administrativa, según la legislación vigente
+                        en aquel momento [28].
+                    - orden: 2
+                      texto: Las penas privativas de libertad y las medidas de seguridad
+                        estarán orientadas hacia la reeducación y reinserción social
+                        y no podrán consistir en trabajos forzados. El condenado a
+                        pena de prisión que estuviere cumpliendo la misma gozará de
+                        los derechos fundamentales de este Capítulo, a excepción de
+                        los que se vean expresamente limitados por el contenido del
+                        fallo condenatorio, el sentido de la pena y la ley penitenciaria.
+                        En todo caso, tendrá derecho a un trabajo remunerado y a los
+                        beneficios correspondientes de la Seguridad Social, así como
+                        al acceso a la cultura y al desarrollo integral de su personalidad
+                        [28].
+                    - orden: 3
+                      texto: La Administración civil no podrá imponer sanciones que,
+                        directa o subsidiariamente, impliquen privación de libertad
+                        [29].
+                - número: 26
+                  apartados:
+                    - orden: Único
+                      texto: Se prohíben los Tribunales de Honor en el ámbito de la
+                        Administración civil y de las organizaciones profesionales
+                        [29].
+                - número: 27
+                  apartados:
+                    - orden: 1
+                      texto: Todos tienen el derecho a la educación. Se reconoce la
+                        libertad de enseñanza [29].
+                    - orden: 2
+                      texto: La educación tendrá por objeto el pleno desarrollo de
+                        la personalidad humana en el respeto a los principios democráticos
+                        de convivencia y a los derechos y libertades fundamentales
+                        [29].
+                    - orden: 3
+                      texto: Los poderes públicos garantizan el derecho que asiste
+                        a los padres para que sus hijos reciban la formación religiosa
+                        y moral que esté de acuerdo con sus propias convicciones [30].
+                    - orden: 4
+                      texto: La enseñanza básica es obligatoria y gratuita [30].
+                    - orden: 5
+                      texto: Los poderes públicos garantizan el derecho de todos a
+                        la educación, mediante una programación general de la enseñanza,
+                        con participación efectiva de todos los sectores afectados
+                        y la creación de centros docentes [30].
+                    - orden: 6
+                      texto: Se reconoce a las personas físicas y jurídicas la libertad
+                        de creación de centros docentes, dentro del respeto a los
+                        principios constitucionales [30].
+                    - orden: 7
+                      texto: Los profesores, los padres y, en su caso, los alumnos
+                        intervendrán en el control y gestión de todos los centros
+                        sostenidos por la Administración con fondos públicos, en los
+                        términos que la ley establezca [31].
+                    - orden: 8
+                      texto: Los poderes públicos inspeccionarán y homologarán el
+                        sistema educativo para garantizar el cumplimiento de las leyes
+                        [31].
+                    - orden: 9
+                      texto: Los poderes públicos ayudarán a los centros docentes
+                        que reúnan los requisitos que la ley establezca [31].
+                    - orden: 10
+                      texto: Se reconoce la autonomía de las Universidades, en los
+                        términos que la ley establezca [31].
+                - número: 28
+                  apartados:
+                    - orden: 1
+                      texto: Todos tienen derecho a sindicarse libremente. La ley
+                        podrá limitar o exceptuar el ejercicio de este derecho a las
+                        Fuerzas o Institutos armados o a los demás Cuerpos sometidos
+                        a disciplina militar y regulará las peculiaridades de su ejercicio
+                        para los funcionarios públicos. La libertad sindical comprende
+                        el derecho a fundar sindicatos y a afiliarse al de su elección,
+                        así como el derecho de los sindicatos a formar confederaciones
+                        y a fundar organizaciones sindicales internacionales o a afiliarse
+                        a las mismas. Nadie podrá ser obligado a afiliarse a un sindicato
+                        [32].
+                    - orden: 2
+                      texto: Se reconoce el derecho a la huelga de los trabajadores
+                        para la defensa de sus intereses. La ley que regule el ejercicio
+                        de este derecho establecerá las garantías precisas para asegurar
+                        el mantenimiento de los servicios esenciales de la comunidad
+                        [33].
+                - número: 29
+                  apartados:
+                    - orden: 1
+                      texto: Todos los españoles tendrán el derecho de petición individual
+                        y colectiva, por escrito, en la forma y con los efectos que
+                        determine la ley [33].
+                    - orden: 2
+                      texto: Los miembros de las Fuerzas o Institutos armados o de
+                        los Cuerpos sometidos a disciplina militar podrán ejercer
+                        este derecho sólo individualmente y con arreglo a lo dispuesto
+                        en su legislación específica [33].
+            - orden: 2.ª
+              nombre: De los derechos y deberes de los ciudadanos
+              artículos:
+                - número: 30
+                  apartados:
+                    - orden: 1
+                      texto: Los españoles tienen el derecho y el deber de defender
+                        a España [34].
+                    - orden: 2
+                      texto: La ley fijará las obligaciones militares de los españoles
+                        y regulará, con las debidas garantías, la objeción de conciencia,
+                        así como las demás causas de exención del servicio militar
+                        obligatorio, pudiendo imponer, en su caso, una prestación
+                        social sustitutoria [34].
+                    - orden: 3
+                      texto: Podrá establecerse un servicio civil para el cumplimiento
+                        de fines de interés general [34].
+                    - orden: 4
+                      texto: Mediante ley podrán regularse los deberes de los ciudadanos
+                        en los casos de grave riesgo, catástrofe o calamidad pública
+                        [34, 35].
+                - número: 31
+                  apartados:
+                    - orden: 1
+                      texto: Todos contribuirán al sostenimiento de los gastos públicos
+                        de acuerdo con su capacidad económica mediante un sistema
+                        tributario justo inspirado en los principios de igualdad y
+                        progresividad que, en ningún caso, tendrá alcance confiscatorio
+                        [35].
+                    - orden: 2
+                      texto: El gasto público realizará una asignación equitativa
+                        de los recursos públicos, y su programación y ejecución responderán
+                        a los criterios de eficiencia y economía [35].
+                    - orden: 3
+                      texto: Sólo podrán establecerse prestaciones personales o patrimoniales
+                        de carácter público con arreglo a la ley [35].
+                - número: 32
+                  apartados:
+                    - orden: 1
+                      texto: El hombre y la mujer tienen derecho a contraer matrimonio
+                        con plena igualdad jurídica [36].
+                    - orden: 2
+                      texto: La ley regulará las formas de matrimonio, la edad y capacidad
+                        para contraerlo, los derechos y deberes de los cónyuges, las
+                        causas de separación y disolución y sus efectos [36].
+                - número: 33
+                  apartados:
+                    - orden: 1
+                      texto: Se reconoce el derecho a la propiedad privada y a la
+                        herencia [36].
+                    - orden: 2
+                      texto: La función social de estos derechos delimitará su contenido,
+                        de acuerdo con las leyes [36].
+                    - orden: 3
+                      texto: Nadie podrá ser privado de sus bienes y derechos sino
+                        por causa justificada de utilidad pública o interés social,
+                        mediante la correspondiente indemnización y de conformidad
+                        con lo dispuesto por las leyes [36, 37].
+                - número: 34
+                  apartados:
+                    - orden: 1
+                      texto: Se reconoce el derecho de fundación para fines de interés
+                        general, con arreglo a la ley [37].
+                    - orden: 2
+                      texto: Regirá también para las fundaciones lo dispuesto en los
+                        apartados 2 y 4 del artículo 22 [37].
+                - número: 35
+                  apartados:
+                    - orden: 1
+                      texto: Todos los españoles tienen el deber de trabajar y el
+                        derecho al trabajo, a la libre elección de profesión u oficio,
+                        a la promoción a través del trabajo y a una remuneración suficiente
+                        para satisfacer sus necesidades y las de su familia, sin que
+                        en ningún caso pueda hacerse discriminación por razón de sexo
+                        [37].
+                    - orden: 2
+                      texto: La ley regulará un estatuto de los trabajadores [38].
+                - número: 36
+                  apartados:
+                    - orden: Único
+                      texto: La ley regulará las peculiaridades propias del régimen
+                        jurídico de los Colegios Profesionales y el ejercicio de las
+                        profesiones tituladas. La estructura interna y el funcionamiento
+                        de los Colegios deberán ser democráticos [38].
+                - número: 37
+                  apartados:
+                    - orden: 1
+                      texto: La ley garantizará el derecho a la negociación colectiva
+                        laboral entre los representantes de los trabajadores y empresarios,
+                        así como la fuerza vinculante de los convenios [38].
+                    - orden: 2
+                      texto: Se reconoce el derecho de los trabajadores y empresarios
+                        a adoptar medidas de conflicto colectivo. La ley que regule
+                        el ejercicio de este derecho, sin perjuicio de las limitaciones
+                        que puedan establecer, incluirá las garantías precisas para
+                        asegurar el funcionamiento de los servicios esenciales de
+                        la comunidad [38].
+                - número: 38
+                  apartados:
+                    - orden: Único
+                      texto: Se reconoce la libertad de empresa en el marco de la
+                        economía de mercado. Los poderes públicos garantizan y protegen
+                        su ejercicio y la defensa de la productividad, de acuerdo
+                        con las exigencias de la economía general y, en su caso, de
+                        la planificación [39].
+        - orden: TERCERO
+          nombre: De los principios rectores de la política social y económica
+          artículos:
+            - número: 39
+              apartados:
+                - orden: 1
+                  texto: Los poderes públicos aseguran la protección social, económica
+                    y jurídica de la familia [39].
+                - orden: 2
+                  texto: Los poderes públicos aseguran, asimismo, la protección integral
+                    de los hijos... [39, 40].
+                - orden: 3
+                  texto: Los padres deben prestar asistencia de todo orden a los hijos...
+                    [40].
+                - orden: 4
+                  texto: Los niños gozarán de la protección prevista en los acuerdos
+                    internacionales... [40].
+            - número: 40
+              apartados:
+                - orden: 1
+                  texto: Los poderes públicos promoverán las condiciones favorables
+                    para el progreso social y económico y para una distribución de
+                    la renta regional y personal más equitativa... De manera especial
+                    realizarán una política orientada al pleno empleo [40, 41].
+                - orden: 2
+                  texto: Asimismo, los poderes públicos fomentarán una política que
+                    garantice la formación y readaptación profesionales... [41].
+            - número: 41
+              apartados:
+                - orden: Único
+                  texto: Los poderes públicos mantendrán un régimen público de Seguridad
+                    Social para todos los ciudadanos... [42].
+            - número: 42
+              apartados:
+                - orden: Único
+                  texto: El Estado velará especialmente por la salvaguardia de los
+                    derechos económicos y sociales de los trabajadores españoles en
+                    el extranjero y orientará su política hacia su retorno [42].
+            - número: 43
+              apartados:
+                - orden: 1
+                  texto: Se reconoce el derecho a la protección de la salud [42].
+                - orden: 2
+                  texto: Compete a los poderes públicos organizar y tutelar la salud
+                    pública... [42, 43].
+                - orden: 3
+                  texto: Los poderes públicos fomentarán la educación sanitaria, la
+                    educación física y el deporte. Asimismo facilitarán la adecuada
+                    utilización del ocio [43].
+            - número: 44
+              apartados:
+                - orden: 1
+                  texto: Los poderes públicos promoverán y tutelarán el acceso a la
+                    cultura, a la que todos tienen derecho [43].
+                - orden: 2
+                  texto: Los poderes públicos promoverán la ciencia y la investigación
+                    científica y técnica en beneficio del interés general [43].
+            - número: 45
+              apartados:
+                - orden: 1
+                  texto: Todos tienen el derecho a disfrutar de un medio ambiente
+                    adecuado para el desarrollo de la persona, así como el deber de
+                    conservarlo [44].
+                - orden: 2
+                  texto: Los poderes públicos velarán por la utilización racional
+                    de todos los recursos naturales... [44].
+                - orden: 3
+                  texto: Para quienes violen lo dispuesto en el apartado anterior,
+                    en los términos que la ley fije se establecerán sanciones penales
+                    o, en su caso, administrativas, así como la obligación de reparar
+                    el daño causado [44].
+            - número: 46
+              apartados:
+                - orden: Único
+                  texto: Los poderes públicos garantizarán la conservación y promoverán
+                    el enriquecimiento del patrimonio histórico, cultural y artístico
+                    de los pueblos de España... [45].
+            - número: 47
+              apartados:
+                - orden: Único
+                  texto: Todos los españoles tienen derecho a disfrutar de una vivienda
+                    digna y adecuada. Los poderes públicos promoverán las condiciones
+                    necesarias y establecerán las normas pertinentes para hacer efectivo
+                    este derecho... [45].
+            - número: 48
+              apartados:
+                - orden: Único
+                  texto: Los poderes públicos promoverán las condiciones para la participación
+                    libre y eficaz de la juventud en el desarrollo político, social,
+                    económico y cultural [46].
+            - número: 49
+              apartados:
+                - orden: 1
+                  texto: Las personas con discapacidad ejercen los derechos previstos
+                    en este Título en condiciones de libertad e igualdad reales y
+                    efectivas. Se regulará por ley la protección especial que sea
+                    necesaria para dicho ejercicio [46].
+                - orden: 2
+                  texto: Los poderes públicos impulsarán las políticas que garanticen
+                    la plena autonomía personal y la inclusión social de las personas
+                    con discapacidad... [46].
+            - número: 50
+              apartados:
+                - orden: Único
+                  texto: Los poderes públicos garantizarán, mediante pensiones adecuadas
+                    y periódicamente actualizadas, la suficiencia económica a los
+                    ciudadanos durante la tercera edad... [47].
+            - número: 51
+              apartados:
+                - orden: 1
+                  texto: Los poderes públicos garantizarán la defensa de los consumidores
+                    y usuarios... [47].
+                - orden: 2
+                  texto: Los poderes públicos promoverán la información y la educación
+                    de los consumidores y usuarios... [48].
+                - orden: 3
+                  texto: En el marco de lo dispuesto por los apartados anteriores,
+                    la ley regulará el comercio interior y el régimen de autorización
+                    de productos comerciales [48].
+            - número: 52
+              apartados:
+                - orden: Único
+                  texto: La ley regulará las organizaciones profesionales que contribuyan
+                    a la defensa de los intereses económicos que les sean propios.
+                    Su estructura interna y funcionamiento deberán ser democráticos
+                    [48].
+        - orden: CUARTO
+          nombre: De las garantías de las libertades y derechos fundamentales
+          artículos:
+            - número: 53
+              apartados:
+                - orden: 1
+                  texto: Los derechos y libertades reconocidos en el Capítulo segundo
+                    del presente Título vinculan a todos los poderes públicos. Sólo
+                    por ley, que en todo caso deberá respetar su contenido esencial,
+                    podrá regularse el ejercicio de tales derechos y libertades, que
+                    se tutelarán de acuerdo con lo previsto en el artículo 161, 1,
+                    a) [49].
+                - orden: 2
+                  texto: Cualquier ciudadano podrá recabar la tutela de las libertades
+                    y derechos reconocidos en el artículo 14 y la Sección primera
+                    del Capítulo segundo ante los Tribunales ordinarios... [49].
+                - orden: 3
+                  texto: El reconocimiento, el respeto y la protección de los principios
+                    reconocidos en el Capítulo tercero informarán la legislación positiva,
+                    la práctica judicial y la actuación de los poderes públicos...
+                    [50].
+            - número: 54
+              apartados:
+                - orden: Único
+                  texto: Una ley orgánica regulará la institución del Defensor del
+                    Pueblo, como alto comisionado de las Cortes Generales, designado
+                    por éstas para la defensa de los derechos comprendidos en este
+                    Título... [50].
+        - orden: QUINTO
+          nombre: De la suspensión de los derechos y libertades
+          artículos:
+            - número: 55
+              apartados:
+                - orden: 1
+                  texto: Los derechos reconocidos en los artículos 17, 18, apartados
+                    2 y 3, artículos 19, 20, apartados 1, a) y d), y 5, artículos
+                    21, 28, apartado 2, y artículo 37, apartado 2, podrán ser suspendidos
+                    cuando se acuerde la declaración del estado de excepción o de
+                    sitio en los términos previstos en la Constitución. Se exceptúa
+                    de lo establecido anteriormente el apartado 3 del artículo 17
+                    para el supuesto de declaración de estado de excepción [51].
+                - orden: 2
+                  texto: Una ley orgánica podrá determinar la forma y los casos en
+                    los que, de forma individual y con la necesaria intervención judicial
+                    y el adecuado control parlamentario, los derechos reconocidos
+                    en los artículos 17, apartado 2, y 18, apartados 2 y 3, pueden
+                    ser suspendidos para personas determinadas, en relación con las
+                    investigaciones correspondientes a la actuación de bandas armadas
+                    o elementos terroristas... [52].
+    - tipo: TÍTULO
+      orden: II
+      nombre: De la Corona
+      artículo_inicial: Artículo 56
+      artículos:
+        - número: 56
+          apartados:
+            - orden: 1
+              texto: El Rey es el Jefe del Estado, símbolo de su unidad y permanencia...
+                [53].
+            - orden: 2
+              texto: Su título es el de Rey de España y podrá utilizar los demás que
+                correspondan a la Corona [53].
+            - orden: 3
+              texto: La persona del Rey es inviolable y no está sujeta a responsabilidad...
+                [54].
+        - número: 57
+          apartados:
+            - orden: 1
+              texto: La Corona de España es hereditaria en los sucesores de S. M.
+                Don Juan Carlos I de Borbón... [54].
+            - orden: 2
+              texto: El Príncipe heredero, desde su nacimiento o desde que se produzca
+                el hecho que origine el llamamiento, tendrá la dignidad de Príncipe
+                de Asturias y los demás títulos vinculados tradicionalmente al sucesor
+                de la Corona de España [55].
+            - orden: 3
+              texto: Extinguidas todas las líneas llamadas en Derecho, las Cortes
+                Generales proveerán a la sucesión en la Corona... [55].
+            - orden: 4
+              texto: Aquellas personas que teniendo derecho a la sucesión en el trono
+                contrajeren matrimonio contra la expresa prohibición del Rey y de
+                las Cortes Generales, quedarán excluidas en la sucesión a la Corona
+                por sí y sus descendientes [55].
+            - orden: 5
+              texto: Las abdicaciones y renuncias y cualquier duda de hecho o de derecho
+                que ocurra en el orden de sucesión a la Corona se resolverán por una
+                ley orgánica [56].
+        - número: 58
+          apartados:
+            - orden: Único
+              texto: La Reina consorte o el consorte de la Reina no podrán asumir
+                funciones constitucionales, salvo lo dispuesto para la Regencia [56].
+        - número: 59
+          apartados:
+            - orden: 1
+              texto: Cuando el Rey fuere menor de edad, el padre o la madre del Rey
+                y, en su defecto, el pariente mayor de edad más próximo a suceder
+                en la Corona... entrará a ejercer inmediatamente la Regencia... [56].
+            - orden: 2
+              texto: Si el Rey se inhabilitare para el ejercicio de su autoridad y
+                la imposibilidad fuere reconocida por las Cortes Generales, entrará
+                a ejercer inmediatamente la Regencia el Príncipe heredero de la Corona...
+                [57].
+            - orden: 3
+              texto: Si no hubiere ninguna persona a quien corresponda la Regencia,
+                ésta será nombrada por las Cortes Generales... [57].
+            - orden: 4
+              texto: Para ejercer la Regencia es preciso ser español y mayor de edad
+                [58].
+            - orden: 5
+              texto: La Regencia se ejercerá por mandato constitucional y siempre
+                en nombre del Rey [58].
+        - número: 60
+          apartados:
+            - orden: 1
+              texto: Será tutor del Rey menor la persona que en su testamento hubiese
+                nombrado el Rey difunto... [58].
+            - orden: 2
+              texto: El ejercicio de la tutela es también incompatible con el de todo
+                cargo o representación política [59].
+        - número: 61
+          apartados:
+            - orden: 1
+              texto: El Rey, al ser proclamado ante las Cortes Generales, prestará
+                juramento de desempeñar fielmente sus funciones... [59].
+            - orden: 2
+              texto: El Príncipe heredero, al alcanzar la mayoría de edad, y el Regente
+                o Regentes al hacerse cargo de sus funciones, prestarán el mismo juramento,
+                así como el de fidelidad al Rey [59].
+        - número: 62
+          apartados:
+            - orden: a
+              texto: Sancionar y promulgar las leyes [60].
+            - orden: b
+              texto: Convocar y disolver las Cortes Generales y convocar elecciones
+                en los términos previstos en la Constitución [60].
+            - orden: c
+              texto: Convocar a referéndum en los casos previstos en la Constitución
+                [60].
+            - orden: d
+              texto: Proponer el candidato a Presidente del Gobierno y, en su caso,
+                nombrarlo, así como poner fin a sus funciones en los términos previstos
+                en la Constitución [60].
+            - orden: e
+              texto: Nombrar y separar a los miembros del Gobierno, a propuesta de
+                su Presidente [60].
+            - orden: f
+              texto: Expedir los decretos acordados en el Consejo de Ministros, conferir
+                los empleos civiles y militares y conceder honores y distinciones
+                con arreglo a las leyes [60, 61].
+            - orden: g
+              texto: Ser informado de los asuntos de Estado y presidir, a estos efectos,
+                las sesiones del Consejo de Ministros, cuando lo estime oportuno,
+                a petición del Presidente del Gobierno [61].
+            - orden: h
+              texto: El mando supremo de las Fuerzas Armadas [61].
+            - orden: i
+              texto: Ejercer el derecho de gracia con arreglo a la ley, que no podrá
+                autorizar indultos generales [61].
+            - orden: j
+              texto: El Alto Patronazgo de las Reales Academias [61].
+        - número: 63
+          apartados:
+            - orden: 1
+              texto: El Rey acredita a los embajadores y otros representantes diplomáticos.
+                Los representantes extranjeros en España están acreditados ante él
+                [61, 62].
+            - orden: 2
+              texto: Al Rey corresponde manifestar el consentimiento del Estado para
+                obligarse internacionalmente por medio de tratados, de conformidad
+                con la Constitución y las leyes [62].
+            - orden: 3
+              texto: Al Rey corresponde, previa autorización de las Cortes Generales,
+                declarar la guerra y hacer la paz [62].
+        - número: 64
+          apartados:
+            - orden: 1
+              texto: Los actos del Rey serán refrendados por el Presidente del Gobierno
+                y, en su caso, por los Ministros competentes. La propuesta y el nombramiento
+                del Presidente del Gobierno, y la disolución prevista en el artículo
+                99, serán refrendados por el Presidente del Congreso [62].
+            - orden: 2
+              texto: De los actos del Rey serán responsables las personas que los
+                refrenden [63].
+        - número: 65
+          apartados:
+            - orden: 1
+              texto: El Rey recibe de los Presupuestos del Estado una cantidad global
+                para el sostenimiento de su Familia y Casa, y distribuye libremente
+                la misma [63].
+            - orden: 2
+              texto: El Rey nombra y releva libremente a los miembros civiles y militares
+                de su Casa [63].
+    - tipo: TÍTULO
+      orden: III
+      nombre: De las Cortes Generales
+      capítulos:
+        - orden: PRIMERO
+          nombre: De las Cámaras
+          artículos:
+            - número: 66
+              apartados:
+                - orden: 1
+                  texto: Las Cortes Generales representan al pueblo español y están
+                    formadas por el Congreso de los Diputados y el Senado [63].
+                - orden: 2
+                  texto: Las Cortes Generales ejercen la potestad legislativa del
+                    Estado, aprueban sus Presupuestos, controlan la acción del Gobierno
+                    y tienen las demás competencias que les atribuya la Constitución
+                    [63, 64].
+                - orden: 3
+                  texto: Las Cortes Generales son inviolables [64].
+            - número: 80
+              apartados:
+                - orden: Único
+                  texto: Las sesiones plenarias de las Cámaras serán públicas, salvo
+                    acuerdo en contrario de cada Cámara, adoptado por mayoría absoluta
+                    o con arreglo al Reglamento [65].
+        - orden: SEGUNDO
+          nombre: De la elaboración de las leyes
+          artículos:
+            - número: 81
+              apartados:
+                - orden: 1
+                  texto: Son leyes orgánicas las relativas al desarrollo de los derechos
+                    fundamentales y de las libertades públicas, las que aprueben los
+                    Estatutos de Autonomía y el régimen electoral general y las demás
+                    previstas en la Constitución [65, 66].
+                - orden: 2
+                  texto: La aprobación, modificación o derogación de las leyes orgánicas
+                    exigirá mayoría absoluta del Congreso, en una votación final sobre
+                    el conjunto del proyecto [66].
+            - número: 92
+              apartados:
+                - orden: 1
+                  texto: Las decisiones políticas de especial trascendencia podrán
+                    ser sometidas a referéndum consultivo de todos los ciudadanos
+                    [67].
+                - orden: 2
+                  texto: El referéndum será convocado por el Rey, mediante propuesta
+                    del Presidente del Gobierno, previamente autorizada por el Congreso
+                    de los Diputados [67, 68].
+                - orden: 3
+                  texto: Una ley orgánica regulará las condiciones y el procedimiento
+                    de las distintas modalidades de referéndum previstas en esta Constitución
+                    [68].
+        - orden: TERCERO
+          nombre: De los Tratados Internacionales
+          artículos:
+            - número: 93
+              apartados:
+                - orden: Único
+                  texto: Mediante ley orgánica se podrá autorizar la celebración de
+                    tratados por los que se atribuya a una organización o institución
+                    internacional el ejercicio de competencias derivadas de la Constitución...
+                    [68].
+    - tipo: TÍTULO
+      orden: IV
+      nombre: Del Gobierno y de la Administración
+      artículo_inicial: Artículo 97
+      artículos:
+        - número: 107
+          apartados:
+            - orden: Único
+              texto: El Consejo de Estado es el supremo órgano consultivo del Gobierno.
+                Una ley orgánica regulará su composición y competencia [69].
+    - tipo: TÍTULO
+      orden: V
+      nombre: De las relaciones entre el Gobierno y las Cortes Generales
+      artículo_inicial: Artículo 108
+      artículos:
+        - número: 116
+          apartados:
+            - orden: 1
+              texto: Una ley orgánica regulará los estados de alarma, de excepción
+                y de sitio, y las competencias y limitaciones correspondientes [70].
+            - orden: 2
+              texto: El estado de alarma será declarado por el Gobierno mediante decreto
+                acordado en Consejo de Ministros... [70].
+            - orden: 3
+              texto: El estado de excepción será declarado por el Gobierno mediante
+                decreto acordado en Consejo de Ministros, previa autorización del
+                Congreso de los Diputados... [71].
+            - orden: 4
+              texto: El estado de sitio será declarado por la mayoría absoluta del
+                Congreso de los Diputados, a propuesta exclusiva del Gobierno... [71].
+            - orden: 5
+              texto: No podrá procederse a la disolución del Congreso mientras estén
+                declarados algunos de los estados comprendidos en el presente artículo...
+                [72].
+            - orden: 6
+              texto: La declaración de los estados de alarma, de excepción y de sitio
+                no modificarán el principio de responsabilidad del Gobierno y de sus
+                agentes reconocidos en la Constitución y en las leyes [73].
+    - tipo: TÍTULO
+      orden: VI
+      nombre: Del Poder Judicial
+      artículo_inicial: Artículo 117
+      artículos:
+        - número: 127
+          apartados:
+            - orden: 1
+              texto: Los Jueces y Magistrados así como los Fiscales, mientras se hallen
+                en activo, no podrán desempeñar otros cargos públicos, ni pertenecer
+                a partidos políticos o sindicatos... [74].
+            - orden: 2
+              texto: La ley establecerá el régimen de incompatibilidades de los miembros
+                del poder judicial, que deberá asegurar la total independencia de
+                los mismos [74].
+    - tipo: TÍTULO
+      orden: VII
+      nombre: Economía y Hacienda
+      artículo_inicial: Artículo 128
+      artículos:
+        - número: 136
+          apartados:
+            - orden: 1
+              texto: El Tribunal de Cuentas es el supremo órgano fiscalizador de las
+                cuentas y de la gestión económica de Estado, así como del sector público...
+                [75].
+            - orden: 2
+              texto: Las cuentas del Estado y del sector público estatal se rendirán
+                al Tribunal de Cuentas y serán censuradas por éste... [75].
+            - orden: 3
+              texto: Los miembros del Tribunal de Cuentas gozarán de la misma independencia
+                e inamovilidad y estarán sometidos a las mismas incompatibilidades
+                que los Jueces [76].
+            - orden: 4
+              texto: Una ley orgánica regulará la composición, organización y funciones
+                del Tribunal de Cuentas [76].
+    - tipo: TÍTULO
+      orden: VIII
+      nombre: De la Organización Territorial del Estado
+      capítulos:
+        - orden: PRIMERO
+          nombre: Principios generales
+          artículos: []
+        - orden: SEGUNDO
+          nombre: De la Administración Local
+          artículos: []
+        - orden: TERCERO
+          nombre: De las Comunidades Autónomas
+          artículos: []
+    - tipo: TÍTULO
+      orden: IX
+      nombre: Del Tribunal Constitucional
+      artículo_inicial: Artículo 159
+      artículos: []
+    - tipo: TÍTULO
+      orden: X
+      nombre: De la reforma constitucional
+      artículo_inicial: Artículo 166
+      artículos: []
+    - tipo: DISPOSICIONES
+      nombre: Disposiciones adicionales
+      contenido:
+        - orden: primera
+          texto: La Constitución ampara y respeta los derechos históricos de los territorios
+            forales... [77, 78].
+        - orden: segunda
+          texto: La declaración de mayoría de edad contenida en el artículo 12 de
+            esta Constitución no perjudica las situaciones amparadas por los derechos
+            forales en el ámbito del Derecho privado [78].
+        - orden: tercera
+          texto: La modificación del régimen económico y fiscal del archipiélago canario
+            requerirá informe previo de la Comunidad Autónoma... [78].
+        - orden: cuarta
+          texto: En las Comunidades Autónomas donde tengan su sede más de una Audiencia
+            Territorial... [78, 79].
+    - tipo: DISPOSICIONES
+      nombre: Disposiciones transitorias
+      contenido:
+        - orden: primera
+          texto: En los territorios dotados de un régimen provisional de autonomía,
+            sus órganos colegiados superiores... [79].
+        - orden: segunda
+          texto: Los territorios que en el pasado hubiesen plebiscitado afirmativamente
+            proyectos de Estatuto de autonomía y cuenten, al tiempo de promulgarse
+            esta Constitución, con regímenes provisionales de autonomía... [80].
+        - orden: tercera
+          texto: La iniciativa del proceso autonómico por parte de las Corporaciones
+            locales o de sus miembros... [81].
+        - orden: cuarta
+          texto: En el caso de Navarra, y a efectos de su incorporación al Consejo
+            General Vasco o al régimen autonómico vasco que le sustituya... [81, 82].
+        - orden: quinta
+          texto: Las ciudades de Ceuta y Melilla podrán constituirse en Comunidades
+            Autónomas si así lo deciden sus respectivos Ayuntamientos... [82].
+        - orden: sexta
+          texto: Cuando se remitieran a la Comisión Constitucional del Congreso varios
+            proyectos de Estatuto... [83].
+        - orden: séptima
+          texto: 'Los organismos provisionales autonómicos se considerarán disueltos
+            en los siguientes casos: a) Una vez constituidos los órganos que establezcan
+            los Estatutos de Autonomía aprobados conforme a esta Constitución. b)
+            En el supuesto de que la iniciativa del proceso autonómico no llegara
+            a prosperar... c) Si el organismo no hubiera ejercido el derecho que le
+            reconoce la disposición transitoria primera en el plazo de tres años [83,
+            84].'
+        - orden: octava
+          texto: 1. Las Cámaras que han aprobado la presente Constitución asumirán...
+            2. A los efectos de lo establecido en el artículo 99, la promulgación
+            de la Constitución se considerará como supuesto constitucional... 3. En
+            caso de disolución... serán de aplicación en las elecciones las normas
+            vigentes con anterioridad... [84-86].
+        - orden: novena
+          texto: A los tres años de la elección por vez primera de los miembros del
+            Tribunal Constitucional se procederá por sorteo para la designación de
+            un grupo de cuatro miembros... [87].
+    - tipo: DISPOSICIONES
+      nombre: Disposiciones derogatorias
+      contenido:
+        - orden: 1
+          texto: Queda derogada la Ley 1/1977, de 4 de enero, para la Reforma Política,
+            así como, en tanto en cuanto no estuvieran ya derogadas por la anteriormente
+            mencionada Ley, la de Principios del Movimiento Nacional... [88].
+        - orden: 2
+          texto: En tanto en cuanto pudiera conservar alguna vigencia, se considera
+            definitivamente derogada la Ley de 25 de octubre de 1839 en lo que pudiera
+            afectar a las provincias de Álava, Guipúzcoa y Vizcaya. En los mismos
+            términos se considera definitivamente derogada la Ley de 21 de julio de
+            1876 [89].
+        - orden: 3
+          texto: Asimismo quedan derogadas cuantas disposiciones se opongan a lo establecido
+            en esta Constitución [89].
+    - tipo: DISPOSICIONES
+      nombre: Disposición final
+      contenido:
+        - orden: Único
+          texto: Esta Constitución entrará en vigor el mismo día de la publicación
+            de su texto oficial en el boletín oficial del Estado. Se publicará también
+            en las demás lenguas de España [89].
