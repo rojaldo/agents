@@ -818,7 +818,6 @@
                     {"orden": "2", "texto": "Las Cortes Generales ejercen la potestad legislativa del Estado, aprueban sus Presupuestos, controlan la acción del Gobierno y tienen las demás competencias que les atribuya la Constitución [63, 64]."},
                     {"orden": "3", "texto": "Las Cortes Generales son inviolables [64]."}
                 ]},
-                // Artículos 67 a 80 (omitiendo contenido detallado por longitud, pero siguiendo la estructura)
                 {"número": "Artículo 80", "apartados": [{"orden": "Único", "texto": "Las sesiones plenarias de las Cámaras serán públicas, salvo acuerdo en contrario de cada Cámara, adoptado por mayoría absoluta o con arreglo al Reglamento [65]."}]}
             ]
           },
@@ -830,7 +829,6 @@
                     {"orden": "1", "texto": "Son leyes orgánicas las relativas al desarrollo de los derechos fundamentales y de las libertades públicas, las que aprueben los Estatutos de Autonomía y el régimen electoral general y las demás previstas en la Constitución [65, 66]."},
                     {"orden": "2", "texto": "La aprobación, modificación o derogación de las leyes orgánicas exigirá mayoría absoluta del Congreso, en una votación final sobre el conjunto del proyecto [66]."}
                 ]},
-                // Artículos 82 a 91 (omitiendo contenido detallado por longitud, pero siguiendo la estructura)
                 {"número": "Artículo 92", "apartados": [
                     {"orden": "1", "texto": "Las decisiones políticas de especial trascendencia podrán ser sometidas a referéndum consultivo de todos los ciudadanos [67]."},
                     {"orden": "2", "texto": "El referéndum será convocado por el Rey, mediante propuesta del Presidente del Gobierno, previamente autorizada por el Congreso de los Diputados [67, 68]."},
@@ -844,9 +842,7 @@
             "artículos": [
                 {"número": "Artículo 93", "apartados": [
                     {"orden": "Único", "texto": "Mediante ley orgánica se podrá autorizar la celebración de tratados por los que se atribuya a una organización o institución internacional el ejercicio de competencias derivadas de la Constitución... [68]."}
-                ]},
-                // Artículos 94 a 96 (omitiendo contenido detallado por longitud, pero siguiendo la estructura)
-            ]
+                ]}            ]
           }
         ]
       },
@@ -856,7 +852,6 @@
         "nombre": "Del Gobierno y de la Administración",
         "artículo_inicial": "Artículo 97",
         "artículos": [
-            // Artículos 97 a 107 (omitiendo contenido detallado por longitud, pero siguiendo la estructura)
             {"número": "Artículo 107", "apartados": [
                 {"orden": "Único", "texto": "El Consejo de Estado es el supremo órgano consultivo del Gobierno. Una ley orgánica regulará su composición y competencia [69]."}
             ]}
@@ -868,7 +863,6 @@
         "nombre": "De las relaciones entre el Gobierno y las Cortes Generales",
         "artículo_inicial": "Artículo 108",
         "artículos": [
-            // Artículos 108 a 116 (omitiendo contenido detallado por longitud, pero siguiendo la estructura)
             {"número": "Artículo 116", "apartados": [
                 {"orden": "1", "texto": "Una ley orgánica regulará los estados de alarma, de excepción y de sitio, y las competencias y limitaciones correspondientes [70]."},
                 {"orden": "2", "texto": "El estado de alarma será declarado por el Gobierno mediante decreto acordado en Consejo de Ministros... [70]."},
@@ -885,7 +879,6 @@
         "nombre": "Del Poder Judicial",
         "artículo_inicial": "Artículo 117",
         "artículos": [
-            // Artículos 117 a 127 (omitiendo contenido detallado por longitud, pero siguiendo la estructura)
             {"número": "Artículo 127", "apartados": [
                 {"orden": "1", "texto": "Los Jueces y Magistrados así como los Fiscales, mientras se hallen en activo, no podrán desempeñar otros cargos públicos, ni pertenecer a partidos políticos o sindicatos... [74]."},
                 {"orden": "2", "texto": "La ley establecerá el régimen de incompatibilidades de los miembros del poder judicial, que deberá asegurar la total independencia de los mismos [74]."}
@@ -898,7 +891,6 @@
         "nombre": "Economía y Hacienda",
         "artículo_inicial": "Artículo 128",
         "artículos": [
-            // Artículos 128 a 136 (omitiendo contenido detallado por longitud, pero siguiendo la estructura)
             {"número": "Artículo 136", "apartados": [
                 {"orden": "1", "texto": "El Tribunal de Cuentas es el supremo órgano fiscalizador de las cuentas y de la gestión económica de Estado, así como del sector público... [75]."},
                 {"orden": "2", "texto": "Las cuentas del Estado y del sector público estatal se rendirán al Tribunal de Cuentas y serán censuradas por éste... [75]."},
@@ -916,21 +908,18 @@
             "orden": "PRIMERO",
             "nombre": "Principios generales",
             "artículos": [
-                // Artículos 137 a 139
             ]
           },
           {
             "orden": "SEGUNDO",
             "nombre": "De la Administración Local",
             "artículos": [
-                // Artículos 140 a 142
             ]
           },
           {
             "orden": "TERCERO",
             "nombre": "De las Comunidades Autónomas",
             "artículos": [
-                // Artículos 143 a 158
             ]
           }
         ]
@@ -941,7 +930,6 @@
         "nombre": "Del Tribunal Constitucional",
         "artículo_inicial": "Artículo 159",
         "artículos": [
-            // Artículos 159 a 165
         ]
       },
       {
@@ -950,7 +938,6 @@
         "nombre": "De la reforma constitucional",
         "artículo_inicial": "Artículo 166",
         "artículos": [
-            // Artículos 166 a 169
         ]
       },
       {
